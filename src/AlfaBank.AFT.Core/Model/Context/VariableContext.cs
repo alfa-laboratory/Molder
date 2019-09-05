@@ -91,13 +91,13 @@ namespace AlfaBank.AFT.Core.Model.Context
 
             if(typeof(JObject).IsAssignableFrom(varType))
             {
-                var jsonObject = JObject.Parse((string)varValue);
+                var jsonObject = JObject.Parse(varValue.ToString());
                 return jsonObject.SelectToken(path?.Remove(0, 2) ?? "/*") ?? null;
             }
 
             if(typeof(JToken).IsAssignableFrom(varType))
             {
-                var jsonToken = JToken.Parse((string)varValue);
+                var jsonToken = JToken.Parse(varValue.ToString());
                 return jsonToken.SelectToken(path?.Remove(0, 2) ?? "/*") ?? null;
             }
 
