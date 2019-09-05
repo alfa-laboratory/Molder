@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput)</TargetsForTfmSpecificBuildOutput>
+    <AssemblyName>AlfaBank.AFT.Core.Library.Service</AssemblyName>
+    <Authors>Egor Shokhin</Authors>
+    <Company>AlfaBank</Company>
+    <Version>0.0.3</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile></DocumentationFile>
+    <NoWarn>NU1701;1702</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <Description>Библиотека с  шагами работы с веб-сервисами</Description>
+    <PackageTags>specflow bdd steps webservice alfabank</PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>SA0001;NU5100;1701;1702</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="5.7.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="SpecFlow" Version="3.0.225" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AlfaBank.AFT.Core\AlfaBank.AFT.Core.csproj" />
+  </ItemGroup>
+
+</Project>

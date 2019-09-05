@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput)</TargetsForTfmSpecificBuildOutput>
+    <AssemblyName>AlfaBank.AFT.Core.Library.Common</AssemblyName>
+    <Authors>Egor Shokhin</Authors>
+    <Company>AlfaBank</Company>
+    <Version>0.0.3</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>NU1701;1702;1591</NoWarn>
+    <DocumentationFile></DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <Description>Библиотека с общими шагами генерации уникальных данных, а также с универсальными проверками корректности значений</Description>
+    <PackageTags>specflow common steps alfabank aft</PackageTags>
+    <AssemblyVersion>0.0.3.0</AssemblyVersion>
+    <FileVersion>0.0.3.0</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>SA0001;NU5100;1701;1702</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="5.7.0" />
+    <PackageReference Include="SpecFlow" Version="3.0.225" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AlfaBank.AFT.Core\AlfaBank.AFT.Core.csproj" />
+  </ItemGroup>
+
+</Project>

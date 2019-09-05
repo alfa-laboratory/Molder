@@ -1,0 +1,366 @@
+﻿// <copyright file="DatabaseSteps.Steps.cs" company="AlfaBank">
+// Copyright (c) AlfaBank. All rights reserved.
+// </copyright>
+
+namespace AlfaBank.AFT.Core.Library.Database
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Linq;
+    using AlfaBank.AFT.Core.Data.DataBase.DbCommandParameter;
+    using AlfaBank.AFT.Core.Data.DataBase.DbConnectionParams;
+    using AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper;
+    using AlfaBank.AFT.Core.Data.DataBase.DbQueryParameters;
+    using AlfaBank.AFT.Core.Model.Context;
+    using FluentAssertions;
+    using TechTalk.SpecFlow;
+    using TechTalk.SpecFlow.Assist;
+
+    /// <summary>
+    /// Шаги для работы с базами данных.
+    /// </summary>
+    [Binding]
+    public class DatabaseSteps
+    {
+        private readonly DatabaseContext databaseContext;
+        private readonly VariableContext variableContext;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DatabaseSteps"/> class.
+        /// Привязка шагов работы с базами данных к работе с переменным через контекст.
+        /// </summary>
+        /// <param name="databaseContext">Контекст для работы с базой данных.</param>
+        /// <param name="variableContext">Контекст для работы с переменными.</param>
+        public DatabaseSteps(DatabaseContext databaseContext, VariableContext variableContext)
+        {
+            this.databaseContext = databaseContext;
+            this.variableContext = variableContext;
+        }
+
+        /// <summary>
+        /// Инициализация подключений к базам данных перед сценарием.
+        /// </summary>
+        [BeforeScenario]
+        [Scope(Tag = "DBAccess")]
+        public void BeforeScenario()
+        {
+            this.databaseContext.DbConnections = new Dictionary<string, DbConnectionWrapper>();
+        }
+
+        /// <summary>
+        /// Очистка подключений к базам данных в конце сценария.
+        /// </summary>
+        [AfterScenario]
+        [Scope(Tag = "DBAccess")]
+        public void AfterScenario()
+        {
+            foreach (var kvp in this.databaseContext.DbConnections)
+            {
+                kvp.Value?.Dispose();
+            }
+
+            this.databaseContext.DbConnections.Clear();
+        }
+
+        /// <summary>
+        /// Трансформация параметров подключения к SqlServer в SqlServerConnectionParams.
+        /// </summary>
+        /// <param name="dataTable">Параметры подключения.</param>
+        /// <returns>Параметры подключения к SqlServer.</returns>
+        [StepArgumentTransformation]
+        [Scope(Tag = "DBAccess")]
+        public SqlServerConnectionParams GetDataBaseParametersFromTableSqlServer(Table dataTable)
+        {
+            return dataTable.CreateInstance<SqlServerConnectionParams>();
+        }
+
+        /// <summary>
+        /// Трансформация запросов в DbQueryParameters.
+        /// </summary>
+        /// <param name="dataTable">Таблица запроса.</param>
+        /// <returns>DbQueryParameters.</returns>
+        [StepArgumentTransformation]
+        [Scope(Tag = "DBAccess")]
+        public DbQueryParameters GetDataBaseQueryParametersSelect(Table dataTable)
+        {
+            var @params = new DbQueryParameters();
+
+            if (!(dataTable?.RowCount > 0))
+            {
+                return @params;
+            }
+
+            if (dataTable.ContainsColumn("Таблицы"))
+            {
+                @params.Tables = dataTable.Rows[0]["Таблицы"].Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            }
+
+            if (dataTable.ContainsColumn("Столбцы"))
+            {
+                @params.Columns = dataTable.Rows[0]["Столбцы"].Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            }
+
+            if (dataTable.ContainsColumn("Условия"))
+            {
+                @params.Conditions = dataTable.Rows[0]["Условия"];
+            }
+
+            if (dataTable.ContainsColumn("ЛимитСтрок"))
+            {
+                @params.LineLimit = int.Parse(dataTable.Rows[0]["ЛимитСтрок"]);
+            }
+
+            if (dataTable.ContainsColumn("ПропускСтрок"))
+            {
+                @params.LineSkip = int.Parse(dataTable.Rows[0]["ПропускСтрок"]);
+            }
+
+            return @params;
+        }
+
+        /// <summary>
+        /// Подключение к SQLServer.
+        /// </summary>
+        /// <param name="connectionName">Название подключения.</param>
+        /// <param name="params">Параметры подключения.</param>
+        [Scope(Tag = "DBAccess")]
+        [Given(@"я подключаюсь к БД MS SQL Server с названием ""(.+)"":")]
+        public void ConnectToDB_SqlServer(string connectionName, SqlServerConnectionParams @params)
+        {
+            @params.Should().NotBeNull("Параметры не заданы.");
+
+            this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value.Should()
+                .BeNull($"Подключение с названием '{connectionName}' уже существует");
+
+            var parameters = new Dictionary<string, object>()
+            {
+                { "DataSource", @params.Source },
+                { "InitialCatalog", @params.Database },
+                { "UserID", @params.Login },
+                { "Password", @params.Password },
+            };
+
+            var connection = new SqlServerConnectionWrapper();
+            connection.GetDb(parameters);
+            this.databaseContext.DbConnections.Add(connectionName, connection);
+        }
+
+        /// <summary>
+        /// Шаг выборки записей из базы данных и сохранения в переменную.
+        /// </summary>
+        /// <param name="connectionName">Название подключения.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        /// <param name="query">Запрос.</param>
+        [Scope(Tag = "DBAccess")]
+        [StepDefinition(@"я выбираю несколько записей из БД ""(.+)"" и сохраняю их в переменную ""(.+)"":")]
+        public void SelectRowsFromDbSetVariable(string connectionName, string varName, string query)
+        {
+            var conn = this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value;
+            conn.Should().NotBeNull($"Подключения с названием '{connectionName}' не существует");
+
+            query.Should().NotBeEmpty("Запрос не может быть пустым.");
+            query = this.variableContext.ReplaceVariablesInXmlBody(query);
+
+            var @params = this.variableContext.Variables
+                .Where(_ => _.Value?.Type.IsValueType == true)
+                .Select(_ => new DbCommandParameter { Name = _.Key, DbType = DbType.Object, Value = _.Value.Value })
+                .ToList();
+
+            var sqlError = this.databaseContext.IsSqlQueryValid(query);
+            sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
+
+            var (outRecords, _, error) = conn.SelectQuery(query, @params, 60);
+            error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
+            this.variableContext.SetVariable(varName, typeof(object[]), outRecords.Rows[0].ItemArray);
+        }
+
+        /// <summary>
+        /// Шаг выборки записи из базы данных и сохранения в переменную.
+        /// </summary>
+        /// <param name="connectionName">Название подключения.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        /// <param name="query">Запрос.</param>
+        [Scope(Tag = "DBAccess")]
+        [StepDefinition(@"я выбираю единственную запись из БД ""(.+)"" и сохраняю её в переменную ""(.+)"":")]
+        public void SelectSingleRowFromDbSetVariable(string connectionName, string varName, string query)
+        {
+            var conn = this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value;
+            conn.Should().NotBeNull($"Подключение с названием '{connectionName}' уже существует");
+
+            query.Should().NotBeEmpty("Запрос не может быть пустым.");
+
+            query = this.variableContext.ReplaceVariablesInXmlBody(query);
+
+            var @params = this.variableContext.Variables
+                .Where(_ => _.Value?.Type.IsValueType == true)
+                .Select(_ => new DbCommandParameter { Name = _.Key, DbType = DbType.Object, Value = _.Value.Value })
+                .ToList();
+
+            var sqlError = this.databaseContext.IsSqlQueryValid(query);
+            sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
+
+            var (outRecords, count, error) = conn.SelectQuery(query, @params, 60);
+            error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
+            count.Should().Be(1, "Запрос вернул не одну запись");
+            this.variableContext.SetVariable(varName, typeof(object[]), outRecords.Rows[0].ItemArray);
+        }
+
+        /// <summary>
+        /// Шаг выборки единственной ячейки из базы данных и сохранения в переменную.
+        /// </summary>
+        /// <param name="connectionName">Название подключения.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        /// <param name="query">Запрос.</param>
+        [Scope(Tag = "DBAccess")]
+        [StepDefinition(@"я сохраняю значение единственной ячейки из выборки из БД ""(.+)"" в переменную ""(.+)"":")]
+        public void SelectScalarFromDbSetVariable(string connectionName, string varName, string query)
+        {
+            var conn = this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value;
+            conn.Should().NotBeNull($"Подключение с названием '{connectionName}' уже существует");
+
+            query.Should().NotBeEmpty("Запрос не может быть пустым.");
+
+            var @params = this.variableContext.Variables
+                .Where(_ => _.Value?.Type.IsValueType == true)
+                .Select(_ => new DbCommandParameter { Name = _.Key, DbType = DbType.Object, Value = _.Value.Value })
+                .ToList();
+
+            query = this.variableContext.ReplaceVariablesInXmlBody(query);
+            var sqlError = this.databaseContext.IsSqlQueryValid(query);
+            sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
+
+            var (outRecords, count, error) = conn.SelectQuery(query, @params, 60);
+            error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
+            count.Should().Be(1, "Запрос вернул не одну запись");
+
+            this.variableContext.SetVariable(varName, outRecords.Columns[0].DataType, outRecords.Rows[0][0]);
+        }
+
+        /// <summary>
+        /// Шаг занесения данных в базу данных и сохранения в переменную.
+        /// </summary>
+        /// <param name="connectionName">Название подключения.</param>
+        /// <param name="tableName">Название таблицы.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        /// <param name="data">Данные.</param>
+        [Scope(Tag = "DBAccess")]
+        [When(@"я заношу записи в БД ""(.+)"" в таблицу ""(.+)"" и сохраняю результат в переменную ""(.+)"":")]
+        public void InsertRowsIntoDbSetVariable(string connectionName, string tableName, string varName, Table data)
+        {
+            var conn = this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value;
+            conn.Should().NotBeNull($"Подключение с названием '{connectionName}' уже существует");
+
+            var @params = this.variableContext.Variables
+                .Where(_ => _.Value?.Type.IsValueType == true)
+                .Select(_ => new DbCommandParameter { Name = _.Key, DbType = DbType.Object, Value = _.Value.Value })
+                .ToList();
+
+            var inRecords = this.TransformationTableToDatatable(data);
+
+            var (outRecords, count, error) = conn.InsertRows(tableName, inRecords, @params, 30);
+            error.Any().Should().BeFalse($"При добавлении данных возникли ошибки");
+            count.Should().Be(data.RowCount, "Были добавлены не все записи.");
+            this.variableContext.SetVariable(varName, typeof(DataTable), outRecords);
+        }
+
+        /// <summary>
+        /// Шаг занесения данных в базу данных.
+        /// </summary>
+        /// <param name="connectionName">Название подключения.</param>
+        /// <param name="tableName">Название таблицы.</param>
+        /// <param name="data">Данные.</param>
+        [Scope(Tag = "DBAccess")]
+        [When(@"я заношу записи в БД ""(.+)"" в таблицу ""(.+)"" без сохранения занесения в переменную:")]
+        public void InsertRowsIntoDb(string connectionName, string tableName, Table data)
+        {
+            var conn = this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value;
+            conn.Should().NotBeNull($"Подключение с названием '{connectionName}' уже существует");
+
+            var @params = this.variableContext.Variables
+                .Where(_ => _.Value?.Type.IsValueType == true)
+                .Select(_ => new DbCommandParameter { Name = _.Key, DbType = DbType.Object, Value = _.Value.Value })
+                .ToList();
+
+            var inRecords = this.TransformationTableToDatatable(data);
+
+            var (_, count, error) = conn.InsertRows(tableName, inRecords, @params, 30);
+            error.Any().Should().BeFalse($"При добавлении данных возникли ошибки");
+            count.Should().Be(data.RowCount, "Были добавлены не все записи.");
+        }
+
+        /// <summary>
+        /// Шаг обновления данных в базе данных.
+        /// </summary>
+        /// <param name="connectionName">Название подключения.</param>
+        /// <param name="query">Запрос.</param>
+        [Scope(Tag = "DBAccess")]
+        [When(@"я обновляю записи в БД ""(.+)"" без занесения в переменную:")]
+        public void UpdateRowsInDb(string connectionName, string query)
+        {
+            var conn = this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value;
+            conn.Should().NotBeNull($"Подключение с названием '{connectionName}' уже существует");
+
+            query.Should().NotBeEmpty("Запрос не может быть пустым.");
+            var @params = this.variableContext.Variables
+                .Where(_ => _.Value?.Type.IsValueType == true)
+                .Select(_ => new DbCommandParameter { Name = _.Key, DbType = DbType.Object, Value = _.Value.Value })
+                .ToList();
+
+            query = this.variableContext.ReplaceVariablesInXmlBody(query);
+
+            var sqlError = this.databaseContext.IsSqlQueryValid(query);
+            sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
+
+            var (count, error) = conn.UpdateRows(query, @params, 30);
+
+            error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
+            count.Should().NotBe(0, "Запрос ничего не обновил");
+        }
+
+        /// <summary>
+        /// Шаг выполнения кода в базе данных.
+        /// </summary>
+        /// <param name="connectionName">Название подключения.</param>
+        /// <param name="query">Запрос.</param>
+        [Scope(Tag = "DBAccess")]
+        [When(@"я выполняю запрос в БД ""(.+)"":")]
+        public void ExecuteQueryInDb(string connectionName, string query)
+        {
+            var conn = this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value;
+            conn.Should().NotBeNull($"Подключение с названием '{connectionName}' уже существует");
+
+            query.Should().NotBeEmpty("Запрос не может быть пустым.");
+
+            query = this.variableContext.ReplaceVariablesInXmlBody(query);
+
+            var sqlError = this.databaseContext.IsSqlQueryValid(query);
+            sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
+
+            var (_, count, error) = conn.ExecuteQuery(query, 30);
+
+            error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
+            count.Should().NotBe(0, "Запрос ничего не сделал");
+        }
+
+        private DataTable TransformationTableToDatatable(Table table)
+        {
+            var inRecords = new DataTable();
+            inRecords.Columns.AddRange(table.Header.Select(_ => new DataColumn(_)).ToArray());
+            foreach (var row in table.Rows)
+            {
+                inRecords.Rows.Add(
+                    row.Values
+                        .Select(_ =>
+                        {
+                            var s = _;
+                            s = this.variableContext.ReplaceVariablesInXmlBody(s);
+                            return s;
+                        })
+                        .ToArray());
+            }
+
+            return inRecords;
+        }
+    }
+}
