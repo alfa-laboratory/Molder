@@ -6,7 +6,7 @@
     <AssemblyName>AlfaBank.AFT.Core.Library.Service</AssemblyName>
     <Authors>Egor Shokhin</Authors>
     <Company>AlfaBank</Company>
-    <Version>0.0.3</Version>
+    <Version>0.0.5</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
@@ -20,6 +20,9 @@
     <IsPackable>true</IsPackable>
     <Description>Библиотека с  шагами работы с веб-сервисами</Description>
     <PackageTags>specflow bdd steps webservice alfabank</PackageTags>
+    <PackageProjectUrl>https://github.com/alfa-laboratory/AlfaBank.AFT.Core.Library</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/alfa-laboratory/AlfaBank.AFT.Core.Library</RepositoryUrl>
+    <Copyright>2019 AlfaBank</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
