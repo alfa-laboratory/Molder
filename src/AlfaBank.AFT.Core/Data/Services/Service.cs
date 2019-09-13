@@ -138,16 +138,27 @@ namespace AlfaBank.AFT.Core.Data.Services
                     listErrors = errors;
                 }
             }
-            catch (Exception e)
+            catch (WebException e)
             {
-                Data = null;
-                listErrors.Add(new Error
+                using (var response = e.Response)
                 {
-                    TargeBase = e.TargetSite,
-                    Message = e.Message,
-                    Type = e.GetType()
-                });
-                return (null, listErrors);
+                    var httpResponse = (HttpWebResponse)response;
+                    statusCode = httpResponse.StatusCode;
+                    using (var responseStream = httpResponse.GetResponseStream())
+                    using (var res = new MemoryStream())
+                    {
+                        responseStream?.CopyTo(res);
+                        Data = res.ToArray();
+                    }
+
+                    listErrors.Add(new Error
+                    {
+                        TargeBase = e.TargetSite,
+                        Message = e.Message,
+                        Type = e.GetType()
+                    });
+                    return (statusCode, listErrors);
+                }
             }
 
             return (statusCode, listErrors);

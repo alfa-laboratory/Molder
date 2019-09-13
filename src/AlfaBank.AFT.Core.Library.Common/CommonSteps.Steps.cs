@@ -424,14 +424,25 @@ namespace AlfaBank.AFT.Core.Library.Common
         public void StoreAsVariableStringFormat(string varName, string text, string newVarName)
         {
             this.variableContext.Variables.ContainsKey(varName).Should().BeTrue($"Переменной '{varName}' не существует");
-            this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{newVarName}' уже существует");
+            this.variableContext.Variables.ContainsKey(newVarName).Should().BeFalse($"Переменная '{newVarName}' уже существует");
             this.variableContext.GetVariableValue(varName).Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            var replacement = this.variableContext.Variables[varName].Type == typeof(string)
-                    ? (string)this.variableContext.GetVariableValue(varName)
-                    : this.variableContext.GetVariableValue(varName).ToString();
+            var replacement = string.Empty;
 
-            this.variableContext.SetVariable(varName, typeof(string), text?.Replace($"{{{varName}}}", replacement));
+            if (this.variableContext.Variables.ContainsKey(varName) &&
+                this.variableContext.GetVariableValue(varName) != null)
+            {
+                if (this.variableContext.Variables[varName].Type == typeof(string))
+                {
+                    replacement = (string)this.variableContext.GetVariableValue(varName);
+                }
+                else
+                {
+                    replacement = this.variableContext.GetVariableValue(varName).ToString();
+                }
+            }
+
+            this.variableContext.SetVariable(newVarName, typeof(string), text?.Replace($"{{{varName}}}", replacement));
         }
 
         /// <summary>
@@ -590,6 +601,7 @@ namespace AlfaBank.AFT.Core.Library.Common
         /// </summary>
         /// <param name="varName">Идентификатор переменной.</param>
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" не является NULL")]
+        [Then(@"я убеждаюсь, что значение переменной ""(.+)"" существует")]
         public void CheckVariableIsNotNull(string varName)
         {
             var value = this.variableContext.GetVariableValue(varName);
@@ -601,6 +613,8 @@ namespace AlfaBank.AFT.Core.Library.Common
         /// </summary>
         /// <param name="varName">Идентификатор переменной.</param>
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" является NULL")]
+        [Then(@"я убеждаюсь, что значения переменной ""(.+)"" нет")]
+        [Then(@"я убеждаюсь, что значение переменной ""(.+)"" не существует")]
         public void CheckVariableIsNull(string varName)
         {
             var value = this.variableContext.GetVariableValue(varName);
@@ -626,7 +640,7 @@ namespace AlfaBank.AFT.Core.Library.Common
         /// Шаг проверки, что значение переменной  является пустой строкой.
         /// </summary>
         /// <param name="varName">Идентификатор переменной.</param>
-        [Then(@"я убеждаюсь, что значение переменной ""(.+)"" не является пустой строкой")]
+        [Then(@"я убеждаюсь, что значение переменной ""(.+)"" пустая строка")]
         public void CheckVariableIsEmpty(string varName)
         {
             var value = this.variableContext.GetVariableValue(varName);
