@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/j33s710ss3f0nf4u?svg=true)](https://ci.appveyor.com/project/egorsh0/alfabank-aft-core-library)
+
 ## AlfaBank.AFT.Core.Library
 
 Набор библиотек с шагами для **BDD** тестирования баз данных, веб-сервисов и WebUI
