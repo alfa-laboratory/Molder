@@ -13,8 +13,8 @@ artifacts:
 deploy:
 - provider: NuGet
   api_key:
-    secure: QX6fDsJUQIZ47BFNT10P/5fjgjTz4XkDguyOVlzGApM=
-  skip_symbols: true
+    secure: $env:NUGET_API_KEY
+  skip_symbols: false
   artifact: /.*\.nupkg/
   on:
       branch: master                # release from master branch only
