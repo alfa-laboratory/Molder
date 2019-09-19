@@ -42,3 +42,12 @@ exit /b 1
 echo Error! Build AlfaBank.AFT.Core.Library.Service failed.
 exit /b 1
 )
+
+@set project=..\src\AlfaBank.AFT.Core.Library.Web\
+
+@call dotnet build -c Release %project%
+
+@if ERRORLEVEL 1 (
+echo Error! Build AlfaBank.AFT.Core.Library.Web failed.
+exit /b 1
+)
