@@ -30,10 +30,12 @@
     <NoWarn>SA0001;NU5100;NU1701;1701;1702</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="5.7.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
     <PackageReference Include="Microsoft.SqlServer.TransactSql.ScriptDom" Version="15.0.4200.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
+    <PackageReference Include="Selenium.WebDriver.WaitExtensions" Version="2.0.0" />
     <PackageReference Include="SoapFormatter" Version="1.0.11" />
     <PackageReference Include="SpecFlow" Version="3.0.225" />
     <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
