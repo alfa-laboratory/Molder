@@ -2,24 +2,24 @@
 // Copyright (c) AlfaBank. All rights reserved.
 // </copyright>
 
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Net;
+using System.Xml.Linq;
+using AlfaBank.AFT.Core.Data.Services;
+using AlfaBank.AFT.Core.Helpers;
+using AlfaBank.AFT.Core.Infrastructure.Service;
+using AlfaBank.AFT.Core.Model.Context;
+using AlfaBank.AFT.Core.Model.Service;
+using FluentAssertions;
+using TechTalk.SpecFlow;
+using TechTalk.SpecFlow.Assist;
+using Xunit.Abstractions;
+
 namespace AlfaBank.AFT.Core.Library.Service
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Specialized;
-    using System.Linq;
-    using System.Net;
-    using System.Xml.Linq;
-    using AlfaBank.AFT.Core.Data.Services;
-    using AlfaBank.AFT.Core.Helpers;
-    using AlfaBank.AFT.Core.Infrastructure.Service;
-    using AlfaBank.AFT.Core.Model.Context;
-    using AlfaBank.AFT.Core.Model.Service;
-    using FluentAssertions;
-    using TechTalk.SpecFlow;
-    using TechTalk.SpecFlow.Assist;
-    using Xunit.Abstractions;
-
     /// <summary>
     /// Шаги для работы с web сервисами.
     /// </summary>

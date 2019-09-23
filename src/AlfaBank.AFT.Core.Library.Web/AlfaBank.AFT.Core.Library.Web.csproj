@@ -4,7 +4,7 @@
     <IsPackable>true</IsPackable>
     <TargetFramework>netstandard2.0</TargetFramework>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput)</TargetsForTfmSpecificBuildOutput>
-    <Version>0.0.1</Version>
+    <Version>0.0.2</Version>
     <Authors>Egor Shokhin</Authors>
     <Company>AlfaBank</Company>
     <Description>Библиотека с  шагами работы с WebUI</Description>
@@ -13,6 +13,8 @@
     <PackageTags>specflow bdd steps web webui selenium alfabank</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/alfa-laboratory/AlfaBank.AFT.Core.Library</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -20,12 +22,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AlfaBank.AFT.Core" Version="0.0.7" />
     <PackageReference Include="FluentAssertions" Version="5.9.0" />
     <PackageReference Include="SpecFlow" Version="3.0.225" />
     <PackageReference Include="xunit" Version="2.4.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\AlfaBank.AFT.Core\AlfaBank.AFT.Core.csproj" />
   </ItemGroup>
 </Project>
