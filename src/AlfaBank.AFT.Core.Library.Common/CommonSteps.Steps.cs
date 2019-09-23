@@ -2,18 +2,19 @@
 // Copyright (c) AlfaBank. All rights reserved.
 // </copyright>
 
+using System;
+using System.Net;
+using System.Threading;
+using AlfaBank.AFT.Core.Helpers;
+using AlfaBank.AFT.Core.Infrastructure.Common;
+using AlfaBank.AFT.Core.Model.Common.Support;
+using AlfaBank.AFT.Core.Model.Context;
+using FluentAssertions;
+using TechTalk.SpecFlow;
+using Xunit.Abstractions;
+
 namespace AlfaBank.AFT.Core.Library.Common
 {
-    using System;
-    using System.Net;
-    using System.Threading;
-    using AlfaBank.AFT.Core.Helpers;
-    using AlfaBank.AFT.Core.Infrastructure.Common;
-    using AlfaBank.AFT.Core.Model.Context;
-    using FluentAssertions;
-    using TechTalk.SpecFlow;
-    using Xunit.Abstractions;
-
     /// <summary>
     /// Общие шаги для генерации данных, работы с переменными, отладки.
     /// </summary>
@@ -21,6 +22,7 @@ namespace AlfaBank.AFT.Core.Library.Common
     public class CommonSteps
     {
         private readonly VariableContext variableContext;
+        private readonly FileSupport fileSupport;
         private readonly ITestOutputHelper consoleOutputHelper;
 
         /// <summary>
@@ -28,10 +30,13 @@ namespace AlfaBank.AFT.Core.Library.Common
         /// Привязка общих шагов к работе с переменным через контекст.
         /// </summary>
         /// <param name="variableContext">Контекст для работы с переменными.</param>
+        /// <param name="fileSupport">Контекст для работы с файлами.</param>
         /// <param name="consoleOutputHelper">Capturing Output.</param>
-        public CommonSteps(VariableContext variableContext, ITestOutputHelper consoleOutputHelper)
+        public CommonSteps(VariableContext variableContext, FileSupport fileSupport,
+            ITestOutputHelper consoleOutputHelper)
         {
             this.variableContext = variableContext;
+            this.fileSupport = fileSupport;
             this.consoleOutputHelper = consoleOutputHelper;
         }
 
@@ -88,6 +93,27 @@ namespace AlfaBank.AFT.Core.Library.Common
         }
 
         /// <summary>
+        /// Шаг для создания пустого текстового файла.
+        /// </summary>
+        /// <param name="filename">Имя файла с расширением.</param>
+        [StepDefinition(@"я создаю пустой текстовый файл с именем \""(.+)\""")]
+        public void CreateEmptyFile(string filename)
+        {
+            fileSupport.CreateTextFile(filename);
+        }
+
+        /// <summary>
+        /// Шаг для создания пустого текстового файла.
+        /// </summary>
+        /// <param name="filename">Имя файла с расширением.</param>
+        /// <param name="content">Содержимое текстового файла.</param>
+        [StepDefinition(@"я создаю текстовый файл с именем \""(.+)\"" и содержимым:")]
+        public void CreateFile(string filename, string content)
+        {
+            fileSupport.CreateTextFile(filename, content: content);
+        }
+
+        /// <summary>
         /// Шаг для удаления переменной.
         /// </summary>
         /// <param name="varName">Идентификатор переменной.</param>
@@ -119,6 +145,18 @@ namespace AlfaBank.AFT.Core.Library.Common
         {
             this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
             this.variableContext.SetVariable(varName, typeof(string), text);
+        }
+
+        /// <summary>
+        /// Шаг для сохранения зашифрованного значения однострочного текста в переменную.
+        /// </summary>
+        /// <param name="text">Зашифрованный текст для сохранения в переменную.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю зашифрованный текст ""(.*)"" в переменную ""(.+)""")]
+        public void StoreAsVariableEncriptedString(string text, string varName)
+        {
+            this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            this.variableContext.SetVariable(varName, typeof(string), new Encryptor().Decrypt(text));
         }
 
         /// <summary>
@@ -571,7 +609,7 @@ namespace AlfaBank.AFT.Core.Library.Common
         public void StoreVariableValueToVariable(string varName, string newVarName)
         {
             this.variableContext.Variables.ContainsKey(varName).Should().BeTrue($"Переменной '{varName}' не существует");
-            this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{newVarName}' уже существует");
+            this.variableContext.Variables.ContainsKey(newVarName).Should().BeFalse($"Переменная '{newVarName}' уже существует");
             var value = this.variableContext.GetVariableValue(varName);
             value.Should().NotBeNull($"Значения в переменной {varName} нет");
 
