@@ -4,13 +4,13 @@ using AlfaBank.AFT.Core.Model.Web.Support;
 using FluentAssertions;
 using OpenQA.Selenium;
 using TechTalk.SpecFlow;
-using Xunit;
 using Xunit.Abstractions;
 
 namespace AlfaBank.AFT.Core.Library.Web
 {
     [Binding]
     [Scope(Tag = "web")]
+    [Scope(Tag = "Web")]
     public class WebSteps_Then
     {
         private readonly WebContext webContext;

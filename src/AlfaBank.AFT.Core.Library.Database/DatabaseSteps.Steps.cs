@@ -2,21 +2,22 @@
 // Copyright (c) AlfaBank. All rights reserved.
 // </copyright>
 
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using AlfaBank.AFT.Core.Data.DataBase.DbCommandParameter;
+using AlfaBank.AFT.Core.Data.DataBase.DbConnectionParams;
+using AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper;
+using AlfaBank.AFT.Core.Data.DataBase.DbQueryParameters;
+using AlfaBank.AFT.Core.Exceptions;
+using AlfaBank.AFT.Core.Model.Context;
+using FluentAssertions;
+using TechTalk.SpecFlow;
+using TechTalk.SpecFlow.Assist;
+
 namespace AlfaBank.AFT.Core.Library.Database
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Linq;
-    using AlfaBank.AFT.Core.Data.DataBase.DbCommandParameter;
-    using AlfaBank.AFT.Core.Data.DataBase.DbConnectionParams;
-    using AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper;
-    using AlfaBank.AFT.Core.Data.DataBase.DbQueryParameters;
-    using AlfaBank.AFT.Core.Model.Context;
-    using FluentAssertions;
-    using TechTalk.SpecFlow;
-    using TechTalk.SpecFlow.Assist;
-
     /// <summary>
     /// Шаги для работы с базами данных.
     /// </summary>
@@ -259,7 +260,8 @@ namespace AlfaBank.AFT.Core.Library.Database
             var inRecords = this.TransformationTableToDatatable(data);
 
             var (outRecords, count, error) = conn.InsertRows(tableName, inRecords, @params, 30);
-            error.Any().Should().BeFalse($"При добавлении данных возникли ошибки");
+            var enumerable = error as Error[] ?? error.ToArray();
+            enumerable.Any().Should().BeFalse($"При добавлении данных возникли ошибки");
             count.Should().Be(data.RowCount, "Были добавлены не все записи.");
             this.variableContext.SetVariable(varName, typeof(DataTable), outRecords);
         }
