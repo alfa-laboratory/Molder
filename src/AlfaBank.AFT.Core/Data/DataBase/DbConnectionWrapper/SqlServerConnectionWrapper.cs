@@ -152,13 +152,8 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
                     var cell = row[column];
                     if(cell is string name)
                     {
-                        var exp = new TSql100Parser(false).ParseExpression(
-                            new System.IO.StringReader(name), out parseErrors);
-                        if(exp.GetType() == typeof(VariableReference) || exp.GetType() == typeof(GlobalVariableExpression))
-                        {
-                            rv.ColumnValues.Add(new VariableReference() { Name = name });
-                            continue;
-                        }
+                        rv.ColumnValues.Add(new VariableReference() { Name = name });
+                        continue;
                     }
 
                     while(listParams.Any(_ => _.Name == $"p{numberParams}"))
