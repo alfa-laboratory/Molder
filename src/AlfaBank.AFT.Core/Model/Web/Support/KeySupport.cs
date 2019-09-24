@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Linq;
 using System.Reflection;
 using AlfaBank.AFT.Core.Model.Context;
 using FluentAssertions;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
 using Selenium.WebDriver.WaitExtensions;
 
 namespace AlfaBank.AFT.Core.Model.Web.Support
@@ -28,14 +28,53 @@ namespace AlfaBank.AFT.Core.Model.Web.Support
             element.SendKeys((string)field?.GetValue(null));
         }
 
-        public void PressKeys(By by, List<string> keys)
+        public void PressKeysBy(By by, string keys)
         {
-            new NotImplementedException();
+            var element = this.webContext.WebDriver.Wait(this.webContext.Timeout).ForElement(by).ToExist();
+            element.Should().NotBeNull($"Элемент \"{by}\" не найден");
+            Press(keys, element); 
         }
 
-        public void PressKeysAndSymbols(By by, List<string> keys, List<string> symbols)
+        public void PressKeys(string keys)
         {
-            new NotImplementedException();
+            Press(keys);
+        }
+
+        private void Press(string keys, IWebElement webElement = null)
+        {
+            var lk = keys.Split('+').ToList();
+
+            if(!lk.Any())
+                return;
+            var actions = new Actions(this.webContext.WebDriver);
+            foreach(var key in lk)
+            {
+                var field = typeof(Keys).GetField(key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Static);
+                if(field != null)
+                {
+                    if (webElement is null)
+                    {
+                        actions.KeyDown((string)field.GetValue(null));
+                    }
+                    else
+                    {
+                        actions.KeyDown(webElement, (string)field.GetValue(null));
+                    }
+                }
+                else
+                {
+                    if(webElement is null)
+                    {
+                        actions.SendKeys(key);
+                    }
+                    else
+                    {
+                        actions.SendKeys(webElement, key);
+                    }
+                }
+            }
+
+            actions.Build().Perform();
         }
     }
 }

@@ -6,9 +6,9 @@
     <AssemblyName>AlfaBank.AFT.Core</AssemblyName>
     <Authors>Egor Shokhin</Authors>
     <Company>AlfaBank</Company>
-    <Version>0.0.7</Version>
+    <Version>0.0.8</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageLicenseExpression></PackageLicenseExpression>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -19,11 +19,12 @@
     <IsPackable>true</IsPackable>
     <Description>Библиотека с логикой генераций уникальных текстовых, числовых значений; работы с базой данных; работой с веб-сервисами</Description>
     <PackageTags>specflow aft alfabank generate core</PackageTags>
-    <AssemblyVersion>0.0.7.0</AssemblyVersion>
-    <FileVersion>0.0.7.0</FileVersion>
+    <AssemblyVersion>0.0.8.0</AssemblyVersion>
+    <FileVersion>0.0.8.0</FileVersion>
     <Copyright>2019 AlfaBank</Copyright>
     <RepositoryUrl>https://github.com/alfa-laboratory/AlfaBank.AFT.Core.Library</RepositoryUrl>
     <PackageProjectUrl>https://github.com/alfa-laboratory/AlfaBank.AFT.Core.Library</PackageProjectUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -41,5 +42,11 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.7.0" />
     <PackageReference Include="System.ServiceModel.Http" Version="4.6.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 </Project>

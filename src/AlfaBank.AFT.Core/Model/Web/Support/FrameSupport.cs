@@ -26,5 +26,15 @@ namespace AlfaBank.AFT.Core.Model.Web.Support
 
             this.webContext.WebDriver.SwitchTo().Frame(element);
         }
+
+        public void SwitchToDefaultContent()
+        {
+            this.webContext.WebDriver.SwitchTo().DefaultContent();
+        }
+
+        public void SwitchToParentFrame()
+        {
+            this.webContext.WebDriver.SwitchTo().ParentFrame();
+        }
     }
 }
