@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using AlfaBank.AFT.Core.Helpers;
 using AlfaBank.AFT.Core.Infrastructure.Web;
 using AlfaBank.AFT.Core.Model.Common.Support;
@@ -32,7 +33,8 @@ namespace AlfaBank.AFT.Core.Library.Web
         private readonly TextBoxSupport textBoxSupport;
         private readonly MoveSupport moveSupport;
         private readonly FrameSupport frameSupport;
-        private readonly FileSupport fileSupport;
+        private readonly FileSupport fileSupport;   
+        private readonly KeySupport keySupport;   
         private readonly DragAndDropSupport dragAndDropSupport;
 
         private readonly ITestOutputHelper consoleOutputHelper;
@@ -51,12 +53,14 @@ namespace AlfaBank.AFT.Core.Library.Web
         /// <param name="dragAndDropSupport">Контекст для работы с перетаскиваниями.</param>
         /// <param name="frameSupport">Контекст для работы с фреймами.</param>
         /// <param name="fileSupport">Контекст для работы с файлами.</param>
+        /// <param name="keySupport">Контекст для работы с клавиатурой.</param>
         /// <param name="consoleOutputHelper">Capturing Output.</param>
         public WebSteps(WebContext webContext, VariableContext variableContext, 
             NavigationSupport navigationSupport, PageObjectSupport pageObjectSupport,
             ClickSupport clickSupport, TextBoxSupport textBoxSupport,
             MoveSupport moveSupport, DragAndDropSupport dragAndDropSupport,
             FrameSupport frameSupport, FileSupport fileSupport,
+            KeySupport keySupport,
             ITestOutputHelper consoleOutputHelper)
         {
             this.webContext = webContext;
@@ -68,6 +72,7 @@ namespace AlfaBank.AFT.Core.Library.Web
             this.dragAndDropSupport = dragAndDropSupport;
             this.frameSupport = frameSupport;
             this.fileSupport = fileSupport;
+            this.keySupport = keySupport;
             this.variableContext = variableContext;
             this.consoleOutputHelper = consoleOutputHelper;
         }
@@ -339,9 +344,8 @@ namespace AlfaBank.AFT.Core.Library.Web
         {
             this.webContext.WebDriver.Should()
                 .NotBeNull($"Браузер не инициализирован");
+            number.Should().BePositive("Неверно задан номер вкладки.");
             var actualNumber = number - 1;
-
-            actualNumber.Should().BePositive("Неверно задан номер вкладки.");
             actualNumber.Should().BeLessThan(this.webContext.WebDriver.WindowHandles.Count(),
                 "Выбранной вкладки не существует.");
 
@@ -462,6 +466,24 @@ namespace AlfaBank.AFT.Core.Library.Web
             this.frameSupport.SwitchFrameBy(number);
         }
 
+        [StepDefinition(@"выполнен переход на основной контент")]
+        public void GoToFrameDefaultContent()
+        {
+            this.webContext.WebDriver.Should()
+                .NotBeNull($"Браузер не инициализирован");
+        
+            this.frameSupport.SwitchToDefaultContent();
+        }
+        
+        [StepDefinition(@"выполнен переход на родительский фрейм")]
+        public void GoToparentFrame()
+        {
+            this.webContext.WebDriver.Should()
+                .NotBeNull($"Браузер не инициализирован");
+        
+            this.frameSupport.SwitchToParentFrame();
+        }
+
         [StepDefinition(@"выполнен переход на фрейм \""(.+)\""")]
         public void GoToFrameBy(string element)
         {
@@ -486,6 +508,37 @@ namespace AlfaBank.AFT.Core.Library.Web
             var path = fileSupport.GetValidFilepath(filename);
             path.Should().NotBeNull($"Файла \"{filename}\" не существует");
             textBoxSupport.SetText(parameter, path);
+        }
+
+        [StepDefinition(@"нажата клавиша \""(.+)\"" на элементе \""(.+)\"" на веб-странице")]
+        public void PressKeyToWebElement(string key, string element)
+        {
+            this.webContext.WebDriver.Should()
+                .NotBeNull($"Браузер не инициализирован");
+            var parameter = this.pageObjectSupport.GetParameterByName(element);
+            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+
+            this.keySupport.PressKey(parameter, key);
+        }
+
+        [StepDefinition(@"я нажимаю сочетание клавиш \""(.+)\"" на элементе \""(.+)\"" веб-страницы")]
+        public void PressKeysToWebElement(string key, string element)
+        {
+            this.webContext.WebDriver.Should()
+                .NotBeNull($"Браузер не инициализирован");
+            var parameter = this.pageObjectSupport.GetParameterByName(element);
+            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+
+            this.keySupport.PressKeysBy(parameter, key);
+        }
+
+        [StepDefinition(@"я нажимаю сочетание клавиш \""(.+)\"" на веб-странице")]
+        public void PressKeysToWebPage(string key)
+        {
+            this.webContext.WebDriver.Should()
+                .NotBeNull($"Браузер не инициализирован");
+
+            this.keySupport.PressKeys(key);
         }
     }
 }

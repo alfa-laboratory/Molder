@@ -416,7 +416,7 @@ namespace AlfaBank.AFT.Core.Library.Common
         /// </summary>
         /// <param name="format">Формат представления даты.</param>
         /// <param name="varName">Идентификатор переменной.</param>
-        [StepDefinition(@"я сохраняю текущую дату в формате '(.+)' в переменную ""(.+)""")]
+        [StepDefinition(@"я сохраняю текущую дату в формате ""(.+)"" в переменную ""(.+)""")]
         public void StoreAsVariableCurrentDateWithFormat(string format, string varName)
         {
             this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
