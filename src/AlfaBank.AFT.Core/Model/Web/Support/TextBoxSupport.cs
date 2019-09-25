@@ -17,10 +17,15 @@ namespace AlfaBank.AFT.Core.Model.Web.Support
         public void SetText(By by, string value)
         {
             var element = this.webContext.WebDriver.Wait(this.webContext.Timeout).ForElement(by).ToExist();
-            element.Wait(this.webContext.Timeout).ForElement().ToBeEnabled();
-            element.Wait(this.webContext.Timeout).ForElement().ToBeVisible();
             element.Should().NotBeNull($"Элемент \"{by}\" не найден");
             element.Clear();
+            element.SendKeys(value);
+        }
+
+        public void SetTextWithoutClear(By by, string value)
+        {
+            var element = this.webContext.WebDriver.Wait(this.webContext.Timeout).ForElement(by).ToExist();
+            element.Should().NotBeNull($"Элемент \"{by}\" не найден");
             element.SendKeys(value);
         }
 
