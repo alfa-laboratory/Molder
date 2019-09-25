@@ -83,7 +83,7 @@ namespace AlfaBank.AFT.Core.Library.Service
             parameters.Should().NotBeNull("Параметры не заданы");
 
             NameValueCollection headersCollection;
-            Dictionary<string, string> queryCollection;
+            List<KeyValuePair<string, string>> queryCollection;
             (url, headersCollection, queryCollection) = this.InitializationRestService(url, parameters);
 
             this.consoleOutputHelper.WriteLine($"url (сериализован): {url}");
@@ -126,7 +126,7 @@ namespace AlfaBank.AFT.Core.Library.Service
             credentials.Should().NotBeNull("Полномочия для входа были не созданы");
 
             NameValueCollection headersCollection;
-            Dictionary<string, string> queryCollection;
+            List<KeyValuePair<string, string>> queryCollection;
             (url, headersCollection, queryCollection) = this.InitializationRestService(url, parameters);
 
             this.consoleOutputHelper.WriteLine($"url (сериализован): {url}");
@@ -169,7 +169,7 @@ namespace AlfaBank.AFT.Core.Library.Service
             this.variableContext.Variables.ContainsKey(body).Should().BeTrue($"Переменной '{body}' не существует");
 
             NameValueCollection headersCollection;
-            Dictionary<string, string> queryCollection;
+            List<KeyValuePair<string, string>> queryCollection;
             (url, headersCollection, queryCollection) = this.InitializationRestService(url, parameters);
 
             var serviceBody = this.variableContext.GetVariableValueText(body);
@@ -218,7 +218,7 @@ namespace AlfaBank.AFT.Core.Library.Service
             credentials.Should().NotBeNull("Полномочия для входа были не созданы");
 
             NameValueCollection headersCollection;
-            Dictionary<string, string> queryCollection;
+            List<KeyValuePair<string, string>> queryCollection;
             (url, headersCollection, queryCollection) = this.InitializationRestService(url, parameters);
 
             var serviceBody = this.variableContext.GetVariableValueText(body);
@@ -427,11 +427,11 @@ namespace AlfaBank.AFT.Core.Library.Service
             status.Should().Be(webService.StatusCode, $"Статус сервиса '{service}':{webService.StatusCode} не равен '{status}'");
         }
 
-        private (string, NameValueCollection, Dictionary<string, string>) InitializationRestService(string url, Table parameters)
+        private (string, NameValueCollection, List<KeyValuePair<string, string>>) InitializationRestService(string url, Table parameters)
         {
             var serviceParameters = parameters.CreateSet<Parameter>();
             NameValueCollection headersCollections = null;
-            Dictionary<string, string> queryCollection = null;
+            List<KeyValuePair<string, string>> queryCollection = null;
             var paramsList = serviceParameters.ToList();
             if (paramsList.Any())
             {
@@ -456,10 +456,10 @@ namespace AlfaBank.AFT.Core.Library.Service
             return (url, headersCollections, queryCollection);
         }
 
-        private (NameValueCollection HeadersCollection, Dictionary<string, string> QueryCollection) TransformParameters(IEnumerable<Parameter> parameters)
+        private (NameValueCollection HeadersCollection, List<KeyValuePair<string, string>> QueryCollection) TransformParameters(IEnumerable<Parameter> parameters)
         {
             var headersCollection = new NameValueCollection();
-            var queryCollection = new Dictionary<string, string>();
+            var queryCollection = new List<KeyValuePair<string, string>>();
 
             foreach (var kvp in parameters)
             {
@@ -467,7 +467,7 @@ namespace AlfaBank.AFT.Core.Library.Service
                 switch (kvp.ParameterType)
                 {
                     case ParameterType.QUERY:
-                        queryCollection.Add(kvp.Name, value);
+                        queryCollection.Add(new KeyValuePair<string, string>(kvp.Name, value));
                         break;
                     case ParameterType.HEADER:
                         headersCollection.Add(kvp.Name, value);
@@ -480,7 +480,7 @@ namespace AlfaBank.AFT.Core.Library.Service
             return (headersCollection, queryCollection);
         }
 
-        private string DictionaryToStringParameters(Dictionary<string, string> collection)
+        private string DictionaryToStringParameters(IEnumerable<KeyValuePair<string, string>> collection)
         {
             return string.Join("&", collection.Select(_ => string.Concat(_.Key, "=", _.Value)).ToArray());
         }
