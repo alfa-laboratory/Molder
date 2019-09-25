@@ -507,7 +507,8 @@ namespace AlfaBank.AFT.Core.Library.Web
 
             var path = fileSupport.GetValidFilepath(filename);
             path.Should().NotBeNull($"Файла \"{filename}\" не существует");
-            textBoxSupport.SetText(parameter, path);
+
+            textBoxSupport.SetTextWithoutClear(parameter, path);
         }
 
         [StepDefinition(@"нажата клавиша \""(.+)\"" на элементе \""(.+)\"" на веб-странице")]
