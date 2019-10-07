@@ -399,7 +399,7 @@ namespace AlfaBank.AFT.Core.Library.Common
         }
 
         /// <summary>
-        /// Шаг для сохранения даты, которая отличается от текущей на определенный срок в переменную, используя конкретный формат.
+        /// Шаг для сохранения будущей даты, которая отличается от текущей на определенный срок в переменную, используя конкретный формат.
         /// </summary>
         /// <param name="year">Количество лет от текущей даты.</param>
         /// <param name="month">Количество месяцев от текущей даты.</param>
@@ -411,6 +411,22 @@ namespace AlfaBank.AFT.Core.Library.Common
         {
             this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
             var dt = DateTime.Now.AddYears(year).AddMonths(month).AddDays(day).ToString(format);
+            this.variableContext.SetVariable(varName, dt.GetType(), dt);
+        }
+
+        /// <summary>
+        /// Шаг для сохранения прошедшей даты, которая отличается от текущей на определенный срок в переменную, используя конкретный формат.
+        /// </summary>
+        /// <param name="year">Количество лет от текущей даты.</param>
+        /// <param name="month">Количество месяцев от текущей даты.</param>
+        /// <param name="day">Количество дней от текущей даты.</param>
+        /// <param name="format">Формат представления даты.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю прошедшую дату, которая отличается от текущей на ""([0-9]+)"" (?:лет|год[а]?) ""([0-9]+)"" (?:месяц|месяц(?:а|ев)) ""([0-9]+)"" (?:день|дн(?:я|ей)) в формате ""(.+)"" в переменную ""(.+)""")]
+        public void StoreAsVariablePastDateTimeWithDifference(int year, int month, int day, string format, string varName)
+        {
+            this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var dt = DateTime.Now.AddYears(year * (-1)).AddMonths(month * (-1)).AddDays(day * (-1)).ToString(format);
             this.variableContext.SetVariable(varName, dt.GetType(), dt);
         }
 
