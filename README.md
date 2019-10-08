@@ -1,8 +1,18 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/j33s710ss3f0nf4u?svg=true)](https://ci.appveyor.com/project/egorsh0/alfabank-aft-core-library)
-
-## AlfaBank.AFT.Core.Library
-
+# AlfaBank.AFT.Core.Library
 Набор библиотек с шагами для **BDD** тестирования баз данных, веб-сервисов и WebUI
+
+ [![Build status](https://ci.appveyor.com/api/projects/status/j33s710ss3f0nf4u?svg=true)](https://ci.appveyor.com/project/egorsh0/alfabank-aft-core-library)
+ [![GitHub license](https://img.shields.io/github/license/alfa-laboratory/AlfaBank.AFT.Core.Library)](https://github.com/alfa-laboratory/AlfaBank.AFT.Core.Library/blob/master/LICENSE)
+
+### Library
+| Name	 															| Nuget	 																																				|
+| ----------------------------------- | ---------------------------------------------------------------------------- 	|
+| AlfaBank.AFT.Core   								| ![Nuget](https://img.shields.io/nuget/dt/AlfaBank.AFT.Core) 									|
+| AlfaBank.AFT.Core.Library.Common 		| ![Nuget](https://img.shields.io/nuget/dt/AlfaBank.AFT.Core.Library.Common) 		|
+| AlfaBank.AFT.Core.Library.Database  | ![Nuget](https://img.shields.io/nuget/dt/AlfaBank.AFT.Core.Library.Database)	|
+| AlfaBank.AFT.Core.Library.Service   | ![Nuget](https://img.shields.io/nuget/dt/AlfaBank.AFT.Core.Library.Service) 	|
+| AlfaBank.AFT.Core.Library.Web    		| ![Nuget](https://img.shields.io/nuget/dt/AlfaBank.AFT.Core.Library.Web) 			|
+
 
 ### Состав библиотек
 
