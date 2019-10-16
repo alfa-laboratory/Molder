@@ -171,9 +171,10 @@ namespace AlfaBank.AFT.Core.Library.Database
             var sqlError = this.databaseContext.IsSqlQueryValid(query);
             sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
 
-            var (outRecords, _, error) = conn.SelectQuery(query, @params, 60);
+            var (outRecords, _, error) = conn.SelectQuery(query, null, @params, 60);
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
-            this.variableContext.SetVariable(varName, typeof(object[]), outRecords.Rows[0].ItemArray);
+            (outRecords is DataTable).Should().BeTrue("Выходные данные не являются типом DataTable");
+            this.variableContext.SetVariable(varName, typeof(object[]), ((DataTable)outRecords).Rows[0].ItemArray);
         }
 
         /// <summary>
@@ -201,10 +202,12 @@ namespace AlfaBank.AFT.Core.Library.Database
             var sqlError = this.databaseContext.IsSqlQueryValid(query);
             sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
 
-            var (outRecords, count, error) = conn.SelectQuery(query, @params, 60);
+            var (outRecords, count, error) = conn.SelectQuery(query, null, @params, 60);
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
             count.Should().Be(1, "Запрос вернул не одну запись");
-            this.variableContext.SetVariable(varName, typeof(object[]), outRecords.Rows[0].ItemArray);
+
+            (outRecords is DataTable).Should().BeTrue("Выходные данные не являются типом DataTable");
+            this.variableContext.SetVariable(varName, typeof(object[]), ((DataTable)outRecords).Rows[0].ItemArray);
         }
 
         /// <summary>
@@ -231,11 +234,13 @@ namespace AlfaBank.AFT.Core.Library.Database
             var sqlError = this.databaseContext.IsSqlQueryValid(query);
             sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
 
-            var (outRecords, count, error) = conn.SelectQuery(query, @params, 60);
+            var (outRecords, count, error) = conn.SelectQuery(query, null, @params, 60);
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
             count.Should().Be(1, "Запрос вернул не одну запись");
 
-            this.variableContext.SetVariable(varName, outRecords.Columns[0].DataType, outRecords.Rows[0][0]);
+            (outRecords is DataTable).Should().BeTrue("Выходные данные не являются типом DataTable");
+
+            this.variableContext.SetVariable(varName, ((DataTable)outRecords).Columns[0].DataType, ((DataTable)outRecords).Rows[0][0]);
         }
 
         /// <summary>
@@ -314,7 +319,7 @@ namespace AlfaBank.AFT.Core.Library.Database
             var sqlError = this.databaseContext.IsSqlQueryValid(query);
             sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
 
-            var (count, error) = conn.UpdateRows(query, @params, 30);
+            var (count, error) = conn.UpdateRows(query, null, @params, 30);
 
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
             count.Should().NotBe(0, "Запрос ничего не обновил");
