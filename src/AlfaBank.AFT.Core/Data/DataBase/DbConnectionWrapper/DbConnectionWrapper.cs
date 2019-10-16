@@ -43,19 +43,19 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
 
         public abstract DbConnection GetDb(IDictionary<string, object> parameters);
 
-        public abstract (DataTable, int, IEnumerable<Error>) SelectQuery(
-            string query,
+        public abstract (object, int, IEnumerable<Error>) SelectQuery(
+            string query, string tableName = null,
             ICollection<DbCommandParameter.DbCommandParameter> parameter = null, int? timeout = null);
 
-        public abstract (DataTable, int, IEnumerable<Error>) InsertRows(string tableName, DataTable records,
+        public abstract (object, int, IEnumerable<Error>) InsertRows(string tableName, DataTable records,
             ICollection<DbCommandParameter.DbCommandParameter> parameter = null, int? timeout = null);
 
         public abstract (int, IEnumerable<Error>) UpdateRows(
-            string query,
+            string query, string tableName = null,
             ICollection<DbCommandParameter.DbCommandParameter> @params = null, int? timeout = null);
 
         public abstract (int, IEnumerable<Error>) DeleteRows(
-            string query,
+            string query, string tableName = null,
             ICollection<DbCommandParameter.DbCommandParameter> @params = null, int? timeout = null);
 
         public object Clone()
