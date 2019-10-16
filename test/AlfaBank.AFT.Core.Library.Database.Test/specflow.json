@@ -1,0 +1,13 @@
+﻿{
+	"language": {
+		"feature": "en-EN"
+	},
+	"stepAssemblies": [
+		{
+			"assembly": "AlfaBank.AFT.Core.Library.Common"
+		},
+		{
+			"assembly": "AlfaBank.AFT.Core.Library.Database"
+		}
+	]
+}
