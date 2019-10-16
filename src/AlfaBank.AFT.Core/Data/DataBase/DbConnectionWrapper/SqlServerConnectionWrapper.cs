@@ -47,12 +47,12 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
             return DbConnection;
         }
 
-        public override (DataTable, int, IEnumerable<Error>) SelectQuery(string query, ICollection<DbCommandParameter.DbCommandParameter> parameter = null, int? timeout = null)
+        public override (object, int, IEnumerable<Error>) SelectQuery(string query, string tableName = null, ICollection<DbCommandParameter.DbCommandParameter> parameter = null, int? timeout = null)
         {
             return ExecuteQuery(query, timeout, parameter);
         }
 
-        public override (DataTable, int, IEnumerable<Error>) InsertRows(string tableName, DataTable records, ICollection<DbCommandParameter.DbCommandParameter> parameter = null,
+        public override (object, int, IEnumerable<Error>) InsertRows(string tableName, DataTable records, ICollection<DbCommandParameter.DbCommandParameter> parameter = null,
             int? timeout = null)
         {
             var (query, listParams, parseErrors) = CreateInsertStatement(tableName, records, parameter);
@@ -72,12 +72,12 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
             return (null, 0, listErrors);
         }
 
-        public override (int, IEnumerable<Error>) UpdateRows(string query, ICollection<DbCommandParameter.DbCommandParameter> parameters = null, int? timeout = null)
+        public override (int, IEnumerable<Error>) UpdateRows(string query, string tableName = null, ICollection<DbCommandParameter.DbCommandParameter> parameters = null, int? timeout = null)
         {
             return ExecuteNonQuery(query, parameters, timeout);
         }
 
-        public override (int, IEnumerable<Error>) DeleteRows(string query, ICollection<DbCommandParameter.DbCommandParameter> parameters = null, int? timeout = null)
+        public override (int, IEnumerable<Error>) DeleteRows(string query, string tableName = null, ICollection<DbCommandParameter.DbCommandParameter> parameters = null, int? timeout = null)
         {
             return ExecuteNonQuery(query, parameters, timeout);
         }
