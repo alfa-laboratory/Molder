@@ -686,7 +686,7 @@ namespace AlfaBank.AFT.Core.Library.Common
             value.Should().NotBeNull($"Значения в переменной {varName} нет");
             if (this.variableContext.GetVariable(varName)?.Type == typeof(string))
             {
-                string.IsNullOrEmpty((string)value).Should().BeFalse($"Значение переменной '{varName}' пустая строка");
+                string.IsNullOrWhiteSpace((string)value).Should().BeFalse($"Значение переменной '{varName}' пустая строка");
             }
         }
 
@@ -695,13 +695,14 @@ namespace AlfaBank.AFT.Core.Library.Common
         /// </summary>
         /// <param name="varName">Идентификатор переменной.</param>
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" пустая строка")]
+        [Then(@"я убеждаюсь, что значение переменной ""(.+)"" равно пустой строке")]
         public void CheckVariableIsEmpty(string varName)
         {
             var value = this.variableContext.GetVariableValue(varName);
             value.Should().NotBeNull($"Значения в переменной {varName} нет");
             if (this.variableContext.GetVariable(varName)?.Type == typeof(string))
             {
-                string.IsNullOrEmpty((string)value).Should().BeTrue($"Значение переменной '{varName}' не пустая строка");
+                string.IsNullOrWhiteSpace((string)value).Should().BeTrue($"Значение переменной '{varName}' не пустая строка");
             }
         }
 
