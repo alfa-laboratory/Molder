@@ -1,5 +1,6 @@
 ﻿using AlfaBank.AFT.Core.Helpers;
 using AlfaBank.AFT.Core.Model.KeyValues;
+using MongoDB.Bson;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Data;
@@ -89,7 +90,13 @@ namespace AlfaBank.AFT.Core.Model.Context
                 varType = varType.GetElementType();
             }
 
-            if(typeof(JObject).IsAssignableFrom(varType))
+            if (typeof(BsonDocument).IsAssignableFrom(varType))
+            {
+                return ((BsonDocument)varValue).GetValue(index) ?? null;
+            }
+
+
+            if (typeof(JObject).IsAssignableFrom(varType))
             {
                 var jsonObject = JObject.Parse(varValue.ToString());
                 return jsonObject.SelectToken(path?.Remove(0, 2) ?? "/*") ?? null;
@@ -147,10 +154,16 @@ namespace AlfaBank.AFT.Core.Model.Context
             string ret;
             switch(val)
             {
+                case BsonValue element when element.Equals(null):
+                    {
+                        ret = element.ToString();
+                        break;
+                    }
                 case XElement element when element.HasElements == false:
+                {
                     ret = element.Value;
                     break;
-
+                }
                 case XmlNode node when node.FirstChild.GetType() == typeof(XmlText):
                 {
                     ret = node.FirstChild.Value;

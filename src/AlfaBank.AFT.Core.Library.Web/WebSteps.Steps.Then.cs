@@ -4,13 +4,13 @@ using AlfaBank.AFT.Core.Model.Web.Support;
 using FluentAssertions;
 using OpenQA.Selenium;
 using TechTalk.SpecFlow;
-using Xunit;
 using Xunit.Abstractions;
 
 namespace AlfaBank.AFT.Core.Library.Web
 {
     [Binding]
     [Scope(Tag = "web")]
+    [Scope(Tag = "Web")]
     public class WebSteps_Then
     {
         private readonly WebContext webContext;
@@ -52,6 +52,7 @@ namespace AlfaBank.AFT.Core.Library.Web
 
         [Then(@"на веб-странице значение элемента \""(.+)\"" пусто")]
         [Then(@"на веб-странице значение элемента \""(.+)\"" пустая строка")]
+        [Then(@"на веб-странице значение элемента \""(.+)\"" равно пустой строке")]
         [Then(@"на веб-странице значение элемента \""(.+)\"" равно null")]
         [Then(@"на веб-странице значение элемента \""(.+)\"" заполнено пробелами")]
         public void WebElementValueIsEmpty(string element)
@@ -67,6 +68,7 @@ namespace AlfaBank.AFT.Core.Library.Web
 
         [Then(@"на веб-странице текст элемента \""(.+)\"" пустой")]
         [Then(@"на веб-странице текст элемента \""(.+)\"" пустая строка")]
+        [Then(@"на веб-странице текст элемента \""(.+)\"" равен пустой строке")]
         [Then(@"на веб-странице текст элемента \""(.+)\"" равен null")]
         [Then(@"на веб-странице текст элемента \""(.+)\"" заполнен пробелами")]
         public void WebElementTextIsEmpty(string element)
@@ -93,7 +95,7 @@ namespace AlfaBank.AFT.Core.Library.Web
             value.Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
         }
 
-        [Then(@"на веб-странице текст элемента \""(.+)\"" заполнено")]
+        [Then(@"на веб-странице текст элемента \""(.+)\"" заполнен")]
         [Then(@"на веб-странице текст элемента \""(.+)\"" не равно null")]
         [Then(@"на веб-странице текст элемента \""(.+)\"" содержит символы, отличные от пробелов")]
         public void WebElementTextIsNotEmpty(string element)

@@ -11,6 +11,7 @@ namespace AlfaBank.AFT.Core.Library.Database
     using AlfaBank.AFT.Core.Data.DataBase.DbCommandParameter;
     using AlfaBank.AFT.Core.Data.DataBase.DbConnectionParams;
     using AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper;
+    using AlfaBank.AFT.Core.Data.DataBase.MongoConnectionWrapper;
     using AlfaBank.AFT.Core.Data.DataBase.DbQueryParameters;
     using AlfaBank.AFT.Core.Model.Context;
     using FluentAssertions;
@@ -202,7 +203,11 @@ namespace AlfaBank.AFT.Core.Library.Database
 
             var (outRecords, _, error) = conn.SelectQuery(query, @params, 60);
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
-            this.variableContext.SetVariable(varName, typeof(object[]), outRecords.Rows[0].ItemArray);
+
+            (outRecords is DataTable).Should().BeTrue("");
+
+
+            this.variableContext.SetVariable(varName, typeof(object[]), ((DataTable)outRecords).Rows[0].ItemArray);
         }
 
         /// <summary>
@@ -277,15 +282,17 @@ namespace AlfaBank.AFT.Core.Library.Database
         [StepDefinition(@"я сохраняю значение единственной ячейки из выборки из БД ""(.+)"" из коллекции ""(.+)"" в переменную ""(.+)"":")]
         public void SelectScalarFromMongoDbSetVariable(string connectionName, string tableName, string varName, string query)
         {
-            var conn = this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value;
+            var conn = (MongoConnectionWrapper)this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value;
             conn.Should().NotBeNull($"Подключение с названием '{connectionName}' не существует");
 
             query.Should().NotBeEmpty("Запрос не может быть пустым.");
 
-            //conn.SelectQuery(tableName, query);
+            var (outResponce, count, errors) = conn.SelectQuery(tableName, query);
+
+            count.Should().Be(1, "_______");
 
 
-            //this.variableContext.SetVariable(varName, outRecords.Columns[0].DataType, outRecords.Rows[0][0]);
+            this.variableContext.SetVariable(varName, outResponce[0].GetType(), (BSonD)outResponce[0]);
         }
 
         /// <summary>
@@ -350,12 +357,14 @@ namespace AlfaBank.AFT.Core.Library.Database
         [When(@"я заношу записи в Mongo БД ""(.+)"" в таблицу ""(.+)"" без сохранения занесения в переменную:")]
         public void InsertRowsIntoMonoDb(string connectionName, string tableName, string query)
         {
-            var conn = this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value;
+            var conn = (MongoConnectionWrapper)this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value;
             conn.Should().NotBeNull($"Подключение с названием '{connectionName}' не существует");
 
             query.Should().NotBeEmpty("Запрос не может быть пустым.");
 
+            conn.InsertRows(tableName, query);
 
+            //сохранить в переменную или вывести ОК/ФЭЙЛ
         }
 
         /// <summary>

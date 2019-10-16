@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Linq;
 using System.Text;
 using AlfaBank.AFT.Core.Data.DataBase.DbCommandParameter;
 using AlfaBank.AFT.Core.Exceptions;
@@ -15,13 +16,17 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
         MongoUrlBuilder connection;
         MongoClient client;
         IMongoDatabase database;
-        //IMongoCollection<BsonDocument> collection;
 
-        public override (int, IEnumerable<Error>) DeleteRows(string query, ICollection<DbCommandParameter.DbCommandParameter> @params = null, int? timeout = null)
+        public override (int, IEnumerable<Error>) DeleteRows(string query, string tableName = null, ICollection<DbCommandParameter.DbCommandParameter> @params = null, int? timeout = null)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// метод устанавливает приватные поля, необходимые для подключения к БД
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
         public override DbConnection GetDb(IDictionary<string, object> @params)
         {
             string connectionString = "mongodb://" +
@@ -30,35 +35,41 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
             @params["DataSource"] + "/" +
             @params["InitialCatalog"];
             connection = new MongoUrlBuilder(connectionString);
-            // получаем клиента для взаимодействия с базой данных
             client = new MongoClient(connectionString);
-            // получаем доступ к самой базе данных
             database = client.GetDatabase(connection.DatabaseName);
             return this.DbConnection;
         }
 
         public void InsertRows(string tableName, string query)
         {
-            IMongoCollection<BsonDocument> collection = database.GetCollection<BsonDocument>(tableName);
-            BsonDocument document = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonDocument>(query);
+            var collection = database.GetCollection<BsonDocument>(tableName);
+            var document = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonDocument>(query);
             collection.InsertOne(document);
             var number = document.ElementCount;
-            collection.Find<BsonDocument>(document);
-            //проверить соответствие
+            //проверить количество на Монго
+            var res = collection.Find(document);
+            //проверить соответствие на Монго
         }
 
-        public override (DataTable, int, IEnumerable<Error>) InsertRows(string tableName, DataTable records, ICollection<DbCommandParameter.DbCommandParameter> parameter = null, int? timeout = null)
+        public override (object, int, IEnumerable<Error>) InsertRows(string tableName, DataTable records, ICollection<DbCommandParameter.DbCommandParameter> parameter = null, int? timeout = null)
         {
             throw new NotImplementedException();
         }
 
-        public string SelectQuery(string tableName, string query)
+        /// <summary>
+        /// метод получает имя таблицы и Aggregate-запрос на получение данных в виде строки,
+        /// выдаёт строку, содержащую найденные записи
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public (object, int, IEnumerable<Error>) SelectQuery(string tableName, string query)
         {
             IMongoCollection<BsonDocument> collection = database.GetCollection<BsonDocument>(tableName);
             BsonDocument document = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonDocument>(query);
             PipelineDefinition<BsonDocument, BsonDocument> pipeline = new BsonDocument[] { document };
             Console.WriteLine(document);
-
+            List<Error> errors = new List<Error>();
             string json = "";
 
             var options = new AggregateOptions()
@@ -67,25 +78,17 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
             };
             using (var cursor = collection.Aggregate(pipeline, options))
             {
-                while (cursor.MoveNext())
-                {
-                    IEnumerable<BsonDocument> batch = cursor.Current;
-                    Console.WriteLine(batch.ToJson());
-                    foreach (BsonDocument doc in batch)
-                    {
-                        json += doc.ToJson() + Environment.NewLine;
-                    }
-                }
+                var count = cursor.Current.ToList().Count;
+                return (cursor.Current, count, errors);
             }
-            return json;
         }
 
-        public override (DataTable, int, IEnumerable<Error>) SelectQuery(string query, ICollection<DbCommandParameter.DbCommandParameter> parameter = null, int? timeout = null)
+        public override (object, int, IEnumerable<Error>) SelectQuery(string query, string tableName = null, ICollection<DbCommandParameter.DbCommandParameter> parameter = null, int? timeout = null)
         {
             throw new NotImplementedException();
         }
 
-        public override (int, IEnumerable<Error>) UpdateRows(string query, ICollection<DbCommandParameter.DbCommandParameter> @params = null, int? timeout = null)
+        public override (int, IEnumerable<Error>) UpdateRows(string query, string tableName = null, ICollection<DbCommandParameter.DbCommandParameter> @params = null, int? timeout = null)
         {
             throw new NotImplementedException();
         }

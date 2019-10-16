@@ -18,6 +18,8 @@ namespace AlfaBank.AFT.Core.Model.Web.Support
         public void Click(By by)
         {
             var element = this.webContext.WebDriver.Wait(this.webContext.Timeout).ForElement(by).ToExist();
+            element.Wait(this.webContext.Timeout).ForElement().ToBeVisible();
+            element.Wait(this.webContext.Timeout).ForElement().ToBeEnabled();
             element.Should().NotBeNull($"Элемент \"{by}\" не найден");
             element.Click();
         }

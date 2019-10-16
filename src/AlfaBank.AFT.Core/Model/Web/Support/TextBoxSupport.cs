@@ -22,6 +22,13 @@ namespace AlfaBank.AFT.Core.Model.Web.Support
             element.SendKeys(value);
         }
 
+        public void SetTextWithoutClear(By by, string value)
+        {
+            var element = this.webContext.WebDriver.Wait(this.webContext.Timeout).ForElement(by).ToExist();
+            element.Should().NotBeNull($"Элемент \"{by}\" не найден");
+            element.SendKeys(value);
+        }
+
         public void Clear(By by)
         {
             var element = this.webContext.WebDriver.Wait(this.webContext.Timeout).ForElement(by).ToExist();
