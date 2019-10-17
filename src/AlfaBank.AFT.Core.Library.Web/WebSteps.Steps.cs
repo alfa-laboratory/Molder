@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using AlfaBank.AFT.Core.Helpers;
 using AlfaBank.AFT.Core.Infrastructure.Web;
 using AlfaBank.AFT.Core.Model.Common.Support;
@@ -34,7 +33,8 @@ namespace AlfaBank.AFT.Core.Library.Web
         private readonly MoveSupport moveSupport;
         private readonly FrameSupport frameSupport;
         private readonly FileSupport fileSupport;   
-        private readonly KeySupport keySupport;   
+        private readonly KeySupport keySupport;
+        private readonly CommandSupport commandSupport;
         private readonly DragAndDropSupport dragAndDropSupport;
 
         private readonly ITestOutputHelper consoleOutputHelper;
@@ -54,13 +54,14 @@ namespace AlfaBank.AFT.Core.Library.Web
         /// <param name="frameSupport">Контекст для работы с фреймами.</param>
         /// <param name="fileSupport">Контекст для работы с файлами.</param>
         /// <param name="keySupport">Контекст для работы с клавиатурой.</param>
+        /// <param name="commandSupport">Контекст для дополнительной проверки команд.</param>
         /// <param name="consoleOutputHelper">Capturing Output.</param>
         public WebSteps(WebContext webContext, VariableContext variableContext, 
             NavigationSupport navigationSupport, PageObjectSupport pageObjectSupport,
             ClickSupport clickSupport, TextBoxSupport textBoxSupport,
             MoveSupport moveSupport, DragAndDropSupport dragAndDropSupport,
             FrameSupport frameSupport, FileSupport fileSupport,
-            KeySupport keySupport,
+            KeySupport keySupport, CommandSupport commandSupport,
             ITestOutputHelper consoleOutputHelper)
         {
             this.webContext = webContext;
@@ -73,6 +74,7 @@ namespace AlfaBank.AFT.Core.Library.Web
             this.frameSupport = frameSupport;
             this.fileSupport = fileSupport;
             this.keySupport = keySupport;
+            this.commandSupport = commandSupport;
             this.variableContext = variableContext;
             this.consoleOutputHelper = consoleOutputHelper;
         }
@@ -199,7 +201,7 @@ namespace AlfaBank.AFT.Core.Library.Web
             url.Should().NotBeEmpty("Url не задан").And.NotBeNullOrWhiteSpace("Url не задан");
 
             url = this.variableContext.ReplaceVariablesInXmlBody(url, (val) => System.Security.SecurityElement.Escape(Reflection.ConvertObject<string>(val)));
-            this.navigationSupport.NavigateTo(url);
+            this.commandSupport.SendCommand(() => this.navigationSupport.NavigateTo(url));
         }
 
         [StepDefinition(@"я обновляю веб-страницу")]
@@ -207,7 +209,7 @@ namespace AlfaBank.AFT.Core.Library.Web
         {
             this.webContext.WebDriver.Should()
                 .NotBeNull($"Браузер не инициализирован");
-            this.navigationSupport.Refresh();
+            this.commandSupport.SendCommand(() => this.navigationSupport.Refresh());
         }
 
         [StepDefinition(@"я сохраняю адрес активной веб-страницы в переменную \""(.+)\""")]
@@ -235,7 +237,7 @@ namespace AlfaBank.AFT.Core.Library.Web
         {
             this.webContext.WebDriver.Should()
                 .NotBeNull($"Браузер не инициализирован");
-            this.webContext.WebDriver.Close();
+            this.commandSupport.SendCommand(() => this.webContext.WebDriver.Close());
         }
 
         [StepDefinition(@"веб-страница проскроллена до элемента \""(.+)\""")]
@@ -246,7 +248,7 @@ namespace AlfaBank.AFT.Core.Library.Web
 
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            this.moveSupport.MoveToElement(parameter);
+            this.commandSupport.SendCommand(() => moveSupport.MoveToElement(parameter));
         }
 
         [StepDefinition(@"совершен переход в начало веб-страницы")]
@@ -254,7 +256,7 @@ namespace AlfaBank.AFT.Core.Library.Web
         {
             this.webContext.WebDriver.Should()
                 .NotBeNull($"Браузер не инициализирован");
-            this.moveSupport.PageTop();
+            this.commandSupport.SendCommand(() => this.moveSupport.PageTop());
         }
 
         [StepDefinition(@"совершен переход в конец веб-страницы")]
@@ -262,7 +264,7 @@ namespace AlfaBank.AFT.Core.Library.Web
         {
             this.webContext.WebDriver.Should()
                 .NotBeNull($"Браузер не инициализирован");
-            this.moveSupport.PageDown();
+            this.commandSupport.SendCommand(() => this.moveSupport.PageDown());
         }
 
         [StepDefinition(@"выполнено нажатие на элемент \""(.+)\"" на веб-странице")]
@@ -272,7 +274,7 @@ namespace AlfaBank.AFT.Core.Library.Web
                 .NotBeNull($"Браузер не инициализирован");
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            this.clickSupport.Click(parameter);
+            this.commandSupport.SendCommand(() => this.clickSupport.Click(parameter));
         }
 
         [StepDefinition(@"выполнено двойное нажатие на элемент \""(.+)\"" на веб-странице")]
@@ -283,7 +285,7 @@ namespace AlfaBank.AFT.Core.Library.Web
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
 
-            this.clickSupport.DoubleClick(parameter);
+            this.commandSupport.SendCommand(() => this.clickSupport.DoubleClick(parameter));
         }
 
         [StepDefinition(@"выполнено нажатие с удержанием на элементе \""(.+)\"" на веб-странице")]
@@ -293,7 +295,7 @@ namespace AlfaBank.AFT.Core.Library.Web
                 .NotBeNull($"Браузер не инициализирован");
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            this.clickSupport.ClickAndHold(parameter);
+            this.commandSupport.SendCommand(() => this.clickSupport.ClickAndHold(parameter));
         }
 
         [StepDefinition(@"я ввожу в поле \""(.+)\"" веб-страницы значение \""(.+)\""")]
@@ -304,7 +306,7 @@ namespace AlfaBank.AFT.Core.Library.Web
                 .NotBeNull($"Браузер не инициализирован");
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            this.textBoxSupport.SetText(parameter, value);
+            this.commandSupport.SendCommand(() => this.textBoxSupport.SetText(parameter, value));
         }
 
         [StepDefinition(@"я ввожу в поле \""(.+)\"" веб-страницы зашифрованное значение \""(.+)\""")]
@@ -315,7 +317,7 @@ namespace AlfaBank.AFT.Core.Library.Web
                 .NotBeNull($"Браузер не инициализирован");
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            this.textBoxSupport.SetText(parameter, new Encryptor().Decrypt(value));
+            this.commandSupport.SendCommand(() => this.textBoxSupport.SetText(parameter, new Encryptor().Decrypt(value)));
         }
 
         [StepDefinition(@"я ввожу в поле \""(.+)\"" веб-страницы значение из переменной \""(.+)\""")]
@@ -326,7 +328,7 @@ namespace AlfaBank.AFT.Core.Library.Web
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
             var value = this.variableContext.GetVariableValueText(varName);
-            this.textBoxSupport.SetText(parameter, value);
+            this.commandSupport.SendCommand(() => this.textBoxSupport.SetText(parameter, value));
         }
 
         [StepDefinition(@"я очищаю поле \""(.+)\"" веб-страницы")]
@@ -336,7 +338,7 @@ namespace AlfaBank.AFT.Core.Library.Web
                 .NotBeNull($"Браузер не инициализирован");
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            this.textBoxSupport.Clear(parameter);
+            this.commandSupport.SendCommand(() => this.textBoxSupport.Clear(parameter));
         }
 
         [StepDefinition(@"выполнен переход на вкладку номер ([1-9]+)")]
@@ -349,7 +351,8 @@ namespace AlfaBank.AFT.Core.Library.Web
             actualNumber.Should().BeLessThan(this.webContext.WebDriver.WindowHandles.Count(),
                 "Выбранной вкладки не существует.");
 
-            this.webContext.WebDriver.SwitchTo().Window(this.webContext.WebDriver.WindowHandles[actualNumber]);
+            this.commandSupport.SendCommand(() => 
+                this.webContext.WebDriver.SwitchTo().Window(this.webContext.WebDriver.WindowHandles[actualNumber]));
         }
 
         [StepDefinition(@"я перемещаюсь к элементу \""(.+)\"" на веб-странице")]
@@ -359,7 +362,7 @@ namespace AlfaBank.AFT.Core.Library.Web
                 .NotBeNull($"Браузер не инициализирован");
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            this.moveSupport.MoveToElement(parameter);
+            this.commandSupport.SendCommand(() => this.moveSupport.MoveToElement(parameter));
         }
 
         [StepDefinition(@"я создаю переменную \""(.+)\"" с текстом из элемента \""(.+)\"" на веб-странице")]
@@ -371,9 +374,9 @@ namespace AlfaBank.AFT.Core.Library.Web
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
 
-            var text = this.textBoxSupport.GetText(parameter);
+            var text = this.commandSupport.SendCommand(() => textBoxSupport.GetText(parameter));
 
-            this.variableContext.SetVariable(varName, typeof(string), text);
+            this.variableContext.SetVariable(varName, typeof(string), text.ToString());
         }
 
         [StepDefinition(@"я создаю переменную \""(.+)\"" со значением из элемента \""(.+)\"" на веб-странице")]
@@ -385,9 +388,10 @@ namespace AlfaBank.AFT.Core.Library.Web
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
 
-            var value = this.textBoxSupport.GetValue(parameter);
+            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
 
-            this.variableContext.SetVariable(varName, typeof(string), value);
+            this.variableContext.SetVariable(varName, typeof(string), value.ToString()
+            );
         }
 
         [StepDefinition(@"я создаю переменную \""(.+)\"" с текстом из диалогового окна на веб-странице")]
@@ -400,8 +404,9 @@ namespace AlfaBank.AFT.Core.Library.Web
             Action act = () => this.webContext.WebDriver.SwitchTo().Alert();
             act.Should().NotThrow<NoAlertPresentException>();
 
-            var alert = this.webContext.WebDriver.SwitchTo().Alert();
-            this.variableContext.SetVariable(varName, typeof(string), alert.Text);
+            var alert = this.commandSupport.SendCommand(() => this.webContext.WebDriver.SwitchTo().Alert());
+            alert.Should().NotBeNull($"Диалоговое окно не найдено");
+            this.variableContext.SetVariable(varName, typeof(string), ((IAlert)alert).Text);
         }
 
         [StepDefinition(@"выполнено нажатие на \""(Accept|Dismiss)\"" в диалоговом окне на веб-странице")]
@@ -412,15 +417,16 @@ namespace AlfaBank.AFT.Core.Library.Web
             Action act = () => this.webContext.WebDriver.SwitchTo().Alert();
             act.Should().NotThrow<NoAlertPresentException>();
 
-            var alert = this.webContext.WebDriver.SwitchTo().Alert();
+            var alert = this.commandSupport.SendCommand(() => this.webContext.WebDriver.SwitchTo().Alert());
+            alert.Should().NotBeNull($"Диалоговое окно не найдено");
 
             switch (key)
             {
                 case AlertKeys.Accept:
-                    alert.Accept();
+                    ((IAlert)alert).Accept();
                     break;
                 case AlertKeys.Dismiss:
-                    alert.Dismiss();
+                    ((IAlert)alert).Dismiss();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(key), key, null);
@@ -435,8 +441,8 @@ namespace AlfaBank.AFT.Core.Library.Web
                 .NotBeNull($"Браузер не инициализирован");
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var text = this.textBoxSupport.GetText(parameter);
-            var json = JObject.Parse(text);
+            var text = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
+            var json = JObject.Parse(text.ToString());
 
             this.variableContext.SetVariable(varName, typeof(JObject), json);
         }
@@ -449,8 +455,8 @@ namespace AlfaBank.AFT.Core.Library.Web
                 .NotBeNull($"Браузер не инициализирован");
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var value = this.textBoxSupport.GetValue(parameter);
-            var json = JObject.Parse(value);
+            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
+            var json = JObject.Parse(value.ToString());
 
             this.variableContext.SetVariable(varName, typeof(JObject), json);
         }
@@ -463,7 +469,7 @@ namespace AlfaBank.AFT.Core.Library.Web
 
             number.Should().BePositive("Неверно задан номер вкладки.");
 
-            this.frameSupport.SwitchFrameBy(number);
+            this.commandSupport.SendCommand(() => this.frameSupport.SwitchFrameBy(number));
         }
 
         [StepDefinition(@"выполнен переход на основной контент")]
@@ -471,8 +477,8 @@ namespace AlfaBank.AFT.Core.Library.Web
         {
             this.webContext.WebDriver.Should()
                 .NotBeNull($"Браузер не инициализирован");
-        
-            this.frameSupport.SwitchToDefaultContent();
+
+            this.commandSupport.SendCommand(() => this.frameSupport.SwitchToDefaultContent());
         }
         
         [StepDefinition(@"выполнен переход на родительский фрейм")]
@@ -480,8 +486,8 @@ namespace AlfaBank.AFT.Core.Library.Web
         {
             this.webContext.WebDriver.Should()
                 .NotBeNull($"Браузер не инициализирован");
-        
-            this.frameSupport.SwitchToParentFrame();
+
+            this.commandSupport.SendCommand(() => this.frameSupport.SwitchToParentFrame());
         }
 
         [StepDefinition(@"выполнен переход на фрейм \""(.+)\""")]
@@ -493,7 +499,7 @@ namespace AlfaBank.AFT.Core.Library.Web
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
 
-            this.frameSupport.SwitchFrameBy(parameter);
+            this.commandSupport.SendCommand(() => this.frameSupport.SwitchFrameBy(parameter));
         }
 
         [StepDefinition(@"загружен файл с именем \""(.+)\"" в элемент \""(.+)\"" на веб-странице")]
@@ -508,7 +514,7 @@ namespace AlfaBank.AFT.Core.Library.Web
             var path = fileSupport.GetValidFilepath(filename);
             path.Should().NotBeNull($"Файла \"{filename}\" не существует");
 
-            textBoxSupport.SetTextWithoutClear(parameter, path);
+            this.commandSupport.SendCommand(() => textBoxSupport.SetTextWithoutClear(parameter, path));
         }
 
         [StepDefinition(@"нажата клавиша \""(.+)\"" на элементе \""(.+)\"" на веб-странице")]
@@ -519,7 +525,7 @@ namespace AlfaBank.AFT.Core.Library.Web
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
 
-            this.keySupport.PressKey(parameter, key);
+            this.commandSupport.SendCommand(() => this.keySupport.PressKey(parameter, key));
         }
 
         [StepDefinition(@"я нажимаю сочетание клавиш \""(.+)\"" на элементе \""(.+)\"" веб-страницы")]
@@ -530,7 +536,7 @@ namespace AlfaBank.AFT.Core.Library.Web
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
 
-            this.keySupport.PressKeysBy(parameter, key);
+            this.commandSupport.SendCommand(() => this.keySupport.PressKeysBy(parameter, key));
         }
 
         [StepDefinition(@"я нажимаю сочетание клавиш \""(.+)\"" на веб-странице")]
@@ -539,7 +545,7 @@ namespace AlfaBank.AFT.Core.Library.Web
             this.webContext.WebDriver.Should()
                 .NotBeNull($"Браузер не инициализирован");
 
-            this.keySupport.PressKeys(key);
+            this.commandSupport.SendCommand(() => this.keySupport.PressKeys(key));
         }
     }
 }
