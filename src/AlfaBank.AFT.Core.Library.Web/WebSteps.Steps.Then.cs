@@ -18,6 +18,7 @@ namespace AlfaBank.AFT.Core.Library.Web
         private readonly PageObjectSupport pageObjectSupport;
         private readonly TextBoxSupport textBoxSupport;
         private readonly ElementSupport elementSupport;
+        private readonly CommandSupport commandSupport;
 
         private readonly ITestOutputHelper consoleOutputHelper;
 
@@ -34,18 +35,20 @@ namespace AlfaBank.AFT.Core.Library.Web
         /// <param name="moveSupport">Контекст для работы с перемещениями.</param>
         /// <param name="dragAndDropSupport">Контекст для работы с перетаскиваниями.</param>
         /// <param name="elementSupport">Контекст для работы с перетаскиваниями.</param>
+        /// <param name="commandSupport">Контекст для обработки команд.</param>
         /// <param name="consoleOutputHelper">Capturing Output.</param>
         public WebSteps_Then(WebContext webContext, VariableContext variableContext, 
             NavigationSupport navigationSupport, PageObjectSupport pageObjectSupport,
             ClickSupport clickSupport, TextBoxSupport textBoxSupport,
             MoveSupport moveSupport, DragAndDropSupport dragAndDropSupport,
-            ElementSupport elementSupport, 
+            ElementSupport elementSupport, CommandSupport commandSupport, 
             ITestOutputHelper consoleOutputHelper)
         {
             this.webContext = webContext;
             this.pageObjectSupport = pageObjectSupport;
             this.textBoxSupport = textBoxSupport;
             this.elementSupport = elementSupport;
+            this.commandSupport = commandSupport;
             this.variableContext = variableContext;
             this.consoleOutputHelper = consoleOutputHelper;
         }
@@ -62,8 +65,8 @@ namespace AlfaBank.AFT.Core.Library.Web
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
 
-            var value = this.textBoxSupport.GetValue(parameter);
-            value.Should().BeNullOrWhiteSpace($"Значение элемента \"{element}\" не пусто ");
+            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
+            value.ToString().Should().BeNullOrWhiteSpace($"Значение элемента \"{element}\" не пусто ");
         }
 
         [Then(@"на веб-странице текст элемента \""(.+)\"" пустой")]
@@ -78,8 +81,8 @@ namespace AlfaBank.AFT.Core.Library.Web
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
 
-            var value = this.textBoxSupport.GetText(parameter);
-            value.Should().BeNullOrWhiteSpace($"Значение элемента \"{element}\" не пусто ");
+            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
+            value.ToString().Should().BeNullOrWhiteSpace($"Значение элемента \"{element}\" не пусто ");
         }
 
         [Then(@"на веб-странице значение элемента \""(.+)\"" заполнено")]
@@ -91,8 +94,8 @@ namespace AlfaBank.AFT.Core.Library.Web
                 .NotBeNull($"Браузер не инициализирован");
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var value = this.textBoxSupport.GetValue(parameter);
-            value.Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
+            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
+            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
         }
 
         [Then(@"на веб-странице текст элемента \""(.+)\"" заполнен")]
@@ -104,8 +107,8 @@ namespace AlfaBank.AFT.Core.Library.Web
                 .NotBeNull($"Браузер не инициализирован");
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var text = this.textBoxSupport.GetText(parameter);
-            text.Should().NotBeNullOrWhiteSpace($"Текст элемента \"{element}\" пустой или не существует");
+            var text = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
+            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст элемента \"{element}\" пустой или не существует");
         }
 
         [Then(@"на веб-странице значение элемента \""(.+)\"" содержит значение \""(.+)\""")]
@@ -117,10 +120,10 @@ namespace AlfaBank.AFT.Core.Library.Web
 
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var value = this.textBoxSupport.GetValue(parameter);
-            value.Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
+            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
+            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
 
-            value.Contains(expected).Should()
+            value.ToString().Contains(expected).Should()
                 .BeTrue($"Значение элемента \"{element}\":\"{value}\" не содержит \"{expected}\"");
         }
 
@@ -136,10 +139,10 @@ namespace AlfaBank.AFT.Core.Library.Web
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
 
-            var value = this.textBoxSupport.GetValue(parameter);
-            value.Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
+            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
+            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
 
-            value.Contains(varValue).Should()
+            value.ToString().Contains(varValue).Should()
                 .BeTrue($"Значение элемента \"{element}\":\"{value}\" не содержит значение переменной \"{varName}\":\"{varValue}\"");
         }
 
@@ -152,10 +155,10 @@ namespace AlfaBank.AFT.Core.Library.Web
 
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var text = this.textBoxSupport.GetText(parameter);
-            text.Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
+            var text = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
+            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
 
-            text.Contains(expected).Should()
+            text.ToString().Contains(expected).Should()
                 .BeTrue($"Текст у элемента \"{element}\":\"{text}\" не содержит \"{expected}\"");
         }
 
@@ -171,10 +174,10 @@ namespace AlfaBank.AFT.Core.Library.Web
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
 
-            var text = this.textBoxSupport.GetText(parameter);
-            text.Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
+            var text = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
+            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
 
-            text.Contains(varValue).Should()
+            text.ToString().Contains(varValue).Should()
                 .BeTrue($"Текст у элемента \"{element}\":\"{text}\" не содержит значение переменной \"{varName}\":\"{varValue}\"");
         }
 
@@ -187,11 +190,10 @@ namespace AlfaBank.AFT.Core.Library.Web
 
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var value = this.textBoxSupport.GetValue(parameter);
-            var text = this.textBoxSupport.GetText(parameter);
-            value.Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
+            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
+            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
 
-            value.Contains(expected).Should()
+            value.ToString().Contains(expected).Should()
                 .BeFalse($"Значение элемента \"{element}\":\"{value}\" содержит \"{expected}\"");
         }
 
@@ -207,10 +209,10 @@ namespace AlfaBank.AFT.Core.Library.Web
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
 
-            var value = this.textBoxSupport.GetValue(parameter);
-            value.Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
+            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
+            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
 
-            value.Contains(varValue).Should()
+            value.ToString().Contains(varValue).Should()
                 .BeFalse($"Значение элемента \"{element}\":\"{value}\" содержит значение переменной \"{varName}\":\"{varValue}\"");
         }
 
@@ -223,10 +225,10 @@ namespace AlfaBank.AFT.Core.Library.Web
 
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var text = this.textBoxSupport.GetText(parameter);
-            text.Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
+            var text = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
+            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
 
-            text.Contains(expected).Should()
+            text.ToString().Contains(expected).Should()
                 .BeFalse($"Текст у элемента \"{element}\":\"{text}\" не содержит \"{expected}\"");
         }
 
@@ -242,10 +244,10 @@ namespace AlfaBank.AFT.Core.Library.Web
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
 
-            var text = this.textBoxSupport.GetText(parameter);
-            text.Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
+            var text = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
+            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
 
-            text.Contains(varValue).Should()
+            text.ToString().Contains(varValue).Should()
                 .BeFalse($"Текст у элемента \"{element}\":\"{text}\" не содержит значение переменной \"{varName}\":\"{varValue}\"");
         }
 
@@ -258,10 +260,10 @@ namespace AlfaBank.AFT.Core.Library.Web
 
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var value = this.textBoxSupport.GetValue(parameter);
-            value.Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
+            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
+            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
 
-            value.Should().Be(expected, $"Значение элемента \"{element}\":\"{value}\" не равно \"{expected}\"");
+            value.ToString().Should().Be(expected, $"Значение элемента \"{element}\":\"{value}\" не равно \"{expected}\"");
         }
 
         [Then(@"на веб-странице значение элемента \""(.+)\"" равно значению из переменной \""(.+)\""")]
@@ -276,10 +278,10 @@ namespace AlfaBank.AFT.Core.Library.Web
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
 
-            var value = this.textBoxSupport.GetValue(parameter);
-            value.Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
+            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
+            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
 
-            value.Should().Be(varValue, $"Значение элемента \"{element}\":\"{value}\" не равно значению переменной \"{varName}\":\"{varValue}\"");
+            value.ToString().Should().Be(varValue, $"Значение элемента \"{element}\":\"{value}\" не равно значению переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"на веб-странице текст элемента \""(.+)\"" равен значению \""(.+)\""")]
@@ -291,10 +293,10 @@ namespace AlfaBank.AFT.Core.Library.Web
 
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var text = this.textBoxSupport.GetText(parameter);
-            text.Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
+            var text = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
+            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
 
-            text.Should()
+            text.ToString().Should()
                 .Be(expected,$"Текст у элемента \"{element}\":\"{text}\" не равен \"{expected}\"");
         }
 
@@ -310,10 +312,10 @@ namespace AlfaBank.AFT.Core.Library.Web
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
 
-            var text = this.textBoxSupport.GetText(parameter);
-            text.Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
+            var text = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
+            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
 
-            text.Should()
+            text.ToString().Should()
                 .Be(varValue,$"Текст у элемента \"{element}\":\"{text}\" не равен значению переменной \"{varName}\":\"{varValue}\"");
         }
 
@@ -326,10 +328,10 @@ namespace AlfaBank.AFT.Core.Library.Web
 
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var value = this.textBoxSupport.GetValue(parameter);
-            value.Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
+            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
+            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
 
-            value.Should()
+            value.ToString().Should()
                 .NotBe(expected, $"Значение элемента \"{element}\":\"{value}\" равно \"{expected}\"");
         }
 
@@ -345,10 +347,10 @@ namespace AlfaBank.AFT.Core.Library.Web
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
 
-            var value = this.textBoxSupport.GetValue(parameter);
-            value.Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
+            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
+            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
 
-            value.Should()
+            value.ToString().Should()
                 .NotBe(varValue,$"Значение элемента \"{element}\":\"{value}\" равно значению переменной \"{varName}\":\"{varValue}\"");
         }
 
@@ -361,10 +363,10 @@ namespace AlfaBank.AFT.Core.Library.Web
 
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var text = this.textBoxSupport.GetText(parameter);
-            text.Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
+            var text = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
+            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
 
-            text.Should()
+            text.ToString().Should()
                 .NotBe(expected,$"Текст у элемента \"{element}\":\"{text}\" равен \"{expected}\"");
         }
 
@@ -380,10 +382,10 @@ namespace AlfaBank.AFT.Core.Library.Web
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
 
-            var text = this.textBoxSupport.GetText(parameter);
-            text.Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
+            var text = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
+            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
 
-            text.Should()
+            text.ToString().Should()
                 .NotBe(varValue,$"Текст у элемента \"{element}\":\"{text}\" равен значению переменной \"{varName}\":\"{varValue}\"");
         }
 
@@ -395,8 +397,8 @@ namespace AlfaBank.AFT.Core.Library.Web
 
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-             
-            this.elementSupport.BeDisplayed(parameter);
+
+            this.commandSupport.SendCommand(() => this.elementSupport.BeDisplayed(parameter));
         }
 
         [Then(@"элемент \""(.+)\"" не отображается на веб-странице")]
@@ -408,7 +410,7 @@ namespace AlfaBank.AFT.Core.Library.Web
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
 
-            this.elementSupport.NotBeDisplayed(parameter);
+            this.commandSupport.SendCommand(() => this.elementSupport.NotBeDisplayed(parameter));
         }
 
         [Then(@"элемент \""(.+)\"" существует на веб-странице")]
@@ -420,7 +422,7 @@ namespace AlfaBank.AFT.Core.Library.Web
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
 
-            this.elementSupport.NotBeNull(parameter);
+            this.commandSupport.SendCommand(() => this.elementSupport.NotBeNull(parameter));
         }
 
         [Then(@"элемент \""(.+)\"" отсутствует на веб-странице")]
@@ -432,7 +434,7 @@ namespace AlfaBank.AFT.Core.Library.Web
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
 
-            this.elementSupport.BeNull(parameter);
+            this.commandSupport.SendCommand(() => this.elementSupport.BeNull(parameter));
         }
 
         [Then(@"на веб-странице элемент \""(.+)\"" активен")]
@@ -443,7 +445,7 @@ namespace AlfaBank.AFT.Core.Library.Web
 
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            this.elementSupport.BeEnabled(parameter);
+            this.commandSupport.SendCommand(() => this.elementSupport.BeEnabled(parameter));
         }
 
         [Then(@"на веб-странице элемент \""(.+)\"" неактивен")]
@@ -454,7 +456,7 @@ namespace AlfaBank.AFT.Core.Library.Web
 
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            this.elementSupport.BeDisabled(parameter);
+            this.commandSupport.SendCommand(() => this.elementSupport.BeDisabled(parameter));
         }
 
         [Then(@"адрес активной веб-страницы содержит значение \""(.+)\""")]
@@ -631,7 +633,7 @@ namespace AlfaBank.AFT.Core.Library.Web
         [Then(@"я убеждаюсь, что на веб-странице появилось диалоговое окно")]
         public void CheckAlert()
         {
-            var act = new Action(() => this.webContext.WebDriver.SwitchTo().Alert());
+            var act = new Action(() => this.commandSupport.SendCommand(() => this.webContext.WebDriver.SwitchTo().Alert()));
             act.Should().NotThrow<NoAlertPresentException>();
         }
     }
