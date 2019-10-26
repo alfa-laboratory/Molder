@@ -20,6 +20,8 @@ namespace AlfaBank.AFT.Core.Model.Web.Support
             var action = new Actions(this.webContext.WebDriver);
             var element = this.webContext.WebDriver.Wait(this.webContext.Timeout).ForElement(by).ToExist();
             element.Should().NotBeNull($"Элемент \"{by}\" не найден");
+            element.Wait(this.webContext.Timeout).ForElement().ToBeVisible();
+            element.Wait(this.webContext.Timeout).ForElement().ToBeEnabled();
             action.MoveToElement(element).Build().Perform();
         }
 

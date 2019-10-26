@@ -7,35 +7,36 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
+using FluentAssertions;
 
 namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
 {
     public class SqlServerConnectionWrapper : DbConnectionWrapper
     {
-        public override DbConnection GetDb(IDictionary<string, object> @params)
+        public override (DbConnection, IEnumerable<Error>) GetDb(IDictionary<string, object> @params)
         {
             if (DbConnection != null)
             {
-                return DbConnection;
+                return (DbConnection, null);
             }
 
-            if((DateTime.Now - LastConnect).TotalSeconds < ConnectPeriod)
+            if ((DateTime.Now - LastConnect).TotalSeconds < ConnectPeriod)
             {
                 System.Threading.Thread.Sleep((int)Math.Ceiling(ConnectPeriod - (DateTime.Now - LastConnect).TotalSeconds) * 1000);
             }
 
             var csb = new SqlConnectionStringBuilder();
-            foreach(var p in @params)
+            foreach (var p in @params)
             {
                 typeof(SqlConnectionStringBuilder).GetProperty(p.Key)?.SetValue(csb, p.Value);
             }
 
-            if(csb.ConnectTimeout <= 0)
+            if (csb.ConnectTimeout <= 0)
             {
                 csb.ConnectTimeout = 30;
             }
 
-            if(csb.LoadBalanceTimeout <= 0)
+            if (csb.LoadBalanceTimeout <= 0)
             {
                 csb.LoadBalanceTimeout = 30;
             }
@@ -44,7 +45,7 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
             DbConnection.Open();
 
             LastConnect = DateTime.Now;
-            return DbConnection;
+            return (DbConnection, null);
         }
 
         public override (object, int, IEnumerable<Error>) SelectQuery(string query, string tableName = null, ICollection<DbCommandParameter.DbCommandParameter> parameter = null, int? timeout = null)
@@ -52,10 +53,12 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
             return ExecuteQuery(query, timeout, parameter);
         }
 
-        public override (object, int, IEnumerable<Error>) InsertRows(string tableName, DataTable records, ICollection<DbCommandParameter.DbCommandParameter> parameter = null,
+        public override (object, int, IEnumerable<Error>) InsertRows(string tableName, object records, ICollection<DbCommandParameter.DbCommandParameter> parameter = null,
             int? timeout = null)
         {
-            var (query, listParams, parseErrors) = CreateInsertStatement(tableName, records, parameter);
+            records.GetType().Should().Be(typeof(DataTable), "Входные данные должны быть ввиде таблицы.");
+
+            var (query, listParams, parseErrors) = CreateInsertStatement(tableName, ((DataTable)records), parameter);
             var listErrors = new List<Error>();
 
             if (!parseErrors.Any())
@@ -144,19 +147,24 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
             statement.InsertSpecification.InsertSource = new ValuesInsertSource();
 
             IList<ParseError> parseErrors;
-            foreach(DataRow row in records.Rows)
+            foreach (DataRow row in records.Rows)
             {
                 var rv = new RowValue();
-                foreach(DataColumn column in records.Columns)
+                foreach (DataColumn column in records.Columns)
                 {
                     var cell = row[column];
-                    if(cell is string name)
+                    if (cell is string name)
                     {
-                        rv.ColumnValues.Add(new VariableReference() { Name = name });
-                        continue;
+                        var exp = new TSql100Parser(false).ParseExpression(
+                            new System.IO.StringReader(name), out parseErrors);
+                        if (exp.GetType() == typeof(VariableReference) || exp.GetType() == typeof(GlobalVariableExpression))
+                        {
+                            rv.ColumnValues.Add(new VariableReference() { Name = name });
+                            continue;
+                        }
                     }
 
-                    while(listParams.Any(_ => _.Name == $"p{numberParams}"))
+                    while (listParams.Any(_ => _.Name == $"p{numberParams}"))
                     {
                         numberParams++;
                     }

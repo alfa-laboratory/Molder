@@ -1,8 +1,10 @@
 ﻿using AlfaBank.AFT.Core.Helpers;
 using AlfaBank.AFT.Core.Model.KeyValues;
 using MongoDB.Bson;
+using MongoDB.Bson.IO;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -22,12 +24,12 @@ namespace AlfaBank.AFT.Core.Model.Context
         public string GetVariableName(string key)
         {
             var varName = key;
-            if(varName.IndexOf('.') > 0)
+            if (varName.IndexOf('.') > 0)
             {
                 varName = varName.Substring(0, varName.IndexOf('.'));
             }
 
-            if(varName.IndexOf('[') > 0)
+            if (varName.IndexOf('[') > 0)
             {
                 varName = varName.Substring(0, varName.IndexOf('['));
             }
@@ -54,15 +56,15 @@ namespace AlfaBank.AFT.Core.Model.Context
             var name = key;
             var index = -1;
             string path = null;
-            if(key.IndexOf('.') > 0)
+            if (key.IndexOf('.') > 0)
             {
                 name = key.Substring(0, key.IndexOf('.'));
                 path = key.Substring(key.IndexOf('.') + 1);
             }
 
-            if(name.IndexOf('[') > 0 && name.IndexOf(']') > name.IndexOf('['))
+            if (name.IndexOf('[') > 0 && name.IndexOf(']') > name.IndexOf('['))
             {
-                if(!int.TryParse(key.Substring(name.IndexOf('[') + 1, Math.Max(0, name.IndexOf(']') - name.IndexOf('[') - 1)), out index))
+                if (!int.TryParse(key.Substring(name.IndexOf('[') + 1, Math.Max(0, name.IndexOf(']') - name.IndexOf('[') - 1)), out index))
                 {
                     index = -1;
                 }
@@ -71,7 +73,7 @@ namespace AlfaBank.AFT.Core.Model.Context
             }
 
             var var = Variables.SingleOrDefault(_ => _.Key == name).Value;
-            if(var == null)
+            if (var == null)
             {
                 return null;
             }
@@ -79,22 +81,23 @@ namespace AlfaBank.AFT.Core.Model.Context
             var varValue = var.Value;
             var varType = var.Type;
 
-            if(varValue == null)
+            if (varValue == null)
             {
                 return varType.GetDefault();
             }
 
-            if(varType.HasElementType && index >= 0)
+            if (varType.HasElementType && index >= 0)
             {
                 varValue = ((object[])varValue)[index];
                 varType = varType.GetElementType();
             }
 
+
             if (typeof(BsonDocument).IsAssignableFrom(varType))
             {
-                return ((BsonDocument)varValue).GetValue(index) ?? null;
+                var json = JObject.Parse(((BsonDocument)varValue).ToJson(new JsonWriterSettings { OutputMode = JsonOutputMode.Strict }));
+                return json.SelectToken(path?.Remove(0, 2) ?? "/*") ?? null;
             }
-
 
             if (typeof(JObject).IsAssignableFrom(varType))
             {
@@ -102,28 +105,28 @@ namespace AlfaBank.AFT.Core.Model.Context
                 return jsonObject.SelectToken(path?.Remove(0, 2) ?? "/*") ?? null;
             }
 
-            if(typeof(JToken).IsAssignableFrom(varType))
+            if (typeof(JToken).IsAssignableFrom(varType))
             {
                 var jsonToken = JToken.Parse(varValue.ToString());
                 return jsonToken.SelectToken(path?.Remove(0, 2) ?? "/*") ?? null;
             }
 
-            if(typeof(XNode).IsAssignableFrom(varType))
+            if (typeof(XNode).IsAssignableFrom(varType))
             {
                 return ((XNode)varValue).XPathSelectElement(path ?? "/*");
             }
 
-            if(typeof(XmlNode).IsAssignableFrom(varType))
+            if (typeof(XmlNode).IsAssignableFrom(varType))
             {
                 return ((XmlNode)varValue).SelectSingleNode(path ?? "/*");
             }
 
-            if(!typeof(DataTable).IsAssignableFrom(varType))
+            if (!typeof(DataTable).IsAssignableFrom(varType))
             {
                 return varValue;
             }
 
-            if(!int.TryParse(key.Substring(key.IndexOf('[') + 1, key.IndexOf(']') - key.IndexOf('[') - 1), out index))
+            if (!int.TryParse(key.Substring(key.IndexOf('[') + 1, key.IndexOf(']') - key.IndexOf('[') - 1), out index))
             {
                 index = -1;
             }
@@ -131,7 +134,7 @@ namespace AlfaBank.AFT.Core.Model.Context
             var row = ((DataTable)varValue).Rows[index];
 
             var offset = key.IndexOf(']') + 1;
-            if(key.IndexOf('[', offset) < 0)
+            if (key.IndexOf('[', offset) < 0)
             {
                 return row[
                     key.Substring(
@@ -152,29 +155,24 @@ namespace AlfaBank.AFT.Core.Model.Context
             }
 
             string ret;
-            switch(val)
+            switch (val)
             {
-                case BsonValue element when element.Equals(null):
+                case XElement element when element.HasElements == false:
                     {
-                        ret = element.ToString();
+                        ret = element.Value;
                         break;
                     }
-                case XElement element when element.HasElements == false:
-                {
-                    ret = element.Value;
-                    break;
-                }
                 case XmlNode node when node.FirstChild.GetType() == typeof(XmlText):
-                {
-                    ret = node.FirstChild.Value;
-                    break;
-                }
+                    {
+                        ret = node.FirstChild.Value;
+                        break;
+                    }
 
                 case JToken token when token.HasValues == true:
-                {
-                    ret = token.Root.ToString();
-                    break;
-                }
+                    {
+                        ret = token.Root.ToString();
+                        break;
+                    }
 
                 default:
                     ret = Reflection.ConvertObject<string>(val);
@@ -202,12 +200,12 @@ namespace AlfaBank.AFT.Core.Model.Context
                 pattern,
                 m =>
                 {
-                    if(m.Groups[1].Value.Length <= 0 || m.Groups[1].Value[0] == '(')
+                    if (m.Groups[1].Value.Length <= 0 || m.Groups[1].Value[0] == '(')
                     {
                         return $"{m.Groups[1].Value}";
                     }
 
-                    if(GetVariable(m.Groups[1].Value) == null)
+                    if (GetVariable(m.Groups[1].Value) == null)
                     {
                         return notFoundReplace != null ? notFoundReplace(m.Groups[1].Value) : m.Groups[1].Value;
                     }

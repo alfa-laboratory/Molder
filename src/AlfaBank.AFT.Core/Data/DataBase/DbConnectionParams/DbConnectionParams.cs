@@ -1,4 +1,6 @@
 ﻿using AlfaBank.AFT.Core.Helpers;
+using FluentAssertions;
+using System;
 
 namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionParams
 {
@@ -11,7 +13,13 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionParams
         public string Login { get; set; } = null;
         public string Password
         {
-            get => new Encryptor().Decrypt(_password);
+            get
+            {
+                var validPassword = string.Empty;
+                var act = new Action(() => validPassword = new Encryptor().Decrypt(_password));
+                act.Should().NotThrow<FormatException>("Неверный пароль.");
+                return validPassword;
+            }
             set => _password = value;
         }
 
