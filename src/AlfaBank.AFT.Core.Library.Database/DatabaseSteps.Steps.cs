@@ -1,23 +1,19 @@
-﻿// <copyright file="DatabaseSteps.Steps.cs" company="AlfaBank">
-// Copyright (c) AlfaBank. All rights reserved.
-// </copyright>
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using AlfaBank.AFT.Core.Data.DataBase.DbCommandParameter;
+using AlfaBank.AFT.Core.Data.DataBase.DbConnectionParams;
+using AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper;
+using AlfaBank.AFT.Core.Data.DataBase.DbQueryParameters;
+using AlfaBank.AFT.Core.Exceptions;
+using AlfaBank.AFT.Core.Model.Context;
+using FluentAssertions;
+using TechTalk.SpecFlow;
+using TechTalk.SpecFlow.Assist;
 
 namespace AlfaBank.AFT.Core.Library.Database
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Linq;
-    using AlfaBank.AFT.Core.Data.DataBase.DbCommandParameter;
-    using AlfaBank.AFT.Core.Data.DataBase.DbConnectionParams;
-    using AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper;
-    using AlfaBank.AFT.Core.Data.DataBase.MongoConnectionWrapper;
-    using AlfaBank.AFT.Core.Data.DataBase.DbQueryParameters;
-    using AlfaBank.AFT.Core.Model.Context;
-    using FluentAssertions;
-    using TechTalk.SpecFlow;
-    using TechTalk.SpecFlow.Assist;
-
     /// <summary>
     /// Шаги для работы с базами данных.
     /// </summary>
@@ -44,7 +40,6 @@ namespace AlfaBank.AFT.Core.Library.Database
         /// </summary>
         [BeforeScenario]
         [Scope(Tag = "DBAccess")]
-        [Scope(Tag = "Mongo")]
         public void BeforeScenario()
         {
             this.databaseContext.DbConnections = new Dictionary<string, DbConnectionWrapper>();
@@ -55,7 +50,6 @@ namespace AlfaBank.AFT.Core.Library.Database
         /// </summary>
         [AfterScenario]
         [Scope(Tag = "DBAccess")]
-        [Scope(Tag = "Mongo")]
         public void AfterScenario()
         {
             foreach (var kvp in this.databaseContext.DbConnections)
@@ -150,34 +144,6 @@ namespace AlfaBank.AFT.Core.Library.Database
         }
 
         /// <summary>
-        /// Подключение к Mongo.
-        /// </summary>
-        /// <param name="connectionName">Название подключения.</param>
-        /// <param name="params">Параметры подключения.</param>
-        [Scope(Tag = "DBAccess")]
-        [Scope(Tag = "Mongo")]
-        [Given(@"я подключаюсь к БД Mongo с названием ""(.+)"":")]
-        public void ConnectToDB_Mongo(string connectionName, MongoConnectionParams @params)
-        {
-            @params.Should().NotBeNull("Параметры не заданы.");
-
-            this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value.Should()
-            .BeNull($"Подключение с названием '{connectionName}' уже существует");
-
-            var parameters = new Dictionary<string, object>()
-                {
-                    { "DataSource", @params.Source },
-                    { "InitialCatalog", @params.Database },
-                    { "UserID", @params.Login },
-                    { "Password", @params.Password },
-                };
-
-            var connection = new MongoConnectionWrapper();
-            connection.GetDb(parameters);
-            this.databaseContext.DbConnections.Add(connectionName, connection);
-        }
-
-        /// <summary>
         /// Шаг выборки записей из базы данных и сохранения в переменную.
         /// </summary>
         /// <param name="connectionName">Название подключения.</param>
@@ -201,12 +167,9 @@ namespace AlfaBank.AFT.Core.Library.Database
             var sqlError = this.databaseContext.IsSqlQueryValid(query);
             sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
 
-            var (outRecords, _, error) = conn.SelectQuery(query, @params, 60);
+            var (outRecords, _, error) = conn.SelectQuery(query, null, @params, 60);
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
-
-            (outRecords is DataTable).Should().BeTrue("");
-
-
+            (outRecords is DataTable).Should().BeTrue("Выходные данные не являются типом DataTable");
             this.variableContext.SetVariable(varName, typeof(object[]), ((DataTable)outRecords).Rows[0].ItemArray);
         }
 
@@ -221,7 +184,7 @@ namespace AlfaBank.AFT.Core.Library.Database
         public void SelectSingleRowFromDbSetVariable(string connectionName, string varName, string query)
         {
             var conn = this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value;
-            conn.Should().NotBeNull($"Подключение с названием '{connectionName}' не существует");
+            conn.Should().NotBeNull($"Подключение с названием '{connectionName}' уже существует");
 
             query.Should().NotBeEmpty("Запрос не может быть пустым.");
 
@@ -235,10 +198,12 @@ namespace AlfaBank.AFT.Core.Library.Database
             var sqlError = this.databaseContext.IsSqlQueryValid(query);
             sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
 
-            var (outRecords, count, error) = conn.SelectQuery(query, @params, 60);
+            var (outRecords, count, error) = conn.SelectQuery(query, null, @params, 60);
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
             count.Should().Be(1, "Запрос вернул не одну запись");
-            this.variableContext.SetVariable(varName, typeof(object[]), outRecords.Rows[0].ItemArray);
+
+            (outRecords is DataTable).Should().BeTrue("Выходные данные не являются типом DataTable");
+            this.variableContext.SetVariable(varName, typeof(object[]), ((DataTable)outRecords).Rows[0].ItemArray);
         }
 
         /// <summary>
@@ -252,7 +217,7 @@ namespace AlfaBank.AFT.Core.Library.Database
         public void SelectScalarFromDbSetVariable(string connectionName, string varName, string query)
         {
             var conn = this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value;
-            conn.Should().NotBeNull($"Подключение с названием '{connectionName}' не существует");
+            conn.Should().NotBeNull($"Подключение с названием '{connectionName}' уже существует");
 
             query.Should().NotBeEmpty("Запрос не может быть пустым.");
 
@@ -265,34 +230,13 @@ namespace AlfaBank.AFT.Core.Library.Database
             var sqlError = this.databaseContext.IsSqlQueryValid(query);
             sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
 
-            var (outRecords, count, error) = conn.SelectQuery(query, @params, 60);
+            var (outRecords, count, error) = conn.SelectQuery(query, null, @params, 60);
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
             count.Should().Be(1, "Запрос вернул не одну запись");
 
-            this.variableContext.SetVariable(varName, outRecords.Columns[0].DataType, outRecords.Rows[0][0]);
-        }
+            (outRecords is DataTable).Should().BeTrue("Выходные данные не являются типом DataTable");
 
-        /// <summary>
-        /// Шаг выборки единственной ячейки из базы данных и сохранения в переменную.
-        /// </summary>
-        /// <param name="connectionName">Название подключения.</param>
-        /// <param name="varName">Идентификатор переменной.</param>
-        /// <param name="query">Запрос.</param>
-        [Scope(Tag = "Mongo")]
-        [StepDefinition(@"я сохраняю значение единственной ячейки из выборки из БД ""(.+)"" из коллекции ""(.+)"" в переменную ""(.+)"":")]
-        public void SelectScalarFromMongoDbSetVariable(string connectionName, string tableName, string varName, string query)
-        {
-            var conn = (MongoConnectionWrapper)this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value;
-            conn.Should().NotBeNull($"Подключение с названием '{connectionName}' не существует");
-
-            query.Should().NotBeEmpty("Запрос не может быть пустым.");
-
-            var (outResponce, count, errors) = conn.SelectQuery(tableName, query);
-
-            count.Should().Be(1, "_______");
-
-
-            this.variableContext.SetVariable(varName, outResponce[0].GetType(), (BSonD)outResponce[0]);
+            this.variableContext.SetVariable(varName, ((DataTable)outRecords).Columns[0].DataType, ((DataTable)outRecords).Rows[0][0]);
         }
 
         /// <summary>
@@ -307,7 +251,7 @@ namespace AlfaBank.AFT.Core.Library.Database
         public void InsertRowsIntoDbSetVariable(string connectionName, string tableName, string varName, Table data)
         {
             var conn = this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value;
-            conn.Should().NotBeNull($"Подключение с названием '{connectionName}' не существует");
+            conn.Should().NotBeNull($"Подключение с названием '{connectionName}' уже существует");
 
             var @params = this.variableContext.Variables
                 .Where(_ => _.Value?.Type.IsValueType == true)
@@ -317,7 +261,8 @@ namespace AlfaBank.AFT.Core.Library.Database
             var inRecords = this.TransformationTableToDatatable(data);
 
             var (outRecords, count, error) = conn.InsertRows(tableName, inRecords, @params, 30);
-            error.Any().Should().BeFalse($"При добавлении данных возникли ошибки");
+            var enumerable = error as Error[] ?? error.ToArray();
+            enumerable.Any().Should().BeFalse($"При добавлении данных возникли ошибки");
             count.Should().Be(data.RowCount, "Были добавлены не все записи.");
             this.variableContext.SetVariable(varName, typeof(DataTable), outRecords);
         }
@@ -333,7 +278,7 @@ namespace AlfaBank.AFT.Core.Library.Database
         public void InsertRowsIntoDb(string connectionName, string tableName, Table data)
         {
             var conn = this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value;
-            conn.Should().NotBeNull($"Подключение с названием '{connectionName}' не существует");
+            conn.Should().NotBeNull($"Подключение с названием '{connectionName}' уже существует");
 
             var @params = this.variableContext.Variables
                 .Where(_ => _.Value?.Type.IsValueType == true)
@@ -348,26 +293,6 @@ namespace AlfaBank.AFT.Core.Library.Database
         }
 
         /// <summary>
-        /// Шаг занесения данных в базу данных.
-        /// </summary>
-        /// <param name="connectionName">Название подключения.</param>
-        /// <param name="tableName">Название таблицы.</param>
-        /// <param name="data">Данные.</param>
-        [Scope(Tag = "Mongo")]
-        [When(@"я заношу записи в Mongo БД ""(.+)"" в таблицу ""(.+)"" без сохранения занесения в переменную:")]
-        public void InsertRowsIntoMonoDb(string connectionName, string tableName, string query)
-        {
-            var conn = (MongoConnectionWrapper)this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value;
-            conn.Should().NotBeNull($"Подключение с названием '{connectionName}' не существует");
-
-            query.Should().NotBeEmpty("Запрос не может быть пустым.");
-
-            conn.InsertRows(tableName, query);
-
-            //сохранить в переменную или вывести ОК/ФЭЙЛ
-        }
-
-        /// <summary>
         /// Шаг обновления данных в базе данных.
         /// </summary>
         /// <param name="connectionName">Название подключения.</param>
@@ -377,7 +302,7 @@ namespace AlfaBank.AFT.Core.Library.Database
         public void UpdateRowsInDb(string connectionName, string query)
         {
             var conn = this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value;
-            conn.Should().NotBeNull($"Подключение с названием '{connectionName}' не существует");
+            conn.Should().NotBeNull($"Подключение с названием '{connectionName}' уже существует");
 
             query.Should().NotBeEmpty("Запрос не может быть пустым.");
             var @params = this.variableContext.Variables
@@ -390,7 +315,7 @@ namespace AlfaBank.AFT.Core.Library.Database
             var sqlError = this.databaseContext.IsSqlQueryValid(query);
             sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
 
-            var (count, error) = conn.UpdateRows(query, @params, 30);
+            var (count, error) = conn.UpdateRows(query, null, @params, 30);
 
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
             count.Should().NotBe(0, "Запрос ничего не обновил");
@@ -406,7 +331,7 @@ namespace AlfaBank.AFT.Core.Library.Database
         public void ExecuteQueryInDb(string connectionName, string query)
         {
             var conn = this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value;
-            conn.Should().NotBeNull($"Подключение с названием '{connectionName}' не существует");
+            conn.Should().NotBeNull($"Подключение с названием '{connectionName}' уже существует");
 
             query.Should().NotBeEmpty("Запрос не может быть пустым.");
 

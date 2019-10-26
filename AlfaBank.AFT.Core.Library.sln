@@ -17,8 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlfaBank.AFT.Core.Library.S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlfaBank.AFT.Core.Library.Web", "src\AlfaBank.AFT.Core.Library.Web\AlfaBank.AFT.Core.Library.Web.csproj", "{A1BC2360-D5C0-46F5-AF1D-9DD305FE5FD6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlfaBank.AFT.Core.Library.Database.Test", "test\AlfaBank.AFT.Core.Library.Database.Test\AlfaBank.AFT.Core.Library.Database.Test.csproj", "{B92C1DE2-CA6A-4B16-93B3-B52676A678CF}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,18 +111,6 @@ Global
 		{A1BC2360-D5C0-46F5-AF1D-9DD305FE5FD6}.Release|x64.Build.0 = Release|Any CPU
 		{A1BC2360-D5C0-46F5-AF1D-9DD305FE5FD6}.Release|x86.ActiveCfg = Release|Any CPU
 		{A1BC2360-D5C0-46F5-AF1D-9DD305FE5FD6}.Release|x86.Build.0 = Release|Any CPU
-		{B92C1DE2-CA6A-4B16-93B3-B52676A678CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B92C1DE2-CA6A-4B16-93B3-B52676A678CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B92C1DE2-CA6A-4B16-93B3-B52676A678CF}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{B92C1DE2-CA6A-4B16-93B3-B52676A678CF}.Debug|x64.Build.0 = Debug|Any CPU
-		{B92C1DE2-CA6A-4B16-93B3-B52676A678CF}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B92C1DE2-CA6A-4B16-93B3-B52676A678CF}.Debug|x86.Build.0 = Debug|Any CPU
-		{B92C1DE2-CA6A-4B16-93B3-B52676A678CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B92C1DE2-CA6A-4B16-93B3-B52676A678CF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B92C1DE2-CA6A-4B16-93B3-B52676A678CF}.Release|x64.ActiveCfg = Release|Any CPU
-		{B92C1DE2-CA6A-4B16-93B3-B52676A678CF}.Release|x64.Build.0 = Release|Any CPU
-		{B92C1DE2-CA6A-4B16-93B3-B52676A678CF}.Release|x86.ActiveCfg = Release|Any CPU
-		{B92C1DE2-CA6A-4B16-93B3-B52676A678CF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
