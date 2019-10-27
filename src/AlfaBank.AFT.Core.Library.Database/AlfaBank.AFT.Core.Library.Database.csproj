@@ -34,7 +34,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AlfaBank.AFT.Core" Version="0.0.10" />
+    <PackageReference Include="AlfaBank.AFT.Core" Version="0.0.12" />
     <PackageReference Include="FluentAssertions" Version="5.9.0" />
     <PackageReference Include="SpecFlow" Version="3.0.225" />
     <PackageReference Include="xunit" Version="2.4.1" />
