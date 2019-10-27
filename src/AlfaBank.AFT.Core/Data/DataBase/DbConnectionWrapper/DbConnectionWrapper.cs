@@ -71,9 +71,9 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
             command.CommandTimeout = Math.Min(300, Math.Max(0, timeout ?? 0));
             command.CommandType = CommandType.Text;
             command.CommandText = query;
-            if (parameters?.Count > 0)
+            if(parameters?.Count > 0)
             {
-                foreach (var p in parameters)
+                foreach(var p in parameters)
                 {
                     CreateCommandParameter(ref command, p);
                 }
@@ -105,7 +105,7 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
                     System.Diagnostics.Debug.Print("SQL Query: {0}", FormatQueryLog(command));
                 });
             results = tmpResults;
-            if (string.IsNullOrWhiteSpace(results.TableName))
+            if(string.IsNullOrWhiteSpace(results.TableName))
             {
                 results.TableName = "SQLResults";
             }
@@ -122,9 +122,9 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
             command.CommandTimeout = Math.Min(300, Math.Max(0, timeout ?? 0));
             command.CommandType = CommandType.Text;
             command.CommandText = query;
-            if (@params?.Count > 0)
+            if(@params?.Count > 0)
             {
-                foreach (var p in @params)
+                foreach(var p in @params)
                 {
                     CreateCommandParameter(ref command, p);
                 }
@@ -159,9 +159,9 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
             command.CommandTimeout = Math.Min(300, Math.Max(0, timeout ?? 0));
             command.CommandType = CommandType.Text;
             command.CommandText = query;
-            if (@params?.Count > 0)
+            if(@params?.Count > 0)
             {
-                foreach (var p in @params)
+                foreach(var p in @params)
                 {
                     CreateCommandParameter(ref command, p);
                 }
@@ -192,18 +192,18 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
             var errors = new List<Error>();
             try
             {
-                if (DbConnection == null)
+                if(DbConnection == null)
                 {
                     return (true, errors);
                 }
 
-                if (DbConnection.State != ConnectionState.Closed && DbConnection.State != ConnectionState.Broken)
+                if(DbConnection.State != ConnectionState.Closed && DbConnection.State != ConnectionState.Broken)
                 {
                     try
                     {
                         DbConnection.Close();
                     }
-                    catch (Exception ex)
+                    catch(Exception ex)
                     {
                         errors.Add(new Error
                         {
@@ -219,7 +219,7 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
                 DbConnection = null;
                 return (true, errors);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 errors.Add(new Error
                 {
@@ -251,7 +251,7 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
                 onExecute(transaction);
                 transaction.Commit();
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 try
                 {
@@ -283,7 +283,7 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
             {
                 return ((IEnumerable)DbTables).Cast<dynamic>().Single(t => t.Schema == schemaName && t.Name == tableName);
             }
-            catch (InvalidOperationException ex)
+            catch(InvalidOperationException ex)
             {
                 throw new Exception($"Table '{tableName}' was not found", ex);
             }
@@ -295,7 +295,7 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
             {
                 return ((IEnumerable)DbTables).Cast<dynamic>().Single(t => t.Name == tableName);
             }
-            catch (InvalidOperationException ex)
+            catch(InvalidOperationException ex)
             {
                 throw new Exception($"Table '{tableName}' was not found", ex);
             }

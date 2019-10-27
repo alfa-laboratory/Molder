@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="DatabaseSteps.Steps.cs" company="AlfaBank">
+// Copyright (c) AlfaBank. All rights reserved.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;

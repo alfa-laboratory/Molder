@@ -65,7 +65,6 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
                 {
                     TargeBase = e.TargetSite,
                     Message = e.Message,
-                    //Message = "Некорректные входные данные.",
                     Type = e.GetType()
                 });
             }
@@ -105,7 +104,6 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
                 {
                     TargeBase = e.TargetSite,
                     Message = e.Message,
-                    //Message = "Некорректные входные данные.",
                     Type = e.GetType()
                 });
                 return (null, 0, errors);
@@ -146,7 +144,6 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
                 {
                     TargeBase = e.TargetSite,
                     Message = e.Message,
-                    //Message = "Некорректные входные данные.",
                     Type = e.GetType()
                 });
                 return (null, 0, errors);

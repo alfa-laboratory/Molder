@@ -48,13 +48,13 @@ namespace AlfaBank.AFT.Core.Model.Web.Support
         {
             var lk = keys.Split('+').ToList();
 
-            if (!lk.Any())
+            if(!lk.Any())
                 return;
             var actions = new Actions(this.webContext.WebDriver);
-            foreach (var key in lk)
+            foreach(var key in lk)
             {
                 var field = typeof(Keys).GetField(key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Static);
-                if (field != null)
+                if(field != null)
                 {
                     if (webElement is null)
                     {
@@ -67,7 +67,7 @@ namespace AlfaBank.AFT.Core.Model.Web.Support
                 }
                 else
                 {
-                    if (webElement is null)
+                    if(webElement is null)
                     {
                         actions.SendKeys(key);
                     }
