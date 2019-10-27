@@ -7,16 +7,17 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
+using FluentAssertions;
 
 namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
 {
     public class SqlServerConnectionWrapper : DbConnectionWrapper
     {
-        public override DbConnection GetDb(IDictionary<string, object> @params)
+        public override (DbConnection, IEnumerable<Error>) GetDb(IDictionary<string, object> @params)
         {
             if (DbConnection != null)
             {
-                return DbConnection;
+                return (DbConnection, null);
             }
 
             if((DateTime.Now - LastConnect).TotalSeconds < ConnectPeriod)
@@ -44,7 +45,7 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
             DbConnection.Open();
 
             LastConnect = DateTime.Now;
-            return DbConnection;
+            return (DbConnection, null);
         }
 
         public override (object, int, IEnumerable<Error>) SelectQuery(string query, string tableName = null, ICollection<DbCommandParameter.DbCommandParameter> parameter = null, int? timeout = null)
@@ -52,10 +53,10 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
             return ExecuteQuery(query, timeout, parameter);
         }
 
-        public override (object, int, IEnumerable<Error>) InsertRows(string tableName, DataTable records, ICollection<DbCommandParameter.DbCommandParameter> parameter = null,
+        public override (object, int, IEnumerable<Error>) InsertRows(string tableName, object records, ICollection<DbCommandParameter.DbCommandParameter> parameter = null,
             int? timeout = null)
         {
-            var (query, listParams, parseErrors) = CreateInsertStatement(tableName, records, parameter);
+            var (query, listParams, parseErrors) = CreateInsertStatement(tableName, ((DataTable)records), parameter);
             var listErrors = new List<Error>();
 
             if (!parseErrors.Any())
@@ -152,8 +153,13 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
                     var cell = row[column];
                     if(cell is string name)
                     {
-                        rv.ColumnValues.Add(new VariableReference() { Name = name });
-                        continue;
+                        var exp = new TSql100Parser(false).ParseExpression(
+                            new System.IO.StringReader(name), out parseErrors);
+                        if (exp.GetType() == typeof(VariableReference) || exp.GetType() == typeof(GlobalVariableExpression))
+                        {
+                            rv.ColumnValues.Add(new VariableReference() { Name = name });
+                            continue;
+                        }
                     }
 
                     while(listParams.Any(_ => _.Name == $"p{numberParams}"))

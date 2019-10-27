@@ -20,10 +20,12 @@ namespace AlfaBank.AFT.Core.Model.Web.Support
         public void PressKey(By by, string key)
         {
             var field = typeof(Keys).GetField(key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Static);
-            field.Should().NotBeNull("Клафиша не найдена");
+            field.Should().NotBeNull("Клавиша не найдена");
 
             var element = this.webContext.WebDriver.Wait(this.webContext.Timeout).ForElement(by).ToExist();
             element.Should().NotBeNull($"Элемент {by} не найден");
+            element.Wait(this.webContext.Timeout).ForElement().ToBeVisible();
+            element.Wait(this.webContext.Timeout).ForElement().ToBeEnabled();
 
             element.SendKeys((string)field?.GetValue(null));
         }
@@ -32,7 +34,9 @@ namespace AlfaBank.AFT.Core.Model.Web.Support
         {
             var element = this.webContext.WebDriver.Wait(this.webContext.Timeout).ForElement(by).ToExist();
             element.Should().NotBeNull($"Элемент \"{by}\" не найден");
-            Press(keys, element); 
+            element.Wait(this.webContext.Timeout).ForElement().ToBeVisible();
+            element.Wait(this.webContext.Timeout).ForElement().ToBeEnabled();
+            Press(keys, element);
         }
 
         public void PressKeys(string keys)

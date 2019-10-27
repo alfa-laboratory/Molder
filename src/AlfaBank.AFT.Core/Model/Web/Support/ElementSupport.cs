@@ -15,6 +15,12 @@ namespace AlfaBank.AFT.Core.Model.Web.Support
             this.webContext = webContext;
         }
 
+        public void BeClickable(By by)
+        {
+            var act = new Action(() => this.webContext.WebDriver.Wait(this.webContext.Timeout).ForElement(by).ToExist().Click());
+            act.Should().NotThrow<WebDriverTimeoutException>();
+        }
+
         public void BeNull(By by)
         {
             var act = new Action(() => this.webContext.WebDriver.Wait().ForElement(by).ToExist());

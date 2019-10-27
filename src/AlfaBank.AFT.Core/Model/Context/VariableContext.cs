@@ -1,7 +1,10 @@
 ﻿using AlfaBank.AFT.Core.Helpers;
 using AlfaBank.AFT.Core.Model.KeyValues;
+using MongoDB.Bson;
+using MongoDB.Bson.IO;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -89,6 +92,12 @@ namespace AlfaBank.AFT.Core.Model.Context
                 varType = varType.GetElementType();
             }
 
+            if(typeof(BsonDocument).IsAssignableFrom(varType))
+            {
+                var json = JObject.Parse(((BsonDocument)varValue).ToJson(new JsonWriterSettings { OutputMode = JsonOutputMode.Strict }));
+                return json.SelectToken(path?.Remove(0, 2) ?? "/*") ?? null;
+            }
+
             if(typeof(JObject).IsAssignableFrom(varType))
             {
                 var jsonObject = JObject.Parse(varValue.ToString());
@@ -148,20 +157,21 @@ namespace AlfaBank.AFT.Core.Model.Context
             switch(val)
             {
                 case XElement element when element.HasElements == false:
-                    ret = element.Value;
-                    break;
-
+                    {
+                        ret = element.Value;
+                        break;
+                    }
                 case XmlNode node when node.FirstChild.GetType() == typeof(XmlText):
-                {
-                    ret = node.FirstChild.Value;
-                    break;
-                }
+                    {
+                        ret = node.FirstChild.Value;
+                        break;
+                    }
 
                 case JToken token when token.HasValues == true:
-                {
-                    ret = token.Root.ToString();
-                    break;
-                }
+                    {
+                        ret = token.Root.ToString();
+                        break;
+                    }
 
                 default:
                     ret = Reflection.ConvertObject<string>(val);

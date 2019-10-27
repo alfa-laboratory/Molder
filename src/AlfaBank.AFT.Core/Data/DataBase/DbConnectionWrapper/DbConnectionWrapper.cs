@@ -41,13 +41,13 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
             command.Parameters.Add(cmdParam);
         }
 
-        public abstract DbConnection GetDb(IDictionary<string, object> parameters);
+        public abstract (DbConnection, IEnumerable<Error>) GetDb(IDictionary<string, object> parameters);
 
         public abstract (object, int, IEnumerable<Error>) SelectQuery(
             string query, string tableName = null,
             ICollection<DbCommandParameter.DbCommandParameter> parameter = null, int? timeout = null);
 
-        public abstract (object, int, IEnumerable<Error>) InsertRows(string tableName, DataTable records,
+        public abstract (object, int, IEnumerable<Error>) InsertRows(string tableName, object records,
             ICollection<DbCommandParameter.DbCommandParameter> parameter = null, int? timeout = null);
 
         public abstract (int, IEnumerable<Error>) UpdateRows(
