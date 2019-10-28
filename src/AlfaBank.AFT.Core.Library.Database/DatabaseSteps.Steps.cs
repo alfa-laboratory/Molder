@@ -223,7 +223,7 @@ namespace AlfaBank.AFT.Core.Library.Database
             var (outRecords, _, error) = conn.SelectQuery(query, null, @params, 60);
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
             (outRecords is DataTable).Should().BeTrue("Выходные данные не являются типом DataTable");
-            this.variableContext.SetVariable(varName, typeof(object[]), ((DataTable)outRecords).Rows[0].ItemArray);
+            this.variableContext.SetVariable(varName, typeof(DataTable), outRecords);
         }
 
         /// <summary>
