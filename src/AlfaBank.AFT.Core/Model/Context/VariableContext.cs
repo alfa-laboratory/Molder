@@ -95,7 +95,7 @@ namespace AlfaBank.AFT.Core.Model.Context
             if(typeof(BsonDocument).IsAssignableFrom(varType))
             {
                 var json = JObject.Parse(((BsonDocument)varValue).ToJson(new JsonWriterSettings { OutputMode = JsonOutputMode.Strict }));
-                return json.SelectToken(path?.Remove(0, 2) ?? "/*") ?? null;
+                return json.SelectToken(path?.Remove(0, 2) ?? "/*") ?? varValue;
             }
 
             if(typeof(JObject).IsAssignableFrom(varType))
