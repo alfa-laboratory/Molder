@@ -449,8 +449,8 @@ namespace AlfaBank.AFT.Core.Library.Database
 
             this.variableContext.SetVariable(
                 varName,
-                outResponse.GetType(),
-                outResponse);
+                typeof(IEnumerable<BsonDocument>),
+                (IEnumerable<BsonDocument>)outResponse);
         }
 
         /// <summary>
