@@ -15,7 +15,7 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
     {
         MongoUrlBuilder connection;
         MongoClient client;
-        IMongoDatabase database;
+        IMongoDatabase database; 
 
         /// <summary>
         /// Шаг удаления записей из колекции в MongoDB
@@ -79,6 +79,7 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
             }
             return (this.DbConnection, errors);
         }
+
         /// <summary>
         /// Метод вставки записей в MongoDB
         /// </summary>
@@ -94,7 +95,7 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
             {
 
                 var collection = database.GetCollection<BsonDocument>(tableName);
-                var documents = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<IEnumerable<BsonDocument>>(records.ToString());
+                var documents = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonDocument[]>(records.ToString());
                 collection.InsertMany(documents);
                 return (documents, documents.ToList().Count, errors);
             }
@@ -134,8 +135,8 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
                 using (var cursor = collection.Aggregate(pipeline, options))
                 {
                     cursor.MoveNext();
-                    IEnumerable<BsonDocument> batch = cursor.Current;
-                    return (cursor.Current, cursor.Current.ToList().Count, errors);
+                    var batch = cursor.Current;
+                    return ((BsonDocument[])batch, batch.ToList().Count, errors);
                 }
             }
             catch (Exception e)
@@ -149,6 +150,7 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
                 return (null, 0, errors);
             }
         }
+
         /// <summary>
         /// Шаг обновления записей в колекции в MongoDB
         /// TОDО написать шаг
