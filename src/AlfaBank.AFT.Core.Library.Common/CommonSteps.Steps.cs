@@ -624,7 +624,7 @@ namespace AlfaBank.AFT.Core.Library.Common
         [StepDefinition(@"я сохраняю значение переменной ""(.+)"" в переменную ""(.+)""")]
         public void StoreVariableValueToVariable(string varName, string newVarName)
         {
-            this.variableContext.Variables.ContainsKey(varName).Should().BeTrue($"Переменной '{varName}' не существует");
+            this.variableContext.Variables.ContainsKey(this.variableContext.GetVariableName(varName)).Should().BeTrue($"Переменной '{varName}' не существует");
             this.variableContext.Variables.ContainsKey(newVarName).Should().BeFalse($"Переменная '{newVarName}' уже существует");
             var value = this.variableContext.GetVariableValue(varName);
             value.Should().NotBeNull($"Значения в переменной {varName} нет");
