@@ -3,6 +3,7 @@
 // </copyright>
 
 using System;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using AlfaBank.AFT.Core.Helpers;
@@ -648,6 +649,29 @@ namespace AlfaBank.AFT.Core.Library.Common
             var networkCredential = new NetworkCredential(username, new Encryptor().Decrypt(password), domain);
             credentialCache.Add(new Uri(host), authType.ToString(), networkCredential);
             this.variableContext.SetVariable(varName, credentialCache.GetType(), credentialCache);
+        }
+
+        /// <summary>
+        /// Шаг для преобразования значения одной переменной в массив.
+        /// </summary>
+        /// <param name="varName">Исходная переменная.</param>
+        /// <param name="chars">Массив символов-разделителей.</param>
+        /// <param name="newVarName">Переменная-результат.</param>
+        [StepDefinition(@"я преобразую значение переменной ""(.+)"" в массив, используя символы ""(.+)"" и сохраняю в переменную ""(.+)""")]
+        public void StoreVariableValueToArrayVariable(string varName, string chars, string newVarName)
+        {
+            this.variableContext.Variables.ContainsKey(this.variableContext.GetVariableName(varName)).Should().BeTrue($"Переменной '{varName}' не существует");
+            this.variableContext.Variables.ContainsKey(newVarName).Should().BeFalse($"Переменная '{newVarName}' уже существует");
+
+            string.IsNullOrEmpty(chars).Should().BeFalse("Строка с символами не задана");
+
+            var value = this.variableContext.GetVariableValue(varName);
+            value.Should().NotBeNull($"Значения в переменной {varName} нет");
+
+            var arrayStrings = value.ToString().Split(chars.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            var enumerable = arrayStrings.Select(word => word.Trim()).ToArray();
+
+            this.variableContext.SetVariable(newVarName, enumerable.GetType(), enumerable);
         }
 
         /// <summary>
