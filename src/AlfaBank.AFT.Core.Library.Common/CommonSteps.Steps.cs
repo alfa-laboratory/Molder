@@ -512,6 +512,7 @@ namespace AlfaBank.AFT.Core.Library.Common
             this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
             len.Should().NotBe(0, "Длина строки не может быть 0");
             prefix.Should().NotBeEmpty("Длина префикса не может быть нулевой");
+            len.Should().BeGreaterOrEqualTo(prefix.Length, "Длина набора не может быть меньше длины префикса");
             var str = DataGenerator.GetRandomStringWithPrefix(len, prefix);
             this.variableContext.SetVariable(varName, str.GetType(), str);
         }
@@ -528,6 +529,7 @@ namespace AlfaBank.AFT.Core.Library.Common
             this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
             len.Should().NotBe(0, "Длина строки не может быть 0");
             prefix.Should().NotBeEmpty("Длина префикса не может быть нулевой");
+            len.Should().BeGreaterOrEqualTo(prefix.Length, "Длина набора не может быть меньше длины префикса");
             var str = DataGenerator.GetRandomCharWithPrefix(len, prefix);
             this.variableContext.SetVariable(varName, str.GetType(), str);
         }
@@ -544,6 +546,7 @@ namespace AlfaBank.AFT.Core.Library.Common
             this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
             len.Should().NotBe(0, "Длина строки не может быть 0");
             prefix.Should().NotBeEmpty("Длина префикса не может быть нулевой");
+            len.Should().BeGreaterOrEqualTo(prefix.Length, "Длина набора не может быть меньше длины префикса");
             var str = DataGenerator.GetRandomNumberWithPrefix(len, prefix);
             this.variableContext.SetVariable(varName, str.GetType(), str);
         }
