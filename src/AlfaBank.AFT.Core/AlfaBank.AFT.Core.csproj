@@ -6,7 +6,7 @@
     <AssemblyName>AlfaBank.AFT.Core</AssemblyName>
     <Authors>Egor Shokhin</Authors>
     <Company>AlfaBank</Company>
-    <Version>0.0.15</Version>
+    <Version>0.0.16</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression></PackageLicenseExpression>
   </PropertyGroup>
@@ -19,8 +19,8 @@
     <IsPackable>true</IsPackable>
     <Description>Библиотека с логикой генераций уникальных текстовых, числовых значений; работы с базой данных; работой с веб-сервисами</Description>
     <PackageTags>specflow aft alfabank generate core</PackageTags>
-    <AssemblyVersion>0.0.15.0</AssemblyVersion>
-    <FileVersion>0.0.15.0</FileVersion>
+    <AssemblyVersion>0.0.16.0</AssemblyVersion>
+    <FileVersion>0.0.16.0</FileVersion>
     <Copyright>2019 AlfaBank</Copyright>
     <RepositoryUrl>https://github.com/alfa-laboratory/AlfaBank.AFT.Core.Library</RepositoryUrl>
     <PackageProjectUrl>https://github.com/alfa-laboratory/AlfaBank.AFT.Core.Library</PackageProjectUrl>

@@ -130,6 +130,11 @@ namespace AlfaBank.AFT.Core.Model.Context
                 index = -1;
             }
 
+            if (((DataTable)varValue).Rows.Count == 0)
+            {
+                return null;
+            }
+
             var row = ((DataTable)varValue).Rows[index];
 
             var offset = key.IndexOf(']') + 1;
