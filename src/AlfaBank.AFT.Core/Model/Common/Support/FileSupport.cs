@@ -13,12 +13,12 @@ namespace AlfaBank.AFT.Core.Model.Common.Support
             var validPath = GetValidSystemPath(string.IsNullOrWhiteSpace(path) ? GlobalPath : path);
 
             var exists = Directory.Exists(validPath);
-            if (!exists)
+            if(!exists)
             {
                 Directory.CreateDirectory(validPath);
             }
 
-            if (string.IsNullOrWhiteSpace(content))
+            if(string.IsNullOrWhiteSpace(content))
             {
                 File.Create(validPath + filename);
             }
@@ -32,7 +32,8 @@ namespace AlfaBank.AFT.Core.Model.Common.Support
         {
             var validPath = GetValidSystemPath(path);
             var exists = System.IO.Directory.Exists(validPath);
-            if (!exists) return null;
+            if(!exists)
+                return null;
 
             var files = Directory.GetFiles(validPath, "*.*", SearchOption.TopDirectoryOnly);
 
@@ -42,8 +43,9 @@ namespace AlfaBank.AFT.Core.Model.Common.Support
         public string GetValidFilepath(string filename, string path = null)
         {
             var allFiles = GetAllFiles(path);
-            var file = allFiles.Select(f => f == filename).FirstOrDefault();
-            if (!file) return null;
+            var file = allFiles.FirstOrDefault(f => f == filename);
+            if(string.IsNullOrWhiteSpace(file))
+                return null;
 
             var validPath = string.IsNullOrWhiteSpace(path) ? GlobalPath + filename : path + filename;
 
@@ -52,7 +54,7 @@ namespace AlfaBank.AFT.Core.Model.Common.Support
 
         public void DeleteFolder(string path = null)
         {
-            if (string.IsNullOrWhiteSpace(path))
+            if(string.IsNullOrWhiteSpace(path))
             {
                 var exists = Directory.Exists(GlobalPath);
                 if(!exists)
@@ -63,7 +65,7 @@ namespace AlfaBank.AFT.Core.Model.Common.Support
             else
             {
                 var exists = Directory.Exists(path);
-                if (!exists)
+                if(!exists)
                 {
                     Directory.Delete(path);
                 }
@@ -72,12 +74,12 @@ namespace AlfaBank.AFT.Core.Model.Common.Support
         private string GetValidSystemPath(string path = null)
         {
             var controlPath = path;
-            if (string.IsNullOrWhiteSpace(path))
+            if(string.IsNullOrWhiteSpace(path))
             {
                 controlPath = GlobalPath;
             }
 
-            return $"{controlPath}{Path.DirectorySeparatorChar}";
+            return $"{controlPath}";
         }
     }
 }
