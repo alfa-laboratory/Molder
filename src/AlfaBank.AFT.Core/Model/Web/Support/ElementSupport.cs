@@ -86,5 +86,19 @@ namespace AlfaBank.AFT.Core.Model.Web.Support
             var act = new Action(() => element.Wait(this.webContext.Timeout).ForElement().ToNotBeSelected());
             act.Should().NotThrow<WebDriverTimeoutException>();
         }
+
+        public void NotBeEditable(By by)
+        {
+            var element = this.webContext.WebDriver.Wait(this.webContext.Timeout).ForElement(by).ToExist();
+            element.Should().NotBeNull($"Элемент \"{by}\" не найден");
+            element.GetAttribute("readonly").Should().Be("true", $"Элемент \"{by}\" доступен для редактирования");
+        }
+
+        public string GetAttribute(By by, string attributeName)
+        {
+            var element = this.webContext.WebDriver.Wait(this.webContext.Timeout).ForElement(by).ToExist();
+            element.Should().NotBeNull($"Элемент \"{by}\" не найден");
+            return element.GetAttribute(attributeName);
+        }
     }
 }
