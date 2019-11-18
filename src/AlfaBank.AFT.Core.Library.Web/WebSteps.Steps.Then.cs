@@ -459,6 +459,17 @@ namespace AlfaBank.AFT.Core.Library.Web
             this.commandSupport.SendCommand(() => this.elementSupport.BeDisabled(parameter));
         }
 
+        [Then(@"на веб-странице элемент \""(.+)\"" нельзя редактировать")]
+        public void WebElementIsNotEditable(string element)
+        {
+            this.webContext.WebDriver.Should()
+            .NotBeNull($"Браузер не инициализирован");
+
+            var parameter = this.pageObjectSupport.GetParameterByName(element);
+            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+            this.commandSupport.SendCommand(() => this.elementSupport.NotBeEditable(parameter));
+        }
+
         [Then(@"адрес активной веб-страницы содержит значение \""(.+)\""")]
         public void WebPageUrlContainsExpected(string url)
         {

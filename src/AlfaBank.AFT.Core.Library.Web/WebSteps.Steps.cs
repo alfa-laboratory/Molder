@@ -36,6 +36,7 @@ namespace AlfaBank.AFT.Core.Library.Web
         private readonly KeySupport keySupport;
         private readonly CommandSupport commandSupport;
         private readonly DragAndDropSupport dragAndDropSupport;
+        private readonly ElementSupport elementSupport;
 
         private readonly ITestOutputHelper consoleOutputHelper;
 
@@ -56,13 +57,14 @@ namespace AlfaBank.AFT.Core.Library.Web
         /// <param name="keySupport">Контекст для работы с клавиатурой.</param>
         /// <param name="commandSupport">Контекст для дополнительной проверки команд.</param>
         /// <param name="consoleOutputHelper">Capturing Output.</param>
+        /// <param name="elementSupport">Контекст для работы с перетаскиваниями.</param>
         public WebSteps(WebContext webContext, VariableContext variableContext, 
             NavigationSupport navigationSupport, PageObjectSupport pageObjectSupport,
             ClickSupport clickSupport, TextBoxSupport textBoxSupport,
             MoveSupport moveSupport, DragAndDropSupport dragAndDropSupport,
             FrameSupport frameSupport, FileSupport fileSupport,
             KeySupport keySupport, CommandSupport commandSupport,
-            ITestOutputHelper consoleOutputHelper)
+            ElementSupport elementSupport, ITestOutputHelper consoleOutputHelper)
         {
             this.webContext = webContext;
             this.navigationSupport = navigationSupport;
@@ -77,6 +79,7 @@ namespace AlfaBank.AFT.Core.Library.Web
             this.commandSupport = commandSupport;
             this.variableContext = variableContext;
             this.consoleOutputHelper = consoleOutputHelper;
+            this.elementSupport = elementSupport;
         }
 
         [StepArgumentTransformation]
@@ -459,6 +462,19 @@ namespace AlfaBank.AFT.Core.Library.Web
             var json = JObject.Parse(value.ToString());
 
             this.variableContext.SetVariable(varName, typeof(JObject), json);
+        }
+
+        [StepDefinition(@"я сохраняю значение атрибута \""(.+)\"" элемента \""(.+)\"" веб-страницы в переменную \""(.+)\""")]
+        public void StoreWebElementValueOfAttributeInVariable(string attributeName, string element, string varName)
+        {
+            this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            this.webContext.WebDriver.Should()
+            .NotBeNull($"Браузер не инициализирован");
+            var parameter = this.pageObjectSupport.GetParameterByName(element);
+            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+            var value = this.commandSupport.SendCommand(() => this.elementSupport.GetAttribute(parameter, attributeName));
+
+            this.variableContext.SetVariable(varName, typeof(string), value);
         }
 
         [StepDefinition(@"выполнен переход на фрейм номер ([0-9]+)")]
