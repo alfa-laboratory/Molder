@@ -309,7 +309,7 @@ namespace AlfaBank.AFT.Core.Library.Web
                 .NotBeNull($"Браузер не инициализирован");
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            this.commandSupport.SendCommand(() => this.textBoxSupport.SetText(parameter, value));
+            this.commandSupport.SendCommand(() => this.textBoxSupport.SetTextWithoutClear(parameter, value));
         }
 
         [StepDefinition(@"я ввожу в поле \""(.+)\"" веб-страницы зашифрованное значение \""(.+)\""")]
@@ -320,7 +320,7 @@ namespace AlfaBank.AFT.Core.Library.Web
                 .NotBeNull($"Браузер не инициализирован");
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            this.commandSupport.SendCommand(() => this.textBoxSupport.SetText(parameter, new Encryptor().Decrypt(value)));
+            this.commandSupport.SendCommand(() => this.textBoxSupport.SetTextWithoutClear(parameter, new Encryptor().Decrypt(value)));
         }
 
         [StepDefinition(@"я ввожу в поле \""(.+)\"" веб-страницы значение из переменной \""(.+)\""")]
@@ -331,7 +331,7 @@ namespace AlfaBank.AFT.Core.Library.Web
             var parameter = this.pageObjectSupport.GetParameterByName(element);
             parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
             var value = this.variableContext.GetVariableValueText(varName);
-            this.commandSupport.SendCommand(() => this.textBoxSupport.SetText(parameter, value));
+            this.commandSupport.SendCommand(() => this.textBoxSupport.SetTextWithoutClear(parameter, value));
         }
 
         [StepDefinition(@"я очищаю поле \""(.+)\"" веб-страницы")]
