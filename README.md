@@ -3,7 +3,6 @@
 
 # AlfaBank.AFT.Core.Library [![build](https://ci.appveyor.com/api/projects/status/j33s710ss3f0nf4u?svg=true)](https://ci.appveyor.com/project/egorsh0/alfabank-aft-core-library) [![license](https://img.shields.io/github/license/alfa-laboratory/AlfaBank.AFT.Core.Library)](https://github.com/alfa-laboratory/AlfaBank.AFT.Core.Library/blob/master/LICENSE)
 Набор библиотек с шагами для **BDD** тестирования баз данных, веб-сервисов и WebUI
-![AlfaBank.AFT.Core ](https://img.shields.io/nuget/dt/AlfaBank.AFT.Core)
 
 ## Library
  ##### *AlfaBank.AFT.Core* ![AlfaBank.AFT.Core](https://img.shields.io/nuget/dt/AlfaBank.AFT.Core)
