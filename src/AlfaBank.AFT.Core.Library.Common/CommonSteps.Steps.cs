@@ -137,6 +137,18 @@ namespace AlfaBank.AFT.Core.Library.Common
         }
 
         /// <summary>
+        /// Шаг для изменения значения переменной.
+        /// </summary>
+        /// <param name="varName">Идентификатор переменной.</param>
+        /// <param name="value">Значение переменной.</param>
+        [StepDefinition(@"я изменяю значение переменной ""(.+)"" на ""(.+)""")]
+        public void ChangeVariable(string varName, string value)
+        {
+            this.variableContext.Variables.ContainsKey(varName).Should().BeTrue($"Переменной '{varName}' не существует");
+            this.variableContext.SetVariable(varName, typeof(object), value);
+        }
+
+        /// <summary>
         /// Шаг для сохранения значения однострочного текста в переменную.
         /// </summary>
         /// <param name="text">Текст для сохранения в переменную.</param>
