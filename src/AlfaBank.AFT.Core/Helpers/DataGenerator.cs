@@ -38,7 +38,7 @@ namespace AlfaBank.AFT.Core.Helpers
 
         public static string GetRandomNumbers(int len)
         {
-            return GetRandomString(1, NumbersWithoutZero) + GetRandomString(len - 1, Numbers);
+            return len != 0 ? GetRandomString(1, NumbersWithoutZero) + GetRandomString(len - 1, Numbers) : "";
         }
 
         public static string GetGuid()
