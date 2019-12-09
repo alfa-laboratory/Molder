@@ -9,7 +9,6 @@ namespace AlfaBank.AFT.Core.Helpers
         public static string UpperChars { get; } = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         public static string LowerChars { get; } = "abcdefghijklmnopqrstuvwxyz";
         public static string Numbers { get; } = "0123456789";
-        public static string NumbersWithoutZero { get; } = "123456789";
 
         public static string GetRandomStringWithPrefix(int len, string prefix)
         {
@@ -38,7 +37,7 @@ namespace AlfaBank.AFT.Core.Helpers
 
         public static string GetRandomNumbers(int len)
         {
-            return len != 0 ? GetRandomString(1, NumbersWithoutZero) + GetRandomString(len - 1, Numbers) : "";
+            return len > 0 ? GetRandomString(1, Numbers.Remove(0, 1)) + GetRandomString(len - 1, Numbers) : "";
         }
 
         public static string GetGuid()
