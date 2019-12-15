@@ -18,7 +18,7 @@ namespace AlfaBank.AFT.Core.Model.Context
     public class VariableContext
     {
         private const string XmlPattern = "{([^}]*)}";
-        private const string JsonPattern = @"@(.\w+)";
+        private const string JsonPattern = @"@(\w+(?:\[\d\])|\w+)";
         public KeyValues<Variable> Variables { get; set; } = new KeyValues<Variable>();
 
         public string GetVariableName(string key)
