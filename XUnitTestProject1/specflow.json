@@ -1,0 +1,10 @@
+﻿{
+  "language": {
+    "feature": "en-EN"
+  },
+  "stepAssemblies": [
+    {
+      "assembly": "AlfaBank.AFT.Core.Library.Common"
+    }
+  ]
+}

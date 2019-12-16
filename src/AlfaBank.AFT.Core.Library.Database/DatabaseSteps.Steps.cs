@@ -29,6 +29,7 @@ namespace AlfaBank.AFT.Core.Library.Database
     {
         private readonly DatabaseContext databaseContext;
         private readonly VariableContext variableContext;
+        private int timeout = 60;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DatabaseSteps"/> class.
@@ -168,6 +169,35 @@ namespace AlfaBank.AFT.Core.Library.Database
         }
 
         /// <summary>
+        /// Подключение к SQLServer.
+        /// </summary>
+        /// <param name="connectionName">Название подключения.</param>
+        /// <param name="time">Таймаут для выполнения запросов.</param>
+        /// <param name="params">Параметры подключения.</param>
+        [Scope(Tag = "DBAccess")]
+        [Given(@"я подключаюсь к БД MS SQL Server с названием ""(.+)"" с таймаутом ([0-9]+):")]
+        public void ConnectWithTimeoutToDB_SqlServer(string connectionName, int time, SqlServerConnectionParams @params)
+        {
+            @params.Should().NotBeNull("Параметры не заданы.");
+
+            time.Should().BeGreaterThan(0, "Таймаут не может быть меньше 0");
+            this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value.Should()
+                .BeNull($"Подключение с названием '{connectionName}' уже существует");
+            this.timeout = time;
+            var parameters = new Dictionary<string, object>()
+            {
+                { "DataSource", @params.Source },
+                { "InitialCatalog", @params.Database },
+                { "UserID", @params.Login },
+                { "Password", @params.Password },
+            };
+
+            var connection = new SqlServerConnectionWrapper();
+            connection.GetDb(parameters);
+            this.databaseContext.DbConnections.Add(connectionName, connection);
+        }
+
+        /// <summary>
         /// Подключение к Mongo.
         /// </summary>
         /// <param name="connectionName">Название подключения.</param>
@@ -220,7 +250,7 @@ namespace AlfaBank.AFT.Core.Library.Database
             var sqlError = this.databaseContext.IsSqlQueryValid(query);
             sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
 
-            var (outRecords, _, error) = conn.SelectQuery(query, null, @params, 60);
+            var (outRecords, _, error) = conn.SelectQuery(query, null, @params, this.timeout);
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
             (outRecords is DataTable).Should().BeTrue("Выходные данные не являются типом DataTable");
             this.variableContext.SetVariable(varName, typeof(DataTable), outRecords);
@@ -283,7 +313,7 @@ namespace AlfaBank.AFT.Core.Library.Database
             var sqlError = this.databaseContext.IsSqlQueryValid(query);
             sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
 
-            var (outRecords, count, error) = conn.SelectQuery(query, null, @params, 60);
+            var (outRecords, count, error) = conn.SelectQuery(query, null, @params, this.timeout);
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
             count.Should().Be(1, "Запрос вернул не одну запись");
 
@@ -347,7 +377,7 @@ namespace AlfaBank.AFT.Core.Library.Database
             var sqlError = this.databaseContext.IsSqlQueryValid(query);
             sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
 
-            var (outRecords, count, error) = conn.SelectQuery(query, null, @params, 60);
+            var (outRecords, count, error) = conn.SelectQuery(query, null, @params, this.timeout);
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
             count.Should().Be(1, "Запрос вернул не одну запись");
 
@@ -412,7 +442,7 @@ namespace AlfaBank.AFT.Core.Library.Database
 
             var inRecords = this.TransformationTableToDatatable(data);
 
-            var (outRecords, count, error) = conn.InsertRows(tableName, inRecords, @params, 30);
+            var (outRecords, count, error) = conn.InsertRows(tableName, inRecords, @params, this.timeout);
             var enumerable = error as Error[] ?? error.ToArray();
             //enumerable.Any().Should().BeFalse($"При добавлении данных возникли ошибки");
             error.Any().Should().BeFalse($"При добавлении данных возникли ошибки");
@@ -473,7 +503,7 @@ namespace AlfaBank.AFT.Core.Library.Database
 
             var inRecords = this.TransformationTableToDatatable(data);
 
-            var (_, count, error) = conn.InsertRows(tableName, inRecords, @params, 30);
+            var (_, count, error) = conn.InsertRows(tableName, inRecords, @params, this.timeout);
             error.Any().Should().BeFalse($"При добавлении данных возникли ошибки");
             count.Should().Be(data.RowCount, "Были добавлены не все записи.");
         }
@@ -530,7 +560,7 @@ namespace AlfaBank.AFT.Core.Library.Database
             var sqlError = this.databaseContext.IsSqlQueryValid(query);
             sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
 
-            var (count, error) = conn.UpdateRows(query, null, @params, 30);
+            var (count, error) = conn.UpdateRows(query, null, @params, this.timeout);
 
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
             count.Should().NotBe(0, "Запрос ничего не обновил");
@@ -555,7 +585,7 @@ namespace AlfaBank.AFT.Core.Library.Database
             var sqlError = this.databaseContext.IsSqlQueryValid(query);
             sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
 
-            var (_, count, error) = conn.ExecuteQuery(query, 30);
+            var (_, count, error) = conn.ExecuteQuery(query, this.timeout);
 
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
             count.Should().NotBe(0, "Запрос ничего не сделал");
