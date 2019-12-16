@@ -17,8 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlfaBank.AFT.Core.Library.S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlfaBank.AFT.Core.Library.Web", "src\AlfaBank.AFT.Core.Library.Web\AlfaBank.AFT.Core.Library.Web.csproj", "{A1BC2360-D5C0-46F5-AF1D-9DD305FE5FD6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XUnitTestProject1", "XUnitTestProject1\XUnitTestProject1.csproj", "{33705DE3-3A9B-4C8F-9659-B39C6D679E3F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,18 +111,6 @@ Global
 		{A1BC2360-D5C0-46F5-AF1D-9DD305FE5FD6}.Release|x64.Build.0 = Release|Any CPU
 		{A1BC2360-D5C0-46F5-AF1D-9DD305FE5FD6}.Release|x86.ActiveCfg = Release|Any CPU
 		{A1BC2360-D5C0-46F5-AF1D-9DD305FE5FD6}.Release|x86.Build.0 = Release|Any CPU
-		{33705DE3-3A9B-4C8F-9659-B39C6D679E3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{33705DE3-3A9B-4C8F-9659-B39C6D679E3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{33705DE3-3A9B-4C8F-9659-B39C6D679E3F}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{33705DE3-3A9B-4C8F-9659-B39C6D679E3F}.Debug|x64.Build.0 = Debug|Any CPU
-		{33705DE3-3A9B-4C8F-9659-B39C6D679E3F}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{33705DE3-3A9B-4C8F-9659-B39C6D679E3F}.Debug|x86.Build.0 = Debug|Any CPU
-		{33705DE3-3A9B-4C8F-9659-B39C6D679E3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{33705DE3-3A9B-4C8F-9659-B39C6D679E3F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{33705DE3-3A9B-4C8F-9659-B39C6D679E3F}.Release|x64.ActiveCfg = Release|Any CPU
-		{33705DE3-3A9B-4C8F-9659-B39C6D679E3F}.Release|x64.Build.0 = Release|Any CPU
-		{33705DE3-3A9B-4C8F-9659-B39C6D679E3F}.Release|x86.ActiveCfg = Release|Any CPU
-		{33705DE3-3A9B-4C8F-9659-B39C6D679E3F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
