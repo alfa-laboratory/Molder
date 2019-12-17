@@ -288,7 +288,7 @@ namespace AlfaBank.AFT.Core.Library.Database
             count.Should().Be(1, "Запрос вернул не одну запись");
 
             (outRecords is DataTable).Should().BeTrue("Выходные данные не являются типом DataTable");
-            this.variableContext.SetVariable(varName, typeof(object[]), ((DataTable)outRecords).Rows[0].ItemArray);
+            this.variableContext.SetVariable(varName, typeof(DataRow), ((DataTable)outRecords).Rows[0]);
         }
 
         /// <summary>
