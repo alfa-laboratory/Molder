@@ -20,23 +20,23 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
                 return (DbConnection, null);
             }
 
-            if((DateTime.Now - LastConnect).TotalSeconds < ConnectPeriod)
+            if ((DateTime.Now - LastConnect).TotalSeconds < ConnectPeriod)
             {
                 System.Threading.Thread.Sleep((int)Math.Ceiling(ConnectPeriod - (DateTime.Now - LastConnect).TotalSeconds) * 1000);
             }
 
             var csb = new SqlConnectionStringBuilder();
-            foreach(var p in @params)
+            foreach (var p in @params)
             {
                 typeof(SqlConnectionStringBuilder).GetProperty(p.Key)?.SetValue(csb, p.Value);
             }
 
-            if(csb.ConnectTimeout <= 0)
+            if (csb.ConnectTimeout <= 0)
             {
                 csb.ConnectTimeout = 30;
             }
 
-            if(csb.LoadBalanceTimeout <= 0)
+            if (csb.LoadBalanceTimeout <= 0)
             {
                 csb.LoadBalanceTimeout = 30;
             }
@@ -145,13 +145,13 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
             statement.InsertSpecification.InsertSource = new ValuesInsertSource();
 
             IList<ParseError> parseErrors;
-            foreach(DataRow row in records.Rows)
+            foreach (DataRow row in records.Rows)
             {
                 var rv = new RowValue();
-                foreach(DataColumn column in records.Columns)
+                foreach (DataColumn column in records.Columns)
                 {
                     var cell = row[column];
-                    if(cell is string name)
+                    if (cell is string name)
                     {
                         var exp = new TSql100Parser(false).ParseExpression(
                             new System.IO.StringReader(name), out parseErrors);
@@ -162,7 +162,7 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper
                         }
                     }
 
-                    while(listParams.Any(_ => _.Name == $"p{numberParams}"))
+                    while (listParams.Any(_ => _.Name == $"p{numberParams}"))
                     {
                         numberParams++;
                     }

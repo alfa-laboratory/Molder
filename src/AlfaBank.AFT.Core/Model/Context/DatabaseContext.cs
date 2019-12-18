@@ -6,8 +6,9 @@ namespace AlfaBank.AFT.Core.Model.Context
 {
     public class DatabaseContext
     {
-        public Dictionary<string, DbConnectionWrapper> DbConnections { get; set; } =
-            new Dictionary<string, DbConnectionWrapper>();
+        public int Timeout { get; set; }
+        public Dictionary<string, (DbConnectionWrapper connection, int? timeout)> DbConnections { get; set; } =
+            new Dictionary<string, (DbConnectionWrapper, int?)>();
 
         public ICollection<string> IsSqlQueryValid(string sql)
         {

@@ -22,6 +22,7 @@ namespace AlfaBank.AFT.Core.Data.DataBase.DbConnectionParams
             }
             set => _password = value;
         }
+        public int? Timeout { get; set; } = 60;
 
         public string GetDataSource()
         {
