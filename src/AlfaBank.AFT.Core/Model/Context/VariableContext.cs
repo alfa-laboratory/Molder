@@ -17,8 +17,9 @@ namespace AlfaBank.AFT.Core.Model.Context
 {
     public class VariableContext
     {
+        private const string BracesPattern = @"\[([.\w]*)\]";
         private const string XmlPattern = "{([^}]*)}";
-        private const string JsonPattern = @"@(\w+(?:\[\d\])|\w+)";
+        private const string JsonPattern = @"@(\w+(?:\[\w+\])*(?:\[\w+\])*)";
         public KeyValues<Variable> Variables { get; set; } = new KeyValues<Variable>();
 
         public string GetVariableName(string key)
@@ -54,6 +55,7 @@ namespace AlfaBank.AFT.Core.Model.Context
         public object GetVariableValue(string key)
         {
             var name = key;
+            var keyPath = key;
             var index = -1;
             string path = null;
             if(key.IndexOf('.') > 0)
@@ -70,6 +72,8 @@ namespace AlfaBank.AFT.Core.Model.Context
                 }
 
                 name = key.Split('[').First();
+
+                keyPath = Regex.Match(key ?? string.Empty, BracesPattern).Groups[1].Value;
             }
 
             var var = Variables.SingleOrDefault(_ => _.Key == name).Value;
@@ -120,19 +124,23 @@ namespace AlfaBank.AFT.Core.Model.Context
                 return ((XmlNode)varValue).SelectSingleNode(path ?? "/*");
             }
 
-            if(!typeof(DataTable).IsAssignableFrom(varType))
+            if(typeof(DataRow).IsAssignableFrom(varType))
+            {
+                if(int.TryParse(keyPath, out int id))
+                {
+                    return ((DataRow)varValue).ItemArray[id].ToString();
+                }
+                return ((DataRow)varValue)[keyPath].ToString();
+            }
+
+            if (!typeof(DataTable).IsAssignableFrom(varType))
             {
                 return varValue;
             }
 
-            if(!int.TryParse(key.Substring(key.IndexOf('[') + 1, key.IndexOf(']') - key.IndexOf('[') - 1), out index))
+            if (!int.TryParse(key.Substring(key.IndexOf('[') + 1, key.IndexOf(']') - key.IndexOf('[') - 1), out index))
             {
                 index = -1;
-            }
-
-            if (((DataTable)varValue).Rows.Count == 0)
-            {
-                return null;
             }
 
             var row = ((DataTable)varValue).Rows[index];
