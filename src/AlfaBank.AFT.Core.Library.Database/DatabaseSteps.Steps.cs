@@ -51,7 +51,7 @@ namespace AlfaBank.AFT.Core.Library.Database
         [Scope(Tag = "mongo")]
         public void BeforeScenario()
         {
-            this.databaseContext.DbConnections = new Dictionary<string, DbConnectionWrapper>();
+            this.databaseContext.DbConnections = new Dictionary<string, (DbConnectionWrapper, int?)>();
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace AlfaBank.AFT.Core.Library.Database
         {
             foreach (var kvp in this.databaseContext.DbConnections)
             {
-                kvp.Value?.Dispose();
+                kvp.Value.connection?.Dispose();
             }
 
             this.databaseContext.DbConnections.Clear();
@@ -151,20 +151,21 @@ namespace AlfaBank.AFT.Core.Library.Database
         {
             @params.Should().NotBeNull("Параметры не заданы.");
 
-            this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value.Should()
-                .BeNull($"Подключение с названием '{connectionName}' уже существует");
+            this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value.Should().Be((null, null), $"Подключение с названием '{connectionName}' уже существует");
 
             var parameters = new Dictionary<string, object>()
             {
                 { "DataSource", @params.Source },
                 { "InitialCatalog", @params.Database },
                 { "UserID", @params.Login },
-                { "Password", @params.Password },
+                { "Password", @params.Password }
             };
 
             var connection = new SqlServerConnectionWrapper();
             connection.GetDb(parameters);
-            this.databaseContext.DbConnections.Add(connectionName, connection);
+
+            this.databaseContext.DbConnections.Add(connectionName, (connection, @params.Timeout));
+
         }
 
         /// <summary>
@@ -193,7 +194,7 @@ namespace AlfaBank.AFT.Core.Library.Database
             var connection = new MongoDBConnectionWrapper();
             var (_, error) = connection.GetDb(parameters);
             error.Any().Should().BeFalse($"При выполнении подключения возникли ошибки.");
-            this.databaseContext.DbConnections.Add(connectionName, connection);
+            this.databaseContext.DbConnections.Add(connectionName, (connection, @params.Timeout));
         }
 
         /// <summary>
@@ -220,7 +221,7 @@ namespace AlfaBank.AFT.Core.Library.Database
             var sqlError = this.databaseContext.IsSqlQueryValid(query);
             sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
 
-            var (outRecords, _, error) = conn.SelectQuery(query, null, @params, 60);
+            var (outRecords, _, error) = conn.connection.SelectQuery(query, null, @params, conn.timeout);
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
             (outRecords is DataTable).Should().BeTrue("Выходные данные не являются типом DataTable");
             this.variableContext.SetVariable(varName, typeof(DataTable), outRecords);
@@ -248,7 +249,7 @@ namespace AlfaBank.AFT.Core.Library.Database
             var act = new Action(() => JToken.Parse(query));
             act.Should().NotThrow<Exception>("Некорректный запрос для поиска.");
 
-            var (outResponse, count, error) = conn.SelectQuery(query, tableName);
+            var (outResponse, count, error) = conn.connection.SelectQuery(query, tableName);
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
             count.Should().NotBe(0, "Запрос вернул пустую выборку.");
 
@@ -283,7 +284,7 @@ namespace AlfaBank.AFT.Core.Library.Database
             var sqlError = this.databaseContext.IsSqlQueryValid(query);
             sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
 
-            var (outRecords, count, error) = conn.SelectQuery(query, null, @params, 60);
+            var (outRecords, count, error) = conn.connection.SelectQuery(query, null, @params, conn.timeout);
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
             count.Should().Be(1, "Запрос вернул не одну запись");
 
@@ -313,7 +314,7 @@ namespace AlfaBank.AFT.Core.Library.Database
             var act = new Action(() => JToken.Parse(query));
             act.Should().NotThrow<Exception>("Некорректный запрос для поиска.");
 
-            var (outResponse, count, error) = conn.SelectQuery(query, tableName);
+            var (outResponse, count, error) = conn.connection.SelectQuery(query, tableName);
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
             count.Should().Be(1, "Выборка по запросу содержит не одну запись.");
 
@@ -347,7 +348,7 @@ namespace AlfaBank.AFT.Core.Library.Database
             var sqlError = this.databaseContext.IsSqlQueryValid(query);
             sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
 
-            var (outRecords, count, error) = conn.SelectQuery(query, null, @params, 60);
+            var (outRecords, count, error) = conn.connection.SelectQuery(query, null, @params, conn.timeout);
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
             count.Should().Be(1, "Запрос вернул не одну запись");
 
@@ -381,7 +382,7 @@ namespace AlfaBank.AFT.Core.Library.Database
             var act = new Action(() => JToken.Parse(query));
             act.Should().NotThrow<Exception>("Некорректный запрос для поиска.");
 
-            var (outResponse, count, error) = conn.SelectQuery(query, tableName);
+            var (outResponse, count, error) = conn.connection.SelectQuery(query, tableName);
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
             count.Should().NotBe(0, "Ничего не вернулось.");
 
@@ -412,7 +413,7 @@ namespace AlfaBank.AFT.Core.Library.Database
 
             var inRecords = this.TransformationTableToDatatable(data);
 
-            var (outRecords, count, error) = conn.InsertRows(tableName, inRecords, @params, 30);
+            var (outRecords, count, error) = conn.connection.InsertRows(tableName, inRecords, @params, conn.timeout);
             var enumerable = error as Error[] ?? error.ToArray();
             //enumerable.Any().Should().BeFalse($"При добавлении данных возникли ошибки");
             error.Any().Should().BeFalse($"При добавлении данных возникли ошибки");
@@ -443,7 +444,7 @@ namespace AlfaBank.AFT.Core.Library.Database
             var act = new Action(() => amountOfRecords = JToken.Parse(data).ToList().Count);
             act.Should().NotThrow<Exception>("Некорректный запрос для вставки.");
 
-            var (outResponse, count, error) = conn.InsertRows(tableName, data);
+            var (outResponse, count, error) = conn.connection.InsertRows(tableName, data);
             error.Any().Should().BeFalse($"При добавлении данных возникли ошибки");
             count.Should().Be(amountOfRecords, $"'{count}' из '{amountOfRecords}' добавлены в базу данных.");
 
@@ -473,7 +474,7 @@ namespace AlfaBank.AFT.Core.Library.Database
 
             var inRecords = this.TransformationTableToDatatable(data);
 
-            var (_, count, error) = conn.InsertRows(tableName, inRecords, @params, 30);
+            var (_, count, error) = conn.connection.InsertRows(tableName, inRecords, @params, conn.timeout);
             error.Any().Should().BeFalse($"При добавлении данных возникли ошибки");
             count.Should().Be(data.RowCount, "Были добавлены не все записи.");
         }
@@ -501,7 +502,7 @@ namespace AlfaBank.AFT.Core.Library.Database
             var act = new Action(() => amountOfRecords = JToken.Parse(data).ToList().Count);
             act.Should().NotThrow<Exception>("Некорректный запрос для вставки.");
 
-            var (_, count, error) = conn.InsertRows(tableName, data);
+            var (_, count, error) = conn.connection.InsertRows(tableName, data);
 
             error.Any().Should().BeFalse($"При добавлении данных возникли ошибки");
             count.Should().Be(amountOfRecords, $"'{count}' из '{amountOfRecords}' добавлены в базу данных.");
@@ -530,7 +531,7 @@ namespace AlfaBank.AFT.Core.Library.Database
             var sqlError = this.databaseContext.IsSqlQueryValid(query);
             sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
 
-            var (count, error) = conn.UpdateRows(query, null, @params, 30);
+            var (count, error) = conn.connection.UpdateRows(query, null, @params, conn.timeout);
 
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
             count.Should().NotBe(0, "Запрос ничего не обновил");
@@ -555,7 +556,7 @@ namespace AlfaBank.AFT.Core.Library.Database
             var sqlError = this.databaseContext.IsSqlQueryValid(query);
             sqlError.Any().Should().BeFalse($"Запрос '{query}' не корректен");
 
-            var (_, count, error) = conn.ExecuteQuery(query, 30);
+            var (_, count, error) = conn.connection.ExecuteQuery(query, conn.timeout);
 
             error.Any().Should().BeFalse($"При выполнении запроса возникли ошибки");
             count.Should().NotBe(0, "Запрос ничего не сделал");
