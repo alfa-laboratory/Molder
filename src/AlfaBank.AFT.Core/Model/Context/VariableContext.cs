@@ -4,14 +4,12 @@ using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using Xunit.Sdk;
 
 namespace AlfaBank.AFT.Core.Model.Context
 {
@@ -49,7 +47,6 @@ namespace AlfaBank.AFT.Core.Model.Context
             var vars = Variables;
             vars[varName] = new Variable() { Type = type, Value = value };
             Variables = vars;
-            Console.WriteLine($"[DEBUG] IN VARIABLE \"{key}\" RECORDED THE VALUE \"{value}\"");
         }
 
         public object GetVariableValue(string key)
@@ -124,37 +121,42 @@ namespace AlfaBank.AFT.Core.Model.Context
                 return ((XmlNode)varValue).SelectSingleNode(path ?? "/*");
             }
 
-            if(typeof(DataRow).IsAssignableFrom(varType))
+            try
             {
-                if(int.TryParse(keyPath, out int id))
+                if (typeof(DataRow).IsAssignableFrom(varType))
                 {
-                    return ((DataRow)varValue).ItemArray[id].ToString();
+                    if (int.TryParse(keyPath, out int id))
+                    {
+                        return ((DataRow)varValue).ItemArray[id].ToString();
+                    }
+                    return ((DataRow)varValue)[keyPath].ToString();
                 }
-                return ((DataRow)varValue)[keyPath].ToString();
+
+                if (!typeof(DataTable).IsAssignableFrom(varType))
+                {
+                    return varValue;
+                }
+
+                if (!int.TryParse(key.Substring(key.IndexOf('[') + 1, key.IndexOf(']') - key.IndexOf('[') - 1), out index))
+                {
+                    index = -1;
+                }
+
+                var row = ((DataTable)varValue).Rows[index];
+
+                var offset = key.IndexOf(']') + 1;
+                if (key.IndexOf('[', offset) < 0)
+                {
+                    return row[
+                        key.Substring(
+                            key.IndexOf('[', offset) + 1,
+                            key.IndexOf(']', offset) - key.IndexOf('[', offset) - 1)];
+                }
+
+                return int.TryParse(key.Substring(key.IndexOf('[', offset) + 1, key.IndexOf(']', offset) - key.IndexOf('[', offset) - 1), out index) ? row[index] : row[key.Substring(key.IndexOf('[', offset) + 1, key.IndexOf(']', offset) - key.IndexOf('[', offset) - 1)];
             }
-
-            if (!typeof(DataTable).IsAssignableFrom(varType))
-            {
-                return varValue;
-            }
-
-            if (!int.TryParse(key.Substring(key.IndexOf('[') + 1, key.IndexOf(']') - key.IndexOf('[') - 1), out index))
-            {
-                index = -1;
-            }
-
-            var row = ((DataTable)varValue).Rows[index];
-
-            var offset = key.IndexOf(']') + 1;
-            if(key.IndexOf('[', offset) < 0)
-            {
-                return row[
-                    key.Substring(
-                        key.IndexOf('[', offset) + 1,
-                        key.IndexOf(']', offset) - key.IndexOf('[', offset) - 1)];
-            }
-
-            return int.TryParse(key.Substring(key.IndexOf('[', offset) + 1, key.IndexOf(']', offset) - key.IndexOf('[', offset) - 1), out index) ? row[index] : row[key.Substring(key.IndexOf('[', offset) + 1, key.IndexOf(']', offset) - key.IndexOf('[', offset) - 1)];
+            catch (IndexOutOfRangeException) { return null; }
+            catch (ArgumentException) { return null; }
         }
 
         public string GetVariableValueText(string key)
