@@ -151,8 +151,8 @@ namespace AlfaBank.AFT.Core.Library.Database
         {
             @params.Should().NotBeNull("Параметры не заданы.");
 
-            this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value.Should()
-                .Be((null, null), $"Подключение с названием '{connectionName}' уже существует");
+            this.databaseContext.DbConnections.SingleOrDefault(_ => _.Key == connectionName).Value.connection.Should()
+                .BeNull($"Подключение с названием '{connectionName}' уже существует");
 
             var parameters = new Dictionary<string, object>()
             {
