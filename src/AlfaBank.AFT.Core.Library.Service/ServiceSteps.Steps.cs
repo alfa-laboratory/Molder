@@ -16,7 +16,6 @@ using AlfaBank.AFT.Core.Model.Service;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
-using Xunit.Abstractions;
 
 namespace AlfaBank.AFT.Core.Library.Service
 {
@@ -28,7 +27,6 @@ namespace AlfaBank.AFT.Core.Library.Service
     {
         private readonly VariableContext variableContext;
         private readonly ServiceContext serviceContext;
-        private readonly ITestOutputHelper consoleOutputHelper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceSteps"/> class.
@@ -37,11 +35,10 @@ namespace AlfaBank.AFT.Core.Library.Service
         /// <param name="variableContext">Контекст для работы с переменными.</param>
         /// <param name="serviceContext">Контекст для работы с web сервисами.</param>
         /// <param name="consoleOutputHelper">Capturing Output.</param>
-        public ServiceSteps(VariableContext variableContext, ServiceContext serviceContext, ITestOutputHelper consoleOutputHelper)
+        public ServiceSteps(VariableContext variableContext, ServiceContext serviceContext)
         {
             this.variableContext = variableContext;
             this.serviceContext = serviceContext;
-            this.consoleOutputHelper = consoleOutputHelper;
         }
 
         /// <summary>
@@ -86,7 +83,7 @@ namespace AlfaBank.AFT.Core.Library.Service
             List<KeyValuePair<string, string>> queryCollection;
             (url, headersCollection, queryCollection) = this.InitializationRestService(url, parameters);
 
-            this.consoleOutputHelper.WriteLine($"url (сериализован): {url}");
+            Console.WriteLine($"url (сериализован): {url}");
             using (var rest = new Rest(url, webServiceMethod: method))
             {
                 rest.Headers = headersCollection;
@@ -129,7 +126,7 @@ namespace AlfaBank.AFT.Core.Library.Service
             List<KeyValuePair<string, string>> queryCollection;
             (url, headersCollection, queryCollection) = this.InitializationRestService(url, parameters);
 
-            this.consoleOutputHelper.WriteLine($"url (сериализован): {url}");
+            Console.WriteLine($"url (сериализован): {url}");
             using (var rest = new Rest(url, webServiceMethod: method))
             {
                 rest.Headers = headersCollection;
@@ -176,8 +173,8 @@ namespace AlfaBank.AFT.Core.Library.Service
 
             serviceBody = this.TransformBody(headersCollection, serviceBody);
 
-            this.consoleOutputHelper.WriteLine($"url (сериализован): {url}");
-            this.consoleOutputHelper.WriteLine($"Запрос (сериализован): {Environment.NewLine}{serviceBody}");
+            Console.WriteLine($"url (сериализован): {url}");
+            Console.WriteLine($"Запрос (сериализован): {Environment.NewLine}{serviceBody}");
             using (var rest = new Rest(url, webServiceMethod: method))
             {
                 rest.Headers = headersCollection;
@@ -225,8 +222,8 @@ namespace AlfaBank.AFT.Core.Library.Service
 
             serviceBody = this.TransformBody(headersCollection, serviceBody);
 
-            this.consoleOutputHelper.WriteLine($"url (сериализован): {url}");
-            this.consoleOutputHelper.WriteLine($"Запрос (сериализован): {Environment.NewLine}{serviceBody}");
+            Console.WriteLine($"url (сериализован): {url}");
+            Console.WriteLine($"Запрос (сериализован): {Environment.NewLine}{serviceBody}");
             using (var rest = new Rest(url, webServiceMethod: method))
             {
                 rest.Headers = headersCollection;
@@ -268,8 +265,8 @@ namespace AlfaBank.AFT.Core.Library.Service
             method = this.variableContext.ReplaceVariablesInXmlBody(method, (val) => System.Security.SecurityElement.Escape(Reflection.ConvertObject<string>(val)));
             xml = this.variableContext.ReplaceVariablesInXmlBody(xml, (val) => System.Security.SecurityElement.Escape(Reflection.ConvertObject<string>(val)));
 
-            this.consoleOutputHelper.WriteLine($"url (сериализован): {url}");
-            this.consoleOutputHelper.WriteLine($"Запрос (сериализован): {Environment.NewLine}{xml}");
+            Console.WriteLine($"url (сериализован): {url}");
+            Console.WriteLine($"Запрос (сериализован): {Environment.NewLine}{xml}");
             using (var soap = new Soap(url, method))
             {
                 var (statusCode, errors) = soap.CallWebService(xml);
@@ -334,7 +331,7 @@ namespace AlfaBank.AFT.Core.Library.Service
             body.Should()
                 .NotBeNull($"Результат вызова сервиса с названием '{service}' не существует");
 
-            this.consoleOutputHelper.WriteLine($"Результат (сериализован): {Environment.NewLine}{body}");
+            Console.WriteLine($"Результат (сериализован): {Environment.NewLine}{body}");
             this.variableContext.SetVariable(varName, body.GetType(), body);
         }
 
@@ -360,7 +357,7 @@ namespace AlfaBank.AFT.Core.Library.Service
             body.Should()
                 .NotBeNull($"Результат вызова сервиса с названием '{service}' не существует");
 
-            this.consoleOutputHelper.WriteLine($"Результат (сериализован): {Environment.NewLine}{body.ToString()}");
+            Console.WriteLine($"Результат (сериализован): {Environment.NewLine}{body.ToString()}");
             this.variableContext.SetVariable(varName, body.GetType(), body);
         }
 
@@ -386,7 +383,7 @@ namespace AlfaBank.AFT.Core.Library.Service
             body.Should()
                 .NotBeNull($"Результат вызова сервиса с названием '{service}' не существует");
 
-            this.consoleOutputHelper.WriteLine($"Результат (сериализован): {Environment.NewLine}{body}");
+            Console.WriteLine($"Результат (сериализован): {Environment.NewLine}{body}");
             this.variableContext.SetVariable(varName, body.GetType(), body);
         }
 
