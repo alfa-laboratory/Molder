@@ -1,7 +1,7 @@
 ﻿using System;
 using OpenQA.Selenium;
 
-namespace AlfaBank.AFT.Core.Model.Web.Support
+namespace AlfaBank.AFT.Core.Supports
 {
     public class CommandSupport
     {
@@ -28,13 +28,13 @@ namespace AlfaBank.AFT.Core.Model.Web.Support
         public object SendCommand<TResult>(Func<TResult> webSupport)
         {
             var attempts = 0;
-            while(attempts < retry)
+            while (attempts < retry)
             {
                 try
                 {
                     return webSupport();
                 }
-                catch(StaleElementReferenceException)
+                catch (StaleElementReferenceException)
                 {
                     attempts++;
                 }

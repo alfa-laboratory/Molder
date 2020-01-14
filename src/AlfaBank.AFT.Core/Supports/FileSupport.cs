@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace AlfaBank.AFT.Core.Model.Common.Support
+namespace AlfaBank.AFT.Core.Supports
 {
     public class FileSupport
     {

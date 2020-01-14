@@ -1,4 +1,4 @@
-﻿namespace AlfaBank.AFT.Core.Infrastructure.Web
+﻿namespace AlfaBank.AFT.Core.Infrastructures.Web
 {
     /// <summary>
     /// Используемые web подключения.
