@@ -56,7 +56,8 @@ namespace AlfaBank.AFT.Core.Library.Web
 
                 foreach (var value in row)
                 {
-                    dataRow[value.Key] = value.Value;
+                    
+                    dataRow[value.Key] = this.variableContext.ReplaceVariablesInXmlBody(value.Value);
                 }
 
                 dataTable.Rows.Add(dataRow);
@@ -147,11 +148,10 @@ namespace AlfaBank.AFT.Core.Library.Web
 
             var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var text = this.commandSupport.SendCommand(() => element.GetText());
-            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{name}\" пустой или не существует");
+            var isText = this.commandSupport.SendCommand(() => element.IsTextContains(expected));
 
-            text.ToString().Contains(expected).Should()
-                .BeTrue($"Текст у элемента \"{name}\":\"{text}\" не содержит \"{expected}\"");
+            ((bool)isText).Should()
+                .BeTrue($"Текст у элемента \"{name}\":\"{element.GetText()}\" не содержит \"{expected}\"");
         }
 
         [Then(@"на веб-странице текст элемента \""(.+)\"" содержит значение из переменной \""(.+)\""")]
@@ -162,11 +162,10 @@ namespace AlfaBank.AFT.Core.Library.Web
 
             var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var text = this.commandSupport.SendCommand(() => element.GetText());
-            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{name}\" пустой или не существует");
+            var isText = this.commandSupport.SendCommand(() => element.IsTextContains(varValue));
 
-            text.ToString().Contains(varValue).Should()
-                .BeTrue($"Текст у элемента \"{name}\":\"{text}\" не содержит значение переменной \"{varName}\":\"{varValue}\"");
+            ((bool)isText).Should()
+              .BeTrue($"Текст у элемента \"{name}\":\"{element.GetText()}\" не содержит значение переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"на веб-странице значение элемента \""(.+)\"" не содержит значение \""(.+)\""")]
@@ -205,11 +204,10 @@ namespace AlfaBank.AFT.Core.Library.Web
 
             var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var text = this.commandSupport.SendCommand(() => element.GetText());
-            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{name}\" пустой или не существует");
+            var isText = this.commandSupport.SendCommand(() => element.IsTextContains(expected));
 
-            text.ToString().Contains(expected).Should()
-                .BeFalse($"Текст у элемента \"{name}\":\"{text}\" не содержит \"{expected}\"");
+            ((bool)isText).Should()
+                .BeFalse($"Текст у элемента \"{name}\":\"{element.GetText()}\" не содержит \"{expected}\"");
         }
 
         [Then(@"на веб-странице текст элемента \""(.+)\"" не содержит значение из переменной \""(.+)\""")]
@@ -220,11 +218,10 @@ namespace AlfaBank.AFT.Core.Library.Web
 
             var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var text = this.commandSupport.SendCommand(() => element.GetText());
-            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{name}\" пустой или не существует");
+            var isText = this.commandSupport.SendCommand(() => element.IsTextContains(varValue));
 
-            text.ToString().Contains(varValue).Should()
-                .BeFalse($"Текст у элемента \"{name}\":\"{text}\" не содержит значение переменной \"{varName}\":\"{varValue}\"");
+            ((bool)isText).Should()
+                .BeFalse($"Текст у элемента \"{name}\":\"{element.GetText()}\" не содержит значение переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"на веб-странице значение элемента \""(.+)\"" равно значению \""(.+)\""")]
