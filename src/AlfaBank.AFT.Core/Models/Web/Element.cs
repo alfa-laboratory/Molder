@@ -66,6 +66,40 @@ namespace AlfaBank.AFT.Core.Models.Web
             }
         }
 
+        public bool IsTextContains(string text)
+        {
+            try
+            {
+                var element = GetWebElement();
+                return element.Wait(this._driverSupport.Timeout).ForText().ToContain(text);
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+            catch (NullReferenceException)
+            {
+                return false;
+            }
+        }
+
+        public bool IsTextEquals(string text)
+        {
+            try
+            {
+                var element = GetWebElement();
+                return element.Wait(this._driverSupport.Timeout).ForText().ToEqual(text);
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+            catch (NullReferenceException)
+            {
+                return false;
+            }
+        }
+
         public bool IsLoad()
         {
             try
