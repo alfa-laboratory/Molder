@@ -590,7 +590,7 @@ namespace AlfaBank.AFT.Core.Library.Web
                 }
                 catch (Exception)
                 {
-                    throw new ArgumentException($"В шаге случилась непридвиденная ошибка");
+                    throw new ArgumentException($"таблица в элементе \"{name}\" не совпадает с предложенной таблицей");
                 }
             }
             else
