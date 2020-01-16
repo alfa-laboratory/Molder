@@ -4,7 +4,7 @@
     {
         public FrameElement(string name, string xpath) : base(name, xpath) { }
 
-        public void Switch()
+        public virtual void Switch()
         {
             var element = GetWebElement();
             this._driverSupport.WebDriver.SwitchTo().Frame(element);

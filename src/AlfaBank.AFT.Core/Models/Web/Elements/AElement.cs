@@ -4,7 +4,7 @@
     {
         public AElement(string name, string xpath) : base(name, xpath) { }
 
-        public string GetHref()
+        public virtual string GetHref()
         {
             if (IsEnabled() && IsVisible())
             {

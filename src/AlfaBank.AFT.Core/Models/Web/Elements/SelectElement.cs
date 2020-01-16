@@ -4,7 +4,7 @@
     {
         public SelectElement(string name, string xpath) : base(name, xpath) { }
 
-        public void SelectByValue(string value)
+        public virtual void SelectByValue(string value)
         {
             if (IsEnabled() && IsVisible())
             {
@@ -14,7 +14,7 @@
             }
         }
 
-        public void SelectByName(string text)
+        public virtual void SelectByName(string text)
         {
             if (IsEnabled() && IsVisible())
             {

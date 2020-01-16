@@ -66,10 +66,14 @@ namespace AlfaBank.AFT.Core.Models.Web
                 {
                     GoToUrl(attr.Url);
                 }
+                else
+                {
+                    throw new ArgumentException($"Атрибут \"Url\" не задан для страницы \"{GetName()}\"");
+                }
             }
             else
             {
-                throw new ArgumentException();
+                throw new ArgumentException($"Атрибуты не заданы для страницы \"{GetName()}\"");
             }
         }
 
@@ -159,21 +163,37 @@ namespace AlfaBank.AFT.Core.Models.Web
                         .Where(f => f.GetCustomAttribute<ElementAttribute>() != null)
                         .ToArray();
 
+            CollectAllPageElement(fields);
+        }
+
+        private void CollectAllPageElement(FieldInfo[] fields)
+        {
             foreach (var field in fields)
             {
                 var attr = field.GetCustomAttribute<ElementAttribute>();
+                var instance = (IElement)Activator.CreateInstance(field.FieldType, attr.Name, attr.Locator);
+
+                var newFields = instance.GetType()
+                        .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                        .Where(f => f.GetCustomAttribute<ElementAttribute>() != null)
+                        .ToArray();
 
                 if (!_allElements.ContainsKey(attr.Name))
                 {
-                    _allElements.Add(attr.Name, (IElement)Activator.CreateInstance(field.FieldType, attr.Name, attr.Locator));
+                    _allElements.Add(attr.Name, instance);
                 }
                 if (attr.Hidden)
                 {
-                    _hiddenElements.Add((IElement)Activator.CreateInstance(field.FieldType, attr.Name, attr.Locator));
+                    _hiddenElements.Add(instance);
                 }
                 if (!attr.Optional)
                 {
-                    _primaryElemets.Add((IElement)Activator.CreateInstance(field.FieldType, attr.Name, attr.Locator));
+                    _primaryElemets.Add(instance);
+                }
+
+                if (newFields.Length > 0)
+                {
+                    CollectAllPageElement(newFields);
                 }
             }
         }

@@ -3,12 +3,15 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using Selenium.WebDriver.WaitExtensions;
 using System;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace AlfaBank.AFT.Core.Models.Web
 {
     public abstract class Element : IElement
     {
+        private readonly TimeSpan _interval = TimeSpan.FromMilliseconds(25);
+
         protected string _xpath;
         protected string _name;
         protected Driver _driverSupport;
@@ -89,6 +92,40 @@ namespace AlfaBank.AFT.Core.Models.Web
             {
                 var element = GetWebElement();
                 return element.Wait(this._driverSupport.Timeout).ForText().ToEqual(text);
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+            catch (NullReferenceException)
+            {
+                return false;
+            }
+        }
+
+        public bool IsTextChange(string text)
+        {
+            try
+            {
+                var element = GetWebElement();
+                return waitTextChange(() => element.Text, text);
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+            catch (NullReferenceException)
+            {
+                return false;
+            }
+        }
+
+        public bool IsValueChange(string text)
+        {
+            try
+            {
+                var element = GetWebElement();
+                return waitTextChange(() => element.GetAttribute("value"), text);
             }
             catch (WebDriverTimeoutException)
             {
@@ -219,9 +256,26 @@ namespace AlfaBank.AFT.Core.Models.Web
             }
         }
 
-        protected IWebElement GetWebElement()
+        protected IWebElement GetWebElement(string xpath = null)
         {
-            return _driverSupport.WebDriver.Wait(_driverSupport.Timeout).ForElement(By.XPath(_xpath)).ToExist();
+            return xpath == null
+                ? _driverSupport.WebDriver.Wait(_driverSupport.Timeout).ForElement(By.XPath(_xpath)).ToExist()
+                : _driverSupport.WebDriver.Wait(_driverSupport.Timeout).ForElement(By.XPath(xpath)).ToExist();        
+        }
+
+        private bool waitTextChange(Func<string> test, string text)
+        {
+            var stopwatch = new Stopwatch();
+
+            while (stopwatch.ElapsedMilliseconds <= _driverSupport.Timeout)
+            {
+                var str = test();
+                if (!str.Equals(text))
+                    return true;
+                System.Threading.Thread.Sleep(_interval);
+            }
+
+            return false;
         }
     }
 }

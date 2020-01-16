@@ -4,7 +4,7 @@
     {
         public InputElement(string name, string xpath) : base(name, xpath) { }
 
-        public void SetText(string text)
+        public virtual void SetText(string text)
         {
             if (IsEnabled() && IsVisible())
             {
@@ -12,7 +12,8 @@
                 element.SendKeys(text);
             }
         }
-        public void Clear()
+
+        public virtual void Clear()
         {
             if (IsEnabled() && IsVisible())
             {

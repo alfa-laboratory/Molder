@@ -131,7 +131,6 @@ namespace AlfaBank.AFT.Core.Models.Context
                 }
             }
         }
-
         public IPage GetCurrentPage()
         {
             if (_currentPage == null) throw new InvalidOperationException("Текущая страница не задана");
@@ -141,6 +140,7 @@ namespace AlfaBank.AFT.Core.Models.Context
         {
             this._driverSupport.Timeout = sec;
         }
+        public int GetTimeout() => _driverSupport.Timeout;
         public void SetSizeBrowser(int width, int height)
         {
             if (this._driverSupport.WebDriver != null)

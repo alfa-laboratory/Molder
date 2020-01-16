@@ -14,6 +14,9 @@
         bool IsTextContains(string text);
         bool IsTextEquals(string text);
 
+        bool IsTextChange(string text);
+        bool IsValueChange(string text);
+
         bool IsLoad();
         bool IsDisabled();
         bool IsEnabled();
