@@ -22,6 +22,10 @@ namespace AlfaBank.AFT.Core.Supports
                 {
                     attempts++;
                 }
+                catch (ElementClickInterceptedException)
+                {
+                    attempts++;
+                }
                 catch (AggregateException)
                 {
                     attempts++;
@@ -39,6 +43,10 @@ namespace AlfaBank.AFT.Core.Supports
                     return webSupport();
                 }
                 catch (StaleElementReferenceException)
+                {
+                    attempts++;
+                }
+                catch (ElementClickInterceptedException)
                 {
                     attempts++;
                 }
