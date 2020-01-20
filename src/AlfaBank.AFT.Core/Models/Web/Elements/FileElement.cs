@@ -6,11 +6,8 @@
 
         public virtual void SetText(string text)
         {
-            if (IsEnabled() && IsVisible())
-            {
-                var element = this.GetWebElement();
-                element.SendKeys(text);
-            }
+            var element = this.GetWebElement();
+            element.SendKeys(text);
         }
     }
 }
