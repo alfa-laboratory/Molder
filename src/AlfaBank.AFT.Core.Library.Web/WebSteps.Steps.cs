@@ -417,9 +417,9 @@ namespace AlfaBank.AFT.Core.Library.Web
             var path = fileSupport.GetValidFilepath(filename);
             path.Should().NotBeNull($"Файла \"{filename}\" не существует");
 
-            if (element is InputElement)
+            if (element is FileElement)
             {
-                this.commandSupport.SendCommand(() => ((InputElement)element).SetText(path));
+                this.commandSupport.SendCommand(() => ((FileElement)element).SetText(path));
             }
             else
             {

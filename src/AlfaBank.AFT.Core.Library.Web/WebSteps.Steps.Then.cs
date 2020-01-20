@@ -578,7 +578,10 @@ namespace AlfaBank.AFT.Core.Library.Web
                         dataRow = table.NewRow();
                         foreach (DataColumn column in table.Columns)
                         {
-                            newTable.Columns.Add(column.ColumnName);
+                            if (!newTable.Columns.Contains(column.ColumnName))
+                            {
+                                newTable.Columns.Add(column.ColumnName);
+                            }
                             dataRow[column.ColumnName] = row[column.ColumnName];
                         }
 
