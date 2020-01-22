@@ -21,6 +21,12 @@ namespace AlfaBank.AFT.Core.Models.Web
             this._name = name;
             this._xpath = xpath;
         }
+
+        public string GetName()
+        {
+            return _name;
+        }
+
         public virtual void SetDriver(Driver driver)
         {
             _driverSupport = driver;
@@ -250,7 +256,7 @@ namespace AlfaBank.AFT.Core.Models.Web
             {
                 return false;
             }
-            catch(FormatException)
+            catch (FormatException)
             {
                 return false;
             }
@@ -260,7 +266,7 @@ namespace AlfaBank.AFT.Core.Models.Web
         {
             return xpath == null
                 ? _driverSupport.WebDriver.Wait(_driverSupport.Timeout).ForElement(By.XPath(_xpath)).ToExist()
-                : _driverSupport.WebDriver.Wait(_driverSupport.Timeout).ForElement(By.XPath(xpath)).ToExist();        
+                : _driverSupport.WebDriver.Wait(_driverSupport.Timeout).ForElement(By.XPath(xpath)).ToExist();
         }
 
         private bool waitTextChange(Func<string> test, string text)

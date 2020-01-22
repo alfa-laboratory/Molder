@@ -124,10 +124,7 @@ namespace AlfaBank.AFT.Core.Models.Context
                         _currentPage.GoToPage();
                     }
 
-                    if (!_currentPage.IsAppeared())
-                    {
-                        throw new ArgumentException($"Один или несколько элементов на странице '{name}' не загрузились");
-                    }
+                    _currentPage.IsPageLoad();
                 }
             }
         }
@@ -165,7 +162,7 @@ namespace AlfaBank.AFT.Core.Models.Context
         }
         public void GoToTab(int number)
         {
-            _driverSupport.WebDriver.SwitchTo().Window(_driverSupport.WebDriver.WindowHandles[number]);
+             _driverSupport.WebDriver.SwitchTo().Window(_driverSupport.WebDriver.WindowHandles[number]);
         }
         public int GetCountTabs() => this._driverSupport.WebDriver.WindowHandles.Count();
         private Dictionary<string, Type> InitializePages()

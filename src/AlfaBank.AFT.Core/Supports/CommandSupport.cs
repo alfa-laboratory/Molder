@@ -26,6 +26,10 @@ namespace AlfaBank.AFT.Core.Supports
                 {
                     attempts++;
                 }
+                catch (ElementNotInteractableException)
+                {
+                    attempts++;
+                }
                 catch (AggregateException)
                 {
                     attempts++;
@@ -47,6 +51,10 @@ namespace AlfaBank.AFT.Core.Supports
                     attempts++;
                 }
                 catch (ElementClickInterceptedException)
+                {
+                    attempts++;
+                }
+                catch (ElementNotInteractableException)
                 {
                     attempts++;
                 }

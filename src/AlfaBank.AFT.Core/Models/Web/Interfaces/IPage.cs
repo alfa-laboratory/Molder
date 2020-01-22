@@ -47,5 +47,7 @@ namespace AlfaBank.AFT.Core.Models.Web.Interfaces
         /// </summary>
         /// <returns></returns>
         bool IsDisappeared();
+
+        void IsPageLoad();
     }
 }
