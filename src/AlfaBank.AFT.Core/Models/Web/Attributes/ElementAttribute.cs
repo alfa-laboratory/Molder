@@ -2,6 +2,7 @@
 
 namespace AlfaBank.AFT.Core.Models.Web.Attributes
 {
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public class ElementAttribute : Attribute
     {
         public string Name { get; set; }

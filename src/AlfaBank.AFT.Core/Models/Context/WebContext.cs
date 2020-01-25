@@ -85,7 +85,8 @@ namespace AlfaBank.AFT.Core.Models.Context
                     break;
                 }
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(browser), browser, null);
+                    throw new ArgumentNullException(
+                        $"Неизвестный тип драйвера \"{browser}\". Невозможно проинициализировать драйвер.");
             }
         }
         public void Stop()
@@ -100,9 +101,9 @@ namespace AlfaBank.AFT.Core.Models.Context
                 _driverSupport.WebDriver.Quit();
                 _driverSupport.WebDriver.Dispose();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Debug.WriteLine(e, "WebDriver stop error");
+                throw new SystemException("Остановить WebDriver не удалось.");
             }
 
             _driverSupport.WebDriver = null;
@@ -126,11 +127,19 @@ namespace AlfaBank.AFT.Core.Models.Context
 
                     _currentPage.IsPageLoad();
                 }
+                else
+                {
+                    throw new NullReferenceException($"Не найдена страница с названием \"{name}\". Убедитесь в наличии атрибута [Page] у классов страниц.");
+                }
+            }
+            else
+            {
+                throw new NullReferenceException($"Не найдены страницы. Убедитесь в наличии атрибута [Page] у классов страниц и подключений их к проекту с тестами.");
             }
         }
         public IPage GetCurrentPage()
         {
-            if (_currentPage == null) throw new InvalidOperationException("Текущая страница не задана");
+            if (_currentPage == null) throw new NullReferenceException("Текущая страница не задана");
             return _currentPage;
         }
         public void SetTimeout(int sec)
@@ -157,12 +166,22 @@ namespace AlfaBank.AFT.Core.Models.Context
         }
         public void Maximize()
         {
-            if (this._driverSupport.WebDriver != null)
-                this._driverSupport.WebDriver.Manage().Window.Maximize();
+            _driverSupport.WebDriver?.Manage().Window.Maximize();
         }
         public void GoToTab(int number)
         {
-             _driverSupport.WebDriver.SwitchTo().Window(_driverSupport.WebDriver.WindowHandles[number]);
+            try
+            {
+                _driverSupport.WebDriver.SwitchTo().Window(_driverSupport.WebDriver.WindowHandles[number]);
+            }
+            catch (NoSuchWindowException)
+            {
+                throw new NoSuchWindowException($"Вкладки с номером \"{number}\" не найдено.");
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw new ArgumentOutOfRangeException($"Вкладки с номером \"{number}\" не найдено.");
+            }
         }
         public int GetCountTabs() => this._driverSupport.WebDriver.WindowHandles.Count();
         private Dictionary<string, Type> InitializePages()

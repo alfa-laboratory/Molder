@@ -70,12 +70,12 @@ namespace AlfaBank.AFT.Core.Models.Web
                 {
                     throw new ArgumentException($"Атрибут \"Url\" не задан для страницы \"{GetName()}\"");
                 }
-                }
-                else
-                {
-                    throw new ArgumentException($"Атрибуты не заданы для страницы \"{GetName()}\"");
-                }
             }
+            else
+            {
+                throw new ArgumentException($"Атрибуты не заданы для страницы \"{GetName()}\"");
+            }
+        }
 
         public void Close()
         {
@@ -134,14 +134,15 @@ namespace AlfaBank.AFT.Core.Models.Web
         public void IsPageLoad()
         {
             var elements = new List<string>();
-            foreach (var element in _primaryElemets)
+
+            _primaryElemets.ForEach(element =>
             {
                 element.SetDriver(_driverSupport);
                 if (!element.IsLoad())
                 {
                     elements.Add(element.GetName());
                 }
-            }
+            });
 
             if (elements.Any())
             {
@@ -153,14 +154,15 @@ namespace AlfaBank.AFT.Core.Models.Web
         public bool IsAppeared()
         {
             var countElement = 0;
-            foreach (var element in _primaryElemets)
+
+            _primaryElemets.ForEach(element =>
             {
                 element.SetDriver(_driverSupport);
-                if (element.IsLoad())
+                if (!element.IsLoad())
                 {
                     countElement++;
                 }
-            }
+            });
 
             return countElement == _primaryElemets.Count;
         }
