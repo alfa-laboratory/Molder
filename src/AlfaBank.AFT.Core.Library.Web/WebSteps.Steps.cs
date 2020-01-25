@@ -146,7 +146,7 @@ namespace AlfaBank.AFT.Core.Library.Web
         [StepDefinition(@"ОТЛАДКА: я получаю имя текущей страницы")]
         public void GetNameCurrentPage()
         {
-            var name = this.webContext.GetCurrentPage().GetName();
+            var name = this.webContext.GetCurrentPage().Name;
             Trace.Write(name);
         }
 
@@ -154,7 +154,7 @@ namespace AlfaBank.AFT.Core.Library.Web
         public void SaveUrlActiveWebPage(string varName)
         {
             this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var url = this.webContext.GetCurrentPage().GetUrl();
+            var url = this.webContext.GetCurrentPage().Url;
             this.variableContext.SetVariable(varName, url.GetType(), url);
         }
 
@@ -162,7 +162,7 @@ namespace AlfaBank.AFT.Core.Library.Web
         public void SaveTitleActiveWebPage(string varName)
         {
             this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var title = this.webContext.GetCurrentPage().GetTitle();
+            var title = this.webContext.GetCurrentPage().Title;
             this.variableContext.SetVariable(varName, title.GetType(), title);
         }
 

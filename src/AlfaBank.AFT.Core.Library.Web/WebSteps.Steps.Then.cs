@@ -411,8 +411,8 @@ namespace AlfaBank.AFT.Core.Library.Web
         [Then(@"адрес активной веб-страницы содержит значение \""(.+)\""")]
         public void WebPageUrlContainsExpected(string url)
         {
-            this.webContext.GetCurrentPage().GetUrl().Contains(url).Should()
-                .BeTrue($"адрес активной веб страницы \"{this.webContext.GetCurrentPage().GetName()}\":\"{this.webContext.GetCurrentPage().GetUrl()}\" не содержит \"{url}\"");
+            this.webContext.GetCurrentPage().Url.Contains(url).Should()
+                .BeTrue($"адрес активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Url}\" не содержит \"{url}\"");
         }
 
         [Then(@"адрес активной веб-страницы содержит значение переменной \""(.+)\""")]
@@ -421,15 +421,15 @@ namespace AlfaBank.AFT.Core.Library.Web
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            this.webContext.GetCurrentPage().GetUrl().Contains(varValue).Should()
-                .BeTrue($"адрес активной веб страницы \"{this.webContext.GetCurrentPage().GetName()}\":\"{this.webContext.GetCurrentPage().GetUrl()}\" не содержит значение переменной \"{varName}\":\"{varValue}\"");
+            this.webContext.GetCurrentPage().Url.Contains(varValue).Should()
+                .BeTrue($"адрес активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Url}\" не содержит значение переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"адрес активной веб-страницы не содержит значение \""(.+)\""")]
         public void WebPageUrlNotContainsExpected(string url)
         {
-            this.webContext.GetCurrentPage().GetUrl().Contains(url).Should()
-                .BeFalse($"адрес активной веб страницы \"{this.webContext.GetCurrentPage().GetName()}\":\"{this.webContext.GetCurrentPage().GetUrl()}\" содержит \"{url}\"");
+            this.webContext.GetCurrentPage().Url.Contains(url).Should()
+                .BeFalse($"адрес активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Url}\" содержит \"{url}\"");
         }
 
         [Then(@"адрес активной веб-страницы не содержит значение переменной \""(.+)\""")]
@@ -438,15 +438,15 @@ namespace AlfaBank.AFT.Core.Library.Web
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            this.webContext.GetCurrentPage().GetUrl().Contains(varValue).Should()
-                .BeFalse($"адрес активной веб страницы \"{this.webContext.GetCurrentPage().GetName()}\":\"{this.webContext.GetCurrentPage().GetUrl()}\" содержит значение переменной \"{varName}\":\"{varValue}\"");
+            this.webContext.GetCurrentPage().Url.Contains(varValue).Should()
+                .BeFalse($"адрес активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Url}\" содержит значение переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"адрес активной веб-страницы равен значению \""(.+)\""")]
         public void WebPageUrlEqualExpected(string expected)
         {
-            this.webContext.GetCurrentPage().GetUrl().Should()
-                .Be(expected, $"адрес активной веб страницы \"{this.webContext.GetCurrentPage().GetName()}\":\"{this.webContext.GetCurrentPage().GetUrl()}\" не равен \"{expected}\"");
+            this.webContext.GetCurrentPage().Url.Should()
+                .Be(expected, $"адрес активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Url}\" не равен \"{expected}\"");
         }
 
         [Then(@"адрес активной веб-страницы равен значению переменной \""(.+)\""")]
@@ -455,15 +455,15 @@ namespace AlfaBank.AFT.Core.Library.Web
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            this.webContext.GetCurrentPage().GetUrl().Should()
-                .Be(varValue, $"адрес активной веб страницы \"{this.webContext.GetCurrentPage().GetName()}\":\"{this.webContext.GetCurrentPage().GetUrl()}\" не равен значению переменной \"{varName}\":\"{varValue}\"");
+            this.webContext.GetCurrentPage().Url.Should()
+                .Be(varValue, $"адрес активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Url}\" не равен значению переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"адрес активной веб-страницы не равен значению \""(.+)\""")]
         public void WebPageUrlNotEqualExpected(string expected)
         {
-            this.webContext.GetCurrentPage().GetUrl().Should()
-                .NotBe(expected, $"адрес активной веб страницы \"{this.webContext.GetCurrentPage().GetName()}\":\"{this.webContext.GetCurrentPage().GetUrl()}\" равен \"{expected}\"");
+            this.webContext.GetCurrentPage().Url.Should()
+                .NotBe(expected, $"адрес активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Url}\" равен \"{expected}\"");
         }
 
         [Then(@"адрес активной веб-страницы не равен значению переменной \""(.+)\""")]
@@ -472,8 +472,8 @@ namespace AlfaBank.AFT.Core.Library.Web
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            this.webContext.GetCurrentPage().GetUrl().Should()
-                .NotBe(varValue, $"адрес активной веб страницы \"{this.webContext.GetCurrentPage().GetName()}\":\"{this.webContext.GetCurrentPage().GetUrl()}\" равен значению переменной \"{varName}\":\"{varValue}\"");
+            this.webContext.GetCurrentPage().Url.Should()
+                .NotBe(varValue, $"адрес активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Url}\" равен значению переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"заголовок веб-страницы равен значению \""(.+)\""")]
@@ -481,8 +481,8 @@ namespace AlfaBank.AFT.Core.Library.Web
         {
             expected.Should().NotBeEmpty("Параметр \"title\" не задан");
 
-            this.webContext.GetCurrentPage().GetTitle().Should()
-                .Be(expected, $"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().GetName()}\":\"{this.webContext.GetCurrentPage().GetTitle()}\" не равен \"{expected}\"");
+            this.webContext.GetCurrentPage().Title.Should()
+                .Be(expected, $"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Title}\" не равен \"{expected}\"");
         }
 
         [Then(@"заголовок веб-страницы равен значению переменной \""(.+)\""")]
@@ -491,8 +491,8 @@ namespace AlfaBank.AFT.Core.Library.Web
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            this.webContext.GetCurrentPage().GetTitle().Should()
-                .Be(varValue, $"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().GetName()}\":\"{this.webContext.GetCurrentPage().GetTitle()}\" не равен значению переменной \"{varName}\":\"{varValue}\"");
+            this.webContext.GetCurrentPage().Title.Should()
+                .Be(varValue, $"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Title}\" не равен значению переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"заголовок веб-страницы не равен значению \""(.+)\""")]
@@ -500,8 +500,8 @@ namespace AlfaBank.AFT.Core.Library.Web
         {
             expected.Should().NotBeEmpty("Параметр \"title\" не задан");
 
-            this.webContext.GetCurrentPage().GetTitle().Should()
-                .NotBe(expected, $"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().GetName()}\":\"{this.webContext.GetCurrentPage().GetTitle()}\" равен \"{expected}\"");
+            this.webContext.GetCurrentPage().Title.Should()
+                .NotBe(expected, $"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Title}\" равен \"{expected}\"");
         }
 
         [Then(@"заголовок веб-страницы не равен значению переменной \""(.+)\""")]
@@ -510,8 +510,8 @@ namespace AlfaBank.AFT.Core.Library.Web
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            this.webContext.GetCurrentPage().GetTitle().Should()
-                .NotBe(varValue, $"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().GetName()}\":\"{this.webContext.GetCurrentPage().GetTitle()}\" равен значению переменной \"{varName}\":\"{varValue}\"");
+            this.webContext.GetCurrentPage().Title.Should()
+                .NotBe(varValue, $"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Title}\" равен значению переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"заголовок веб-страницы содержит значение \""(.+)\""")]
@@ -519,8 +519,8 @@ namespace AlfaBank.AFT.Core.Library.Web
         {
             title.Should().NotBeEmpty("Параметр \"title\" не задан");
 
-            this.webContext.GetCurrentPage().GetTitle().Contains(title).Should()
-                .BeTrue($"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().GetName()}\":\"{this.webContext.GetCurrentPage().GetTitle()}\" не содержит \"{title}\"");
+            this.webContext.GetCurrentPage().Title.Contains(title).Should()
+                .BeTrue($"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Title}\" не содержит \"{title}\"");
         }
 
         [Then(@"заголовок веб-страницы содержит значение переменной \""(.+)\""")]
@@ -529,8 +529,8 @@ namespace AlfaBank.AFT.Core.Library.Web
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            this.webContext.GetCurrentPage().GetTitle().Contains(varValue).Should()
-                .BeTrue($"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().GetName()}\":\"{this.webContext.GetCurrentPage().GetTitle()}\" не содержит значение переменной \"{varName}\":\"{varValue}\"");
+            this.webContext.GetCurrentPage().Title.Contains(varValue).Should()
+                .BeTrue($"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Title}\" не содержит значение переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"заголовок веб-страницы не содержит значение \""(.+)\""")]
@@ -538,8 +538,8 @@ namespace AlfaBank.AFT.Core.Library.Web
         {
             title.Should().NotBeEmpty("Параметр \"title\" не задан");
 
-            this.webContext.GetCurrentPage().GetTitle().Contains(title).Should()
-                .BeFalse($"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().GetName()}\":\"{this.webContext.GetCurrentPage().GetTitle()}\" содержит \"{title}\"");
+            this.webContext.GetCurrentPage().Title.Contains(title).Should()
+                .BeFalse($"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Title}\" содержит \"{title}\"");
         }
 
         [Then(@"заголовок веб-страницы не содержит значение переменной \""(.+)\""")]
@@ -548,15 +548,15 @@ namespace AlfaBank.AFT.Core.Library.Web
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            this.webContext.GetCurrentPage().GetTitle().Contains(varValue).Should()
-                .BeFalse($"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().GetName()}\":\"{this.webContext.GetCurrentPage().GetTitle()}\" содержит значение переменной \"{varName}\":\"{varValue}\"");
+            this.webContext.GetCurrentPage().Title.Contains(varValue).Should()
+                .BeFalse($"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Title}\" содержит значение переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"я убеждаюсь, что на веб-странице появилось диалоговое окно")]
         public void CheckAlert()
         {
             var alert = this.commandSupport.SendCommand(() => driverSupport.GetAlert());
-            alert.Should().NotBeNull($"Диалоговое окно не найдено");
+            alert.Should().NotBeNull("Диалоговое окно не найдено");
         }
 
         [Then(@"таблица \""(.+)\"" на веб-странице равна:")]
@@ -570,12 +570,11 @@ namespace AlfaBank.AFT.Core.Library.Web
 
                 try
                 {
-                    DataTable newTable = new DataTable();
+                    var newTable = new DataTable();
 
                     foreach (DataRow row in ((DataTable)webTable).Rows)
                     {
-                        DataRow dataRow = null;
-                        dataRow = table.NewRow();
+                        var dataRow = table.NewRow();
                         foreach (DataColumn column in table.Columns)
                         {
                             if (!newTable.Columns.Contains(column.ColumnName))
@@ -588,7 +587,7 @@ namespace AlfaBank.AFT.Core.Library.Web
                         newTable.Rows.Add(dataRow.ItemArray);
                     }
 
-                    DataCompare.AreTablesTheSame(newTable, table).Should()
+                    newTable.AreTablesTheSame(table).Should()
                         .BeTrue($"таблица в элементе \"{name}\" не совпадает с предложенной таблицей");
                 }
                 catch (Exception)
