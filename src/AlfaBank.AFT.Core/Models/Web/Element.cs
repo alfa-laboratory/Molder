@@ -22,10 +22,7 @@ namespace AlfaBank.AFT.Core.Models.Web
             this._xpath = xpath;
         }
 
-        public string GetName()
-        {
-            return _name;
-        }
+        public string Name => _name;
 
         public virtual void SetDriver(Driver driver)
         {

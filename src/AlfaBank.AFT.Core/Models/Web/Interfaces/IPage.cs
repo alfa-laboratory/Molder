@@ -4,6 +4,11 @@ namespace AlfaBank.AFT.Core.Models.Web.Interfaces
 {
     public interface IPage
     {
+        string Name { get; }
+        string Url { get; }
+        string AttrUrl { get; }
+        string Title { get; }
+
         /// <summary>
         /// Получение элемента по имени
         /// </summary>
@@ -22,11 +27,6 @@ namespace AlfaBank.AFT.Core.Models.Web.Interfaces
         /// </summary>
         /// <returns></returns>
         List<IElement> GetHiddenElements();
-
-        string GetName();
-        string GetUrl();
-        string GetAttrUrl();
-        string GetTitle();
 
         void Close();
         void GoToPage();

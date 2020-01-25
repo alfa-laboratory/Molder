@@ -27,12 +27,17 @@ namespace AlfaBank.AFT.Core.Models.Web
             Initialize();
         }
 
+        public string Name => this.GetType().GetCustomAttribute<PageAttribute>()?.Name;
+        public string Url => this._driverSupport.WebDriver.Url;
+        public string AttrUrl => this.GetType().GetCustomAttribute<PageAttribute>()?.Url;
+        public string Title => this._driverSupport.WebDriver.Title;
+
         public IElement GetElementByName(string name)
         {
             if (!_allElements.Any())
-                throw new ArgumentException($"Элемент \"{name}\" не инициализирован на странице \"{GetName()}\"");
+                throw new ArgumentException($"Элемент \"{name}\" не инициализирован на странице \"{Name}\"");
             if (!_allElements.ContainsKey(name))
-                throw new ArgumentException($"Элемент \"{name}\" не инициализирован на странице \"{GetName()}\"");
+                throw new ArgumentException($"Элемент \"{name}\" не инициализирован на странице \"{Name}\"");
             _allElements[name].SetDriver(_driverSupport);
             return _allElements[name];
         }
@@ -68,43 +73,18 @@ namespace AlfaBank.AFT.Core.Models.Web
                 }
                 else
                 {
-                    throw new ArgumentException($"Атрибут \"Url\" не задан для страницы \"{GetName()}\"");
+                    throw new ArgumentException($"Атрибут \"Url\" не задан для страницы \"{Name}\"");
                 }
             }
             else
             {
-                throw new ArgumentException($"Атрибуты не заданы для страницы \"{GetName()}\"");
+                throw new ArgumentException($"Атрибуты не заданы для страницы \"{Name}\"");
             }
         }
 
         public void Close()
         {
             this._driverSupport.WebDriver.Close();
-        }
-
-        public string GetName()
-        {
-            var attr = this.GetType().GetCustomAttribute<PageAttribute>();
-
-            return attr?.Name;
-        }
-
-        public string GetUrl()
-        {
-            return this._driverSupport.WebDriver.Url;
-        }
-
-        public string GetAttrUrl()
-        {
-            var attr = this.GetType()
-            .GetCustomAttribute<PageAttribute>();
-
-            return attr?.Url;
-        }
-
-        public string GetTitle()
-        {
-            return this._driverSupport.WebDriver.Title;
         }
 
         public void Refresh()
@@ -140,14 +120,14 @@ namespace AlfaBank.AFT.Core.Models.Web
                 element.SetDriver(_driverSupport);
                 if (!element.IsLoad())
                 {
-                    elements.Add(element.GetName());
+                    elements.Add(element.Name);
                 }
             });
 
             if (elements.Any())
             {
                 var aggregate = string.Join(", ", elements);
-                throw new ArgumentException($"элемент/ы \"{aggregate}\" не инициализированы на странице \"{GetName()}\"");
+                throw new ArgumentException($"элемент/ы \"{aggregate}\" не инициализированы на странице \"{Name}\"");
             }
         }
 

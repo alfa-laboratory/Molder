@@ -2,7 +2,7 @@
 {
     public interface IElement
     {
-        string GetName();
+        string Name { get; }
         void SetDriver(Driver webDriver);
 
         void MoveTo();
