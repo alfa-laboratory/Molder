@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using AlfaBank.AFT.Core.Helpers;
 using AlfaBank.AFT.Core.Infrastructures.Web;
+using AlfaBank.AFT.Core.Model.Context;
 using AlfaBank.AFT.Core.Models.Web;
 using AlfaBank.AFT.Core.Models.Web.Attributes;
 using AlfaBank.AFT.Core.Models.Web.Interfaces;
@@ -21,16 +21,19 @@ namespace AlfaBank.AFT.Core.Models.Context
     {
         private readonly Dictionary<string, Type> _allPages = null;
         private IPage _currentPage = null;
-        private readonly Driver _driverSupport;
 
-        public WebContext(Driver driverSupport)
+        private readonly Driver _driver;
+        private readonly VariableContext _context;
+
+        public WebContext(Driver driver, VariableContext context)
         {
-            this._driverSupport = driverSupport;
+            this._driver = driver;
+            this._context = context;
             _allPages = InitializePages();
         }
         public void Start(BrowserType browser, bool remote = false, DriverOptions options = null, string version = null, string url = null, PlatformType platform = PlatformType.Any)
         {
-            if (!(_driverSupport.WebDriver is null))
+            if (!(_driver.WebDriver is null))
             {
                 return;
             }
@@ -52,7 +55,7 @@ namespace AlfaBank.AFT.Core.Models.Context
                         capabilities?.SetCapability("enableVNC", true);
 #pragma warning restore 618
 
-                        _driverSupport.WebDriver = new RemoteWebDriver(new Uri(url), capabilities);
+                        _driver.WebDriver = new RemoteWebDriver(new Uri(url), capabilities);
                         return;
                     }
                     default:
@@ -76,12 +79,12 @@ namespace AlfaBank.AFT.Core.Models.Context
             {
                 case BrowserType.Chrome:
                 {
-                    _driverSupport.WebDriver = options != null ? new ChromeDriver((ChromeOptions)options) : new ChromeDriver();
+                    _driver.WebDriver = options != null ? new ChromeDriver((ChromeOptions)options) : new ChromeDriver();
                     break;
                 }
                 case BrowserType.Mozila:
                 {
-                    _driverSupport.WebDriver = options != null ? new FirefoxDriver((FirefoxOptions)options) : new FirefoxDriver();
+                    _driver.WebDriver = options != null ? new FirefoxDriver((FirefoxOptions)options) : new FirefoxDriver();
                     break;
                 }
                 default:
@@ -91,26 +94,26 @@ namespace AlfaBank.AFT.Core.Models.Context
         }
         public void Stop()
         {
-            if (_driverSupport.WebDriver is null)
+            if (_driver.WebDriver is null)
             {
                 return;
             }
 
             try
             {
-                _driverSupport.WebDriver.Quit();
-                _driverSupport.WebDriver.Dispose();
+                _driver.WebDriver.Quit();
+                _driver.WebDriver.Dispose();
             }
             catch (Exception)
             {
                 throw new SystemException("Остановить WebDriver не удалось.");
             }
 
-            _driverSupport.WebDriver = null;
+            _driver.WebDriver = null;
         }
         public void Dispose()
         {
-            DisposeDriverService.FinishHim(_driverSupport.WebDriver);
+            DisposeDriverService.FinishHim(_driver.WebDriver);
         }
         public void SetCurrentPageBy(string name, bool withLoad = false)
         {
@@ -118,7 +121,7 @@ namespace AlfaBank.AFT.Core.Models.Context
             {
                 if (_allPages.ContainsKey(name))
                 {
-                    _currentPage = (IPage)Activator.CreateInstance(_allPages[name], _driverSupport);
+                    _currentPage = (IPage)Activator.CreateInstance(_allPages[name], _driver, _context);
 
                     if(withLoad)
                     {
@@ -144,35 +147,35 @@ namespace AlfaBank.AFT.Core.Models.Context
         }
         public void SetTimeout(int sec)
         {
-            this._driverSupport.Timeout = sec;
+            this._driver.Timeout = sec;
         }
-        public int GetTimeout() => _driverSupport.Timeout;
+        public int GetTimeout() => _driver.Timeout;
         public void SetSizeBrowser(int width, int height)
         {
-            if (this._driverSupport.WebDriver != null)
-                this._driverSupport.WebDriver.Manage().Window.Size = new Size(width, height);
+            if (this._driver.WebDriver != null)
+                this._driver.WebDriver.Manage().Window.Size = new Size(width, height);
         }
         public Size GetSizeBrowser()
         {
-            if (this._driverSupport.WebDriver != null)
-                return this._driverSupport.WebDriver.Manage().Window.Size;
+            if (this._driver.WebDriver != null)
+                return this._driver.WebDriver.Manage().Window.Size;
 
             return new Size(0, 0);
         }
         public void GoToUrl(string url)
         {
-            this._driverSupport.WebDriver.Navigate().GoToUrl(new Uri(url));
-            this._driverSupport.WebDriver.Wait(this._driverSupport.Timeout).ForPage().ReadyStateComplete();
+            this._driver.WebDriver.Navigate().GoToUrl(new Uri(url));
+            this._driver.WebDriver.Wait(this._driver.Timeout).ForPage().ReadyStateComplete();
         }
         public void Maximize()
         {
-            _driverSupport.WebDriver?.Manage().Window.Maximize();
+            _driver.WebDriver?.Manage().Window.Maximize();
         }
         public void GoToTab(int number)
         {
             try
             {
-                _driverSupport.WebDriver.SwitchTo().Window(_driverSupport.WebDriver.WindowHandles[number]);
+                _driver.WebDriver.SwitchTo().Window(_driver.WebDriver.WindowHandles[number]);
             }
             catch (NoSuchWindowException)
             {
@@ -183,7 +186,7 @@ namespace AlfaBank.AFT.Core.Models.Context
                 throw new ArgumentOutOfRangeException($"Вкладки с номером \"{number}\" не найдено.");
             }
         }
-        public int GetCountTabs() => this._driverSupport.WebDriver.WindowHandles.Count();
+        public int GetCountTabs() => this._driver.WebDriver.WindowHandles.Count();
         private Dictionary<string, Type> InitializePages()
         {
             var projects = AppDomain.CurrentDomain.GetAssemblies();

@@ -1,4 +1,5 @@
-﻿using AlfaBank.AFT.Core.Models.Web.Attributes;
+﻿using AlfaBank.AFT.Core.Model.Context;
+using AlfaBank.AFT.Core.Models.Web.Attributes;
 using AlfaBank.AFT.Core.Models.Web.Interfaces;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
@@ -16,21 +17,23 @@ namespace AlfaBank.AFT.Core.Models.Web
         private readonly List<IElement> _hiddenElements;
         private readonly List<IElement> _primaryElemets;
 
-        private readonly Driver _driverSupport;
+        private readonly Driver _driver;
+        private readonly VariableContext _context;
 
-        public Page(Driver driverSupport)
+        public Page(Driver driver, VariableContext context)
         {
-            _driverSupport = driverSupport;
+            _driver = driver;
+            _context = context;
             _allElements = new Dictionary<string, IElement>();
             _hiddenElements = new List<IElement>();
             _primaryElemets = new List<IElement>();
-            Initialize();
+            InitializeElements();
         }
 
         public string Name => this.GetType().GetCustomAttribute<PageAttribute>()?.Name;
-        public string Url => this._driverSupport.WebDriver.Url;
-        public string AttrUrl => this.GetType().GetCustomAttribute<PageAttribute>()?.Url;
-        public string Title => this._driverSupport.WebDriver.Title;
+        public string Url => this._driver.WebDriver.Url;
+        public string AttrUrl => _context.ReplaceVariablesInXmlBody(this.GetType().GetCustomAttribute<PageAttribute>()?.Url);
+        public string Title => this._driver.WebDriver.Title;
 
         public IElement GetElementByName(string name)
         {
@@ -38,7 +41,7 @@ namespace AlfaBank.AFT.Core.Models.Web
                 throw new ArgumentException($"Элемент \"{name}\" не инициализирован на странице \"{Name}\"");
             if (!_allElements.ContainsKey(name))
                 throw new ArgumentException($"Элемент \"{name}\" не инициализирован на странице \"{Name}\"");
-            _allElements[name].SetDriver(_driverSupport);
+            _allElements[name].SetDriver(_driver);
             return _allElements[name];
         }
 
@@ -62,51 +65,41 @@ namespace AlfaBank.AFT.Core.Models.Web
 
         public void GoToPage()
         {
-            var attr = this.GetType()
-                        .GetCustomAttribute<PageAttribute>();
-
-            if (attr != null)
+            try
             {
-                if (attr.Url != null)
-                {
-                    GoToUrl(attr.Url);
-                }
-                else
-                {
-                    throw new ArgumentException($"Атрибут \"Url\" не задан для страницы \"{Name}\"");
-                }
+                GoToUrl(AttrUrl);
             }
-            else
+            catch (UriFormatException)
             {
-                throw new ArgumentException($"Атрибуты не заданы для страницы \"{Name}\"");
+                throw new UriFormatException($"Url страницы \"{Name}\" пустой или содержит ошибки: url => \"{AttrUrl}\"");
             }
         }
 
         public void Close()
         {
-            this._driverSupport.WebDriver.Close();
+            this._driver.WebDriver.Close();
         }
 
         public void Refresh()
         {
-            this._driverSupport.WebDriver.Navigate().Refresh();
+            this._driver.WebDriver.Navigate().Refresh();
         }
 
         public void Maximize()
         {
-            this._driverSupport.WebDriver.Manage().Window.Maximize();
+            this._driver.WebDriver.Manage().Window.Maximize();
         }
 
         public void PageTop()
         {
-            var action = new Actions(this._driverSupport.WebDriver);
+            var action = new Actions(this._driver.WebDriver);
             action.SendKeys(Keys.Control).SendKeys(Keys.Home).Build().Perform();
             action.KeyUp(Keys.Control).Perform();
         }
 
         public void PageDown()
         {
-            var action = new Actions(this._driverSupport.WebDriver);
+            var action = new Actions(this._driver.WebDriver);
             action.SendKeys(Keys.Control).SendKeys(Keys.End).Build().Perform();
             action.KeyUp(Keys.Control).Perform();
         }
@@ -117,7 +110,7 @@ namespace AlfaBank.AFT.Core.Models.Web
 
             _primaryElemets.ForEach(element =>
             {
-                element.SetDriver(_driverSupport);
+                element.SetDriver(_driver);
                 if (!element.IsLoad())
                 {
                     elements.Add(element.Name);
@@ -137,7 +130,7 @@ namespace AlfaBank.AFT.Core.Models.Web
 
             _primaryElemets.ForEach(element =>
             {
-                element.SetDriver(_driverSupport);
+                element.SetDriver(_driver);
                 if (!element.IsLoad())
                 {
                     countElement++;
@@ -152,7 +145,7 @@ namespace AlfaBank.AFT.Core.Models.Web
             throw new NotImplementedException();
         }
 
-        private void Initialize()
+        private void InitializeElements()
         {
             var fields = this.GetType()
                         .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
@@ -167,7 +160,8 @@ namespace AlfaBank.AFT.Core.Models.Web
             foreach (var field in fields)
             {
                 var attr = field.GetCustomAttribute<ElementAttribute>();
-                var instance = (IElement)Activator.CreateInstance(field.FieldType, attr.Name, attr.Locator);
+                var locator = _context.ReplaceVariablesInXmlBody(attr.Locator);
+                var instance = (IElement)Activator.CreateInstance(field.FieldType, attr.Name, locator);
 
                 var newFields = instance.GetType()
                         .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
@@ -196,8 +190,8 @@ namespace AlfaBank.AFT.Core.Models.Web
 
         private void GoToUrl(string url)
         {
-            _driverSupport.WebDriver.Navigate().GoToUrl(new Uri(url));
-            _driverSupport.WebDriver.Wait(_driverSupport.Timeout).ForPage().ReadyStateComplete();
+            _driver.WebDriver.Navigate().GoToUrl(new Uri(url));
+            _driver.WebDriver.Wait(_driver.Timeout).ForPage().ReadyStateComplete();
         }
     }
 }
