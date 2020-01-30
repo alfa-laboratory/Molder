@@ -6,7 +6,7 @@
     <AssemblyName>AlfaBank.AFT.Core.Library.Service</AssemblyName>
     <Authors>Egor Shokhin</Authors>
     <Company>AlfaBank</Company>
-    <Version>0.0.13-beta</Version>
+    <Version>0.0.14-beta</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
@@ -32,7 +32,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AlfaBank.AFT.Core" Version="0.0.32-beta" />
+    <PackageReference Include="AlfaBank.AFT.Core" Version="0.0.33-beta" />
     <PackageReference Include="FluentAssertions" Version="5.10.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="SpecFlow" Version="3.1.80" />

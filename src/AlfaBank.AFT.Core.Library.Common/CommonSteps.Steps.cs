@@ -9,6 +9,7 @@ using System.Threading;
 using AlfaBank.AFT.Core.Helpers;
 using AlfaBank.AFT.Core.Infrastructure.Common;
 using AlfaBank.AFT.Core.Model.Context;
+using AlfaBank.AFT.Core.Models.Context;
 using AlfaBank.AFT.Core.Supports;
 using FluentAssertions;
 using TechTalk.SpecFlow;
@@ -22,6 +23,7 @@ namespace AlfaBank.AFT.Core.Library.Common
     public class CommonSteps
     {
         private readonly VariableContext variableContext;
+        private readonly ConfigContext config;
         private readonly FileSupport fileSupport;
 
         /// <summary>
@@ -30,10 +32,10 @@ namespace AlfaBank.AFT.Core.Library.Common
         /// </summary>
         /// <param name="variableContext">Контекст для работы с переменными.</param>
         /// <param name="fileSupport">Контекст для работы с файлами.</param>
-        /// <param name="consoleOutputHelper">Capturing Output.</param>
-        public CommonSteps(VariableContext variableContext, FileSupport fileSupport)
+        public CommonSteps(VariableContext variableContext, FileSupport fileSupport, ConfigContext config)
         {
             this.variableContext = variableContext;
+            this.config = config;
             this.fileSupport = fileSupport;
         }
 

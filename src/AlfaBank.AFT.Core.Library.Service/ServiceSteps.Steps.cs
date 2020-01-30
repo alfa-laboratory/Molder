@@ -13,6 +13,7 @@ using AlfaBank.AFT.Core.Helpers;
 using AlfaBank.AFT.Core.Infrastructure.Service;
 using AlfaBank.AFT.Core.Model.Context;
 using AlfaBank.AFT.Core.Model.Service;
+using AlfaBank.AFT.Core.Models.Context;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
@@ -26,6 +27,7 @@ namespace AlfaBank.AFT.Core.Library.Service
     public class ServiceSteps
     {
         private readonly VariableContext variableContext;
+        private readonly ConfigContext config;
         private readonly ServiceContext serviceContext;
 
         /// <summary>
@@ -34,10 +36,10 @@ namespace AlfaBank.AFT.Core.Library.Service
         /// </summary>
         /// <param name="variableContext">Контекст для работы с переменными.</param>
         /// <param name="serviceContext">Контекст для работы с web сервисами.</param>
-        /// <param name="consoleOutputHelper">Capturing Output.</param>
-        public ServiceSteps(VariableContext variableContext, ServiceContext serviceContext)
+        public ServiceSteps(VariableContext variableContext, ServiceContext serviceContext, ConfigContext config)
         {
             this.variableContext = variableContext;
+            this.config = config;
             this.serviceContext = serviceContext;
         }
 

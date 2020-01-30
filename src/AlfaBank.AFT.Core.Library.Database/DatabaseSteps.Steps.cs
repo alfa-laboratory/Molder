@@ -13,6 +13,7 @@ using AlfaBank.AFT.Core.Data.DataBase.DbQueryParameters;
 using AlfaBank.AFT.Core.Exceptions;
 using AlfaBank.AFT.Core.Helpers;
 using AlfaBank.AFT.Core.Model.Context;
+using AlfaBank.AFT.Core.Models.Context;
 using FluentAssertions;
 using MongoDB.Bson;
 using Newtonsoft.Json.Linq;
@@ -29,6 +30,7 @@ namespace AlfaBank.AFT.Core.Library.Database
     {
         private readonly DatabaseContext databaseContext;
         private readonly VariableContext variableContext;
+        private readonly ConfigContext config;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DatabaseSteps"/> class.
@@ -36,9 +38,10 @@ namespace AlfaBank.AFT.Core.Library.Database
         /// </summary>
         /// <param name="databaseContext">Контекст для работы с базой данных.</param>
         /// <param name="variableContext">Контекст для работы с переменными.</param>
-        public DatabaseSteps(DatabaseContext databaseContext, VariableContext variableContext)
+        public DatabaseSteps(DatabaseContext databaseContext, VariableContext variableContext, ConfigContext config)
         {
             this.databaseContext = databaseContext;
+            this.config = config;
             this.variableContext = variableContext;
         }
 

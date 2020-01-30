@@ -24,6 +24,7 @@ namespace AlfaBank.AFT.Core.Library.Web
         private readonly WebContext webContext;
         private readonly CommandSupport commandSupport;
         private readonly DriverSupport driverSupport;
+        private readonly ConfigContext config;
         private readonly FileSupport fileSupport;
 
         /// <summary>
@@ -37,12 +38,13 @@ namespace AlfaBank.AFT.Core.Library.Web
         /// <param name="commandSupport">Контекст для дополнительной проверки команд.</param>
         public WebSteps(WebContext webContext,
                             CommandSupport commandSupport, DriverSupport driverSupport, FileSupport fileSupport,
-                            VariableContext variableContext)
+                            VariableContext variableContext, ConfigContext config)
         {
             this.webContext = webContext;
             this.commandSupport = commandSupport;
             this.driverSupport = driverSupport;
             this.fileSupport = fileSupport;
+            this.config = config;
             this.variableContext = variableContext;
         }
 

@@ -4,7 +4,7 @@
     <IsPackable>true</IsPackable>
     <TargetFramework>netstandard2.0</TargetFramework>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput)</TargetsForTfmSpecificBuildOutput>
-    <Version>0.0.22-beta</Version>
+    <Version>0.0.23-beta</Version>
     <Authors>Egor Shokhin</Authors>
     <Company>AlfaBank</Company>
     <Description>Библиотека с  шагами работы с WebUI</Description>
@@ -23,7 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AlfaBank.AFT.Core" Version="0.0.32-beta" />
+    <PackageReference Include="AlfaBank.AFT.Core" Version="0.0.33-beta" />
     <PackageReference Include="FluentAssertions" Version="5.10.0" />
     <PackageReference Include="SpecFlow" Version="3.1.80" />
   </ItemGroup>

@@ -19,6 +19,7 @@ namespace AlfaBank.AFT.Core.Library.Web
         private readonly WebContext webContext;
         private readonly VariableContext variableContext;
         private readonly CommandSupport commandSupport;
+        private readonly ConfigContext config;
         private readonly DriverSupport driverSupport;
 
         /// <summary>
@@ -29,11 +30,13 @@ namespace AlfaBank.AFT.Core.Library.Web
         /// <param name="variableContext">Контекст для работы с переменными.</param>
         /// <param name="commandSupport">Контекст для обработки команд.</param>
         /// <param name="driverSupport"></param>
-        public WebSteps_Then(WebContext webContext, VariableContext variableContext, CommandSupport commandSupport, DriverSupport driverSupport)
+        public WebSteps_Then(WebContext webContext, VariableContext variableContext, CommandSupport commandSupport, 
+            DriverSupport driverSupport, ConfigContext config)
         {
             this.webContext = webContext;
             this.commandSupport = commandSupport;
             this.driverSupport = driverSupport;
+            this.config = config;
             this.variableContext = variableContext;
         }
 
