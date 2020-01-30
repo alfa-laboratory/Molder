@@ -22,6 +22,8 @@ namespace AlfaBank.AFT.Core.Models.Context
             this.variableContext = variableContext;
             this.featureContext = featureContext;
             this.scenarioContext = scenarioContext;
+
+            Setup();
         }
 
         public void Setup()
