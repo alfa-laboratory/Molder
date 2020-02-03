@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using AlfaBank.AFT.Core.Infrastructures.Reports;
 using AlfaBank.AFT.Core.Model.Context;
 using AlfaBank.AFT.Core.Supports;
 using TechTalk.SpecFlow;
@@ -40,6 +42,21 @@ namespace AlfaBank.AFT.Core.Models.Context
                         foreach (var param in parameter.Params)
                         {
                             variableContext.SetVariable(param.Key, param.Value.GetType(), param.Value);
+                        }
+                    }
+                });
+
+                configSupport.Config.Reports.ToList().ForEach(report =>
+                {
+                    foreach(var rp in Enum.GetNames(typeof(ReportType)))
+                    {
+                        if (rp.ToString().Equals(report))
+                        {
+                            variableContext.SetVariable(rp.ToString(), typeof(bool), true);
+                        }
+                        else
+                        {
+                            variableContext.SetVariable(rp.ToString(), typeof(bool), false);
                         }
                     }
                 });

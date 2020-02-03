@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using AlfaBank.AFT.Core.Helpers;
+using AlfaBank.AFT.Core.Infrastructures.Reports;
 using AlfaBank.AFT.Core.Infrastructures.Web;
 using AlfaBank.AFT.Core.Model.Context;
 using AlfaBank.AFT.Core.Models.Web;
@@ -20,10 +22,25 @@ namespace AlfaBank.AFT.Core.Models.Context
     public class WebContext
     {
         private readonly Dictionary<string, Type> _allPages = null;
-        private IPage _currentPage = null;
-
+        private ThreadLocal<IPage> _currentPage { get; set; } = new ThreadLocal<IPage>();
         private readonly Driver _driver;
         private readonly VariableContext _context;
+
+        public IPage CurrentPage
+        {
+            get
+            {
+                if (!_currentPage.IsValueCreated)
+                {
+                    throw new NullReferenceException(
+                        "Текущая страница не инициализирована");
+                }
+
+                return _currentPage.Value;
+            }
+            set { _currentPage.Value = value; }
+        }
+        public bool withReport = false;
 
         public WebContext(Driver driver, VariableContext context)
         {
@@ -31,12 +48,14 @@ namespace AlfaBank.AFT.Core.Models.Context
             this._context = context;
             _allPages = InitializePages();
         }
-        public void Start(BrowserType browser, bool remote = false, DriverOptions options = null, string version = null, string url = null, PlatformType platform = PlatformType.Any)
+        public void Start(BrowserType browser, bool remote = false, bool withReport = false, DriverOptions options = null, string version = null, string url = null, PlatformType platform = PlatformType.Any)
         {
             if (!(_driver.WebDriver is null))
             {
                 return;
             }
+
+            this.withReport = (bool)_context.GetVariableValue(ReportType.ReportPortal.ToString());
 
             if (remote)
             {
@@ -59,7 +78,8 @@ namespace AlfaBank.AFT.Core.Models.Context
                         return;
                     }
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(browser), browser, null);
+                        throw new ArgumentNullException(
+                            $"Неизвестный тип драйвера \"{browser}\". Невозможно проинициализировать драйвер.");
                 }
             }
 
@@ -69,24 +89,6 @@ namespace AlfaBank.AFT.Core.Models.Context
                 case BrowserType.Mozila:
                     Start(browser, options);
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(browser), browser, null);
-            }
-        }
-        public void Start(BrowserType browser, DriverOptions options = null)
-        {
-            switch (browser)
-            {
-                case BrowserType.Chrome:
-                {
-                    _driver.WebDriver = options != null ? new ChromeDriver((ChromeOptions)options) : new ChromeDriver();
-                    break;
-                }
-                case BrowserType.Mozila:
-                {
-                    _driver.WebDriver = options != null ? new FirefoxDriver((FirefoxOptions)options) : new FirefoxDriver();
-                    break;
-                }
                 default:
                     throw new ArgumentNullException(
                         $"Неизвестный тип драйвера \"{browser}\". Невозможно проинициализировать драйвер.");
@@ -120,14 +122,14 @@ namespace AlfaBank.AFT.Core.Models.Context
             {
                 if (_allPages.ContainsKey(name))
                 {
-                    _currentPage = (IPage)Activator.CreateInstance(_allPages[name], _driver, _context);
+                    CurrentPage = (IPage)Activator.CreateInstance(_allPages[name], _driver, _context);
 
                     if(withLoad)
                     {
-                        _currentPage.GoToPage();
+                        CurrentPage.GoToPage();
                     }
 
-                    _currentPage.IsPageLoad();
+                    CurrentPage.IsPageLoad();
                 }
                 else
                 {
@@ -142,7 +144,7 @@ namespace AlfaBank.AFT.Core.Models.Context
         public IPage GetCurrentPage()
         {
             if (_currentPage == null) throw new NullReferenceException("Текущая страница не задана");
-            return _currentPage;
+            return CurrentPage;
         }
         public void SetTimeout(int sec)
         {
@@ -203,6 +205,25 @@ namespace AlfaBank.AFT.Core.Models.Context
             }
 
             return allClasses;
+        }
+        private void Start(BrowserType browser, DriverOptions options = null)
+        {
+            switch (browser)
+            {
+                case BrowserType.Chrome:
+                {
+                    _driver.WebDriver = options != null ? new ChromeDriver((ChromeOptions)options) : new ChromeDriver();
+                    break;
+                }
+                case BrowserType.Mozila:
+                {
+                    _driver.WebDriver = options != null ? new FirefoxDriver((FirefoxOptions)options) : new FirefoxDriver();
+                    break;
+                }
+                default:
+                    throw new ArgumentNullException(
+                        $"Неизвестный тип драйвера \"{browser}\". Невозможно проинициализировать драйвер.");
+            }
         }
     }
 }

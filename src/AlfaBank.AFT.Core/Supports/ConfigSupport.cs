@@ -56,7 +56,7 @@ namespace AlfaBank.AFT.Core.Supports
             }
             else
             {
-                Trace.WriteLine($"Конфигурационный файл не задан. Проверьте установку переменной среды \"{environmentConfig}\" или свойство файла \"Copy To Output Directory\".");
+                Console.WriteLine($"Конфигурационный файл не задан. Проверьте установку переменной среды \"{environmentConfig}\" или свойство файла \"Copy To Output Directory\".");
             }
         }
 

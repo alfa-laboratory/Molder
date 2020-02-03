@@ -8,11 +8,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 
 namespace AlfaBank.AFT.Core.Models.Web
 {
     public class Page : IPage
     {
+        private ThreadLocal<IElement> _webElement { get; set; } = new ThreadLocal<IElement>();
+        public IElement WebElement
+        {
+            get
+            {
+                if (!_webElement.IsValueCreated)
+                {
+                    throw new NullReferenceException(
+                        "Элемент не создан");
+                }
+
+                return _webElement.Value;
+            }
+            set { _webElement.Value = value; }
+        }
+
         private readonly Dictionary<string, IElement> _allElements;
         private readonly List<IElement> _hiddenElements;
         private readonly List<IElement> _primaryElemets;
@@ -161,30 +178,32 @@ namespace AlfaBank.AFT.Core.Models.Web
             {
                 var attr = field.GetCustomAttribute<ElementAttribute>();
                 var locator = _context.ReplaceVariablesInXmlBody(attr.Locator);
-                var instance = (IElement)Activator.CreateInstance(field.FieldType, attr.Name, locator);
+                WebElement = (IElement)Activator.CreateInstance(field.FieldType, attr.Name, locator);
 
-                var newFields = instance.GetType()
+                var newFields = WebElement.GetType()
                         .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                         .Where(f => f.GetCustomAttribute<ElementAttribute>() != null)
                         .ToArray();
 
                 if (!_allElements.ContainsKey(attr.Name))
                 {
-                    _allElements.Add(attr.Name, instance);
+                    _allElements.Add(attr.Name, WebElement);
                 }
                 if (attr.Hidden)
                 {
-                    _hiddenElements.Add(instance);
+                    _hiddenElements.Add(WebElement);
                 }
                 if (!attr.Optional)
                 {
-                    _primaryElemets.Add(instance);
+                    _primaryElemets.Add(WebElement);
                 }
 
                 if (newFields.Length > 0)
                 {
+                    WebElement = null;
                     CollectAllPageElement(newFields);
                 }
+                WebElement = null;
             }
         }
 

@@ -12,13 +12,12 @@ namespace AlfaBank.AFT.Core.Models.Web
         {
             get
             {
-                if (!_driver.IsValueCreated)
+                if (_driver.IsValueCreated)
                 {
-                    throw new NullReferenceException(
-                        "Драйвер не был инициализирован. Проинициализируйте драйвер перед его использованием.");
+                    return _driver.Value;
                 }
 
-                return _driver.Value;
+                return null;
             }
             set { _driver.Value = value; }
         }

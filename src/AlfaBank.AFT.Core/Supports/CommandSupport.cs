@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using OpenQA.Selenium;
 
 namespace AlfaBank.AFT.Core.Supports
@@ -15,7 +16,7 @@ namespace AlfaBank.AFT.Core.Supports
             {
                 try
                 {
-                    webSupport();
+                    Parallel.Invoke(webSupport);
                     res = true;
                 }
                 catch (StaleElementReferenceException)
