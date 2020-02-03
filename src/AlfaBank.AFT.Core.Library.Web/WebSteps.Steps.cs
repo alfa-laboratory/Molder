@@ -24,8 +24,8 @@ namespace AlfaBank.AFT.Core.Library.Web
         private readonly WebContext webContext;
         private readonly CommandSupport commandSupport;
         private readonly DriverSupport driverSupport;
-        private readonly ConfigContext config;
         private readonly FileSupport fileSupport;
+        private readonly ConfigContext config;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="webContext"/> class.
@@ -78,7 +78,7 @@ namespace AlfaBank.AFT.Core.Library.Web
         [Given(@"я инициализирую браузер \""(.+)\""")]
         public void InitWebDriver(BrowserType browser)
         {
-            this.webContext.Start(browser, null);
+            this.webContext.Start(browser);
         }
 
         [Given(@"я инициализирую браузер \""(.+)\"" в headless режиме")]
@@ -105,7 +105,7 @@ namespace AlfaBank.AFT.Core.Library.Web
                     throw new ArgumentOutOfRangeException(nameof(browser), browser, null);
             }
 
-            this.webContext.Start(browser, options);
+            this.webContext.Start(browser, options:options);
         }
 
         [StepDefinition(@"установлено разрешение окна браузера ([0-9]+) X ([0-9]+)")]

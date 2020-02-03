@@ -159,10 +159,10 @@ namespace AlfaBank.AFT.Core.Library.Database
 
             var parameters = new Dictionary<string, object>()
             {
-                { "DataSource", @params.Source },
-                { "InitialCatalog", @params.Database },
-                { "UserID", @params.Login },
-                { "Password", @params.Password }
+                { "DataSource", this.variableContext.ReplaceVariablesInXmlBody(@params.Source) },
+                { "InitialCatalog", this.variableContext.ReplaceVariablesInXmlBody(@params.Database) },
+                { "UserID", this.variableContext.ReplaceVariablesInXmlBody(@params.Login) },
+                { "Password", this.variableContext.ReplaceVariablesInXmlBody(@params.Password) }
             };
 
             var connection = new SqlServerConnectionWrapper();
@@ -189,10 +189,10 @@ namespace AlfaBank.AFT.Core.Library.Database
 
             var parameters = new Dictionary<string, object>()
                 {
-                    { "DataSource", @params.Source },
-                    { "InitialCatalog", @params.Database },
-                    { "UserID", @params.Login },
-                    { "Password", @params.Password },
+                    { "DataSource", this.variableContext.ReplaceVariablesInXmlBody(@params.Source) },
+                    { "InitialCatalog", this.variableContext.ReplaceVariablesInXmlBody(@params.Database) },
+                    { "UserID", this.variableContext.ReplaceVariablesInXmlBody(@params.Login) },
+                    { "Password", this.variableContext.ReplaceVariablesInXmlBody(@params.Password) },
                 };
 
             var connection = new MongoDBConnectionWrapper();
