@@ -12,7 +12,6 @@ using AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper;
 using AlfaBank.AFT.Core.Data.DataBase.DbQueryParameters;
 using AlfaBank.AFT.Core.Exceptions;
 using AlfaBank.AFT.Core.Helpers;
-using AlfaBank.AFT.Core.Model.Context;
 using AlfaBank.AFT.Core.Models.Context;
 using FluentAssertions;
 using MongoDB.Bson;

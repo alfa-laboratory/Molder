@@ -8,7 +8,6 @@ using System.Net;
 using System.Threading;
 using AlfaBank.AFT.Core.Helpers;
 using AlfaBank.AFT.Core.Infrastructure.Common;
-using AlfaBank.AFT.Core.Model.Context;
 using AlfaBank.AFT.Core.Models.Context;
 using AlfaBank.AFT.Core.Supports;
 using FluentAssertions;
