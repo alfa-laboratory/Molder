@@ -2,7 +2,7 @@
 using System.Collections.Specialized;
 using System.Net;
 
-namespace AlfaBank.AFT.Core.Model.Service
+namespace AlfaBank.AFT.Core.Models.Service
 {
     public class WebService
     {

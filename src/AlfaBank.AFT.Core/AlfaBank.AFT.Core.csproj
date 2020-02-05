@@ -6,7 +6,7 @@
     <AssemblyName>AlfaBank.AFT.Core</AssemblyName>
     <Authors>Egor Shokhin</Authors>
     <Company>AlfaBank</Company>
-    <Version>0.0.35-beta</Version>
+    <Version>0.0.36-beta</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression></PackageLicenseExpression>
   </PropertyGroup>
@@ -37,7 +37,7 @@
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
     <PackageReference Include="Selenium.WebDriver.WaitExtensions" Version="2.0.0" />
     <PackageReference Include="SoapFormatter" Version="1.0.11" />
-    <PackageReference Include="SpecFlow" Version="3.1.80" />
+    <PackageReference Include="SpecFlow" Version="3.1.82" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.0" />
     <PackageReference Include="System.ServiceModel.Http" Version="4.7.0" />
   </ItemGroup>

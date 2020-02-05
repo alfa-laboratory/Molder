@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace AlfaBank.AFT.Core.Model.KeyValues
+namespace AlfaBank.AFT.Core.Models.KeyValues
 {
     public class KeyValues<T> : Dictionary<string, T>
     {

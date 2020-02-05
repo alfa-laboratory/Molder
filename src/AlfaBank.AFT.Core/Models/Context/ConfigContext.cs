@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using AlfaBank.AFT.Core.Infrastructures.Reports;
-using AlfaBank.AFT.Core.Model.Context;
 using AlfaBank.AFT.Core.Supports;
 using TechTalk.SpecFlow;
 

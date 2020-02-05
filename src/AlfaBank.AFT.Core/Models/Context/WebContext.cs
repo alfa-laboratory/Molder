@@ -7,7 +7,6 @@ using System.Threading;
 using AlfaBank.AFT.Core.Helpers;
 using AlfaBank.AFT.Core.Infrastructures.Reports;
 using AlfaBank.AFT.Core.Infrastructures.Web;
-using AlfaBank.AFT.Core.Model.Context;
 using AlfaBank.AFT.Core.Models.Web;
 using AlfaBank.AFT.Core.Models.Web.Attributes;
 using AlfaBank.AFT.Core.Models.Web.Interfaces;
@@ -55,8 +54,11 @@ namespace AlfaBank.AFT.Core.Models.Context
                 return;
             }
 
-            this.withReport = (bool)_context.GetVariableValue(ReportType.ReportPortal.ToString());
-
+            if(_context.checkVariableByKey(ReportType.ReportPortal.ToString()))
+            {
+                this.withReport = (bool)_context.GetVariableValue(ReportType.ReportPortal.ToString());
+            }
+            
             if (remote)
             {
                 if ((version is null) || (url is null))

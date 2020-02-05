@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
-namespace AlfaBank.AFT.Core.Model.KeyValues
+namespace AlfaBank.AFT.Core.Models.KeyValues
 {
     public class KeyValues : KeyValues<object>
     {

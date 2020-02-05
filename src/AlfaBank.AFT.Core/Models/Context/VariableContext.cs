@@ -1,5 +1,5 @@
 ﻿using AlfaBank.AFT.Core.Helpers;
-using AlfaBank.AFT.Core.Model.KeyValues;
+using AlfaBank.AFT.Core.Models.KeyValues;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using Newtonsoft.Json.Linq;
@@ -11,7 +11,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-namespace AlfaBank.AFT.Core.Model.Context
+namespace AlfaBank.AFT.Core.Models.Context
 {
     public class VariableContext
     {
@@ -35,12 +35,14 @@ namespace AlfaBank.AFT.Core.Model.Context
 
             return varName;
         }
-
         public Variable GetVariable(string key)
         {
             return Variables.SingleOrDefault(_ => _.Key == GetVariableName(key)).Value;
         }
-
+        public bool checkVariableByKey(string key)
+        {
+            return Variables.Any(_ => _.Key == GetVariableName(key));
+        }
         public void SetVariable(string key, Type type, object value)
         {
             var varName = GetVariableName(key);

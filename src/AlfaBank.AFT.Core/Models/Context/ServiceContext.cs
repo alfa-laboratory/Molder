@@ -1,7 +1,7 @@
-﻿using AlfaBank.AFT.Core.Model.Service;
+﻿using AlfaBank.AFT.Core.Models.Service;
 using System.Collections.Generic;
 
-namespace AlfaBank.AFT.Core.Model.Context
+namespace AlfaBank.AFT.Core.Models.Context
 {
     public class ServiceContext
     {

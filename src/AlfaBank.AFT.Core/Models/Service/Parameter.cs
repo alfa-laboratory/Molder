@@ -1,7 +1,7 @@
 ﻿using AlfaBank.AFT.Core.Infrastructure.Service;
 using TechTalk.SpecFlow.Assist.Attributes;
 
-namespace AlfaBank.AFT.Core.Model.Service
+namespace AlfaBank.AFT.Core.Models.Service
 {
     public class Parameter
     {

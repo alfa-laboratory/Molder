@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AlfaBank.AFT.Core.Model
+namespace AlfaBank.AFT.Core.Models
 {
     public class Variable
     {

@@ -1,4 +1,4 @@
-﻿using AlfaBank.AFT.Core.Model.Context;
+﻿using AlfaBank.AFT.Core.Models.Context;
 using AlfaBank.AFT.Core.Models.Web.Attributes;
 using AlfaBank.AFT.Core.Models.Web.Interfaces;
 using OpenQA.Selenium;
