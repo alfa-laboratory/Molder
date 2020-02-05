@@ -5,7 +5,7 @@
 namespace AlfaBank.AFT.Core.Test.Utils
 {
     using System.Diagnostics.CodeAnalysis;
-    using AlfaBank.AFT.Core.Model.Context;
+    using AlfaBank.AFT.Core.Models.Context;
     using Xunit;
 
     /// <summary>
