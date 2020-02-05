@@ -170,6 +170,10 @@ namespace AlfaBank.AFT.Core.Models.Context
             this._driver.WebDriver.Navigate().GoToUrl(new Uri(url));
             this._driver.WebDriver.Wait(this._driver.Timeout).ForPage().ReadyStateComplete();
         }
+        public string GetUrl()
+        {
+            return this._driver.WebDriver?.Url;
+        }
         public void Maximize()
         {
             _driver.WebDriver?.Manage().Window.Maximize();
