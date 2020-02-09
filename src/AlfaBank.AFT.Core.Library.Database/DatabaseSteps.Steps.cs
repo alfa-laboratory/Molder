@@ -82,7 +82,8 @@ namespace AlfaBank.AFT.Core.Library.Database
         [Scope(Tag = "DBAccess")]
         public SqlServerConnectionParams GetDataBaseParametersFromTableSqlServer(Table dataTable)
         {
-            return dataTable.CreateInstance<SqlServerConnectionParams>();
+            var table = ReplaceTableContent(dataTable);
+            return table.CreateInstance<SqlServerConnectionParams>();
         }
 
         /// <summary>
@@ -95,7 +96,8 @@ namespace AlfaBank.AFT.Core.Library.Database
         [Scope(Tag = "mongo")]
         public MongoDBConnectionParams GetDataBaseParametersFromTableMongoDB(Table dataTable)
         {
-            return dataTable.CreateInstance<MongoDBConnectionParams>();
+            var table = ReplaceTableContent(dataTable);
+            return table.CreateInstance<MongoDBConnectionParams>();
         }
 
         /// <summary>
@@ -583,6 +585,22 @@ namespace AlfaBank.AFT.Core.Library.Database
             }
 
             return inRecords;
+        }
+
+        private Table ReplaceTableContent(Table dataTable)
+        {
+            var table = new Table(dataTable.Header.ToArray());
+            dataTable.Rows.ToList().ForEach(row =>
+            {
+                var tr = new List<string>();
+                row.Values.ToList().ForEach(elem =>
+                {
+                    tr.Add(variableContext.ReplaceVariablesInXmlBody(elem));
+                });
+                table.AddRow(tr.ToArray());
+                tr.Clear();
+            });
+            return table;
         }
     }
 }
