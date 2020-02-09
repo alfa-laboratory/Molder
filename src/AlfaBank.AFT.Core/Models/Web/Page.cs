@@ -209,7 +209,14 @@ namespace AlfaBank.AFT.Core.Models.Web
 
         private void GoToUrl(string url)
         {
-            _driver.WebDriver.Navigate().GoToUrl(new Uri(url));
+            if (Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            {
+                _driver.WebDriver.Navigate().GoToUrl(new Uri(url));
+            }
+            else
+            {
+                _driver.WebDriver.Navigate().GoToUrl(url);
+            }
             _driver.WebDriver.Wait(_driver.Timeout).ForPage().ReadyStateComplete();
         }
     }

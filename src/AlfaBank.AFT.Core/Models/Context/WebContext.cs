@@ -167,8 +167,15 @@ namespace AlfaBank.AFT.Core.Models.Context
         }
         public void GoToUrl(string url)
         {
-            this._driver.WebDriver.Navigate().GoToUrl(new Uri(url));
-            this._driver.WebDriver.Wait(this._driver.Timeout).ForPage().ReadyStateComplete();
+            if (Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            {
+                _driver.WebDriver.Navigate().GoToUrl(new Uri(url));
+            }
+            else
+            {
+                _driver.WebDriver.Navigate().GoToUrl(url);
+            }
+            _driver.WebDriver.Wait(_driver.Timeout).ForPage().ReadyStateComplete();
         }
         public string GetUrl()
         {
