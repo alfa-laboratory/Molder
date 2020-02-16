@@ -261,9 +261,16 @@ namespace AlfaBank.AFT.Core.Models.Web
 
         protected IWebElement GetWebElement(string xpath = null)
         {
-            return xpath == null
-                ? _driverSupport.WebDriver.Wait(_driverSupport.Timeout).ForElement(By.XPath(_xpath)).ToExist()
-                : _driverSupport.WebDriver.Wait(_driverSupport.Timeout).ForElement(By.XPath(xpath)).ToExist();
+            try
+            {
+                return xpath == null
+                    ? _driverSupport.WebDriver.Wait(_driverSupport.Timeout).ForElement(By.XPath(_xpath)).ToExist()
+                    : _driverSupport.WebDriver.Wait(_driverSupport.Timeout).ForElement(By.XPath(xpath)).ToExist();
+            }
+            catch (WebDriverTimeoutException ex) when (ex.InnerException is NoSuchElementException)
+            {
+                throw new NoSuchElementException($"Локатор у элемента \"{_name}\" некорректный. Проверьте корректность в \"{_xpath}\"");
+            }
         }
 
         private bool waitTextChange(Func<string> test, string text)
