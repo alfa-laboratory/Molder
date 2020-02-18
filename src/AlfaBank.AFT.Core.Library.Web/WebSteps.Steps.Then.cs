@@ -565,36 +565,27 @@ namespace AlfaBank.AFT.Core.Library.Web
         public void CompareWebTableWith(string name, DataTable table)
         {
             var element = this.webContext.GetCurrentPage().GetElementByName(name);
-
             if (element is TableElement)
             {
                 var webTable = this.commandSupport.SendCommand(() => ((TableElement)element).GetTable());
-
-                try
+                var newTable = new DataTable();
+                foreach (DataRow row in ((DataTable)webTable).Rows)
                 {
-                    var newTable = new DataTable();
-
-                    foreach (DataRow row in ((DataTable)webTable).Rows)
+                    var dataRow = table.NewRow();
+                    foreach (DataColumn column in table.Columns)
                     {
-                        var dataRow = table.NewRow();
-                        foreach (DataColumn column in table.Columns)
+                        if (!newTable.Columns.Contains(column.ColumnName))
                         {
-                            if (!newTable.Columns.Contains(column.ColumnName))
-                            {
-                                newTable.Columns.Add(column.ColumnName);
-                            }
-                            dataRow[column.ColumnName] = row[column.ColumnName];
+                            newTable.Columns.Add(column.ColumnName);
                         }
-
-                        newTable.Rows.Add(dataRow.ItemArray);
+                        dataRow[column.ColumnName] = row[column.ColumnName];
                     }
-
-                    newTable.AreTablesTheSame(table).Should()
-                        .BeTrue($"таблица в элементе \"{name}\" не совпадает с предложенной таблицей");
+                    newTable.Rows.Add(dataRow.ItemArray);
                 }
-                catch (Exception)
+                var (status, errors) = newTable.AreTablesTheSame(table);
+                if (!status)
                 {
-                    throw new ArgumentException($"таблица в элементе \"{name}\" не совпадает с предложенной таблицей");
+                    throw new ArgumentException(errors);
                 }
             }
             else
