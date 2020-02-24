@@ -12,7 +12,7 @@ namespace AlfaBank.AFT.Core.Helpers
 
         public static string GetRandomStringWithPrefix(int len, string prefix)
         {
-            return prefix != string.Empty ? prefix + GetRandomString(len + prefix.Count(), UpperChars + LowerChars + Numbers) : GetRandomString(len, UpperChars + LowerChars + Numbers);
+            return prefix != string.Empty ? prefix + GetRandomString(len - prefix.Count(), UpperChars + LowerChars + Numbers) : GetRandomString(len, UpperChars + LowerChars + Numbers);
         }
 
         public static string GetRandomString(int len)
@@ -22,7 +22,7 @@ namespace AlfaBank.AFT.Core.Helpers
 
         public static string GetRandomCharWithPrefix(int len, string prefix)
         {
-            return prefix != string.Empty ? prefix + GetRandomString(len + prefix.Count(), UpperChars + LowerChars) : GetRandomString(len, UpperChars + LowerChars);
+            return prefix != string.Empty ? prefix + GetRandomString(len - prefix.Count(), UpperChars + LowerChars) : GetRandomString(len, UpperChars + LowerChars);
         }
 
         public static string GetRandomChars(int len)
@@ -32,12 +32,12 @@ namespace AlfaBank.AFT.Core.Helpers
 
         public static string GetRandomNumberWithPrefix(int len, string prefix)
         {
-            return prefix != string.Empty ? prefix + GetRandomString(len + prefix.Count(), Numbers) : GetRandomString(len, Numbers);
+            return prefix != string.Empty ? prefix + GetRandomString(len - prefix.Count(), Numbers) : GetRandomString(len, Numbers);
         }
 
         public static string GetRandomNumbers(int len)
         {
-            return GetRandomString(len, Numbers);
+            return len > 0 ? GetRandomString(1, Numbers.Remove(0, 1)) + GetRandomString(len - 1, Numbers) : "";
         }
 
         public static string GetGuid()

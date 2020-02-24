@@ -6,7 +6,7 @@
     <AssemblyName>AlfaBank.AFT.Core.Library.Database</AssemblyName>
     <Authors>Egor Shokhin</Authors>
     <Company>AlfaBank</Company>
-    <Version>0.0.10</Version>
+    <Version>0.1.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
@@ -20,8 +20,6 @@
     <IsPackable>true</IsPackable>
     <Description>Библиотека с шагами подключения к базе данных, выполнения запросов и запуска хранимых процедур</Description>
     <PackageTags>specflow bdd aft steps database alfabank</PackageTags>
-    <AssemblyVersion>0.0.10.0</AssemblyVersion>
-    <FileVersion>0.0.10.0</FileVersion>
     <Copyright>2019 AlfaBank</Copyright>
     <PackageProjectUrl>https://github.com/alfa-laboratory/AlfaBank.AFT.Core.Library</PackageProjectUrl>
     <RepositoryUrl>https://github.com/alfa-laboratory/AlfaBank.AFT.Core.Library</RepositoryUrl>
@@ -34,10 +32,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AlfaBank.AFT.Core" Version="0.0.12" />
-    <PackageReference Include="FluentAssertions" Version="5.9.0" />
-    <PackageReference Include="SpecFlow" Version="3.0.225" />
-    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="AlfaBank.AFT.Core" Version="0.1.0" />
+    <PackageReference Include="FluentAssertions" Version="5.10.2" />
+    <PackageReference Include="SpecFlow" Version="3.1.86" />
   </ItemGroup>
 
   <ItemGroup>

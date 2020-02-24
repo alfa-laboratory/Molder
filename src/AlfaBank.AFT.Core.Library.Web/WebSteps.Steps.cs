@@ -1,21 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
+using System.Diagnostics;
 using AlfaBank.AFT.Core.Helpers;
 using AlfaBank.AFT.Core.Infrastructure.Web;
-using AlfaBank.AFT.Core.Model.Common.Support;
-using AlfaBank.AFT.Core.Model.Context;
-using AlfaBank.AFT.Core.Model.Web;
-using AlfaBank.AFT.Core.Model.Web.Support;
+using AlfaBank.AFT.Core.Infrastructures.Web;
+using AlfaBank.AFT.Core.Models.Context;
+using AlfaBank.AFT.Core.Models.Web.Elements;
+using AlfaBank.AFT.Core.Supports;
 using FluentAssertions;
-using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using TechTalk.SpecFlow;
-using TechTalk.SpecFlow.Assist;
-using Xunit.Abstractions;
 
 namespace AlfaBank.AFT.Core.Library.Web
 {
@@ -24,20 +19,12 @@ namespace AlfaBank.AFT.Core.Library.Web
     [Scope(Tag = "Web")]
     public class WebSteps
     {
-        private readonly WebContext webContext;
         private readonly VariableContext variableContext;
-        private readonly NavigationSupport navigationSupport;
-        private readonly PageObjectSupport pageObjectSupport;
-        private readonly ClickSupport clickSupport;
-        private readonly TextBoxSupport textBoxSupport;
-        private readonly MoveSupport moveSupport;
-        private readonly FrameSupport frameSupport;
-        private readonly FileSupport fileSupport;   
-        private readonly KeySupport keySupport;
+        private readonly WebContext webContext;
         private readonly CommandSupport commandSupport;
-        private readonly DragAndDropSupport dragAndDropSupport;
-
-        private readonly ITestOutputHelper consoleOutputHelper;
+        private readonly DriverSupport driverSupport;
+        private readonly FileSupport fileSupport;
+        private readonly ConfigContext config;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="webContext"/> class.
@@ -45,105 +32,79 @@ namespace AlfaBank.AFT.Core.Library.Web
         /// </summary>
         /// <param name="webContext">Контекст для работы с web driver.</param>
         /// <param name="variableContext">Контекст для работы с переменными.</param>
-        /// <param name="navigationSupport">Контекст для работы с навигацией.</param>
-        /// <param name="pageObjectSupport">Контекст для работы с page object.</param>
-        /// <param name="clickSupport">Контекст для работы с нажатиями.</param>
-        /// <param name="textBoxSupport">Контекст для работы с textBox.</param>
-        /// <param name="moveSupport">Контекст для работы с перемещениями.</param>
-        /// <param name="dragAndDropSupport">Контекст для работы с перетаскиваниями.</param>
-        /// <param name="frameSupport">Контекст для работы с фреймами.</param>
+        /// <param name="driverSupport"></param>
         /// <param name="fileSupport">Контекст для работы с файлами.</param>
-        /// <param name="keySupport">Контекст для работы с клавиатурой.</param>
         /// <param name="commandSupport">Контекст для дополнительной проверки команд.</param>
-        /// <param name="consoleOutputHelper">Capturing Output.</param>
-        public WebSteps(WebContext webContext, VariableContext variableContext, 
-            NavigationSupport navigationSupport, PageObjectSupport pageObjectSupport,
-            ClickSupport clickSupport, TextBoxSupport textBoxSupport,
-            MoveSupport moveSupport, DragAndDropSupport dragAndDropSupport,
-            FrameSupport frameSupport, FileSupport fileSupport,
-            KeySupport keySupport, CommandSupport commandSupport,
-            ITestOutputHelper consoleOutputHelper)
+        public WebSteps(WebContext webContext,
+                            CommandSupport commandSupport, DriverSupport driverSupport, FileSupport fileSupport,
+                            VariableContext variableContext, ConfigContext config)
         {
             this.webContext = webContext;
-            this.navigationSupport = navigationSupport;
-            this.pageObjectSupport = pageObjectSupport;
-            this.clickSupport = clickSupport;
-            this.textBoxSupport = textBoxSupport;
-            this.moveSupport = moveSupport;
-            this.dragAndDropSupport = dragAndDropSupport;
-            this.frameSupport = frameSupport;
-            this.fileSupport = fileSupport;
-            this.keySupport = keySupport;
             this.commandSupport = commandSupport;
+            this.driverSupport = driverSupport;
+            this.fileSupport = fileSupport;
+            this.config = config;
             this.variableContext = variableContext;
-            this.consoleOutputHelper = consoleOutputHelper;
-        }
-
-        [StepArgumentTransformation]
-        public Dictionary<string, Element> TableToDictionary(Table table)
-        {
-            var elements = table.CreateSet<Element>();
-
-            return elements.ToDictionary(element => element.Name, element => new Element() {Name = element.Name, Classname = element.Classname, Id = element.Id, Xpath = element.Xpath});
         }
 
         [AfterScenario]
-        public void AfterWebScenario()
-        {
-            this.webContext.Stop();
-        }
+        public void AfterWebScenario() => webContext.Stop();
 
-        [StepDefinition("у меня есть элементы, присутствующие на веб-странице:")]
-        public void HaveWebElements(Dictionary<string, Element> pageObject)
-        {
-            if (this.webContext.PageObject is null)
-            {
-                this.webContext.PageObject = pageObject;
-            }
-            else
-            {
-                foreach (var element in pageObject)
-                {
-                    this.webContext.PageObject.ContainsKey(element.Key).Should()
-                        .BeFalse($"Элемент с именем {element.Key} уже есть в PageObject");
-                    this.webContext.PageObject.Add(element.Key, element.Value);
-                }
-            }
-        }
-
-        [StepDefinition(@"я устанавливаю ожидание для веб-драйвера в ([0-9]+) сек")]
+        [Given(@"я устанавливаю ожидание для веб-драйвера в ([0-9]+) сек")]
         public void SetTimeout(int sec)
         {
             sec.Should().NotBe(0, "Время не должно быть равно нулю.");
             sec.Should().BePositive("Указанное время отрицательно.");
 
-            this.webContext.Timeout = sec * 1000;
+            this.webContext.SetTimeout(sec * 1000);
         }
 
         [Given(@"я инициализирую браузер \""(.+)\"" версии \""(.+)\"" на удаленной машине \""(.+)\""")]
-        public void InitRemoteWebDriver(BrowserType browser, string version, string url)
+        public void InitRemoteDriver(BrowserType browser, string version, string url)
         {
             version.Should().NotBeEmpty("Версия не указана");
             url.Should().NotBeEmpty("Ссылка на удаленный хаб не указана");
-            this.webContext.WebDriver.Should()
-                .BeNull($"Браузер \"{browser}\" версии \"{version}\" на \"{url}\" уже инициализирован");
 
             this.webContext.Start(browser, remote: true, version: version, url: url);
+        }
+
+        [Given(@"я инициализирую браузер \""(.+)\"" версии \""(.+)\"" на удаленной машине \""(.+)\"" в headless режиме")]
+        public void InitRemoteDriverHeadless(BrowserType browser, string version, string url)
+        {
+            version.Should().NotBeEmpty("Версия не указана");
+            url.Should().NotBeEmpty("Ссылка на удаленный хаб не указана");
+            DriverOptions options;
+            switch (browser)
+            {
+                case BrowserType.Chrome:
+                {
+                    options = new ChromeOptions();
+                    ((ChromeOptions)options).AddArgument("--headless");
+                    ((ChromeOptions)options).AddArgument("--disable-gpu");
+                    break;
+                }
+                case BrowserType.Mozila:
+                {
+                    options = new FirefoxOptions();
+                    ((FirefoxOptions)options).AddArgument("--headless");
+                    ((FirefoxOptions)options).AddArgument("--disable-gpu");
+                    break;
+                }
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(browser), browser, null);
+            }
+            this.webContext.Start(browser, remote: true, version: version, url: url, options: options);
         }
 
         [Given(@"я инициализирую браузер \""(.+)\""")]
         public void InitWebDriver(BrowserType browser)
         {
-            this.webContext.WebDriver.Should()
-                .BeNull($"Браузер \"{browser}\" уже инициализирован");
-            this.webContext.Start(browser, null);
+            this.webContext.Start(browser);
         }
 
         [Given(@"я инициализирую браузер \""(.+)\"" в headless режиме")]
         public void InitHeadlessWebDriver(BrowserType browser)
         {
-            this.webContext.WebDriver.Should()
-                .BeNull($"Браузер \"{browser}\" уже инициализирован");
             DriverOptions options;
             switch (browser)
             {
@@ -165,60 +126,51 @@ namespace AlfaBank.AFT.Core.Library.Web
                     throw new ArgumentOutOfRangeException(nameof(browser), browser, null);
             }
 
-            this.webContext.Start(browser, options);
+            this.webContext.Start(browser, options:options);
         }
 
         [StepDefinition(@"установлено разрешение окна браузера ([0-9]+) X ([0-9]+)")]
         public void SetSizeBrowserWindow(int width, int height)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            this.webContext.WebDriver.Manage().Window.Size = new Size(width, height);
-        }
-
-        [StepDefinition(@"ОТЛАДКА: показать размер окна браузера")]
-        public void GetSizeBrowserWindow()
-        {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            var browserSize = this.webContext.WebDriver.Manage().Window.Size;
-            this.consoleOutputHelper.WriteLine($"[DEBUG] Browser Size: {browserSize.Width} X {browserSize.Height}");
+            this.webContext.SetSizeBrowser(width, height);
         }
 
         [StepDefinition(@"я развернул веб-страницу на весь экран")]
         public void MaximizeWindow()
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            this.webContext.WebDriver.Manage().Window.Maximize();
+            this.webContext.Maximize();
         }
 
-        [StepDefinition(@"я открываю веб-страницу \""(.+)\""")]
-        public void OpenWebPage(string url)
+        [Given(@"я перехожу на страницу ""(.+)""")]
+        public void GoToUrl(string pageName)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            url.Should().NotBeEmpty("Url не задан").And.NotBeNullOrWhiteSpace("Url не задан");
+            this.commandSupport.SendCommand(() => this.webContext.SetCurrentPageBy(pageName, true));
+        }
 
-            url = this.variableContext.ReplaceVariablesInXmlBody(url, (val) => System.Security.SecurityElement.Escape(Reflection.ConvertObject<string>(val)));
-            this.commandSupport.SendCommand(() => this.navigationSupport.NavigateTo(url));
+        [StepDefinition(@"я обновляю текущую страницу на \""(.+)\""")]
+        public void UpdateCurrentPage(string pageName)
+        {
+            this.commandSupport.SendCommand(() => this.webContext.SetCurrentPageBy(pageName));
         }
 
         [StepDefinition(@"я обновляю веб-страницу")]
-        public void RefreshWebPage()
+        public void Refresh()
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            this.commandSupport.SendCommand(() => this.navigationSupport.Refresh());
+            this.commandSupport.SendCommand(() => this.webContext.GetCurrentPage().Refresh());
+        }
+
+        [StepDefinition(@"ОТЛАДКА: я получаю имя текущей страницы")]
+        public void GetNameCurrentPage()
+        {
+            var name = this.webContext.GetCurrentPage().Name;
+            Trace.Write(name);
         }
 
         [StepDefinition(@"я сохраняю адрес активной веб-страницы в переменную \""(.+)\""")]
         public void SaveUrlActiveWebPage(string varName)
         {
             this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            var url = this.webContext.WebDriver.Url;
+            var url = this.webContext.GetCurrentPage().Url;
             this.variableContext.SetVariable(varName, url.GetType(), url);
         }
 
@@ -226,326 +178,277 @@ namespace AlfaBank.AFT.Core.Library.Web
         public void SaveTitleActiveWebPage(string varName)
         {
             this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            var title = this.webContext.WebDriver.Title;
+            var title = this.webContext.GetCurrentPage().Title;
             this.variableContext.SetVariable(varName, title.GetType(), title);
         }
 
         [StepDefinition(@"я закрываю веб-страницу")]
         public void CloseWebPage()
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            this.commandSupport.SendCommand(() => this.webContext.WebDriver.Close());
+            this.commandSupport.SendCommand(() => this.webContext.GetCurrentPage().Close());
         }
 
-        [StepDefinition(@"веб-страница проскроллена до элемента \""(.+)\""")]
-        public void ScrollToElement(string element)
+        [StepDefinition(@"я перемещаюсь к элементу \""(.+)\"" на веб-странице")]
+        public void ScrollToElement(string name)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            this.commandSupport.SendCommand(() => moveSupport.MoveToElement(parameter));
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
+            this.commandSupport.SendCommand(() => element.MoveTo());
         }
 
         [StepDefinition(@"совершен переход в начало веб-страницы")]
         public void GoPageTop()
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            this.commandSupport.SendCommand(() => this.moveSupport.PageTop());
+            this.commandSupport.SendCommand(() => this.webContext.GetCurrentPage().PageTop());
         }
 
         [StepDefinition(@"совершен переход в конец веб-страницы")]
         public void GoPageDown()
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            this.commandSupport.SendCommand(() => this.moveSupport.PageDown());
+            this.commandSupport.SendCommand(() => this.webContext.GetCurrentPage().PageDown());
         }
 
         [StepDefinition(@"выполнено нажатие на элемент \""(.+)\"" на веб-странице")]
-        public void ClickToWebElement(string element)
+        public void ClickToWebElement(string name)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            this.commandSupport.SendCommand(() => this.clickSupport.Click(parameter));
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
+
+            if (element is ClickElement)
+            {
+                this.commandSupport.SendCommand(() => ((ClickElement)element).Click());
+            }
+            else
+            {
+                throw new ArgumentException($"Элемент '{name}' имеет отличный тип от click");
+            }
         }
 
         [StepDefinition(@"выполнено двойное нажатие на элемент \""(.+)\"" на веб-странице")]
-        public void DoubleClickToWebElement(string element)
+        public void DoubleClickToWebElement(string name)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            this.commandSupport.SendCommand(() => this.clickSupport.DoubleClick(parameter));
+            if (element is ClickElement)
+            {
+                this.commandSupport.SendCommand(() => ((ClickElement)element).DoubleClick());
+            }
+            else
+            {
+                throw new ArgumentException($"Элемент '{name}' имеет отличный тип от click");
+            }
         }
 
         [StepDefinition(@"выполнено нажатие с удержанием на элементе \""(.+)\"" на веб-странице")]
-        public void ClickAndHoldToWebElement(string element)
+        public void ClickAndHoldToWebElement(string name)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            this.commandSupport.SendCommand(() => this.clickSupport.ClickAndHold(parameter));
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
+
+            if (element is ClickElement)
+            {
+                this.commandSupport.SendCommand(() => ((ClickElement)element).ClickAndHold());
+            }
+            else
+            {
+                throw new ArgumentException($"Элемент '{name}' имеет отличный тип от click");
+            }
         }
 
         [StepDefinition(@"я ввожу в поле \""(.+)\"" веб-страницы значение \""(.+)\""")]
-        public void InputValueIntoField(string element, string value)
+        public void InputValueIntoField(string name, string value)
         {
-            value.Should().NotBeEmpty("Версия не указана");
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            this.commandSupport.SendCommand(() => this.textBoxSupport.SetText(parameter, value));
+            value.Should().NotBeEmpty("Значение не указано");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
+            if (element is InputElement)
+            {
+                this.commandSupport.SendCommand(() => ((InputElement)element).SetText(value));
+            }
+            else
+            {
+                throw new ArgumentException($"Элемент '{name}' имеет отличный тип от input");
+            }
         }
 
         [StepDefinition(@"я ввожу в поле \""(.+)\"" веб-страницы зашифрованное значение \""(.+)\""")]
-        public void InputEncriptedValueIntoField(string element, string value)
+        public void InputEncriptedValueIntoField(string name, string value)
         {
-            value.Should().NotBeEmpty("Версия не указана");
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            this.commandSupport.SendCommand(() => this.textBoxSupport.SetText(parameter, new Encryptor().Decrypt(value)));
+            value.Should().NotBeEmpty("Значение не указано");
+
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
+
+            if (element is InputElement)
+            {
+                this.commandSupport.SendCommand(() => ((InputElement)element).SetText(new Encryptor().Decrypt(value)));
+            }
+            else
+            {
+                throw new ArgumentException($"Элемент '{name}' имеет отличный тип от input");
+            }
         }
 
         [StepDefinition(@"я ввожу в поле \""(.+)\"" веб-страницы значение из переменной \""(.+)\""")]
-        public void InputVarNameValueIntoField(string element, string varName)
+        public void InputVarNameValueIntoField(string name, string varName)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
             var value = this.variableContext.GetVariableValueText(varName);
-            this.commandSupport.SendCommand(() => this.textBoxSupport.SetText(parameter, value));
+
+            if (element is InputElement)
+            {
+                this.commandSupport.SendCommand(() => ((InputElement)element).SetText(value));
+            }
+            else
+            {
+                throw new ArgumentException($"Элемент '{name}' имеет отличный тип от input");
+            }
         }
 
         [StepDefinition(@"я очищаю поле \""(.+)\"" веб-страницы")]
-        public void ClearField(string element)
+        public void ClearField(string name)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            this.commandSupport.SendCommand(() => this.textBoxSupport.Clear(parameter));
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
+
+            if (element is InputElement)
+            {
+                this.commandSupport.SendCommand(() => ((InputElement)element).Clear());
+            }
+            else
+            {
+                throw new ArgumentException($"Элемент '{name}' имеет отличный тип от input");
+            }
         }
 
         [StepDefinition(@"выполнен переход на вкладку номер ([1-9]+)")]
         public void GoToTabByNumber(int number)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            number.Should().BePositive("Неверно задан номер вкладки.");
-            var actualNumber = number - 1;
-            actualNumber.Should().BeLessThan(this.webContext.WebDriver.WindowHandles.Count(),
+            (number--).Should().BePositive("Неверно задан номер вкладки.");
+            number.Should().BeLessOrEqualTo(this.webContext.GetCountTabs(),
                 "Выбранной вкладки не существует.");
 
-            this.commandSupport.SendCommand(() => 
-                this.webContext.WebDriver.SwitchTo().Window(this.webContext.WebDriver.WindowHandles[actualNumber]));
-        }
-
-        [StepDefinition(@"я перемещаюсь к элементу \""(.+)\"" на веб-странице")]
-        public void MoveToElement(string element)
-        {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            this.commandSupport.SendCommand(() => this.moveSupport.MoveToElement(parameter));
+            this.commandSupport.SendCommand(() => this.webContext.GoToTab(number));
         }
 
         [StepDefinition(@"я создаю переменную \""(.+)\"" с текстом из элемента \""(.+)\"" на веб-странице")]
-        public void SetVariableValueOfElementText(string varName, string element)
+        public void SetVariableValueOfElementText(string varName, string name)
         {
             this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
 
-            var text = this.commandSupport.SendCommand(() => textBoxSupport.GetText(parameter));
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
+
+            var text = this.commandSupport.SendCommand(() => element.GetText());
 
             this.variableContext.SetVariable(varName, typeof(string), text.ToString());
         }
 
         [StepDefinition(@"я создаю переменную \""(.+)\"" со значением из элемента \""(.+)\"" на веб-странице")]
-        public void SetVariableValueOfElementValue(string varName, string element)
+        public void SetVariableValueOfElementValue(string varName, string name)
         {
             this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
 
-            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            this.variableContext.SetVariable(varName, typeof(string), value.ToString()
-            );
+            var value = this.commandSupport.SendCommand(() => element.GetValue());
+
+            this.variableContext.SetVariable(varName, typeof(string), value);
         }
 
         [StepDefinition(@"я создаю переменную \""(.+)\"" с текстом из диалогового окна на веб-странице")]
         public void SetVariableValueOfAlertText(string varName)
         {
             this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
 
-            Action act = () => this.webContext.WebDriver.SwitchTo().Alert();
-            act.Should().NotThrow<NoAlertPresentException>();
-
-            var alert = this.commandSupport.SendCommand(() => this.webContext.WebDriver.SwitchTo().Alert());
+            var alert = driverSupport.GetAlert();
             alert.Should().NotBeNull($"Диалоговое окно не найдено");
-            this.variableContext.SetVariable(varName, typeof(string), ((IAlert)alert).Text);
+
+            this.variableContext.SetVariable(varName, typeof(string), alert.Text);
         }
 
         [StepDefinition(@"выполнено нажатие на \""(Accept|Dismiss)\"" в диалоговом окне на веб-странице")]
         public void AlertClick(AlertKeys key)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            Action act = () => this.webContext.WebDriver.SwitchTo().Alert();
-            act.Should().NotThrow<NoAlertPresentException>();
-
-            var alert = this.commandSupport.SendCommand(() => this.webContext.WebDriver.SwitchTo().Alert());
+            var alert = driverSupport.GetAlert();
             alert.Should().NotBeNull($"Диалоговое окно не найдено");
 
             switch (key)
             {
                 case AlertKeys.Accept:
-                    ((IAlert)alert).Accept();
+                    alert.Accept();
                     break;
                 case AlertKeys.Dismiss:
-                    ((IAlert)alert).Dismiss();
+                    alert.Dismiss();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(key), key, null);
             }
         }
 
-        [StepDefinition(@"я сохраняю текст элемента \""(.+)\"" веб-страницы как JSON в переменную \""(.+)\""")]
-        public void StoreWebElementTextInVariable(string element, string varName)
+        [StepDefinition(@"я сохраняю значение атрибута \""(.+)\"" элемента \""(.+)\"" веб-страницы в переменную \""(.+)\""")]
+        public void StoreWebElementValueOfAttributeInVariable(string attribute, string name, string varName)
         {
             this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var text = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
-            var json = JObject.Parse(text.ToString());
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            this.variableContext.SetVariable(varName, typeof(JObject), json);
-        }
+            var value = this.commandSupport.SendCommand(() => element.GetAttribute(attribute));
 
-        [StepDefinition(@"я сохраняю значение элемента \""(.+)\"" веб-страницы как JSON в переменную \""(.+)\""")]
-        public void StoreWebElementValueInVariable(string element, string varName)
-        {
-            this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
-            var json = JObject.Parse(value.ToString());
-
-            this.variableContext.SetVariable(varName, typeof(JObject), json);
+            this.variableContext.SetVariable(varName, typeof(string), value);
         }
 
         [StepDefinition(@"выполнен переход на фрейм номер ([0-9]+)")]
         public void GoToFrameByNumber(int number)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
             number.Should().BePositive("Неверно задан номер вкладки.");
 
-            this.commandSupport.SendCommand(() => this.frameSupport.SwitchFrameBy(number));
+            this.commandSupport.SendCommand(() => this.driverSupport.SwitchFrameBy(number));
+        }
+
+        [StepDefinition(@"выполнен переход на фрейм \""(.+)\""")]
+        public void GoToFrameBy(string name)
+        {
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
+
+            if (element is FrameElement)
+            {
+                this.commandSupport.SendCommand(() => ((FrameElement)element).Switch());
+            }
+            else
+            {
+                throw new ArgumentException($"Элемент '{name}' имеет отличный тип от frame");
+            }
         }
 
         [StepDefinition(@"выполнен переход на основной контент")]
         public void GoToFrameDefaultContent()
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
-            this.commandSupport.SendCommand(() => this.frameSupport.SwitchToDefaultContent());
+            this.commandSupport.SendCommand(() => this.driverSupport.SwitchToDefaultContent());
         }
-        
+
         [StepDefinition(@"выполнен переход на родительский фрейм")]
         public void GoToparentFrame()
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
-            this.commandSupport.SendCommand(() => this.frameSupport.SwitchToParentFrame());
-        }
-
-        [StepDefinition(@"выполнен переход на фрейм \""(.+)\""")]
-        public void GoToFrameBy(string element)
-        {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-
-            this.commandSupport.SendCommand(() => this.frameSupport.SwitchFrameBy(parameter));
+            this.commandSupport.SendCommand(() => this.driverSupport.SwitchToParentFrame());
         }
 
         [StepDefinition(@"загружен файл с именем \""(.+)\"" в элемент \""(.+)\"" на веб-странице")]
-        public void LoadFileToElement(string filename, string element)
+        public void LoadFileToElement(string filename, string name)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
             var path = fileSupport.GetValidFilepath(filename);
             path.Should().NotBeNull($"Файла \"{filename}\" не существует");
 
-            this.commandSupport.SendCommand(() => textBoxSupport.SetTextWithoutClear(parameter, path));
+            if (element is FileElement)
+            {
+                this.commandSupport.SendCommand(() => ((FileElement)element).SetText(path));
+            }
+            else
+            {
+                throw new ArgumentException($"Элемент '{name}' имеет отличный тип от input с типом file");
+            }
         }
 
         [StepDefinition(@"нажата клавиша \""(.+)\"" на элементе \""(.+)\"" на веб-странице")]
-        public void PressKeyToWebElement(string key, string element)
+        public void PressKeyToWebElement(string key, string name)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            this.commandSupport.SendCommand(() => this.keySupport.PressKey(parameter, key));
-        }
-
-        [StepDefinition(@"я нажимаю сочетание клавиш \""(.+)\"" на элементе \""(.+)\"" веб-страницы")]
-        public void PressKeysToWebElement(string key, string element)
-        {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-
-            this.commandSupport.SendCommand(() => this.keySupport.PressKeysBy(parameter, key));
-        }
-
-        [StepDefinition(@"я нажимаю сочетание клавиш \""(.+)\"" на веб-странице")]
-        public void PressKeysToWebPage(string key)
-        {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
-            this.commandSupport.SendCommand(() => this.keySupport.PressKeys(key));
+            this.commandSupport.SendCommand(() => element.PressKey(key));
         }
     }
 }

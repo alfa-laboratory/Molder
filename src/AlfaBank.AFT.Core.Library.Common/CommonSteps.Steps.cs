@@ -3,15 +3,15 @@
 // </copyright>
 
 using System;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using AlfaBank.AFT.Core.Helpers;
 using AlfaBank.AFT.Core.Infrastructure.Common;
-using AlfaBank.AFT.Core.Model.Common.Support;
-using AlfaBank.AFT.Core.Model.Context;
+using AlfaBank.AFT.Core.Models.Context;
+using AlfaBank.AFT.Core.Supports;
 using FluentAssertions;
 using TechTalk.SpecFlow;
-using Xunit.Abstractions;
 
 namespace AlfaBank.AFT.Core.Library.Common
 {
@@ -22,8 +22,8 @@ namespace AlfaBank.AFT.Core.Library.Common
     public class CommonSteps
     {
         private readonly VariableContext variableContext;
+        private readonly ConfigContext config;
         private readonly FileSupport fileSupport;
-        private readonly ITestOutputHelper consoleOutputHelper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommonSteps"/> class.
@@ -31,53 +31,11 @@ namespace AlfaBank.AFT.Core.Library.Common
         /// </summary>
         /// <param name="variableContext">Контекст для работы с переменными.</param>
         /// <param name="fileSupport">Контекст для работы с файлами.</param>
-        /// <param name="consoleOutputHelper">Capturing Output.</param>
-        public CommonSteps(VariableContext variableContext, FileSupport fileSupport,
-            ITestOutputHelper consoleOutputHelper)
+        public CommonSteps(VariableContext variableContext, FileSupport fileSupport, ConfigContext config)
         {
             this.variableContext = variableContext;
+            this.config = config;
             this.fileSupport = fileSupport;
-            this.consoleOutputHelper = consoleOutputHelper;
-        }
-
-        /// <summary>
-        /// Шаг для отображения типа значения в переменной.
-        /// </summary>
-        /// <param name="varName">Идентификатор переменной.</param>
-        [StepDefinition(@"ОТЛАДКА: показать тип переменной ""(.+)""")]
-        public void DisplayVariableType(string varName)
-        {
-            this.variableContext.Should().NotBeNull("Контекст не создан");
-            var type = this.variableContext.GetVariableValue(varName).GetType();
-            type.Should().NotBeNull($"У переменной '{varName}' нет типа");
-            this.consoleOutputHelper.WriteLine($"[DEBUG] VARIABLE TYPE: {type.FullName}");
-        }
-
-        /// <summary>
-        /// Шаг для отображения значения переменной.
-        /// </summary>
-        /// <param name="varName">Идентификатор переменной.</param>
-        [StepDefinition(@"ОТЛАДКА: показать значение переменной ""(.+)""")]
-        public void DisplayVariableValue(string varName)
-        {
-            this.variableContext.Should().NotBeNull("Контекст не создан");
-            var value = this.variableContext.GetVariableValueText(varName);
-            value.Should().NotBeNull($"У переменной '{varName}' значение не найдено");
-            this.consoleOutputHelper.WriteLine($"[DEBUG] VARIABLE VALUE: {value}");
-        }
-
-        /// <summary>
-        /// Шаг для шифрования текста с открытым ключем.
-        /// </summary>
-        /// <param name="salt">Ключ шифрования.</param>
-        /// <param name="text">Текст для защифровки.</param>
-        [StepDefinition(@"ОТЛАДКА: зашифровать текст с ключем ""(.*)"":")]
-        public void EncodeText(string salt, string text)
-        {
-            salt.Should().NotBeEmpty("Ксюч шифрование не может быть пустой строкой");
-            text.Should().NotBeEmpty("Текст для зашифровки не может быть пустой строкой");
-            var enc = new Encryptor(string.IsNullOrEmpty(salt) ? null : salt);
-            this.consoleOutputHelper.WriteLine($"[DEBUG] ENCODED TEXT: {enc.Encrypt(text)}");
         }
 
         /// <summary>
@@ -133,6 +91,18 @@ namespace AlfaBank.AFT.Core.Library.Common
         {
             this.variableContext.Variables.ContainsKey(varName).Should().BeTrue($"Переменной '{varName}' не существует");
             this.variableContext.SetVariable(varName, typeof(object), null);
+        }
+
+        /// <summary>
+        /// Шаг для изменения значения переменной.
+        /// </summary>
+        /// <param name="varName">Идентификатор переменной.</param>
+        /// <param name="value">Значение переменной.</param>
+        [StepDefinition(@"я изменяю значение переменной ""(.+)"" на ""(.+)""")]
+        public void ChangeVariable(string varName, string value)
+        {
+            this.variableContext.Variables.ContainsKey(varName).Should().BeTrue($"Переменной '{varName}' не существует");
+            this.variableContext.SetVariable(varName, typeof(object), value);
         }
 
         /// <summary>
@@ -511,6 +481,7 @@ namespace AlfaBank.AFT.Core.Library.Common
             this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
             len.Should().NotBe(0, "Длина строки не может быть 0");
             prefix.Should().NotBeEmpty("Длина префикса не может быть нулевой");
+            len.Should().BeGreaterOrEqualTo(prefix.Length, "Длина набора не может быть меньше длины префикса");
             var str = DataGenerator.GetRandomStringWithPrefix(len, prefix);
             this.variableContext.SetVariable(varName, str.GetType(), str);
         }
@@ -527,6 +498,7 @@ namespace AlfaBank.AFT.Core.Library.Common
             this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
             len.Should().NotBe(0, "Длина строки не может быть 0");
             prefix.Should().NotBeEmpty("Длина префикса не может быть нулевой");
+            len.Should().BeGreaterOrEqualTo(prefix.Length, "Длина набора не может быть меньше длины префикса");
             var str = DataGenerator.GetRandomCharWithPrefix(len, prefix);
             this.variableContext.SetVariable(varName, str.GetType(), str);
         }
@@ -543,6 +515,7 @@ namespace AlfaBank.AFT.Core.Library.Common
             this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
             len.Should().NotBe(0, "Длина строки не может быть 0");
             prefix.Should().NotBeEmpty("Длина префикса не может быть нулевой");
+            len.Should().BeGreaterOrEqualTo(prefix.Length, "Длина набора не может быть меньше длины префикса");
             var str = DataGenerator.GetRandomNumberWithPrefix(len, prefix);
             this.variableContext.SetVariable(varName, str.GetType(), str);
         }
@@ -624,7 +597,7 @@ namespace AlfaBank.AFT.Core.Library.Common
         [StepDefinition(@"я сохраняю значение переменной ""(.+)"" в переменную ""(.+)""")]
         public void StoreVariableValueToVariable(string varName, string newVarName)
         {
-            this.variableContext.Variables.ContainsKey(varName).Should().BeTrue($"Переменной '{varName}' не существует");
+            this.variableContext.Variables.ContainsKey(this.variableContext.GetVariableName(varName)).Should().BeTrue($"Переменной '{varName}' не существует");
             this.variableContext.Variables.ContainsKey(newVarName).Should().BeFalse($"Переменная '{newVarName}' уже существует");
             var value = this.variableContext.GetVariableValue(varName);
             value.Should().NotBeNull($"Значения в переменной {varName} нет");
@@ -651,6 +624,29 @@ namespace AlfaBank.AFT.Core.Library.Common
         }
 
         /// <summary>
+        /// Шаг для преобразования значения одной переменной в массив.
+        /// </summary>
+        /// <param name="varName">Исходная переменная.</param>
+        /// <param name="chars">Массив символов-разделителей.</param>
+        /// <param name="newVarName">Переменная-результат.</param>
+        [StepDefinition(@"я преобразую значение переменной ""(.+)"" в массив, используя символы ""(.+)"" и сохраняю в переменную ""(.+)""")]
+        public void StoreVariableValueToArrayVariable(string varName, string chars, string newVarName)
+        {
+            this.variableContext.Variables.ContainsKey(this.variableContext.GetVariableName(varName)).Should().BeTrue($"Переменной '{varName}' не существует");
+            this.variableContext.Variables.ContainsKey(newVarName).Should().BeFalse($"Переменная '{newVarName}' уже существует");
+
+            string.IsNullOrEmpty(chars).Should().BeFalse("Строка с символами не задана");
+
+            var value = this.variableContext.GetVariableValue(varName);
+            value.Should().NotBeNull($"Значения в переменной {varName} нет");
+
+            var arrayStrings = value.ToString().Split(chars.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            var enumerable = arrayStrings.Select(word => word.Trim()).ToArray();
+
+            this.variableContext.SetVariable(newVarName, enumerable.GetType(), enumerable);
+        }
+
+        /// <summary>
         /// Шаг проверки, что значение переменной не является NULL.
         /// </summary>
         /// <param name="varName">Идентификатор переменной.</param>
@@ -658,6 +654,7 @@ namespace AlfaBank.AFT.Core.Library.Common
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" существует")]
         public void CheckVariableIsNotNull(string varName)
         {
+            varName.Should().NotBeNull($"Значение 'varName' не задано");
             var value = this.variableContext.GetVariableValue(varName);
             value.Should().NotBeNull($"Значение переменной '{varName}' является NULL");
         }
@@ -671,6 +668,7 @@ namespace AlfaBank.AFT.Core.Library.Common
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" не существует")]
         public void CheckVariableIsNull(string varName)
         {
+            varName.Should().NotBeNull($"Значение 'varName' не задано");
             var value = this.variableContext.GetVariableValue(varName);
             value.Should().BeNull($"Значение переменной '{varName}' не является NULL");
         }
@@ -682,6 +680,7 @@ namespace AlfaBank.AFT.Core.Library.Common
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" не является пустой строкой")]
         public void CheckVariableIsNotEmpty(string varName)
         {
+            varName.Should().NotBeNull($"Значение 'varName' не задано");
             var value = this.variableContext.GetVariableValue(varName);
             value.Should().NotBeNull($"Значения в переменной {varName} нет");
             if (this.variableContext.GetVariable(varName)?.Type == typeof(string))
@@ -698,6 +697,7 @@ namespace AlfaBank.AFT.Core.Library.Common
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" равно пустой строке")]
         public void CheckVariableIsEmpty(string varName)
         {
+            varName.Should().NotBeNull($"Значение 'varName' не задано");
             var value = this.variableContext.GetVariableValue(varName);
             value.Should().NotBeNull($"Значения в переменной {varName} нет");
             if (this.variableContext.GetVariable(varName)?.Type == typeof(string))
@@ -714,6 +714,7 @@ namespace AlfaBank.AFT.Core.Library.Common
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" равно ""(.+)""")]
         public void CheckVariableEquals(string varName, object expected)
         {
+            varName.Should().NotBeNull($"Значение 'varName' не задано");
             expected.Should().NotBeNull($"Значение 'expected' не задано");
             var actual = this.variableContext.GetVariableValueText(varName);
             expected.GetType().Should().Be(actual.GetType(), $"Тип значения переменной '{varName}' не совпадает с типом '{expected}'");
@@ -728,6 +729,7 @@ namespace AlfaBank.AFT.Core.Library.Common
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" не равно ""(.+)""")]
         public void CheckVariableNotEquals(string varName, object expected)
         {
+            varName.Should().NotBeNull($"Значение 'varName' не задано");
             expected.Should().NotBeNull($"Значение 'expected' не задано");
             var actual = this.variableContext.GetVariableValueText(varName);
             expected.GetType().Should().Be(actual.GetType(), $"Тип значения переменной '{varName}' не совпадает с типом '{expected}'");
@@ -742,8 +744,10 @@ namespace AlfaBank.AFT.Core.Library.Common
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" содержит ""(.+)""")]
         public void CheckVariableContains(string varName, string expected)
         {
+            varName.Should().NotBeNull($"Значение 'varName' не задано");
             expected.Should().NotBeNull($"Значение 'expected' не задано");
             var actual = this.variableContext.GetVariableValueText(varName);
+            string.IsNullOrWhiteSpace(actual).Should().BeFalse($"Значения в переменной {varName} нет");
             actual?.Contains(expected).Should().BeTrue($"Значение переменной '{varName}':'{actual}' не содержит '{expected}'");
         }
 
@@ -755,6 +759,7 @@ namespace AlfaBank.AFT.Core.Library.Common
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" не содержит ""(.+)""")]
         public void CheckVariableNotContains(string varName, string expected)
         {
+            varName.Should().NotBeNull($"Значение 'varName' не задано");
             expected.Should().NotBeNull($"Значение 'expected' не задано");
             var actual = this.variableContext.GetVariableValueText(varName);
             actual.Contains(expected).Should().BeFalse($"Значение переменной '{varName}':'{actual}' содержит '{expected}'");
@@ -768,6 +773,7 @@ namespace AlfaBank.AFT.Core.Library.Common
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" начинается с ""(.+)""")]
         public void CheckVariableStartsWith(string varName, string expected)
         {
+            varName.Should().NotBeNull($"Значение 'varName' не задано");
             expected.Should().NotBeNull($"Значение 'expected' не задано");
             var actual = this.variableContext.GetVariableValueText(varName);
             actual.StartsWith(expected).Should().BeTrue($"Значение переменной '{varName}':'{actual}' не начинается с '{expected}'");
@@ -781,6 +787,7 @@ namespace AlfaBank.AFT.Core.Library.Common
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" заканчивается с ""(.+)""")]
         public void CheckVariableEndsWith(string varName, string expected)
         {
+            varName.Should().NotBeNull($"Значение 'varName' не задано");
             expected.Should().NotBeNull($"Значение 'expected' не задано");
             var actual = this.variableContext.GetVariableValueText(varName);
             actual.EndsWith(expected).Should().BeTrue($"Значение переменной '{varName}':'{actual}' не заканчивается с '{expected}'");
@@ -794,8 +801,12 @@ namespace AlfaBank.AFT.Core.Library.Common
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" равно значению переменной ""(.+)""")]
         public void CheckVariablesAreEqual(string varName1, string varName2)
         {
+            varName1.Should().NotBeNull($"Значение 'varName1' не задано");
+            varName2.Should().NotBeNull($"Значение 'varName2' не задано");
             var value1 = this.variableContext.GetVariableValueText(varName1);
             var value2 = this.variableContext.GetVariableValueText(varName2);
+            value1.Should().NotBeNull($"Значения в переменной {varName1} нет");
+            value2.Should().NotBeNull($"Значения в переменной {varName2} нет");
             value1.Should().Be(
                 value2,
                 $"Значение переменной '{varName1}':'{value1}' не равно значению переменной '{varName2}':'{value2}'");
@@ -809,8 +820,12 @@ namespace AlfaBank.AFT.Core.Library.Common
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" не равно значению переменной ""(.+)""")]
         public void CheckVariablesAreNotEqual(string varName1, string varName2)
         {
+            varName1.Should().NotBeNull($"Значение 'varName1' не задано");
+            varName2.Should().NotBeNull($"Значение 'varName2' не задано");
             var value1 = this.variableContext.GetVariableValueText(varName1);
             var value2 = this.variableContext.GetVariableValueText(varName2);
+            value1.Should().NotBeNull($"Значения в переменной {varName1} нет");
+            value2.Should().NotBeNull($"Значения в переменной {varName2} нет");
             value1.Should().NotBe(
                 value2,
                 $"Значение переменной '{varName1}':'{value1}' равно значению переменной '{varName2}':'{value2}'");
@@ -824,8 +839,12 @@ namespace AlfaBank.AFT.Core.Library.Common
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" содержит значение переменной ""(.+)""")]
         public void CheckVariableAreContains(string varName1, string varName2)
         {
+            varName1.Should().NotBeNull($"Значение 'varName1' не задано");
+            varName2.Should().NotBeNull($"Значение 'varName2' не задано");
             var first = this.variableContext.GetVariableValueText(varName1);
             var second = this.variableContext.GetVariableValueText(varName2);
+            first.Should().NotBeNull($"Значения в переменной {varName1} нет");
+            second.Should().NotBeNull($"Значения в переменной {varName2} нет");
 
             first.Contains(second).Should().BeTrue($"Значение переменной '{varName1}':'{first}' не содержит значение переменной '{varName2}':'{second}'");
         }
@@ -838,8 +857,12 @@ namespace AlfaBank.AFT.Core.Library.Common
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" не содержит значение переменной ""(.+)""")]
         public void CheckVariableAreNotContains(string varName1, string varName2)
         {
+            varName1.Should().NotBeNull($"Значение 'varName1' не задано");
+            varName2.Should().NotBeNull($"Значение 'varName2' не задано");
             var first = this.variableContext.GetVariableValueText(varName1);
             var second = this.variableContext.GetVariableValueText(varName2);
+            first.Should().NotBeNull($"Значения в переменной {varName1} нет");
+            second.Should().NotBeNull($"Значения в переменной {varName2} нет");
 
             first.Contains(second).Should().BeFalse($"Значение переменной '{varName1}':'{first}' содержит значение переменной '{varName2}':'{second}'");
         }
