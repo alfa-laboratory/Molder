@@ -1,4 +1,7 @@
-﻿namespace AlfaBank.AFT.Core.Models.Web.Elements
+﻿using OpenQA.Selenium;
+using System;
+
+namespace AlfaBank.AFT.Core.Models.Web.Elements
 {
     public class FileElement : Element
     {
@@ -6,8 +9,20 @@
 
         public virtual void SetText(string text)
         {
-            var element = this.GetWebElement();
-            element.SendKeys(text);
+            try
+            {
+                var element = GetWebElement();
+
+                element.SendKeys(text);
+            }
+            catch (ArgumentNullException ex)
+            {
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (NoSuchElementException ex)
+            {
+                throw new NoSuchElementException(ex.Message);
+            }
         }
     }
 }

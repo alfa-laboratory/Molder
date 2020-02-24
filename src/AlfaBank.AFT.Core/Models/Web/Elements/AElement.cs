@@ -9,6 +9,7 @@
             if (IsEnabled() && IsVisible())
             {
                 var element = GetWebElement();
+
                 return element.GetAttribute("href");
             }
             return null;

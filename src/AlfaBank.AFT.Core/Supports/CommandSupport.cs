@@ -31,10 +31,6 @@ namespace AlfaBank.AFT.Core.Supports
                 {
                     attempts++;
                 }
-                catch (AggregateException)
-                {
-                    attempts++;
-                }
             }
         }
 

@@ -42,7 +42,6 @@ namespace AlfaBank.AFT.Core.Models.Web
             _driver = driver;
             _context = context;
             _allElements = new Dictionary<string, IElement>();
-            _hiddenElements = new List<IElement>();
             _primaryElemets = new List<IElement>();
             InitializeElements();
         }
@@ -137,7 +136,8 @@ namespace AlfaBank.AFT.Core.Models.Web
             if (elements.Any())
             {
                 var aggregate = string.Join(", ", elements);
-                throw new ArgumentException($"элемент/ы \"{aggregate}\" не инициализированы на странице \"{Name}\"");
+                throw new ArgumentException(
+                    $"элемент/ы \"{aggregate}\" не инициализированы на странице \"{Name}\"");
             }
         }
 
@@ -188,10 +188,6 @@ namespace AlfaBank.AFT.Core.Models.Web
                 if (!_allElements.ContainsKey(attr.Name))
                 {
                     _allElements.Add(attr.Name, WebElement);
-                }
-                if (attr.Hidden)
-                {
-                    _hiddenElements.Add(WebElement);
                 }
                 if (!attr.Optional)
                 {

@@ -53,30 +53,26 @@ namespace AlfaBank.AFT.Core.Models.Context
             {
                 return;
             }
-
-            if(_context.checkVariableByKey(ReportType.ReportPortal.ToString()))
+            if (_context.CheckVariableByKey(ReportType.ReportPortal.ToString()))
             {
                 this.withReport = (bool)_context.GetVariableValue(ReportType.ReportPortal.ToString());
             }
-            
             if (remote)
             {
                 if ((version is null) || (url is null))
                 {
                     return;
                 }
-
                 switch (browser)
                 {
                     case BrowserType.Chrome:
-                    case BrowserType.Mozila:
                     {
 #pragma warning disable 618
-                        var capabilities = new DesiredCapabilities(browser.ToString().ToLower(), version, new Platform(platform));
-                        capabilities?.SetCapability("enableVNC", true);
+                        ((ChromeOptions)options).AddAdditionalCapability("version", version, true);
+                        ((ChromeOptions)options).AddAdditionalCapability("enableVNC", true, true);
+                        ((ChromeOptions)options).AddAdditionalCapability("platform", "ANY", true);
 #pragma warning restore 618
-
-                        _driver.WebDriver = new RemoteWebDriver(new Uri(url), capabilities);
+                        _driver.WebDriver = new RemoteWebDriver(new Uri(url), ((ChromeOptions)options).ToCapabilities());
                         return;
                     }
                     default:
@@ -84,7 +80,6 @@ namespace AlfaBank.AFT.Core.Models.Context
                             $"Неизвестный тип драйвера \"{browser}\". Невозможно проинициализировать драйвер.");
                 }
             }
-
             switch (browser)
             {
                 case BrowserType.Chrome:
@@ -113,10 +108,6 @@ namespace AlfaBank.AFT.Core.Models.Context
             }
 
             _driver.WebDriver = null;
-        }
-        public void Dispose()
-        {
-            DisposeDriverService.FinishHim(_driver.WebDriver);
         }
         public void SetCurrentPageBy(string name, bool withLoad = false)
         {

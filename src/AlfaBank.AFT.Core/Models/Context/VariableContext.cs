@@ -39,7 +39,7 @@ namespace AlfaBank.AFT.Core.Models.Context
         {
             return Variables.SingleOrDefault(_ => _.Key == GetVariableName(key)).Value;
         }
-        public bool checkVariableByKey(string key)
+        public bool CheckVariableByKey(string key)
         {
             return Variables.Any(_ => _.Key == GetVariableName(key));
         }

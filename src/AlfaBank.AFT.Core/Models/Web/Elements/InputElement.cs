@@ -8,7 +8,8 @@
         {
             if (IsEnabled() && IsVisible())
             {
-                var element = this.GetWebElement();
+                var element = GetWebElement();
+
                 element.SendKeys(text);
             }
         }
@@ -17,7 +18,8 @@
         {
             if (IsEnabled() && IsVisible())
             {
-                var element = this.GetWebElement();
+                var element = GetWebElement();
+
                 element.Clear();
             }
         }

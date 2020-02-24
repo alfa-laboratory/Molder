@@ -11,6 +11,7 @@ namespace AlfaBank.AFT.Core.Models.Web.Elements
             if (IsEnabled() && IsVisible())
             {
                 var element = GetWebElement();
+
                 element.Click();
             }
         }
@@ -20,6 +21,7 @@ namespace AlfaBank.AFT.Core.Models.Web.Elements
             if (IsEnabled() && IsVisible())
             {
                 var element = GetWebElement();
+
                 var builder = new Actions(_driverSupport.WebDriver);
                 builder.DoubleClick(element).Build().Perform();
             }
@@ -30,6 +32,7 @@ namespace AlfaBank.AFT.Core.Models.Web.Elements
             if (IsEnabled() && IsVisible())
             {
                 var element = GetWebElement();
+
                 var builder = new Actions(_driverSupport.WebDriver);
                 builder.ClickAndHold(element).Build().Perform();
             }

@@ -6,7 +6,7 @@
     <AssemblyName>AlfaBank.AFT.Core</AssemblyName>
     <Authors>Egor Shokhin</Authors>
     <Company>AlfaBank</Company>
-    <Version>0.0.40-beta</Version>
+    <Version>0.1.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression></PackageLicenseExpression>
   </PropertyGroup>
@@ -29,16 +29,16 @@
     <NoWarn>SA0001;NU5100;NU1701;1701;1702</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="5.10.0" />
+    <PackageReference Include="FluentAssertions" Version="5.10.2" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.SqlServer.TransactSql.ScriptDom" Version="150.4573.2" />
-    <PackageReference Include="MongoDB.Driver" Version="2.10.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.10.2" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
     <PackageReference Include="Selenium.WebDriver.WaitExtensions" Version="2.0.0" />
     <PackageReference Include="SoapFormatter" Version="1.0.11" />
-    <PackageReference Include="SpecFlow" Version="3.1.82" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.0" />
+    <PackageReference Include="SpecFlow" Version="3.1.86" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.1" />
     <PackageReference Include="System.ServiceModel.Http" Version="4.7.0" />
   </ItemGroup>
   <ItemGroup>

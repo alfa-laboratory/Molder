@@ -8,7 +8,8 @@
         {
             if (IsEnabled() && IsVisible())
             {
-                var element = this.GetWebElement();
+                var element = GetWebElement();
+
                 var selectElement = new OpenQA.Selenium.Support.UI.SelectElement(element);
                 selectElement.SelectByValue(value);
             }
@@ -18,7 +19,8 @@
         {
             if (IsEnabled() && IsVisible())
             {
-                var element = this.GetWebElement();
+                var element = GetWebElement();
+
                 var selectElement = new OpenQA.Selenium.Support.UI.SelectElement(element);
                 selectElement.SelectByText(text);
             }

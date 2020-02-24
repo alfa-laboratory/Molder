@@ -32,8 +32,21 @@ namespace AlfaBank.AFT.Core.Models.Web
         public virtual void MoveTo()
         {
             var action = new Actions(_driverSupport.WebDriver);
-            var element = GetWebElement();
-            action.MoveToElement(element).Build().Perform();
+
+            try
+            {
+                var element = GetWebElement();
+
+                action.MoveToElement(element).Build().Perform();
+            }
+            catch (ArgumentNullException ex)
+            {
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (NoSuchElementException ex)
+            {
+                throw new NoSuchElementException(ex.Message);
+            }
         }
 
         public virtual string GetText()
@@ -41,6 +54,7 @@ namespace AlfaBank.AFT.Core.Models.Web
             if (IsEnabled() && IsVisible())
             {
                 var element = GetWebElement();
+
                 return element.Text;
             }
             return null;
@@ -51,6 +65,7 @@ namespace AlfaBank.AFT.Core.Models.Web
             if (IsEnabled() && IsVisible())
             {
                 var element = GetWebElement();
+
                 return element.GetAttribute("value");
             }
             return null;
@@ -58,8 +73,14 @@ namespace AlfaBank.AFT.Core.Models.Web
 
         public virtual string GetAttribute(string name)
         {
-            var element = GetWebElement();
-            return element.GetAttribute(name);
+            if (IsEnabled() && IsVisible())
+            {
+                var element = GetWebElement();
+
+                return element.GetAttribute(name);
+            }
+
+            return null;
         }
 
         public virtual void PressKey(string key)
@@ -68,6 +89,7 @@ namespace AlfaBank.AFT.Core.Models.Web
             if (IsEnabled() && IsVisible())
             {
                 var element = GetWebElement();
+
                 element.SendKeys((string)field?.GetValue(null));
             }
         }
@@ -77,15 +99,20 @@ namespace AlfaBank.AFT.Core.Models.Web
             try
             {
                 var element = GetWebElement();
+
                 return element.Wait(this._driverSupport.Timeout).ForText().ToContain(text);
             }
             catch (WebDriverTimeoutException)
             {
                 return false;
             }
-            catch (NullReferenceException)
+            catch (ArgumentNullException ex)
             {
-                return false;
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (NoSuchElementException ex)
+            {
+                throw new NoSuchElementException(ex.Message);
             }
         }
 
@@ -94,15 +121,20 @@ namespace AlfaBank.AFT.Core.Models.Web
             try
             {
                 var element = GetWebElement();
+
                 return element.Wait(this._driverSupport.Timeout).ForText().ToEqual(text);
             }
             catch (WebDriverTimeoutException)
             {
                 return false;
             }
-            catch (NullReferenceException)
+            catch (ArgumentNullException ex)
             {
-                return false;
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (NoSuchElementException ex)
+            {
+                throw new NoSuchElementException(ex.Message);
             }
         }
 
@@ -111,32 +143,42 @@ namespace AlfaBank.AFT.Core.Models.Web
             try
             {
                 var element = GetWebElement();
+
                 return waitTextChange(() => element.Text, text);
             }
             catch (WebDriverTimeoutException)
             {
                 return false;
             }
-            catch (NullReferenceException)
+            catch (ArgumentNullException ex)
             {
-                return false;
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (NoSuchElementException ex)
+            {
+                throw new NoSuchElementException(ex.Message);
             }
         }
 
         public bool IsValueChange(string text)
         {
+            var element = GetWebElement();
+
             try
             {
-                var element = GetWebElement();
                 return waitTextChange(() => element.GetAttribute("value"), text);
             }
             catch (WebDriverTimeoutException)
             {
                 return false;
             }
-            catch (NullReferenceException)
+            catch (ArgumentNullException ex)
             {
-                return false;
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (NoSuchElementException ex)
+            {
+                throw new NoSuchElementException(ex.Message);
             }
         }
 
@@ -155,11 +197,16 @@ namespace AlfaBank.AFT.Core.Models.Web
             {
                 return false;
             }
+            catch (NoSuchElementException)
+            {
+                return false;
+            }
         }
 
-        public bool IsDisabled()
+        public bool IsExist()
         {
             var element = GetWebElement();
+
             try
             {
                 element.Wait(this._driverSupport.Timeout).ForElement().ToBeDisabled();
@@ -169,11 +216,43 @@ namespace AlfaBank.AFT.Core.Models.Web
             {
                 return false;
             }
+            catch (ArgumentNullException ex)
+            {
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (NoSuchElementException ex)
+            {
+                throw new NoSuchElementException(ex.Message);
+            }
+        }
+
+        public bool IsDisabled()
+        {
+            var element = GetWebElement();
+
+            try
+            {
+                element.Wait(this._driverSupport.Timeout).ForElement().ToBeDisabled();
+                return true;
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+            catch (ArgumentNullException ex)
+            {
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (NoSuchElementException ex)
+            {
+                throw new NoSuchElementException(ex.Message);
+            }
         }
 
         public virtual bool IsEnabled()
         {
             var element = GetWebElement();
+
             try
             {
                 element.Wait(this._driverSupport.Timeout).ForElement().ToBeEnabled();
@@ -183,11 +262,20 @@ namespace AlfaBank.AFT.Core.Models.Web
             {
                 return false;
             }
+            catch (ArgumentNullException ex)
+            {
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (NoSuchElementException ex)
+            {
+                throw new NoSuchElementException(ex.Message);
+            }
         }
 
         public bool IsVisible()
         {
             var element = GetWebElement();
+
             try
             {
                 element.Wait(this._driverSupport.Timeout).ForElement().ToBeVisible();
@@ -197,11 +285,20 @@ namespace AlfaBank.AFT.Core.Models.Web
             {
                 return false;
             }
+            catch (ArgumentNullException ex)
+            {
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (NoSuchElementException ex)
+            {
+                throw new NoSuchElementException(ex.Message);
+            }
         }
 
         public bool IsInvisible()
         {
             var element = GetWebElement();
+
             try
             {
                 element.Wait(this._driverSupport.Timeout).ForElement().ToBeInvisible();
@@ -211,11 +308,20 @@ namespace AlfaBank.AFT.Core.Models.Web
             {
                 return false;
             }
+            catch (ArgumentNullException ex)
+            {
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (NoSuchElementException ex)
+            {
+                throw new NoSuchElementException(ex.Message);
+            }
         }
 
         public virtual bool IsSelected()
         {
             var element = GetWebElement();
+
             try
             {
                 element.Wait(this._driverSupport.Timeout).ForElement().ToBeSelected();
@@ -225,11 +331,20 @@ namespace AlfaBank.AFT.Core.Models.Web
             {
                 return false;
             }
+            catch (ArgumentNullException ex)
+            {
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (NoSuchElementException ex)
+            {
+                throw new NoSuchElementException(ex.Message);
+            }
         }
 
         public bool IsNotSelected()
         {
             var element = GetWebElement();
+
             try
             {
                 element.Wait(this._driverSupport.Timeout).ForElement().ToNotBeSelected();
@@ -239,13 +354,21 @@ namespace AlfaBank.AFT.Core.Models.Web
             {
                 return false;
             }
+            catch (ArgumentNullException ex)
+            {
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (NoSuchElementException ex)
+            {
+                throw new NoSuchElementException(ex.Message);
+            }
         }
 
         public bool IsEditable()
         {
-            var element = GetWebElement();
             try
             {
+                var element = GetWebElement();
                 var onlyRead = element.GetAttribute("readonly");
                 return Convert.ToBoolean(onlyRead);
             }
@@ -253,9 +376,17 @@ namespace AlfaBank.AFT.Core.Models.Web
             {
                 return false;
             }
-            catch (FormatException)
+            catch (ArgumentNullException ex)
             {
-                return false;
+                throw new ArgumentNullException(ex.Message); 
+            }
+            catch (NoSuchElementException ex)
+            {
+                throw new NoSuchElementException(ex.Message);
+            }
+            catch (FormatException ex)
+            {
+                throw new FormatException(ex.Message);
             }
         }
 
@@ -263,9 +394,16 @@ namespace AlfaBank.AFT.Core.Models.Web
         {
             try
             {
-                return xpath == null
+                var element = xpath == null
                     ? _driverSupport.WebDriver.Wait(_driverSupport.Timeout).ForElement(By.XPath(_xpath)).ToExist()
                     : _driverSupport.WebDriver.Wait(_driverSupport.Timeout).ForElement(By.XPath(xpath)).ToExist();
+
+                if (element == null)
+                {
+                    throw new ArgumentNullException($"Элемента \"{_name}\" с локатором \"{_xpath}\" на странице не существует.");
+                }
+
+                return element;
             }
             catch (WebDriverTimeoutException ex) when (ex.InnerException is NoSuchElementException)
             {
