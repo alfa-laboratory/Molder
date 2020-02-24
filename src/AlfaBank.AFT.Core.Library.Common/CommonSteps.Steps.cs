@@ -39,46 +39,6 @@ namespace AlfaBank.AFT.Core.Library.Common
         }
 
         /// <summary>
-        /// Шаг для отображения типа значения в переменной.
-        /// </summary>
-        /// <param name="varName">Идентификатор переменной.</param>
-        [StepDefinition(@"ОТЛАДКА: показать тип переменной ""(.+)""")]
-        public void DisplayVariableType(string varName)
-        {
-            this.variableContext.Should().NotBeNull("Контекст не создан");
-            var type = this.variableContext.GetVariableValue(varName).GetType();
-            type.Should().NotBeNull($"У переменной '{varName}' нет типа");
-            Console.WriteLine($"[DEBUG] VARIABLE TYPE: {type.FullName}");
-        }
-
-        /// <summary>
-        /// Шаг для отображения значения переменной.
-        /// </summary>
-        /// <param name="varName">Идентификатор переменной.</param>
-        [StepDefinition(@"ОТЛАДКА: показать значение переменной ""(.+)""")]
-        public void DisplayVariableValue(string varName)
-        {
-            this.variableContext.Should().NotBeNull("Контекст не создан");
-            var value = this.variableContext.GetVariableValueText(varName);
-            value.Should().NotBeNull($"У переменной '{varName}' значение не найдено");
-            Console.WriteLine($"[DEBUG] VARIABLE VALUE: {value}");
-        }
-
-        /// <summary>
-        /// Шаг для шифрования текста с открытым ключем.
-        /// </summary>
-        /// <param name="salt">Ключ шифрования.</param>
-        /// <param name="text">Текст для защифровки.</param>
-        [StepDefinition(@"ОТЛАДКА: зашифровать текст с ключем ""(.*)"":")]
-        public void EncodeText(string salt, string text)
-        {
-            salt.Should().NotBeEmpty("Ксюч шифрование не может быть пустой строкой");
-            text.Should().NotBeEmpty("Текст для зашифровки не может быть пустой строкой");
-            var enc = new Encryptor(string.IsNullOrEmpty(salt) ? null : salt);
-            Console.WriteLine($"[DEBUG] ENCODED TEXT: {enc.Encrypt(text)}");
-        }
-
-        /// <summary>
         /// Шаг для явного ожидания.
         /// </summary>
         /// <param name="seconds">Количество секунд ожидания.</param>

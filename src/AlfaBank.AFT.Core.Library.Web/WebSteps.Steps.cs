@@ -47,12 +47,6 @@ namespace AlfaBank.AFT.Core.Library.Web
             this.variableContext = variableContext;
         }
 
-        [BeforeScenario]
-        public void BeforeWebScenario()
-        {
-            DisposeDriverService.TestRunStartTime = DateTime.Now;
-        }
-
         [AfterScenario]
         public void AfterWebScenario() => webContext.Stop();
 
@@ -72,6 +66,34 @@ namespace AlfaBank.AFT.Core.Library.Web
             url.Should().NotBeEmpty("Ссылка на удаленный хаб не указана");
 
             this.webContext.Start(browser, remote: true, version: version, url: url);
+        }
+
+        [Given(@"я инициализирую браузер \""(.+)\"" версии \""(.+)\"" на удаленной машине \""(.+)\"" в headless режиме")]
+        public void InitRemoteDriverHeadless(BrowserType browser, string version, string url)
+        {
+            version.Should().NotBeEmpty("Версия не указана");
+            url.Should().NotBeEmpty("Ссылка на удаленный хаб не указана");
+            DriverOptions options;
+            switch (browser)
+            {
+                case BrowserType.Chrome:
+                {
+                    options = new ChromeOptions();
+                    ((ChromeOptions)options).AddArgument("--headless");
+                    ((ChromeOptions)options).AddArgument("--disable-gpu");
+                    break;
+                }
+                case BrowserType.Mozila:
+                {
+                    options = new FirefoxOptions();
+                    ((FirefoxOptions)options).AddArgument("--headless");
+                    ((FirefoxOptions)options).AddArgument("--disable-gpu");
+                    break;
+                }
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(browser), browser, null);
+            }
+            this.webContext.Start(browser, remote: true, version: version, url: url, options: options);
         }
 
         [Given(@"я инициализирую браузер \""(.+)\""")]
@@ -111,13 +133,6 @@ namespace AlfaBank.AFT.Core.Library.Web
         public void SetSizeBrowserWindow(int width, int height)
         {
             this.webContext.SetSizeBrowser(width, height);
-        }
-
-        [StepDefinition(@"ОТЛАДКА: показать размер окна браузера")]
-        public void GetSizeBrowserWindow()
-        {
-            var browserSize = this.webContext.GetSizeBrowser();
-            Debug.WriteLine($"[DEBUG] Browser Size: {browserSize.Width} X {browserSize.Height}");
         }
 
         [StepDefinition(@"я развернул веб-страницу на весь экран")]
