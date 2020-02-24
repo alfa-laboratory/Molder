@@ -12,7 +12,7 @@ using AlfaBank.AFT.Core.Data.DataBase.DbConnectionWrapper;
 using AlfaBank.AFT.Core.Data.DataBase.DbQueryParameters;
 using AlfaBank.AFT.Core.Exceptions;
 using AlfaBank.AFT.Core.Helpers;
-using AlfaBank.AFT.Core.Model.Context;
+using AlfaBank.AFT.Core.Models.Context;
 using FluentAssertions;
 using MongoDB.Bson;
 using Newtonsoft.Json.Linq;
@@ -29,6 +29,7 @@ namespace AlfaBank.AFT.Core.Library.Database
     {
         private readonly DatabaseContext databaseContext;
         private readonly VariableContext variableContext;
+        private readonly ConfigContext config;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DatabaseSteps"/> class.
@@ -36,9 +37,10 @@ namespace AlfaBank.AFT.Core.Library.Database
         /// </summary>
         /// <param name="databaseContext">Контекст для работы с базой данных.</param>
         /// <param name="variableContext">Контекст для работы с переменными.</param>
-        public DatabaseSteps(DatabaseContext databaseContext, VariableContext variableContext)
+        public DatabaseSteps(DatabaseContext databaseContext, VariableContext variableContext, ConfigContext config)
         {
             this.databaseContext = databaseContext;
+            this.config = config;
             this.variableContext = variableContext;
         }
 
@@ -80,7 +82,8 @@ namespace AlfaBank.AFT.Core.Library.Database
         [Scope(Tag = "DBAccess")]
         public SqlServerConnectionParams GetDataBaseParametersFromTableSqlServer(Table dataTable)
         {
-            return dataTable.CreateInstance<SqlServerConnectionParams>();
+            var table = ReplaceTableContent(dataTable);
+            return table.CreateInstance<SqlServerConnectionParams>();
         }
 
         /// <summary>
@@ -93,7 +96,8 @@ namespace AlfaBank.AFT.Core.Library.Database
         [Scope(Tag = "mongo")]
         public MongoDBConnectionParams GetDataBaseParametersFromTableMongoDB(Table dataTable)
         {
-            return dataTable.CreateInstance<MongoDBConnectionParams>();
+            var table = ReplaceTableContent(dataTable);
+            return table.CreateInstance<MongoDBConnectionParams>();
         }
 
         /// <summary>
@@ -156,10 +160,10 @@ namespace AlfaBank.AFT.Core.Library.Database
 
             var parameters = new Dictionary<string, object>()
             {
-                { "DataSource", @params.Source },
-                { "InitialCatalog", @params.Database },
-                { "UserID", @params.Login },
-                { "Password", @params.Password }
+                { "DataSource", this.variableContext.ReplaceVariablesInXmlBody(@params.Source) },
+                { "InitialCatalog", this.variableContext.ReplaceVariablesInXmlBody(@params.Database) },
+                { "UserID", this.variableContext.ReplaceVariablesInXmlBody(@params.Login) },
+                { "Password", this.variableContext.ReplaceVariablesInXmlBody(@params.Password) }
             };
 
             var connection = new SqlServerConnectionWrapper();
@@ -186,10 +190,10 @@ namespace AlfaBank.AFT.Core.Library.Database
 
             var parameters = new Dictionary<string, object>()
                 {
-                    { "DataSource", @params.Source },
-                    { "InitialCatalog", @params.Database },
-                    { "UserID", @params.Login },
-                    { "Password", @params.Password },
+                    { "DataSource", this.variableContext.ReplaceVariablesInXmlBody(@params.Source) },
+                    { "InitialCatalog", this.variableContext.ReplaceVariablesInXmlBody(@params.Database) },
+                    { "UserID", this.variableContext.ReplaceVariablesInXmlBody(@params.Login) },
+                    { "Password", this.variableContext.ReplaceVariablesInXmlBody(@params.Password) },
                 };
 
             var connection = new MongoDBConnectionWrapper();
@@ -581,6 +585,22 @@ namespace AlfaBank.AFT.Core.Library.Database
             }
 
             return inRecords;
+        }
+
+        private Table ReplaceTableContent(Table dataTable)
+        {
+            var table = new Table(dataTable.Header.ToArray());
+            dataTable.Rows.ToList().ForEach(row =>
+            {
+                var tr = new List<string>();
+                row.Values.ToList().ForEach(elem =>
+                {
+                    tr.Add(variableContext.ReplaceVariablesInXmlBody(elem));
+                });
+                table.AddRow(tr.ToArray());
+                tr.Clear();
+            });
+            return table;
         }
     }
 }

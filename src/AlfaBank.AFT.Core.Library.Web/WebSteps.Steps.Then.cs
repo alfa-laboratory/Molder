@@ -1,10 +1,12 @@
-﻿using System;
-using AlfaBank.AFT.Core.Model.Context;
-using AlfaBank.AFT.Core.Model.Web.Support;
+﻿using AlfaBank.AFT.Core.Helpers;
+using AlfaBank.AFT.Core.Models.Context;
+using AlfaBank.AFT.Core.Models.Web.Elements;
+using AlfaBank.AFT.Core.Supports;
 using FluentAssertions;
-using OpenQA.Selenium;
+using System;
+using System.Data;
+using System.Linq;
 using TechTalk.SpecFlow;
-using Xunit.Abstractions;
 
 namespace AlfaBank.AFT.Core.Library.Web
 {
@@ -15,12 +17,9 @@ namespace AlfaBank.AFT.Core.Library.Web
     {
         private readonly WebContext webContext;
         private readonly VariableContext variableContext;
-        private readonly PageObjectSupport pageObjectSupport;
-        private readonly TextBoxSupport textBoxSupport;
-        private readonly ElementSupport elementSupport;
         private readonly CommandSupport commandSupport;
-
-        private readonly ITestOutputHelper consoleOutputHelper;
+        private readonly ConfigContext config;
+        private readonly DriverSupport driverSupport;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="webContext"/> class.
@@ -28,29 +27,45 @@ namespace AlfaBank.AFT.Core.Library.Web
         /// </summary>
         /// <param name="webContext">Контекст для работы с web driver.</param>
         /// <param name="variableContext">Контекст для работы с переменными.</param>
-        /// <param name="navigationSupport">Контекст для работы с навигацией.</param>
-        /// <param name="pageObjectSupport">Контекст для работы с page object.</param>
-        /// <param name="clickSupport">Контекст для работы с нажатиями.</param>
-        /// <param name="textBoxSupport">Контекст для работы с textBox.</param>
-        /// <param name="moveSupport">Контекст для работы с перемещениями.</param>
-        /// <param name="dragAndDropSupport">Контекст для работы с перетаскиваниями.</param>
-        /// <param name="elementSupport">Контекст для работы с перетаскиваниями.</param>
         /// <param name="commandSupport">Контекст для обработки команд.</param>
-        /// <param name="consoleOutputHelper">Capturing Output.</param>
-        public WebSteps_Then(WebContext webContext, VariableContext variableContext, 
-            NavigationSupport navigationSupport, PageObjectSupport pageObjectSupport,
-            ClickSupport clickSupport, TextBoxSupport textBoxSupport,
-            MoveSupport moveSupport, DragAndDropSupport dragAndDropSupport,
-            ElementSupport elementSupport, CommandSupport commandSupport, 
-            ITestOutputHelper consoleOutputHelper)
+        /// <param name="driverSupport"></param>
+        public WebSteps_Then(WebContext webContext, VariableContext variableContext, CommandSupport commandSupport, 
+            DriverSupport driverSupport, ConfigContext config)
         {
             this.webContext = webContext;
-            this.pageObjectSupport = pageObjectSupport;
-            this.textBoxSupport = textBoxSupport;
-            this.elementSupport = elementSupport;
             this.commandSupport = commandSupport;
+            this.driverSupport = driverSupport;
+            this.config = config;
             this.variableContext = variableContext;
-            this.consoleOutputHelper = consoleOutputHelper;
+        }
+
+        [StepArgumentTransformation]
+        public DataTable ToDatatable(Table table)
+        {
+            var dataTable = new DataTable();
+
+            if (table.Rows.Any())
+            {
+                for (var index = 0; index < table.Rows[0].Keys.Count; index++)
+                {
+                    dataTable.Columns.Add(table.Rows[0].Keys.ToArray()[index]);
+                }
+            }
+
+            foreach (var row in table.Rows)
+            {
+                DataRow dataRow = dataTable.NewRow();
+
+                foreach (var value in row)
+                {
+                    
+                    dataRow[value.Key] = this.variableContext.ReplaceVariablesInXmlBody(value.Value);
+                }
+
+                dataTable.Rows.Add(dataRow);
+            }
+
+            return dataTable;
         }
 
         [Then(@"на веб-странице значение элемента \""(.+)\"" пусто")]
@@ -58,15 +73,12 @@ namespace AlfaBank.AFT.Core.Library.Web
         [Then(@"на веб-странице значение элемента \""(.+)\"" равно пустой строке")]
         [Then(@"на веб-странице значение элемента \""(.+)\"" равно null")]
         [Then(@"на веб-странице значение элемента \""(.+)\"" заполнено пробелами")]
-        public void WebElementValueIsEmpty(string element)
+        public void WebElementValueIsEmpty(string name)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
-            value.ToString().Should().BeNullOrWhiteSpace($"Значение элемента \"{element}\" не пусто ");
+            var value = this.commandSupport.SendCommand(() => element.GetValue());
+            value.ToString().Should().BeNullOrWhiteSpace($"Значение элемента \"{name}\" не пусто ");
         }
 
         [Then(@"на веб-странице текст элемента \""(.+)\"" пустой")]
@@ -74,142 +86,113 @@ namespace AlfaBank.AFT.Core.Library.Web
         [Then(@"на веб-странице текст элемента \""(.+)\"" равен пустой строке")]
         [Then(@"на веб-странице текст элемента \""(.+)\"" равен null")]
         [Then(@"на веб-странице текст элемента \""(.+)\"" заполнен пробелами")]
-        public void WebElementTextIsEmpty(string element)
+        public void WebElementTextIsEmpty(string name)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
-            value.ToString().Should().BeNullOrWhiteSpace($"Значение элемента \"{element}\" не пусто ");
+            var text = this.commandSupport.SendCommand(() => element.GetText());
+            text.ToString().Should().BeNullOrWhiteSpace($"Текст элемента \"{name}\" не пустой ");
         }
 
         [Then(@"на веб-странице значение элемента \""(.+)\"" заполнено")]
         [Then(@"на веб-странице значение элемента \""(.+)\"" не равно null")]
         [Then(@"на веб-странице значение элемента \""(.+)\"" содержит символы, отличные от пробелов")]
-        public void WebElementValueIsNotEmpty(string element)
+        public void WebElementValueIsNotEmpty(string name)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
-            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
+
+            var value = this.commandSupport.SendCommand(() => element.GetValue());
+            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{name}\" пусто или не существует");
         }
 
         [Then(@"на веб-странице текст элемента \""(.+)\"" заполнен")]
         [Then(@"на веб-странице текст элемента \""(.+)\"" не равно null")]
         [Then(@"на веб-странице текст элемента \""(.+)\"" содержит символы, отличные от пробелов")]
-        public void WebElementTextIsNotEmpty(string element)
+        public void WebElementTextIsNotEmpty(string name)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var text = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
-            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст элемента \"{element}\" пустой или не существует");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
+
+            var text = this.commandSupport.SendCommand(() => element.GetText());
+            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст элемента \"{name}\" пустой или не существует");
         }
 
         [Then(@"на веб-странице значение элемента \""(.+)\"" содержит значение \""(.+)\""")]
-        public void WebElementValueContainsValue(string element, string expected)
+        public void WebElementValueContainsValue(string name, string expected)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-            expected.Should().NotBeNullOrWhiteSpace("Значение \"expected\" не задано");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
-            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
+            var value = this.commandSupport.SendCommand(() => element.GetValue());
+            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{name}\" пусто или не существует");
 
             value.ToString().Contains(expected).Should()
-                .BeTrue($"Значение элемента \"{element}\":\"{value}\" не содержит \"{expected}\"");
+                .BeTrue($"Значение элемента \"{name}\":\"{value}\" не содержит \"{expected}\"");
         }
 
         [Then(@"на веб-странице значение элемента \""(.+)\"" содержит значение из переменной \""(.+)\""")]
-        public void WebElementValueContainsVariableValue(string element, string varName)
+        public void WebElementValueContainsVariableValue(string name, string varName)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
-            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
+            var value = this.commandSupport.SendCommand(() => element.GetValue());
+            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{name}\" пусто или не существует");
 
             value.ToString().Contains(varValue).Should()
-                .BeTrue($"Значение элемента \"{element}\":\"{value}\" не содержит значение переменной \"{varName}\":\"{varValue}\"");
+                .BeTrue($"Значение элемента \"{name}\":\"{value}\" не содержит значение переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"на веб-странице текст элемента \""(.+)\"" содержит значение \""(.+)\""")]
-        public void WebElementTextContainsValue(string element, string expected)
+        public void WebElementTextContainsValue(string name, string expected)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
             expected.Should().NotBeNullOrWhiteSpace("Значение \"expected\" не задано");
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var text = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
-            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            text.ToString().Contains(expected).Should()
-                .BeTrue($"Текст у элемента \"{element}\":\"{text}\" не содержит \"{expected}\"");
+            var isText = this.commandSupport.SendCommand(() => element.IsTextContains(expected));
+
+            ((bool)isText).Should()
+                .BeTrue($"Текст у элемента \"{name}\":\"{element.GetText()}\" не содержит \"{expected}\"");
         }
 
         [Then(@"на веб-странице текст элемента \""(.+)\"" содержит значение из переменной \""(.+)\""")]
-        public void WebElementTextContainsVariableValue(string element, string varName)
+        public void WebElementTextContainsVariableValue(string name, string varName)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var text = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
-            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
+            var isText = this.commandSupport.SendCommand(() => element.IsTextContains(varValue));
 
-            text.ToString().Contains(varValue).Should()
-                .BeTrue($"Текст у элемента \"{element}\":\"{text}\" не содержит значение переменной \"{varName}\":\"{varValue}\"");
+            ((bool)isText).Should()
+              .BeTrue($"Текст у элемента \"{name}\":\"{element.GetText()}\" не содержит значение переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"на веб-странице значение элемента \""(.+)\"" не содержит значение \""(.+)\""")]
-        public void WebElementValueNotContainsValue(string element, string expected)
+        public void WebElementValueNotContainsValue(string name, string expected)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
             expected.Should().NotBeNullOrWhiteSpace("Значение \"expected\" не задано");
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
-            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
+
+            var value = this.commandSupport.SendCommand(() => element.GetValue());
+            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{name}\" пусто или не существует");
 
             value.ToString().Contains(expected).Should()
-                .BeFalse($"Значение элемента \"{element}\":\"{value}\" содержит \"{expected}\"");
+                .BeFalse($"Значение элемента \"{name}\":\"{value}\" содержит \"{expected}\"");
         }
 
         [Then(@"на веб-странице значение элемента \""(.+)\"" не содержит значение из переменной \""(.+)\""")]
-        public void WebElementValueNotContainsVariableValue(string element, string varName)
+        public void WebElementValueNotContainsVariableValue(string name, string varName)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
+            var value = this.commandSupport.SendCommand(() => element.GetValue());
             value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
 
             value.ToString().Contains(varValue).Should()
@@ -217,340 +200,282 @@ namespace AlfaBank.AFT.Core.Library.Web
         }
 
         [Then(@"на веб-странице текст элемента \""(.+)\"" не содержит значение \""(.+)\""")]
-        public void WebElementTextNotContainsValue(string element, string expected)
+        public void WebElementTextNotContainsValue(string name, string expected)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
             expected.Should().NotBeNullOrWhiteSpace("Значение \"expected\" не задано");
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var text = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
-            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            text.ToString().Contains(expected).Should()
-                .BeFalse($"Текст у элемента \"{element}\":\"{text}\" не содержит \"{expected}\"");
+            var isText = this.commandSupport.SendCommand(() => element.IsTextContains(expected));
+
+            ((bool)isText).Should()
+                .BeFalse($"Текст у элемента \"{name}\":\"{element.GetText()}\" не содержит \"{expected}\"");
         }
 
         [Then(@"на веб-странице текст элемента \""(.+)\"" не содержит значение из переменной \""(.+)\""")]
-        public void WebElementTextNotContainsVariableValue(string element, string varName)
+        public void WebElementTextNotContainsVariableValue(string name, string varName)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var text = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
-            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
+            var isText = this.commandSupport.SendCommand(() => element.IsTextContains(varValue));
 
-            text.ToString().Contains(varValue).Should()
-                .BeFalse($"Текст у элемента \"{element}\":\"{text}\" не содержит значение переменной \"{varName}\":\"{varValue}\"");
+            ((bool)isText).Should()
+                .BeFalse($"Текст у элемента \"{name}\":\"{element.GetText()}\" не содержит значение переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"на веб-странице значение элемента \""(.+)\"" равно значению \""(.+)\""")]
-        public void WebElementValueEqualValue(string element, string expected)
+        public void WebElementValueEqualValue(string name, string expected)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
             expected.Should().NotBeNullOrWhiteSpace("Значение \"expected\" не задано");
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
-            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            value.ToString().Should().Be(expected, $"Значение элемента \"{element}\":\"{value}\" не равно \"{expected}\"");
+            var value = this.commandSupport.SendCommand(() => element.GetValue());
+            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{name}\" пусто или не существует");
+
+            value.ToString().Should().Be(expected, $"Значение элемента \"{name}\":\"{value}\" не равно \"{expected}\"");
         }
 
         [Then(@"на веб-странице значение элемента \""(.+)\"" равно значению из переменной \""(.+)\""")]
-        public void WebElementValueEqualVariableValue(string element, string varName)
+        public void WebElementValueEqualVariableValue(string name, string varName)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
-            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
+            var value = this.commandSupport.SendCommand(() => element.GetValue());
+            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{name}\" пусто или не существует");
 
-            value.ToString().Should().Be(varValue, $"Значение элемента \"{element}\":\"{value}\" не равно значению переменной \"{varName}\":\"{varValue}\"");
+            value.ToString().Should().Be(varValue, $"Значение элемента \"{name}\":\"{value}\" не равно значению переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"на веб-странице текст элемента \""(.+)\"" равен значению \""(.+)\""")]
-        public void WebElementTextEqualValue(string element, string expected)
+        public void WebElementTextEqualValue(string name, string expected)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
             expected.Should().NotBeNullOrWhiteSpace("Значение \"expected\" не задано");
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var text = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
-            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
+
+            var text = this.commandSupport.SendCommand(() => element.GetText());
+            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{name}\" пустой или не существует");
 
             text.ToString().Should()
-                .Be(expected,$"Текст у элемента \"{element}\":\"{text}\" не равен \"{expected}\"");
+                .Be(expected,$"Текст у элемента \"{name}\":\"{text}\" не равен \"{expected}\"");
         }
 
         [Then(@"на веб-странице текст элемента \""(.+)\"" равен значению из переменной \""(.+)\""")]
-        public void WebElementTextEqualVariableValue(string element, string varName)
+        public void WebElementTextEqualVariableValue(string name, string varName)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var text = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
-            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
+            var text = this.commandSupport.SendCommand(() => element.GetText());
+            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{name}\" пустой или не существует");
 
             text.ToString().Should()
-                .Be(varValue,$"Текст у элемента \"{element}\":\"{text}\" не равен значению переменной \"{varName}\":\"{varValue}\"");
+                .Be(varValue,$"Текст у элемента \"{name}\":\"{text}\" не равен значению переменной \"{varName}\":\"{varValue}\"");
         }
 
-        [Then(@"на веб-странице значение элемента \""(.+)\"" не равен значению \""(.+)\""")]
-        public void WebElementValueNotEqualValue(string element, string expected)
+        [Then(@"на веб-странице значение элемента \""(.+)\"" не равно значению \""(.+)\""")]
+        public void WebElementValueNotEqualValue(string name, string expected)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
             expected.Should().NotBeNullOrWhiteSpace("Значение \"expected\" не задано");
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
-            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
+
+            var value = this.commandSupport.SendCommand(() => element.GetValue());
+            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{name}\" пусто или не существует");
 
             value.ToString().Should()
-                .NotBe(expected, $"Значение элемента \"{element}\":\"{value}\" равно \"{expected}\"");
+                .NotBe(expected, $"Значение элемента \"{name}\":\"{value}\" равно \"{expected}\"");
         }
 
         [Then(@"на веб-странице значение элемента \""(.+)\"" не равно значению из переменной \""(.+)\""")]
-        public void WebElementValueNotEqualVariableValue(string element, string varName)
+        public void WebElementValueNotEqualVariableValue(string name, string varName)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var value = this.commandSupport.SendCommand(() => this.textBoxSupport.GetValue(parameter));
-            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{element}\" пусто или не существует");
+            var value = this.commandSupport.SendCommand(() => element.GetValue());
+            value.ToString().Should().NotBeNullOrWhiteSpace($"Значение элемента \"{name}\" пусто или не существует");
 
             value.ToString().Should()
-                .NotBe(varValue,$"Значение элемента \"{element}\":\"{value}\" равно значению переменной \"{varName}\":\"{varValue}\"");
+                .NotBe(varValue,$"Значение элемента \"{name}\":\"{value}\" равно значению переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"на веб-странице текст элемента \""(.+)\"" не равен значению \""(.+)\""")]
-        public void WebElementTextNotEqualValue(string element, string expected)
+        public void WebElementTextNotEqualValue(string name, string expected)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
             expected.Should().NotBeNullOrWhiteSpace("Значение \"expected\" не задано");
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            var text = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
-            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
+
+            var text = this.commandSupport.SendCommand(() => element.GetText());
+            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{name}\" пустой или не существует");
 
             text.ToString().Should()
-                .NotBe(expected,$"Текст у элемента \"{element}\":\"{text}\" равен \"{expected}\"");
+                .NotBe(expected,$"Текст у элемента \"{name}\":\"{text}\" равен \"{expected}\"");
         }
 
         [Then(@"на веб-странице текст элемента \""(.+)\"" не равен значению из переменной \""(.+)\""")]
-        public void WebElementTextNotEqualVariableValue(string element, string varName)
+        public void WebElementTextNotEqualVariableValue(string name, string varName)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var text = this.commandSupport.SendCommand(() => this.textBoxSupport.GetText(parameter));
-            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{element}\" пустой или не существует");
+            var text = this.commandSupport.SendCommand(() => element.GetText());
+            text.ToString().Should().NotBeNullOrWhiteSpace($"Текст у элемента \"{name}\" пустой или не существует");
 
             text.ToString().Should()
-                .NotBe(varValue,$"Текст у элемента \"{element}\":\"{text}\" равен значению переменной \"{varName}\":\"{varValue}\"");
+                .NotBe(varValue,$"Текст у элемента \"{name}\":\"{text}\" равен значению переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"элемент \""(.+)\"" отображается на веб-странице")]
-        public void WebElementIsDisplayed(string element)
+        public void WebElementIsDisplayed(string name)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+            var isVisible = this.commandSupport.SendCommand(() => element.IsVisible());
 
-            this.commandSupport.SendCommand(() => this.elementSupport.BeDisplayed(parameter));
+            ((bool)isVisible).Should().BeTrue($"Элемент \"{name}\" не отображается");
         }
 
         [Then(@"элемент \""(.+)\"" не отображается на веб-странице")]
-        public void WebElementIsNotDisplayed(string element)
+        public void WebElementIsNotDisplayed(string name)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+            var isInvisible = this.commandSupport.SendCommand(() => element.IsInvisible());
 
-            this.commandSupport.SendCommand(() => this.elementSupport.NotBeDisplayed(parameter));
+            ((bool)isInvisible).Should().BeFalse($"Элемент \"{name}\" отображается");
         }
 
         [Then(@"элемент \""(.+)\"" существует на веб-странице")]
-        public void WebElementIsNotNull(string element)
+        public void WebElementIsNotNull(string name)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+            var isNotNull = this.commandSupport.SendCommand(() => element.IsLoad());
 
-            this.commandSupport.SendCommand(() => this.elementSupport.NotBeNull(parameter));
+            ((bool)isNotNull).Should().BeTrue($"Элемент \"{name}\" не существует");
         }
 
         [Then(@"элемент \""(.+)\"" отсутствует на веб-странице")]
-        public void WebElementIsNull(string element)
+        public void WebElementIsNull(string name)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
+            var isNull = this.commandSupport.SendCommand(() => element.IsLoad());
 
-            this.commandSupport.SendCommand(() => this.elementSupport.BeNull(parameter));
+            ((bool)isNull).Should().BeFalse($"Элемент \"{name}\" существует");
         }
 
         [Then(@"на веб-странице элемент \""(.+)\"" активен")]
-        public void WebElementIsEnabled(string element)
+        public void WebElementIsEnabled(string name)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            this.commandSupport.SendCommand(() => this.elementSupport.BeEnabled(parameter));
+            var isEnable = this.commandSupport.SendCommand(() => element.IsEnabled());
+
+            ((bool)isEnable).Should().BeTrue($"Элемент \"{name}\" не активен");
         }
 
         [Then(@"на веб-странице элемент \""(.+)\"" неактивен")]
-        public void WebElementIsDisabled(string element)
+        public void WebElementIsDisabled(string name)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            this.commandSupport.SendCommand(() => this.elementSupport.BeDisabled(parameter));
+            var isDisabled = this.commandSupport.SendCommand(() => element.IsDisabled());
+
+            ((bool)isDisabled).Should().BeFalse($"Элемент \"{name}\" активен");
         }
 
         [Then(@"на веб-странице элемент \""(.+)\"" нельзя редактировать")]
-        public void WebElementIsNotEditable(string element)
+        public void WebElementIsNotEditable(string name)
         {
-            this.webContext.WebDriver.Should()
-            .NotBeNull($"Браузер не инициализирован");
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
 
-            var parameter = this.pageObjectSupport.GetParameterByName(element);
-            parameter.Should().NotBeNull($"Элемент \"{element}\" не инициализирован в PageObject");
-            this.commandSupport.SendCommand(() => this.elementSupport.NotBeEditable(parameter));
+            var notEditable = this.commandSupport.SendCommand(() => element.IsEditable());
+
+            ((bool)notEditable).Should().BeTrue($"Элемент \"{name}\" доступен для редактирования");
         }
 
         [Then(@"адрес активной веб-страницы содержит значение \""(.+)\""")]
         public void WebPageUrlContainsExpected(string url)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
-            this.webContext.WebDriver.Url.Contains(url).Should()
-                .BeTrue($"адрес активной веб страницы \"{this.webContext.WebDriver.Url}\" не содержит \"{url}\"");
+            this.webContext.GetCurrentPage().Url.Contains(url).Should()
+                .BeTrue($"адрес активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Url}\" не содержит \"{url}\"");
         }
 
         [Then(@"адрес активной веб-страницы содержит значение переменной \""(.+)\""")]
         public void WebPageUrlContainsVarValue(string varName)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            this.webContext.WebDriver.Url.Contains(varValue).Should()
-                .BeTrue($"адрес активной веб страницы \"{this.webContext.WebDriver.Url}\" не содержит значение переменной \"{varName}\":\"{varValue}\"");
+            this.webContext.GetCurrentPage().Url.Contains(varValue).Should()
+                .BeTrue($"адрес активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Url}\" не содержит значение переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"адрес активной веб-страницы не содержит значение \""(.+)\""")]
         public void WebPageUrlNotContainsExpected(string url)
         {
-            this.webContext.WebDriver.Url.Contains(url).Should()
-                .BeFalse($"адрес активной веб страницы \"{this.webContext.WebDriver.Url}\" содержит \"{url}\"");
+            this.webContext.GetCurrentPage().Url.Contains(url).Should()
+                .BeFalse($"адрес активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Url}\" содержит \"{url}\"");
         }
 
         [Then(@"адрес активной веб-страницы не содержит значение переменной \""(.+)\""")]
         public void WebPageUrlNotContainsvarValue(string varName)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            this.webContext.WebDriver.Url.Contains(varValue).Should()
-                .BeFalse($"адрес активной веб страницы \"{this.webContext.WebDriver.Url}\" содержит значение переменной \"{varName}\":\"{varValue}\"");
+            this.webContext.GetCurrentPage().Url.Contains(varValue).Should()
+                .BeFalse($"адрес активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Url}\" содержит значение переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"адрес активной веб-страницы равен значению \""(.+)\""")]
         public void WebPageUrlEqualExpected(string expected)
         {
-            this.webContext.WebDriver.Url.Should()
-                .Be(expected, $"адрес активной веб страницы \"{this.webContext.WebDriver.Url}\" не равен \"{expected}\"");
+            this.webContext.GetCurrentPage().Url.Should()
+                .Be(expected, $"адрес активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Url}\" не равен \"{expected}\"");
         }
 
         [Then(@"адрес активной веб-страницы равен значению переменной \""(.+)\""")]
         public void WebPageUrlEqualVarValue(string varName)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            this.webContext.WebDriver.Url.Should()
-                .Be(varValue, $"адрес активной веб страницы \"{this.webContext.WebDriver.Url}\" не равен значению переменной \"{varName}\":\"{varValue}\"");
+            this.webContext.GetCurrentPage().Url.Should()
+                .Be(varValue, $"адрес активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Url}\" не равен значению переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"адрес активной веб-страницы не равен значению \""(.+)\""")]
         public void WebPageUrlNotEqualExpected(string expected)
         {
-            this.webContext.WebDriver.Url.Should()
-                .NotBe(expected, $"адрес активной веб страницы \"{this.webContext.WebDriver.Url}\" равен \"{expected}\"");
+            this.webContext.GetCurrentPage().Url.Should()
+                .NotBe(expected, $"адрес активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Url}\" равен \"{expected}\"");
         }
 
         [Then(@"адрес активной веб-страницы не равен значению переменной \""(.+)\""")]
         public void WebPageUrlNotEqualVarValue(string varName)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            this.webContext.WebDriver.Url.Should()
-                .NotBe(varValue, $"адрес активной веб страницы \"{this.webContext.WebDriver.Url}\" равен значению переменной \"{varName}\":\"{varValue}\"");
+            this.webContext.GetCurrentPage().Url.Should()
+                .NotBe(varValue, $"адрес активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Url}\" равен значению переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"заголовок веб-страницы равен значению \""(.+)\""")]
@@ -558,21 +483,18 @@ namespace AlfaBank.AFT.Core.Library.Web
         {
             expected.Should().NotBeEmpty("Параметр \"title\" не задан");
 
-            this.webContext.WebDriver.Title.Should()
-                .Be(expected, $"Заголовок активной веб страницы \"{this.webContext.WebDriver.Url}\" не равен \"{expected}\"");
+            this.webContext.GetCurrentPage().Title.Should()
+                .Be(expected, $"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Title}\" не равен \"{expected}\"");
         }
 
         [Then(@"заголовок веб-страницы равен значению переменной \""(.+)\""")]
         public void WebPageTitleIsEqualVarValue(string varName)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            this.webContext.WebDriver.Title.Should()
-                .Be(varValue, $"Заголовок активной веб страницы \"{this.webContext.WebDriver.Url}\" не равен значению переменной \"{varName}\":\"{varValue}\"");
+            this.webContext.GetCurrentPage().Title.Should()
+                .Be(varValue, $"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Title}\" не равен значению переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"заголовок веб-страницы не равен значению \""(.+)\""")]
@@ -580,21 +502,18 @@ namespace AlfaBank.AFT.Core.Library.Web
         {
             expected.Should().NotBeEmpty("Параметр \"title\" не задан");
 
-            this.webContext.WebDriver.Title.Should()
-                .NotBe(expected, $"Заголовок активной веб страницы \"{this.webContext.WebDriver.Url}\" равен \"{expected}\"");
+            this.webContext.GetCurrentPage().Title.Should()
+                .NotBe(expected, $"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Title}\" равен \"{expected}\"");
         }
 
         [Then(@"заголовок веб-страницы не равен значению переменной \""(.+)\""")]
         public void WebPageTitleIsNotEqualVarValue(string varName)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            this.webContext.WebDriver.Title.Should()
-                .NotBe(varValue, $"Заголовок активной веб страницы \"{this.webContext.WebDriver.Url}\" равен значению переменной \"{varName}\":\"{varValue}\"");
+            this.webContext.GetCurrentPage().Title.Should()
+                .NotBe(varValue, $"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Title}\" равен значению переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"заголовок веб-страницы содержит значение \""(.+)\""")]
@@ -602,21 +521,18 @@ namespace AlfaBank.AFT.Core.Library.Web
         {
             title.Should().NotBeEmpty("Параметр \"title\" не задан");
 
-            this.webContext.WebDriver.Title.Contains(title).Should()
-                .BeTrue($"адрес активной веб страницы \"{this.webContext.WebDriver.Url}\" не содержит \"{title}\"");
+            this.webContext.GetCurrentPage().Title.Contains(title).Should()
+                .BeTrue($"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Title}\" не содержит \"{title}\"");
         }
 
         [Then(@"заголовок веб-страницы содержит значение переменной \""(.+)\""")]
         public void WebPageTitleIsContainsVarValue(string varName)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            this.webContext.WebDriver.Title.Contains(varValue).Should()
-                .BeTrue($"адрес активной веб страницы \"{this.webContext.WebDriver.Url}\" не содержит значение переменной \"{varName}\":\"{varValue}\"");
+            this.webContext.GetCurrentPage().Title.Contains(varValue).Should()
+                .BeTrue($"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Title}\" не содержит значение переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"заголовок веб-страницы не содержит значение \""(.+)\""")]
@@ -624,28 +540,58 @@ namespace AlfaBank.AFT.Core.Library.Web
         {
             title.Should().NotBeEmpty("Параметр \"title\" не задан");
 
-            this.webContext.WebDriver.Title.Contains(title).Should()
-                .BeFalse($"адрес активной веб страницы \"{this.webContext.WebDriver.Url}\" содержит \"{title}\"");
+            this.webContext.GetCurrentPage().Title.Contains(title).Should()
+                .BeFalse($"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Title}\" содержит \"{title}\"");
         }
 
         [Then(@"заголовок веб-страницы не содержит значение переменной \""(.+)\""")]
         public void WebPageTitleIsNotContainsVarValue(string varName)
         {
-            this.webContext.WebDriver.Should()
-                .NotBeNull($"Браузер не инициализирован");
-
             var varValue = this.variableContext.GetVariableValueText(varName);
             varValue.Should().NotBeNull($"Значения в переменной {varName} нет");
 
-            this.webContext.WebDriver.Title.Contains(varValue).Should()
-                .BeFalse($"адрес активной веб страницы \"{this.webContext.WebDriver.Url}\" содержит значение переменной \"{varName}\":\"{varValue}\"");
+            this.webContext.GetCurrentPage().Title.Contains(varValue).Should()
+                .BeFalse($"Заголовок активной веб страницы \"{this.webContext.GetCurrentPage().Name}\":\"{this.webContext.GetCurrentPage().Title}\" содержит значение переменной \"{varName}\":\"{varValue}\"");
         }
 
         [Then(@"я убеждаюсь, что на веб-странице появилось диалоговое окно")]
         public void CheckAlert()
         {
-            var act = new Action(() => this.commandSupport.SendCommand(() => this.webContext.WebDriver.SwitchTo().Alert()));
-            act.Should().NotThrow<NoAlertPresentException>();
+            var alert = this.commandSupport.SendCommand(() => driverSupport.GetAlert());
+            alert.Should().NotBeNull("Диалоговое окно не найдено");
+        }
+
+        [Then(@"таблица \""(.+)\"" на веб-странице равна:")]
+        public void CompareWebTableWith(string name, DataTable table)
+        {
+            var element = this.webContext.GetCurrentPage().GetElementByName(name);
+            if (element is TableElement)
+            {
+                var webTable = this.commandSupport.SendCommand(() => ((TableElement)element).GetTable());
+                var newTable = new DataTable();
+                foreach (DataRow row in ((DataTable)webTable).Rows)
+                {
+                    var dataRow = table.NewRow();
+                    foreach (DataColumn column in table.Columns)
+                    {
+                        if (!newTable.Columns.Contains(column.ColumnName))
+                        {
+                            newTable.Columns.Add(column.ColumnName);
+                        }
+                        dataRow[column.ColumnName] = row[column.ColumnName];
+                    }
+                    newTable.Rows.Add(dataRow.ItemArray);
+                }
+                var (status, errors) = newTable.AreTablesTheSame(table);
+                if (!status)
+                {
+                    throw new ArgumentException(errors);
+                }
+            }
+            else
+            {
+                throw new ArgumentException($"Элемент '{name}' имеет отличный тип от table");
+            }
         }
     }
 }

@@ -8,11 +8,10 @@ using System.Net;
 using System.Threading;
 using AlfaBank.AFT.Core.Helpers;
 using AlfaBank.AFT.Core.Infrastructure.Common;
-using AlfaBank.AFT.Core.Model.Common.Support;
-using AlfaBank.AFT.Core.Model.Context;
+using AlfaBank.AFT.Core.Models.Context;
+using AlfaBank.AFT.Core.Supports;
 using FluentAssertions;
 using TechTalk.SpecFlow;
-using Xunit.Abstractions;
 
 namespace AlfaBank.AFT.Core.Library.Common
 {
@@ -23,8 +22,8 @@ namespace AlfaBank.AFT.Core.Library.Common
     public class CommonSteps
     {
         private readonly VariableContext variableContext;
+        private readonly ConfigContext config;
         private readonly FileSupport fileSupport;
-        private readonly ITestOutputHelper consoleOutputHelper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommonSteps"/> class.
@@ -32,53 +31,11 @@ namespace AlfaBank.AFT.Core.Library.Common
         /// </summary>
         /// <param name="variableContext">Контекст для работы с переменными.</param>
         /// <param name="fileSupport">Контекст для работы с файлами.</param>
-        /// <param name="consoleOutputHelper">Capturing Output.</param>
-        public CommonSteps(VariableContext variableContext, FileSupport fileSupport,
-            ITestOutputHelper consoleOutputHelper)
+        public CommonSteps(VariableContext variableContext, FileSupport fileSupport, ConfigContext config)
         {
             this.variableContext = variableContext;
+            this.config = config;
             this.fileSupport = fileSupport;
-            this.consoleOutputHelper = consoleOutputHelper;
-        }
-
-        /// <summary>
-        /// Шаг для отображения типа значения в переменной.
-        /// </summary>
-        /// <param name="varName">Идентификатор переменной.</param>
-        [StepDefinition(@"ОТЛАДКА: показать тип переменной ""(.+)""")]
-        public void DisplayVariableType(string varName)
-        {
-            this.variableContext.Should().NotBeNull("Контекст не создан");
-            var type = this.variableContext.GetVariableValue(varName).GetType();
-            type.Should().NotBeNull($"У переменной '{varName}' нет типа");
-            this.consoleOutputHelper.WriteLine($"[DEBUG] VARIABLE TYPE: {type.FullName}");
-        }
-
-        /// <summary>
-        /// Шаг для отображения значения переменной.
-        /// </summary>
-        /// <param name="varName">Идентификатор переменной.</param>
-        [StepDefinition(@"ОТЛАДКА: показать значение переменной ""(.+)""")]
-        public void DisplayVariableValue(string varName)
-        {
-            this.variableContext.Should().NotBeNull("Контекст не создан");
-            var value = this.variableContext.GetVariableValueText(varName);
-            value.Should().NotBeNull($"У переменной '{varName}' значение не найдено");
-            this.consoleOutputHelper.WriteLine($"[DEBUG] VARIABLE VALUE: {value}");
-        }
-
-        /// <summary>
-        /// Шаг для шифрования текста с открытым ключем.
-        /// </summary>
-        /// <param name="salt">Ключ шифрования.</param>
-        /// <param name="text">Текст для защифровки.</param>
-        [StepDefinition(@"ОТЛАДКА: зашифровать текст с ключем ""(.*)"":")]
-        public void EncodeText(string salt, string text)
-        {
-            salt.Should().NotBeEmpty("Ксюч шифрование не может быть пустой строкой");
-            text.Should().NotBeEmpty("Текст для зашифровки не может быть пустой строкой");
-            var enc = new Encryptor(string.IsNullOrEmpty(salt) ? null : salt);
-            this.consoleOutputHelper.WriteLine($"[DEBUG] ENCODED TEXT: {enc.Encrypt(text)}");
         }
 
         /// <summary>
