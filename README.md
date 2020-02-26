@@ -78,4 +78,4 @@ All the documentation is available [on our site][wiki].
 
 ## License
 
-The AlfaBank.AFT.Core.Library is released of the [MIT License 2019][license].
+The AlfaBank.AFT.Core.Library is released of the [MIT License 2020][license].
