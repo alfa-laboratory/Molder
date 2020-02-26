@@ -36,7 +36,6 @@ namespace AlfaBank.AFT.Core.Models.Web
             try
             {
                 var element = GetWebElement();
-
                 action.MoveToElement(element).Build().Perform();
             }
             catch (ArgumentNullException ex)
@@ -54,7 +53,6 @@ namespace AlfaBank.AFT.Core.Models.Web
             if (IsEnabled() && IsVisible())
             {
                 var element = GetWebElement();
-
                 return element.Text;
             }
             return null;
@@ -65,7 +63,6 @@ namespace AlfaBank.AFT.Core.Models.Web
             if (IsEnabled() && IsVisible())
             {
                 var element = GetWebElement();
-
                 return element.GetAttribute("value");
             }
             return null;
@@ -76,7 +73,6 @@ namespace AlfaBank.AFT.Core.Models.Web
             if (IsEnabled() && IsVisible())
             {
                 var element = GetWebElement();
-
                 return element.GetAttribute(name);
             }
 
@@ -99,7 +95,6 @@ namespace AlfaBank.AFT.Core.Models.Web
             try
             {
                 var element = GetWebElement();
-
                 return element.Wait(this._driverSupport.Timeout).ForText().ToContain(text);
             }
             catch (WebDriverTimeoutException)
@@ -121,7 +116,6 @@ namespace AlfaBank.AFT.Core.Models.Web
             try
             {
                 var element = GetWebElement();
-
                 return element.Wait(this._driverSupport.Timeout).ForText().ToEqual(text);
             }
             catch (WebDriverTimeoutException)
@@ -143,7 +137,6 @@ namespace AlfaBank.AFT.Core.Models.Web
             try
             {
                 var element = GetWebElement();
-
                 return waitTextChange(() => element.Text, text);
             }
             catch (WebDriverTimeoutException)
@@ -162,10 +155,9 @@ namespace AlfaBank.AFT.Core.Models.Web
 
         public bool IsValueChange(string text)
         {
-            var element = GetWebElement();
-
             try
             {
+                var element = GetWebElement();
                 return waitTextChange(() => element.GetAttribute("value"), text);
             }
             catch (WebDriverTimeoutException)
@@ -205,10 +197,9 @@ namespace AlfaBank.AFT.Core.Models.Web
 
         public bool IsExist()
         {
-            var element = GetWebElement();
-
             try
             {
+                var element = GetWebElement();
                 element.Wait(this._driverSupport.Timeout).ForElement().ToBeDisabled();
                 return true;
             }
@@ -228,10 +219,9 @@ namespace AlfaBank.AFT.Core.Models.Web
 
         public bool IsDisabled()
         {
-            var element = GetWebElement();
-
             try
             {
+                var element = GetWebElement();
                 element.Wait(this._driverSupport.Timeout).ForElement().ToBeDisabled();
                 return true;
             }
@@ -251,10 +241,9 @@ namespace AlfaBank.AFT.Core.Models.Web
 
         public virtual bool IsEnabled()
         {
-            var element = GetWebElement();
-
             try
             {
+                var element = GetWebElement();
                 element.Wait(this._driverSupport.Timeout).ForElement().ToBeEnabled();
                 return true;
             }
@@ -274,10 +263,9 @@ namespace AlfaBank.AFT.Core.Models.Web
 
         public bool IsVisible()
         {
-            var element = GetWebElement();
-
             try
             {
+                var element = GetWebElement();
                 element.Wait(this._driverSupport.Timeout).ForElement().ToBeVisible();
                 return true;
             }
@@ -297,10 +285,9 @@ namespace AlfaBank.AFT.Core.Models.Web
 
         public bool IsInvisible()
         {
-            var element = GetWebElement();
-
             try
             {
+                var element = GetWebElement();
                 element.Wait(this._driverSupport.Timeout).ForElement().ToBeInvisible();
                 return true;
             }
@@ -320,10 +307,9 @@ namespace AlfaBank.AFT.Core.Models.Web
 
         public virtual bool IsSelected()
         {
-            var element = GetWebElement();
-
             try
             {
+                var element = GetWebElement();
                 element.Wait(this._driverSupport.Timeout).ForElement().ToBeSelected();
                 return true;
             }
@@ -343,10 +329,9 @@ namespace AlfaBank.AFT.Core.Models.Web
 
         public bool IsNotSelected()
         {
-            var element = GetWebElement();
-
             try
             {
+                var element = GetWebElement();
                 element.Wait(this._driverSupport.Timeout).ForElement().ToNotBeSelected();
                 return true;
             }

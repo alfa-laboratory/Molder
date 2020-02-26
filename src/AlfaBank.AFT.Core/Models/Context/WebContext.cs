@@ -67,11 +67,9 @@ namespace AlfaBank.AFT.Core.Models.Context
                 {
                     case BrowserType.Chrome:
                     {
-#pragma warning disable 618
                         ((ChromeOptions)options).AddAdditionalCapability("version", version, true);
                         ((ChromeOptions)options).AddAdditionalCapability("enableVNC", true, true);
                         ((ChromeOptions)options).AddAdditionalCapability("platform", "ANY", true);
-#pragma warning restore 618
                         _driver.WebDriver = new RemoteWebDriver(new Uri(url), ((ChromeOptions)options).ToCapabilities());
                         return;
                     }

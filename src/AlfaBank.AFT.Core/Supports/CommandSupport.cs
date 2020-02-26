@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using OpenQA.Selenium;
 
 namespace AlfaBank.AFT.Core.Supports
@@ -16,7 +15,7 @@ namespace AlfaBank.AFT.Core.Supports
             {
                 try
                 {
-                    Parallel.Invoke(webSupport);
+                    webSupport();
                     res = true;
                 }
                 catch (StaleElementReferenceException)
@@ -28,6 +27,10 @@ namespace AlfaBank.AFT.Core.Supports
                     attempts++;
                 }
                 catch (ElementNotInteractableException)
+                {
+                    attempts++;
+                }
+                catch (InvalidElementStateException)
                 {
                     attempts++;
                 }
@@ -55,7 +58,7 @@ namespace AlfaBank.AFT.Core.Supports
                 {
                     attempts++;
                 }
-                catch (AggregateException)
+                catch (InvalidElementStateException)
                 {
                     attempts++;
                 }
