@@ -47,38 +47,54 @@ namespace AlfaBank.AFT.Core.Models.Web
                 throw new NoSuchElementException(ex.Message);
             }
         }
-
         public virtual string GetText()
         {
-            if (IsEnabled() && IsVisible())
+            try
             {
                 var element = GetWebElement();
                 return element.Text;
             }
-            return null;
+            catch (ArgumentNullException ex)
+            {
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (NoSuchElementException ex)
+            {
+                throw new NoSuchElementException(ex.Message);
+            }
         }
-
         public virtual string GetValue()
         {
-            if (IsEnabled() && IsVisible())
+            try
             {
                 var element = GetWebElement();
                 return element.GetAttribute("value");
             }
-            return null;
+            catch (ArgumentNullException ex)
+            {
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (NoSuchElementException ex)
+            {
+                throw new NoSuchElementException(ex.Message);
+            }
         }
-
         public virtual string GetAttribute(string name)
         {
-            if (IsEnabled() && IsVisible())
+            try
             {
                 var element = GetWebElement();
                 return element.GetAttribute(name);
             }
-
-            return null;
+            catch (ArgumentNullException ex)
+            {
+                throw new ArgumentNullException(ex.Message);
+            }
+            catch (NoSuchElementException ex)
+            {
+                throw new NoSuchElementException(ex.Message);
+            }
         }
-
         public virtual void PressKey(string key)
         {
             var field = typeof(Keys).GetField(key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Static);
