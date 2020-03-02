@@ -100,12 +100,14 @@ namespace AlfaBank.AFT.Core.Models.Web
             var field = typeof(Keys).GetField(key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Static);
             if (IsEnabled() && IsVisible())
             {
-                var element = GetWebElement();
-
-                element.SendKeys((string)field?.GetValue(null));
+                    var element = GetWebElement();
+                    element.SendKeys((string) field?.GetValue(null));
+            }
+            else
+            {
+                throw new ArgumentNullException($"Проверьте, что элемент \"{_name}\" Enabled и Visible");
             }
         }
-
         public bool IsTextContains(string text)
         {
             try
@@ -126,7 +128,6 @@ namespace AlfaBank.AFT.Core.Models.Web
                 throw new NoSuchElementException(ex.Message);
             }
         }
-
         public bool IsTextEquals(string text)
         {
             try
@@ -147,7 +148,6 @@ namespace AlfaBank.AFT.Core.Models.Web
                 throw new NoSuchElementException(ex.Message);
             }
         }
-
         public bool IsTextChange(string text)
         {
             try
@@ -168,7 +168,6 @@ namespace AlfaBank.AFT.Core.Models.Web
                 throw new NoSuchElementException(ex.Message);
             }
         }
-
         public bool IsValueChange(string text)
         {
             try
@@ -189,7 +188,6 @@ namespace AlfaBank.AFT.Core.Models.Web
                 throw new NoSuchElementException(ex.Message);
             }
         }
-
         public bool IsLoad()
         {
             try
@@ -201,7 +199,7 @@ namespace AlfaBank.AFT.Core.Models.Web
             {
                 return false;
             }
-            catch (NullReferenceException)
+            catch (ArgumentNullException)
             {
                 return false;
             }
@@ -210,29 +208,6 @@ namespace AlfaBank.AFT.Core.Models.Web
                 return false;
             }
         }
-
-        public bool IsExist()
-        {
-            try
-            {
-                var element = GetWebElement();
-                element.Wait(this._driverSupport.Timeout).ForElement().ToBeDisabled();
-                return true;
-            }
-            catch (WebDriverTimeoutException)
-            {
-                return false;
-            }
-            catch (ArgumentNullException ex)
-            {
-                throw new ArgumentNullException(ex.Message);
-            }
-            catch (NoSuchElementException ex)
-            {
-                throw new NoSuchElementException(ex.Message);
-            }
-        }
-
         public bool IsDisabled()
         {
             try
@@ -254,7 +229,6 @@ namespace AlfaBank.AFT.Core.Models.Web
                 throw new NoSuchElementException(ex.Message);
             }
         }
-
         public virtual bool IsEnabled()
         {
             try
@@ -276,7 +250,6 @@ namespace AlfaBank.AFT.Core.Models.Web
                 throw new NoSuchElementException(ex.Message);
             }
         }
-
         public bool IsVisible()
         {
             try
@@ -298,7 +271,6 @@ namespace AlfaBank.AFT.Core.Models.Web
                 throw new NoSuchElementException(ex.Message);
             }
         }
-
         public bool IsInvisible()
         {
             try
@@ -320,7 +292,6 @@ namespace AlfaBank.AFT.Core.Models.Web
                 throw new NoSuchElementException(ex.Message);
             }
         }
-
         public virtual bool IsSelected()
         {
             try
@@ -342,7 +313,6 @@ namespace AlfaBank.AFT.Core.Models.Web
                 throw new NoSuchElementException(ex.Message);
             }
         }
-
         public bool IsNotSelected()
         {
             try
@@ -364,7 +334,6 @@ namespace AlfaBank.AFT.Core.Models.Web
                 throw new NoSuchElementException(ex.Message);
             }
         }
-
         public bool IsEditable()
         {
             try
@@ -390,7 +359,6 @@ namespace AlfaBank.AFT.Core.Models.Web
                 throw new FormatException(ex.Message);
             }
         }
-
         protected IWebElement GetWebElement(string xpath = null)
         {
             try
@@ -411,7 +379,6 @@ namespace AlfaBank.AFT.Core.Models.Web
                 throw new NoSuchElementException($"Локатор у элемента \"{_name}\" некорректный. Проверьте корректность в \"{_xpath}\"");
             }
         }
-
         private bool waitTextChange(Func<string> test, string text)
         {
             var stopwatch = new Stopwatch();

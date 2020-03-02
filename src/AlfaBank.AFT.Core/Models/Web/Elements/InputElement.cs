@@ -1,4 +1,6 @@
-﻿namespace AlfaBank.AFT.Core.Models.Web.Elements
+﻿using System;
+
+namespace AlfaBank.AFT.Core.Models.Web.Elements
 {
     public class InputElement : Element
     {
@@ -12,6 +14,10 @@
 
                 element.SendKeys(text);
             }
+            else
+            {
+                throw new ArgumentNullException($"Проверьте, что элемент \"{_name}\" Enabled и Visible");
+            }
         }
 
         public virtual void Clear()
@@ -21,6 +27,10 @@
                 var element = GetWebElement();
 
                 element.Clear();
+            }
+            else
+            {
+                throw new ArgumentNullException($"Проверьте, что элемент \"{_name}\" Enabled и Visible");
             }
         }
     }

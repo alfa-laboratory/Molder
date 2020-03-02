@@ -1,4 +1,6 @@
-﻿namespace AlfaBank.AFT.Core.Models.Web.Elements
+﻿using System;
+
+namespace AlfaBank.AFT.Core.Models.Web.Elements
 {
     public class SelectElement : Element
     {
@@ -13,6 +15,10 @@
                 var selectElement = new OpenQA.Selenium.Support.UI.SelectElement(element);
                 selectElement.SelectByValue(value);
             }
+            else
+            {
+                throw new ArgumentNullException($"Элемент \"{_name}\" не найден на странице");
+            }
         }
 
         public virtual void SelectByName(string text)
@@ -23,6 +29,10 @@
 
                 var selectElement = new OpenQA.Selenium.Support.UI.SelectElement(element);
                 selectElement.SelectByText(text);
+            }
+            else
+            {
+                throw new ArgumentNullException($"Элемент \"{_name}\" не найден на странице");
             }
         }
     }

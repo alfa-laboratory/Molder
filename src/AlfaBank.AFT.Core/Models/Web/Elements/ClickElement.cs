@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium.Interactions;
+﻿using System;
+using OpenQA.Selenium.Interactions;
 
 namespace AlfaBank.AFT.Core.Models.Web.Elements
 {
@@ -14,6 +15,10 @@ namespace AlfaBank.AFT.Core.Models.Web.Elements
 
                 element.Click();
             }
+            else
+            {
+                throw new ArgumentNullException($"Проверьте, что элемент \"{_name}\" Enabled и Visible");
+            }
         }
 
         public virtual void DoubleClick()
@@ -25,6 +30,10 @@ namespace AlfaBank.AFT.Core.Models.Web.Elements
                 var builder = new Actions(_driverSupport.WebDriver);
                 builder.DoubleClick(element).Build().Perform();
             }
+            else
+            {
+                throw new ArgumentNullException($"Проверьте, что элемент \"{_name}\" Enabled и Visible");
+            }
         }
 
         public virtual void ClickAndHold()
@@ -35,6 +44,10 @@ namespace AlfaBank.AFT.Core.Models.Web.Elements
 
                 var builder = new Actions(_driverSupport.WebDriver);
                 builder.ClickAndHold(element).Build().Perform();
+            }
+            else
+            {
+                throw new ArgumentNullException($"Проверьте, что элемент \"{_name}\" Enabled и Visible");
             }
         }
     }
