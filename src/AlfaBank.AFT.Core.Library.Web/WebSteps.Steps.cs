@@ -64,8 +64,21 @@ namespace AlfaBank.AFT.Core.Library.Web
         {
             version.Should().NotBeEmpty("Версия не указана");
             url.Should().NotBeEmpty("Ссылка на удаленный хаб не указана");
+            DriverOptions options;
 
-            this.webContext.Start(browser, remote: true, version: version, url: url);
+            switch (browser)
+            {
+                case BrowserType.Chrome:
+                {
+                    options = new ChromeOptions();
+                    break;
+                }
+                default:
+                    throw new ArgumentNullException(
+                        $"Неизвестный тип драйвера \"{browser}\". Невозможно проинициализировать драйвер.");
+            }
+
+            this.webContext.Start(browser, remote: true, version: version, url: url, options: options);
         }
 
         [Given(@"я инициализирую браузер \""(.+)\"" версии \""(.+)\"" на удаленной машине \""(.+)\"" в headless режиме")]

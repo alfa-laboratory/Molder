@@ -357,7 +357,7 @@ namespace AlfaBank.AFT.Core.Library.Web
 
             var isInvisible = this.commandSupport.SendCommand(() => element.IsInvisible());
 
-            ((bool)isInvisible).Should().BeFalse($"Элемент \"{name}\" отображается");
+            ((bool)isInvisible).Should().BeTrue($"Элемент \"{name}\" отображается");
         }
 
         [Then(@"элемент \""(.+)\"" существует на веб-странице")]
@@ -397,7 +397,7 @@ namespace AlfaBank.AFT.Core.Library.Web
 
             var isDisabled = this.commandSupport.SendCommand(() => element.IsDisabled());
 
-            ((bool)isDisabled).Should().BeFalse($"Элемент \"{name}\" активен");
+            ((bool)isDisabled).Should().BeTrue($"Элемент \"{name}\" активен");
         }
 
         [Then(@"на веб-странице элемент \""(.+)\"" нельзя редактировать")]
