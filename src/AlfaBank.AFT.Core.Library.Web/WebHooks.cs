@@ -26,25 +26,59 @@ namespace AlfaBank.AFT.Core.Library.Web
         {
             if (_webContext.withReport)
             {
-                LogScreenshot(_scenario.StepContext.StepInfo.Text);
+                LogMessage(_scenario.StepContext.StepInfo.Text);
             }
         }
 
-        private void LogScreenshot(string text)
+        [AfterScenario(new[] {"web", "Web"})]
+        public void AfterScenario()
         {
-            var screenshot = ((ITakesScreenshot)(_driver.WebDriver)).GetScreenshot().AsByteArray;
-            Log.Message(new ReportPortal.Client.Requests.AddLogItemRequest
+            if (_scenario.TestError != null)
             {
-                Level = ReportPortal.Client.Models.LogLevel.Debug,
-                Time = DateTime.UtcNow,
-                Text = $"{text}",
-                Attach = new ReportPortal.Client.Models.Attach
+                LogMessage(_scenario.StepContext.StepInfo.Text);
+            }
+        }
+
+        private void LogMessage(string text)
+        {
+            byte[] screenshot = null;
+            string logMessage = string.Empty;
+            bool IsError = false;
+            try
+            {
+                screenshot = ((ITakesScreenshot) (_driver.WebDriver)).GetScreenshot().AsByteArray;
+                logMessage = text;
+            }
+            catch (UnhandledAlertException ex)
+            {
+                logMessage = $"Alert text is \"{ex.AlertText}\"";
+                IsError = true;
+            }
+
+            if (IsError)
+            {
+                Log.Message(new ReportPortal.Client.Requests.AddLogItemRequest
                 {
-                    Name = "Screenshot",
-                    MimeType = "image/png",
-                    Data = screenshot
-                }
-            });
+                    Level = ReportPortal.Client.Models.LogLevel.Error,
+                    Time = DateTime.UtcNow,
+                    Text = $"{logMessage}"
+                });
+            }
+            else
+            {
+                Log.Message(new ReportPortal.Client.Requests.AddLogItemRequest
+                {
+                    Level = ReportPortal.Client.Models.LogLevel.Info,
+                    Time = DateTime.UtcNow,
+                    Text = $"{logMessage}",
+                    Attach = new ReportPortal.Client.Models.Attach
+                    {
+                        Name = "Screenshot",
+                        MimeType = "image/png",
+                        Data = screenshot
+                    }
+                });
+            }
         }
     }
 }

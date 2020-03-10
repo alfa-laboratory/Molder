@@ -557,7 +557,7 @@ namespace AlfaBank.AFT.Core.Library.Web
         [Then(@"я убеждаюсь, что на веб-странице появилось диалоговое окно")]
         public void CheckAlert()
         {
-            var alert = this.commandSupport.SendCommand(() => driverSupport.GetAlert());
+            var alert = this.commandSupport.WaitCommand(() => driverSupport.GetAlert());
             alert.Should().NotBeNull("Диалоговое окно не найдено");
         }
 
