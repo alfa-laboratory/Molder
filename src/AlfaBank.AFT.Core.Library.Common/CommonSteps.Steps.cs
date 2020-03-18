@@ -599,7 +599,7 @@ namespace AlfaBank.AFT.Core.Library.Common
         {
             this.variableContext.Variables.ContainsKey(this.variableContext.GetVariableName(varName)).Should().BeTrue($"Переменной '{varName}' не существует");
             this.variableContext.Variables.ContainsKey(newVarName).Should().BeFalse($"Переменная '{newVarName}' уже существует");
-            var value = this.variableContext.GetVariableValue(varName);
+            var value = this.variableContext.GetVariableValueText(varName);
             value.Should().NotBeNull($"Значения в переменной {varName} нет");
 
             this.variableContext.SetVariable(newVarName, value.GetType(), value);
