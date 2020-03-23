@@ -6,7 +6,7 @@
     <AssemblyName>AlfaBank.AFT.Core.Library.Database</AssemblyName>
     <Authors>Egor Shokhin</Authors>
     <Company>AlfaBank</Company>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
@@ -32,9 +32,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AlfaBank.AFT.Core" Version="0.1.0" />
-    <PackageReference Include="FluentAssertions" Version="5.10.2" />
-    <PackageReference Include="SpecFlow" Version="3.1.86" />
+    <PackageReference Include="AlfaBank.AFT.Core" Version="0.1.6" />
+    <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="SpecFlow" Version="3.1.89" />
   </ItemGroup>
 
   <ItemGroup>
