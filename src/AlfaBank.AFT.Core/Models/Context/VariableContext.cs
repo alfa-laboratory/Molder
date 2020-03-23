@@ -54,7 +54,7 @@ namespace AlfaBank.AFT.Core.Models.Context
         public object GetVariableValue(string key)
         {
             var name = key;
-            var keyPath = key;
+            var keyPath = string.Empty;
             var index = -1;
             string path = null;
             if(key.IndexOf('.') > 0)
