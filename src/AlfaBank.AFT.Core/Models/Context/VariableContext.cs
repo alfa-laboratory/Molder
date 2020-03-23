@@ -127,6 +127,10 @@ namespace AlfaBank.AFT.Core.Models.Context
             {
                 if (typeof(DataRow).IsAssignableFrom(varType))
                 {
+                    if (keyPath == String.Empty)
+                    {
+                        return ((DataRow)varValue);
+                    }
                     if (int.TryParse(keyPath, out int id))
                     {
                         return ((DataRow)varValue).ItemArray[id].ToString();
