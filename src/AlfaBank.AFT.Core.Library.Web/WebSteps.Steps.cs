@@ -367,7 +367,7 @@ namespace AlfaBank.AFT.Core.Library.Web
         {
             this.variableContext.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
 
-            var alert = driverSupport.GetAlert();
+            IAlert alert = (IAlert)this.commandSupport.WaitCommand(() => driverSupport.GetAlert());
             alert.Should().NotBeNull($"Диалоговое окно не найдено");
 
             this.variableContext.SetVariable(varName, typeof(string), alert.Text);
@@ -376,7 +376,7 @@ namespace AlfaBank.AFT.Core.Library.Web
         [StepDefinition(@"выполнено нажатие на \""(Accept|Dismiss)\"" в диалоговом окне на веб-странице")]
         public void AlertClick(AlertKeys key)
         {
-            var alert = driverSupport.GetAlert();
+            IAlert alert = (IAlert) this.commandSupport.WaitCommand(() => driverSupport.GetAlert());
             alert.Should().NotBeNull($"Диалоговое окно не найдено");
 
             switch (key)
