@@ -72,7 +72,7 @@ namespace AlfaBank.AFT.Core.Library.Service
         /// <param name="service">Название сервиса.</param>
         /// <param name="parameters">Параметры вызова.</param>
         [Scope(Tag = "WebService")]
-        [When(@"я вызываю веб-сервис на REST по адресу \""(.+)\"" с методом \""(POST|GET|PUT|DELETE)\"", названием \""([A-z]+)\"" и параметрами:")]
+        [When(@"я вызываю веб-сервис на REST по адресу \""(.+)\"" с методом \""(GET|POST|UPDATE|DELETE|PATCH|PUT)\"", названием \""([A-z]+)\"" и параметрами:")]
         public void SendToRestService(string url, WebServiceMethod method, string service, Table parameters)
         {
             this.serviceContext.Services.SingleOrDefault(key => key.Key == service).Value.Should()
@@ -112,7 +112,7 @@ namespace AlfaBank.AFT.Core.Library.Service
         /// <param name="varCredentials">Полномочия.</param>
         /// <param name="parameters">Параметры вызова.</param>
         [Scope(Tag = "WebServiceAuth")]
-        [When(@"я вызываю веб-сервис на REST по адресу \""(.+)\"" с методом \""(POST|GET|PUT|DELETE)\"", названием \""([A-z]+)\"" и параметрами, используя полномочия из переменной \""(.+)\"":")]
+        [When(@"я вызываю веб-сервис на REST по адресу \""(.+)\"" с методом \""(GET|POST|UPDATE|DELETE|PATCH|PUT)\"", названием \""([A-z]+)\"" и параметрами, используя полномочия из переменной \""(.+)\"":")]
         public void SendToRestServiceWithAuth(string url, WebServiceMethod method, string service, string varCredentials, Table parameters)
         {
             this.serviceContext.Services.SingleOrDefault(key => key.Key == service).Value.Should()
@@ -157,8 +157,8 @@ namespace AlfaBank.AFT.Core.Library.Service
         /// <param name="service">Название сервиса.</param>
         /// <param name="parameters">Параметры вызова.</param>
         [Scope(Tag = "WebService")]
-        [When(@"я вызываю веб-сервис на REST по адресу \""(.+)\"" с методом \""(POST|GET|PUT|DELETE)\"", телом из переменной \""(.+)\"", названием \""([A-z]+)\"" и параметрами:")]
-        public void SendToRestServiceWithBody(string url, WebServiceMethod method, string body, string service,  Table parameters)
+        [When(@"я вызываю веб-сервис на REST по адресу \""(.+)\"" с методом \""(GET|POST|UPDATE|DELETE|PATCH|PUT)\"", телом из переменной \""(.+)\"", названием \""([A-z]+)\"" и параметрами:")]
+        public void SendToRestServiceWithBody(string url, WebServiceMethod method, string body, string service, Table parameters)
         {
             this.serviceContext.Services.SingleOrDefault(key => key.Key == service).Value.Should()
                 .BeNull($"Сервис с названием '{service}' уже существует");
@@ -204,7 +204,7 @@ namespace AlfaBank.AFT.Core.Library.Service
         /// <param name="varCredentials">Полномочия.</param>
         /// <param name="parameters">Параметры вызова.</param>
         [Scope(Tag = "WebServiceAuth")]
-        [When(@"я вызываю веб-сервис на REST по адресу \""(.+)\"" с методом \""(POST|GET|PUT|DELETE)\"", телом из переменной \""(.+)\"", названием \""([A-z]+)\"" и параметрами, используя полномочия из переменной \""(.+)\"":")]
+        [When(@"я вызываю веб-сервис на REST по адресу \""(.+)\"" с методом \""(GET|POST|UPDATE|DELETE|PATCH|PUT)\"", телом из переменной \""(.+)\"", названием \""([A-z]+)\"" и параметрами, используя полномочия из переменной \""(.+)\"":")]
         public void SendToRestServiceWithBodyAndAuth(string url, WebServiceMethod method, string body, string service, string varCredentials, Table parameters)
         {
             this.serviceContext.Services.SingleOrDefault(key => key.Key == service).Value.Should()
