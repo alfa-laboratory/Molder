@@ -98,6 +98,7 @@ namespace AlfaBank.AFT.Core.Models.Context
 
             try
             {
+                _driver.WebDriver.Close();
                 _driver.WebDriver.Quit();
             }
             catch (Exception)
