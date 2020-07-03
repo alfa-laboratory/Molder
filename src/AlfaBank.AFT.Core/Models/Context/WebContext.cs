@@ -49,10 +49,6 @@ namespace AlfaBank.AFT.Core.Models.Context
         }
         public void Start(BrowserType browser, bool remote = false, bool withReport = false, DriverOptions options = null, string version = null, string url = null, PlatformType platform = PlatformType.Any)
         {
-            if (!(_driver.WebDriver is null))
-            {
-                return;
-            }
             if (_context.CheckVariableByKey(ReportType.ReportPortal.ToString()))
             {
                 this.withReport = (bool)_context.GetVariableValue(ReportType.ReportPortal.ToString());
