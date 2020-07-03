@@ -6,7 +6,7 @@
     <AssemblyName>AlfaBank.AFT.Core</AssemblyName>
     <Authors>Egor Shokhin</Authors>
     <Company>AlfaBank</Company>
-    <Version>0.1.8</Version>
+    <Version>0.1.9</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression></PackageLicenseExpression>
   </PropertyGroup>

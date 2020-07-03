@@ -89,25 +89,30 @@ namespace AlfaBank.AFT.Core.Models.Context
                         $"Неизвестный тип драйвера \"{browser}\". Невозможно проинициализировать драйвер.");
             }
         }
-        public void Stop()
+        public void Close()
         {
-            if (_driver.WebDriver is null)
-            {
-                return;
-            }
-
             try
             {
                 _driver.WebDriver.Close();
+            }
+            catch (Exception)
+            {
+                throw new SystemException("Остановить WebDriver не удалось.");
+            }
+        }
+
+        public void Quit()
+        {
+            try
+            {
                 _driver.WebDriver.Quit();
             }
             catch (Exception)
             {
                 throw new SystemException("Остановить WebDriver не удалось.");
             }
-
-            _driver.WebDriver = null;
         }
+
         public void SetCurrentPageBy(string name, bool withLoad = false)
         {
             if (_allPages.Any())
