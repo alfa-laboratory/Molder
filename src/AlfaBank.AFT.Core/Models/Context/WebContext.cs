@@ -49,6 +49,11 @@ namespace AlfaBank.AFT.Core.Models.Context
         }
         public void Start(BrowserType browser, bool remote = false, bool withReport = false, DriverOptions options = null, string version = null, string url = null, PlatformType platform = PlatformType.Any)
         {
+            if(!(_driver.WebDriver is null))
+            {
+                return;
+            }
+
             if (_context.CheckVariableByKey(ReportType.ReportPortal.ToString()))
             {
                 this.withReport = (bool)_context.GetVariableValue(ReportType.ReportPortal.ToString());
@@ -89,7 +94,11 @@ namespace AlfaBank.AFT.Core.Models.Context
         {
             try
             {
-                _driver.WebDriver.Close();
+                if (!(_driver.WebDriver is null))
+                {
+                    _driver.WebDriver.Close();
+                    _driver.WebDriver = null;
+                }
             }
             catch (Exception)
             {
@@ -101,12 +110,17 @@ namespace AlfaBank.AFT.Core.Models.Context
         {
             try
             {
-                _driver.WebDriver.Quit();
+                if (!(_driver.WebDriver is null))
+                {
+                    _driver.WebDriver.Quit();
+                    _driver.WebDriver = null;
+                }
             }
             catch (Exception)
             {
                 throw new SystemException("Остановить WebDriver не удалось.");
             }
+            
         }
 
         public void SetCurrentPageBy(string name, bool withLoad = false)
