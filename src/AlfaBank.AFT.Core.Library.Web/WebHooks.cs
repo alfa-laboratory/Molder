@@ -46,6 +46,10 @@ namespace AlfaBank.AFT.Core.Library.Web
             bool IsError = false;
             try
             {
+                if(_driver.WebDriver is null)
+                {
+                    return;
+                }
                 screenshot = ((ITakesScreenshot) (_driver.WebDriver)).GetScreenshot().AsByteArray;
                 logMessage = text;
             }
@@ -56,7 +60,7 @@ namespace AlfaBank.AFT.Core.Library.Web
             }
             catch(Exception ex)
             {
-                logMessage = $"\"{ex.Message}\"";
+                logMessage = $"\"Проблемы c {ex.Message}\"";
             }
 
             if (IsError)
