@@ -54,6 +54,10 @@ namespace AlfaBank.AFT.Core.Library.Web
                 logMessage = $"Alert text is \"{ex.AlertText}\"";
                 IsError = true;
             }
+            catch(Exception ex)
+            {
+                logMessage = $"\"{ex.Message}\"";
+            }
 
             if (IsError)
             {

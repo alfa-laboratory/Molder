@@ -48,7 +48,7 @@ namespace AlfaBank.AFT.Core.Library.Web
         }
 
         [AfterScenario]
-        public void AfterWebScenario() => webContext.Stop();
+        public void AfterWebScenario() => webContext.Quit();
 
         [Given(@"я устанавливаю ожидание для веб-драйвера в ([0-9]+) сек")]
         public void SetTimeout(int sec)
