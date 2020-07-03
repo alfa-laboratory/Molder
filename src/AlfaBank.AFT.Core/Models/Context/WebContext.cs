@@ -51,7 +51,7 @@ namespace AlfaBank.AFT.Core.Models.Context
         {
             if(!(_driver.WebDriver is null))
             {
-                return;
+                throw new WebDriverException("Инициализация драйвера не успешна. Экземпляр уже запущен.")
             }
 
             if (_context.CheckVariableByKey(ReportType.ReportPortal.ToString()))
