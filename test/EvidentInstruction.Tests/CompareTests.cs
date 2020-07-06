@@ -1,0 +1,43 @@
+﻿using FluentAssertions;
+using EvidentInstruction.Helpers;
+using EvidentInstruction.Tests.Models;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using Xunit;
+
+namespace EvidentInstruction.Tests
+{
+    /// <summary>
+    /// Тесты проверки сравнений.
+    /// </summary>
+    [ExcludeFromCodeCoverage]
+    public class CompareTests
+    {
+        [Fact]
+        public void CompareTables_TableIsEqual_ReturnTrue()
+        {
+            var table = CreateObject.CreateDataTable(new List<string>() { "a", "b" }, new List<string>() { "a1;b1" });
+
+            bool isSame = Compare.AreTablesTheSame(table, table);
+            isSame.Should().BeTrue();
+        }
+
+        [Fact]
+        public void CompareTables_TableIsNotEqual_ReturnFalse()
+        {
+            var fTable = CreateObject.CreateDataTable(new List<string>() { "a", "b" }, new List<string>() { "a1;b1" });
+            var sTable = CreateObject.CreateDataTable(new List<string>() { "a", "b" }, new List<string>() { "a2;b1" });
+            bool isSame = Compare.AreTablesTheSame(fTable, sTable);
+            isSame.Should().BeFalse();
+        }
+
+        [Fact]
+        public void CompareTables_TableIsNotEqualCount_ReturnFalse()
+        {
+            var fTable = CreateObject.CreateDataTable(new List<string>() { "a", "b", "c" }, new List<string>() { "a1;b1;c1" });
+            var sTable = CreateObject.CreateDataTable(new List<string>() { "a", "b" }, new List<string>() { "a2;b1" });
+            bool isSame = Compare.AreTablesTheSame(fTable, sTable);
+            isSame.Should().BeFalse();
+        }
+    }
+}

@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput)</TargetsForTfmSpecificBuildOutput>
+    <AssemblyName>Phoenix.Generator</AssemblyName>
+    <Authors>Egor Shokhin</Authors>
+    <Company>AlfaBank</Company>
+    <Version>0.2.0-alpha</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>NU1701;1702;1591</NoWarn>
+    <DocumentationFile></DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <Description>Библиотека с общими шагами генерации уникальных данных, а также с универсальными проверками корректности значений</Description>
+    <PackageTags>specflow common steps alfabank aft</PackageTags>
+    <Copyright>2020 AlfaBank</Copyright>
+    <RepositoryUrl>https://github.com/alfa-laboratory/AlfaBank.AFT.Core.Library</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/alfa-laboratory/AlfaBank.AFT.Core.Library</PackageProjectUrl>
+    <PackageLicenseExpression></PackageLicenseExpression>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageId>EvidentInstruction.Generator</PackageId>
+    <Product>EvidentInstruction.Generator</Product>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>SA0001;NU5100;1701;1702</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="SpecFlow" Version="3.3.30" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EvidentInstruction\EvidentInstruction.csproj" />
+  </ItemGroup>
+
+</Project>
