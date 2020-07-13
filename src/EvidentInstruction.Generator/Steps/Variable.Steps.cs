@@ -154,7 +154,7 @@ namespace EvidentInstruction.Generator.Steps
             Log.Logger.Information($"xml is \"{xmlBody}\"");
 
             var doc = Converter.CreateXmlDoc(xmlBody);
-            doc.Should().NotBeNull();
+            doc.Should().NotBeNull($"Создать XmlDoc из строки \"{xmlBody}\" не удалось");
 
             this.variableController.SetVariable(varName, doc.GetType(), doc);
         }

@@ -7,47 +7,38 @@ exit /b 1
 echo Restoring dependencies was successful.
 )
 
-@set project=..\src\AlfaBank.AFT.Core\
+@set project=..\src\EvidentInstruction\
 
 @call dotnet build -c Release %project%
 
 @if ERRORLEVEL 1 (
-echo Error! Build AlfaBank.AFT.Core failed.
+echo Error! Build EvidentInstruction failed.
 exit /b 1
 )
 
-@set project=..\src\AlfaBank.AFT.Core.Library.Common\
+@set project=..\src\EvidentInstruction.Generator\
 
 @call dotnet build -c Release %project%
 
 @if ERRORLEVEL 1 (
-echo Error! Build AlfaBank.AFT.Core.Library.Common failed.
+echo Error! Build EvidentInstruction.Generator failed.
 exit /b 1
 )
 
-@set project=..\src\AlfaBank.AFT.Core.Library.Database\
+@set project=..\src\EvidentInstruction.Database\
 
 @call dotnet build -c Release %project%
 
 @if ERRORLEVEL 1 (
-echo Error! Build AlfaBank.AFT.Core.Library.Database failed.
+echo Error! Build EvidentInstruction.Database failed.
 exit /b 1
 )
 
-@set project=..\src\AlfaBank.AFT.Core.Library.Service\
+@set project=..\src\EvidentInstruction.Service\
 
 @call dotnet build -c Release %project%
 
 @if ERRORLEVEL 1 (
-echo Error! Build AlfaBank.AFT.Core.Library.Service failed.
-exit /b 1
-)
-
-@set project=..\src\AlfaBank.AFT.Core.Library.Web\
-
-@call dotnet build -c Release %project%
-
-@if ERRORLEVEL 1 (
-echo Error! Build AlfaBank.AFT.Core.Library.Web failed.
+echo Error! Build EvidentInstruction.Service failed.
 exit /b 1
 )
