@@ -56,9 +56,9 @@ namespace EvidentInstruction.Controllers
 
             if (Variables.ContainsKey(correcKey))
                 if (Variables[correcKey].TypeOfAccess == TypeOfAccess.Global)
-                   Log.Logger.Information($"Элемент с ключем \"{key}\" с типом 'Global' содержит значение {Variables[correcKey].Value}");
+                   Log.Logger.Information($"Element with key: \"{key}\" contains value {Variables[correcKey].Value} with type 'Global'");
 
-                return Variables.SingleOrDefault(_ => _.Key == GetVariableName(key)).Value;            
+            return Variables.SingleOrDefault(_ => _.Key == GetVariableName(key)).Value;            
         }
         public bool CheckVariableByKey(string key)
         {
@@ -72,7 +72,7 @@ namespace EvidentInstruction.Controllers
             {
                 if (accessType == TypeOfAccess.Local && Variables[varName].TypeOfAccess == TypeOfAccess.Global)
                 {
-                    Log.Logger.Information($"Element with key: \"{key}\" has already created with type 'Global'");
+                    Log.Logger.Information($"Element with key: \"{key}\" has already created ");
                     return;
                 }                    
 

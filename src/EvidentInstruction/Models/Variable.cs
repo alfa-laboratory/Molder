@@ -17,9 +17,6 @@ namespace EvidentInstruction.Models
             get; set;
         }
 
-        public TypeOfAccess TypeOfAccess
-        {
-            get; set;
-        } = TypeOfAccess.Local;
+        public TypeOfAccess TypeOfAccess { get; set; } = TypeOfAccess.Local;
     }
 }
