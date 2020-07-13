@@ -7,9 +7,9 @@ namespace EvidentInstruction.Models
     public interface IFile
     {
         void Create(string filename, string content = null);
-        void Delete();
+        void Delete(string filename, string path);
         string Get();
-        bool CheckFileExistence();
+        bool IsExist(string filename, string path);
 
     }
 }

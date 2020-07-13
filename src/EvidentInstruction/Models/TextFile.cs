@@ -1,91 +1,94 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Reflection;
-using System.Text;
+using System.Threading;
 using EvidentInstruction.Exceptions;
 using EvidentInstruction.Helpers;
 
+
 namespace EvidentInstruction.Models
 {
-    public class TextFile : IFile
+    public class TextFile : IFile, IDisposable
     {
-
-        private readonly UserDirectory userDirectory;
-
+        private ThreadLocal<UserDirectory> _userDirectory { get; } = new ThreadLocal<UserDirectory>();
+        public UserDirectory UserDirectory
+        {
+            get
+            {
+                if (_userDirectory != null) return _userDirectory.Value;
+                return null;
+            }
+            set => _userDirectory.Value = value;
+        }
         public TextFile()
         {
-            userDirectory = new UserDirectory();
+            UserDirectory = new UserDirectory();
         }
-        public bool CheckFileExistence()
-        {
-            throw new NotImplementedException();
-        }
-
-        private bool CheckFileName(string filename)
-        {
-            bool result = string.IsNullOrEmpty(filename) ? false : true;
-            return result;
-        }
-
         private bool CheckFileExtension(string filename)
         {
             string extension = Path.GetExtension(filename);
-            string extMustBeTxt = ".txt";
+            string extMustBeTxt = FileExtensions.txt;
             bool result = (extension == extMustBeTxt) ? true : false;
             return result;
         }
-
-        private string GetBinDirectory()
+        public bool IsExist(string filename, string path)
         {
-            return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-        }
-        private bool IsFileExist(string filename)
-        {
-            string binDirectory = GetBinDirectory();
-            string path = Path.Combine(binDirectory, filename);
-            bool result = (System.IO.File.Exists(path)) ? true : false;
+            string fullpath = Path.Combine(path, filename);
+            bool result = (System.IO.File.Exists(fullpath)) ? true : false;
             return result;
         }
-        public void DownloadFileByURL(string url, string filename)
+        public void DownloadFileByURL(string url, string filename, string pathToSave)
         {
-            bool isValidName = CheckFileName(filename);
-            bool isValidExtension = CheckFileExtension(filename);
-            if ((isValidExtension) && (isValidName))
+            if (string.IsNullOrWhiteSpace(filename))
             {
-                using (var webclient = new WebClient())
-                {
-                    webclient.DownloadFile(url, filename);
-                    bool isExist = IsFileExist(filename);
-                    if (isExist)
-                    {
-                        Log.Logger.Warning("Файл " + filename + " скачан ");
-                    }
-                    else
-                    {
-                        Log.Logger.Warning("Файл " + filename + " не скачан");
-                        throw new FileNotFoundException("Файл " + filename + " скачан");
-                    }
-                }
+                Log.Logger.Warning("Отсутствует имя файла");
+                throw new ArgumentException("Имя файла " + filename + " отсутствует");
             }
             else
             {
-                throw new ValidFileNameException("Проверьте, что файл имеет имя и его расширение .txt");
-                Log.Logger.Warning("Проверьте, что файл имеет имя и его расширение .txt");
+                bool isValidExtension = CheckFileExtension(filename);
+                if (isValidExtension)
+                {
+                    try
+                    {
+                        using (var webclient = new WebClient())
+                        {
+                            string endPath = Path.Combine(pathToSave, filename);
+                            webclient.DownloadFile(new Uri(url), endPath);
+                            bool isExist = IsExist(filename, pathToSave);
+                            if (isExist)
+                            {
+                                Log.Logger.Information("Файл " + filename + " скачан ");
+                            }
+                            else
+                            {
+                                Log.Logger.Warning("Файл " + filename + " не скачан");
+                                throw new FileNotFoundException("Файл " + filename + " скачан");
+                            }
+                        }
+                    }
+                    catch (WebException e)
+                    {
+                        Log.Logger.Warning(e.Message);
+                    }
+                }
+                else
+                {
+                    throw new ValidFileNameException("Проверьте, что файл " + filename + " имеет расширение .txt");
+                    Log.Logger.Warning("Проверьте, что файл " + filename + " имеет расширение .txt");
+                }
             }
         }
-
         public void Create(string filename, string content = null)
         {
-            string path = userDirectory.Get();
-            bool isNull = string.IsNullOrEmpty(filename);
+            string path = UserDirectory.Get();
+            bool isNull = string.IsNullOrWhiteSpace(filename);
             if (!isNull)
             {
                 string fullPath = Path.Combine(path, filename);
-                string extension = Path.GetExtension(fullPath);
-                string extMustBeTxt = ".txt";
-                if (extension == extMustBeTxt)
+                bool IsTxt = CheckFileExtension(filename);
+
+                if (IsTxt)
                 {
                     var exist = System.IO.File.Exists(fullPath);
                     if (!exist)
@@ -95,26 +98,24 @@ namespace EvidentInstruction.Models
                             try
                             {
                                 System.IO.File.Create(fullPath);
-                                Log.Logger.Warning("Пустой файл был создан")
+                                Log.Logger.Information("Пустой файл был создан");
                             }
                             catch (FileNotFoundException e)
                             {
-                                Log.Logger.Warning("Файл не был создан");
+                                Log.Logger.Warning(e.Message);
                             }
-
                         }
                         else
                         {
                             try
                             {
                                 System.IO.File.AppendAllText(fullPath, content);
-                                Log.Logger.Warning("Файл был создан");
+                                Log.Logger.Information("Файл был создан");
                             }
                             catch (FileNotFoundException e)
                             {
-                                Log.Logger.Warning("Файл не был создан");
+                                Log.Logger.Warning(e.Message);
                             }
-
                         }
                     }
                     else
@@ -122,36 +123,61 @@ namespace EvidentInstruction.Models
                         try
                         {
                             System.IO.File.WriteAllText(fullPath, content);
-                            Log.Logger.Warning("Файл был перезаписан");
+                            Log.Logger.Information("Файл был перезаписан");
                         }
                         catch (FileNotFoundException e)
                         {
-                            Log.Logger.Warning("Файл не был создан");
+                            Log.Logger.Warning(e.Message);
                         }
-
                     }
-
                 }
                 else
                 {
                     throw new FileExtensionException("Файл " + filename + " не является текстовым файлом");
+                    Log.Logger.Warning("Файл " + filename + " не является текстовым файлом");
                 }
             }
             else
             {
                 throw new NoFileNameException("Имя файла отсутствует");
+                Log.Logger.Warning("Имя файла отсутствует");
             }
         }
-
-
-        public void Delete()
+        public void Delete(string filename, string path)
         {
-            throw new NotImplementedException();
-        }
+            string fullpath = Path.Combine(path, filename);
+            string notfullpath = fullpath.Replace("\\", "");
 
+            if (string.IsNullOrWhiteSpace(fullpath))
+            {
+                Log.Logger.Warning("Путь до файла не указан");
+                throw new ArgumentNullException("Путь до файла " + path + " введен не верно");
+            }
+            if (System.IO.File.Exists(fullpath)) System.IO.File.Delete(fullpath);
+            else
+            {
+                Log.Logger.Warning("Файла по указанному пути не существует");
+                throw new FileNotFoundException("Файла по указанному пути не существует");
+            }
+
+            if (IsExist(filename, path))
+            {
+                Log.Logger.Warning("Файл " + filename + "не был удален");
+                throw new FileExistException("Файл " + filename + " не был удален");
+            }
+            else
+            {
+                Log.Logger.Information("Файл " + filename + " был удален");
+                Console.WriteLine("Файл " + filename + "  был удален");
+            }
+        }
         public string Get()
         {
             throw new NotImplementedException();
+        }
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
         }
     }
 }

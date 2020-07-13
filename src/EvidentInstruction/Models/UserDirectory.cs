@@ -4,7 +4,7 @@ using System.Text;
 
 namespace EvidentInstruction.Models
 {
-    public class UserDirectory: IUserDirectory
+    public class UserDirectory: IDirectory
     { 
         public string Get()
         {

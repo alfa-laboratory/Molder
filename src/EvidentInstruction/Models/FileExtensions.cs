@@ -4,8 +4,8 @@ using System.Text;
 
 namespace EvidentInstruction.Models
 {
-    public interface IUserDirectory
+    static class FileExtensions
     {
-        string Get();
+        public static string txt = ".txt";
     }
 }
