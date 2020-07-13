@@ -10,9 +10,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using System.Xml.Linq;
 using Xunit;
+using EvidentInstruction.Models;
 
 namespace EvidentInstruction.Tests
 {
+
     [ExcludeFromCodeCoverage]
     public class VariableControllerTests
     {
@@ -43,16 +45,18 @@ namespace EvidentInstruction.Tests
             var varName = variableContext.GetVariableName(key);
             varName.Should().Be(name);
         }
-
+       
         [Theory]
         [InlineData("pointTest.test", "pointTest")]
         [InlineData("bracessTest[test]", "bracessTest")]
         public void GetVariableName_NameWithBracessAndPoint_ReturnName(string key, string name)
         {
             variableContext.SetVariable(key, typeof(string), "1");
-            var varName = variableContext.GetVariableName(key);
-            varName.Should().Be(name);
-        }
+ 
+            var varName = variableContext.GetVariableName(key);                     
+            varName.Should().Be(name);            
+        }       
+
 
         [Theory]
         [InlineData(null)]
@@ -72,6 +76,40 @@ namespace EvidentInstruction.Tests
             var variable = variableContext.GetVariable(key);
             variable.Type.Should().Be(type);
             variable.Value.Should().Be(value);
+        }
+
+        [Theory]
+        [InlineData("first", typeof(string), "1", TypeOfAccess.Local)]
+        [InlineData("second", typeof(string), "2", TypeOfAccess.Global)]        
+        public void GetVariable_CorrectTypeOfAccess_ReturnVariable(string key, Type type, string value, TypeOfAccess typeOfAccess)
+        {
+            variableContext.SetVariable(key, type, value, typeOfAccess);
+
+            var variable = variableContext.GetVariable(key);
+            variable.TypeOfAccess.Should().Be(typeOfAccess);
+        }
+
+        [Theory]
+        [InlineData("Zero", typeof(string), "0")]        
+        public void GetVariable_RewriteLocalToGlobal(string key, Type type, string value)
+        {
+            
+            variableContext.SetVariable(key, type, value);            
+            variableContext.SetVariable(key, type, value, TypeOfAccess.Global);
+
+            variableContext.Variables[key].TypeOfAccess.Should().Be(TypeOfAccess.Global);   
+        }
+
+
+        [Theory]
+        [InlineData("five", typeof(string), "5")]        
+        public void GetVariable_RewriteLocalToLocal(string key, Type type, string value)
+        {
+            variableContext.SetVariable(key, type, value);
+            variableContext.SetVariable(key, type, value+1);
+
+            var variable = variableContext.GetVariable(key);
+            variable.TypeOfAccess.Should().Be(TypeOfAccess.Local);
         }
 
         [Theory]
@@ -257,7 +295,7 @@ namespace EvidentInstruction.Tests
 
             var variable = variableContext.GetVariableValue("DataTable[0]");
             (variable is DataRow).Should().BeTrue();
-        }
+        }       
 
         [Fact]
         public void GetVariableValue_VariableValueNullByName_ReturnNull()

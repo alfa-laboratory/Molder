@@ -50,21 +50,29 @@ namespace EvidentInstruction.Controllers
         }
         public Variable GetVariable(string key)
         {
-            return Variables.SingleOrDefault(_ => _.Key == GetVariableName(key)).Value;
+            var correcKey = GetVariableName(key);
+            if (Variables.ContainsKey(correcKey))
+                if (Variables[correcKey].TypeOfAccess == TypeOfAccess.Global)
+                    Log.Logger.Warning($"Элемент с ключем \"{key}\" с типом 'Global' уже был создан");
+                            
+
+            return Variables.SingleOrDefault(_ => _.Key == GetVariableName(key)).Value;            
         }
         public bool CheckVariableByKey(string key)
         {
             return Variables.Any(_ => _.Key == GetVariableName(key));
         }
-        public void SetVariable(string key, Type type, object value)
+        public void SetVariable(string key, Type type, object value, TypeOfAccess accessType = TypeOfAccess.Local)
         {
             var varName = GetVariableName(key);
             var vars = Variables;
-            var variable = new Variable() { Type = type, Value = value };
+            var variable = new Variable() { Type = type, Value = value, TypeOfAccess = accessType };
 
             vars.AddOrUpdate(varName, variable, (k, v) => variable);
             Variables = vars;
         }
+
+
         public object GetVariableValue(string key)
         {
             try

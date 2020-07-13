@@ -3,6 +3,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace EvidentInstruction.Models
 {
+
+    public enum TypeOfAccess
+    {
+        Global,
+        Local
+    }
     [ExcludeFromCodeCoverage]
     public class Variable
     {
@@ -15,5 +21,12 @@ namespace EvidentInstruction.Models
         {
             get; set;
         }
+
+        public TypeOfAccess TypeOfAccess
+        {
+            get; set;
+        }
+
+
     }
 }
