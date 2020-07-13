@@ -11,6 +11,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Xunit;
 using EvidentInstruction.Models;
+using EvidentInstruction.Infrastructures;
 
 namespace EvidentInstruction.Tests
 {
@@ -51,12 +52,10 @@ namespace EvidentInstruction.Tests
         [InlineData("bracessTest[test]", "bracessTest")]
         public void GetVariableName_NameWithBracessAndPoint_ReturnName(string key, string name)
         {
-            variableContext.SetVariable(key, typeof(string), "1");
- 
+            variableContext.SetVariable(key, typeof(string), "1"); 
             var varName = variableContext.GetVariableName(key);                     
             varName.Should().Be(name);            
-        }       
-
+        }  
 
         [Theory]
         [InlineData(null)]
@@ -79,38 +78,14 @@ namespace EvidentInstruction.Tests
         }
 
         [Theory]
-        [InlineData("first", typeof(string), "1", TypeOfAccess.Local)]
-        [InlineData("second", typeof(string), "2", TypeOfAccess.Global)]        
+        [InlineData("first", typeof(string), "first", TypeOfAccess.Local)]
+        [InlineData("second", typeof(string), "second", TypeOfAccess.Global)]        
         public void GetVariable_CorrectTypeOfAccess_ReturnVariable(string key, Type type, string value, TypeOfAccess typeOfAccess)
         {
             variableContext.SetVariable(key, type, value, typeOfAccess);
-
-            var variable = variableContext.GetVariable(key);
-            variable.TypeOfAccess.Should().Be(typeOfAccess);
-        }
-
-        [Theory]
-        [InlineData("Zero", typeof(string), "0")]        
-        public void GetVariable_RewriteLocalToGlobal(string key, Type type, string value)
-        {
-            
-            variableContext.SetVariable(key, type, value);            
-            variableContext.SetVariable(key, type, value, TypeOfAccess.Global);
-
-            variableContext.Variables[key].TypeOfAccess.Should().Be(TypeOfAccess.Global);   
-        }
-
-
-        [Theory]
-        [InlineData("five", typeof(string), "5")]        
-        public void GetVariable_RewriteLocalToLocal(string key, Type type, string value)
-        {
-            variableContext.SetVariable(key, type, value);
-            variableContext.SetVariable(key, type, value+1);
-
-            var variable = variableContext.GetVariable(key);
-            variable.TypeOfAccess.Should().Be(TypeOfAccess.Local);
-        }
+            variableContext.Variables[key].TypeOfAccess.Should().Be(typeOfAccess);
+            variableContext.Variables[key].Value.Should().Be(value);
+        }   
 
         [Theory]
         [InlineData(null)]
@@ -255,6 +230,18 @@ namespace EvidentInstruction.Tests
 
             ((JValue)variable).Value.Should().Be(searchValue);
         }
+
+        [Theory]
+        [InlineData("second", typeof(string), "second", TypeOfAccess.Global)]
+        public void GetDoubleVariable_TypeOfAccessGlobal_ReturnException(string key, Type type, string value, TypeOfAccess typeOfAccess)
+        {
+            variableContext.SetVariable(key, type, value, typeOfAccess);
+
+            Action act = () => variableContext.SetVariable(key, type, value+1, typeOfAccess);
+            act
+              .Should().Throw<ArgumentException>()
+              .WithMessage("Element is duplicate");
+        }        
 
         [Fact]
         public void GetVariableValue_SearchDataTable_ReturnValue()

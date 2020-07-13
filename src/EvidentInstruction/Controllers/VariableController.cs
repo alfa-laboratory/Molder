@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using EvidentInstruction.Infrastructures;
 
 namespace EvidentInstruction.Controllers
 {
@@ -51,12 +52,13 @@ namespace EvidentInstruction.Controllers
         public Variable GetVariable(string key)
         {
             var correcKey = GetVariableName(key);
+            if (correcKey == null) return null;
+
             if (Variables.ContainsKey(correcKey))
                 if (Variables[correcKey].TypeOfAccess == TypeOfAccess.Global)
-                    Log.Logger.Warning($"Элемент с ключем \"{key}\" с типом 'Global' уже был создан");
-                            
+                   Log.Logger.Information($"Элемент с ключем \"{key}\" с типом 'Global' содержит значение {Variables[correcKey].Value}");
 
-            return Variables.SingleOrDefault(_ => _.Key == GetVariableName(key)).Value;            
+                return Variables.SingleOrDefault(_ => _.Key == GetVariableName(key)).Value;            
         }
         public bool CheckVariableByKey(string key)
         {
@@ -65,6 +67,22 @@ namespace EvidentInstruction.Controllers
         public void SetVariable(string key, Type type, object value, TypeOfAccess accessType = TypeOfAccess.Local)
         {
             var varName = GetVariableName(key);
+
+            if (Variables.ContainsKey(varName))
+            {
+                if (accessType == TypeOfAccess.Local && Variables[varName].TypeOfAccess == TypeOfAccess.Global)
+                {
+                    Log.Logger.Information($"Element with key: \"{key}\" has already created with type 'Global'");
+                    return;
+                }                    
+
+                if (Variables[varName].TypeOfAccess == TypeOfAccess.Global)
+                {
+                    Log.Logger.Warning($"Element with key: \"{key}\" has already created with type 'Global'");
+                    throw new ArgumentException($"Element is duplicate");
+                }                
+            }
+
             var vars = Variables;
             var variable = new Variable() { Type = type, Value = value, TypeOfAccess = accessType };
 
