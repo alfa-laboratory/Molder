@@ -4,7 +4,7 @@ using System.Text;
 
 namespace EvidentInstruction.Exceptions
 {
-    public class NoFileNameException : Exception
+    public class NoFileNameException : ArgumentException
     {
         public NoFileNameException(string message) : base(message) { }
     }

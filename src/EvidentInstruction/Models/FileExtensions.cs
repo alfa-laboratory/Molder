@@ -6,6 +6,6 @@ namespace EvidentInstruction.Models
 {
     static class FileExtensions
     {
-        public static string txt = ".txt";
+        public static string TXT = ".txt";
     }
 }
