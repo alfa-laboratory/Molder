@@ -204,5 +204,74 @@ namespace EvidentInstruction.Tests
             Action action = () => file.Delete(file.Filename, file.Path);
             action.Should().Throw<FileExistException>();
         }
+
+        [Fact]
+        public void Download_NULLFilename_ReturnNoFileNameException()
+        {
+            var file = new TextFile()
+            {
+                Filename = null,
+                Path = "just path",
+                Url = "just URL"
+            };
+            Action acvtion = () => file.DownloadFile(file.Url, file.Filename, file.Path);
+            acvtion.Should().Throw<ArgumentException>().WithMessage("Имя файла отсутствует");
+        }
+
+        [Fact]
+        public void Download_CorrectFileNameAndURL_ReturnTrue()
+        {
+            var file = new TextFile()
+            {
+                Filename = "test.txt",
+                Path = "just path",
+                Url = "just URL"
+            };
+            var mockWebProvider = new Mock<IWebProvider>();
+            var mockFileProvider = new Mock<IFileProvider>();
+            mockWebProvider.Setup(f => f.Download(file.Url, file.Path, file.Filename)).Returns(true);
+            mockFileProvider.Setup(f => f.CheckFileExtension(file.Filename)).Returns(true);
+            file.FileProvider = mockFileProvider.Object;
+            file.WebProvider = mockWebProvider.Object;
+            bool result = file.DownloadFile(file.Url, file.Filename, file.Path);
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Download_WebClientDownloadMethodError_ReturnFalse()
+        {
+            var file = new TextFile()
+            {
+                Filename = "test.txt",
+                Path = "just path",
+                Url = "just URL"
+            };
+            var mockFileProvider = new Mock<IFileProvider>();
+            var mockWebProvider = new Mock<IWebProvider>();
+            mockFileProvider.Setup(f => f.CheckFileExtension(file.Filename)).Returns(true);
+            mockWebProvider.Setup(f => f.Download(file.Url, file.Path, file.Filename)).Returns(false);
+            file.FileProvider = mockFileProvider.Object;
+            file.WebProvider = mockWebProvider.Object;
+            bool result = file.DownloadFile(file.Url, file.Filename, file.Path);
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Download_IncorrectFileExtension_ReturnValidFileNameException()
+        {
+
+            var file = new TextFile()
+            {
+                Filename = "test.jpg",
+                Path = "just path",
+                Url = "just URL"
+            };
+            var mockFileProvider = new Mock<IFileProvider>();
+            mockFileProvider.Setup(f => f.CheckFileExtension(file.Filename)).Returns(false);
+            file.FileProvider = mockFileProvider.Object;
+            Action action = () => file.DownloadFile(file.Url, file.Filename, file.Path);
+            action.Should().Throw<ValidFileNameException>()
+                .WithMessage("Проверьте, что файл \"{filename}\"  имеет расширение .txt");
+        }
     }
 }

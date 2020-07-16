@@ -23,9 +23,11 @@ namespace EvidentInstruction.Models
         public string Filename { get; set; }
         public string Path { get; set; }
         public string Content { get; set; }
+        public string Url { get; set; }
 
         public IFileProvider FileProvider = new FileProvider();
         public IPathProvider PathProvider = new PathProvider();
+        public IWebProvider WebProvider = new WebProvider();
         public TextFile()
         {
             UserDirectory = new UserDirectory();
@@ -44,7 +46,7 @@ namespace EvidentInstruction.Models
             bool result = (System.IO.File.Exists(fullpath)) ? true : false;
             return result;
         }
-        public void DownloadFileByURL(string url, string filename, string pathToSave)
+        public bool DownloadFile(string url, string filename, string pathToSave)
         {
             if (string.IsNullOrWhiteSpace(pathToSave)) pathToSave = UserDirectory.Get();
             if (string.IsNullOrWhiteSpace(filename))
@@ -54,36 +56,16 @@ namespace EvidentInstruction.Models
             }
             else
             {
-                bool isValidExtension = CheckFileExtension(filename);
+                bool isValidExtension = FileProvider.CheckFileExtension(filename);
                 if (isValidExtension)
                 {
-                    try
-                    {
-                        using (var webclient = new WebClient())
-                        {
-                            string endPath = PathProvider.Combine(pathToSave, filename);
-                            webclient.DownloadFile(new Uri(url), endPath);
-                            bool isExist = IsExist(filename, pathToSave);
-                            if (isExist)
-                            {
-                                Log.Logger.Information("Файл  \"{0}\" был скачан в директорию \"{1}\" ", filename, pathToSave);
-                            }
-                            else
-                            {
-                                Log.Logger.Warning("Файл \"{0}\" не скачан",filename);
-                                throw new FileNotFoundException("Файл \"{0}\" не скачан", filename);
-                            }
-                        }
-                    }
-                    catch (WebException e)
-                    {
-                        Log.Logger.Warning("Файл \"{0}\" не скачан по ошибке {1}", filename,e.Message);
-                    }
+                    if (WebProvider.Download(url, pathToSave, filename)) return true;
+                    else return false;
                 }
                 else
                 {
-                    throw new FileExtensionException("Проверьте, что файл \"{0}\" имеет расширение {1} ", filename, FileExtensions.TXT);
-                    Log.Logger.Warning("Проверьте, что файл \"{0}\"  имеет расширение {1}",filename, FileExtensions.TXT);
+                    throw new ValidFileNameException("Проверьте, что файл \"{filename}\"  имеет расширение .txt");
+                    Log.Logger.Warning("Проверьте, что файл \"{filename}\"  имеет расширение .txt");
                 }
             }
         }
