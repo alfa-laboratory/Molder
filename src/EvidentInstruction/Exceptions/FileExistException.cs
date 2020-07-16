@@ -10,6 +10,10 @@ namespace EvidentInstruction.Exceptions
 
         public FileExistException(string message) : base(message) { }
 
+        public FileExistException(string paramName, string message) : base(paramName, message)
+        {
+        }
+
         public FileExistException(string paramName, string message, string path) : base(paramName, message)
         {
             this.path = path;

@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading;
 using EvidentInstruction.Exceptions;
 using EvidentInstruction.Helpers;
+using EvidentInstruction.Models.inerfaces;
 
 namespace EvidentInstruction.Models
 {
@@ -19,13 +20,19 @@ namespace EvidentInstruction.Models
             }
             set => _userDirectory.Value = value;
         }
+        public string Filename { get; set; }
+        public string Path { get; set; }
+        public string Content { get; set; }
+
+        public IFileProvider FileProvider = new FileProvider();
+        public IPathProvider PathProvider = new PathProvider();
         public TextFile()
         {
             UserDirectory = new UserDirectory();
         }
         protected bool CheckFileExtension(string filename)
         {
-            string extension = Path.GetExtension(filename);
+            string extension = System.IO.Path.GetExtension(filename);
             string extMustBeTxt = FileExtensions.TXT;
             bool result = (extension == extMustBeTxt) ? true : false;
             return result;
@@ -33,7 +40,7 @@ namespace EvidentInstruction.Models
         public bool IsExist(string filename, string path)
         {
             if (string.IsNullOrWhiteSpace(path)) path = UserDirectory.Get();
-            string fullpath = Path.Combine(path, filename);
+            string fullpath = System.IO.Path.Combine(path, filename);
             bool result = (System.IO.File.Exists(fullpath)) ? true : false;
             return result;
         }
@@ -54,7 +61,7 @@ namespace EvidentInstruction.Models
                     {
                         using (var webclient = new WebClient())
                         {
-                            string endPath = Path.Combine(pathToSave, filename);
+                            string endPath = PathProvider.Combine(pathToSave, filename);
                             webclient.DownloadFile(new Uri(url), endPath);
                             bool isExist = IsExist(filename, pathToSave);
                             if (isExist)
@@ -80,100 +87,70 @@ namespace EvidentInstruction.Models
                 }
             }
         }
-        public void Create(string filename,string path, string content = null)
+
+        public bool Create(string filename, string path, string content = null)
         {
             if (string.IsNullOrWhiteSpace(path)) path = UserDirectory.Get();
-            bool isNull = string.IsNullOrWhiteSpace(filename);
+            bool isNull = string.IsNullOrEmpty(filename);
             if (!isNull)
             {
-                string fullPath = Path.Combine(path, filename);
-                bool IsTxt = CheckFileExtension(filename);
+                string fullPath = System.IO.Path.Combine(path, filename);
+                bool IsTxt = FileProvider.CheckFileExtension(filename);
 
                 if (IsTxt)
                 {
-                    var exist = System.IO.File.Exists(fullPath);
+                    var exist = FileProvider.Exist(fullPath);
                     if (!exist)
                     {
                         if (string.IsNullOrWhiteSpace(content))
                         {
-                            try
-                            {
-                                System.IO.File.Create(fullPath);
-                                Log.Logger.Information("Пустой файл \"{0}\" был создан в директории \"{1}\" ",filename, path);
-                            }
-                            catch (FileNotFoundException e)
-                            {
-                                Log.Logger.Warning("Пустой файл \"{0}\" не был создан с ошибкой \"{1}\"", filename,e.Message);
-                            }
+                            if (FileProvider.Create(filename, path, content)) return true;
+                            else return false;
+
                         }
                         else
                         {
-                            try
-                            {
-                                System.IO.File.AppendAllText(fullPath, content);
-                                Log.Logger.Information("Файл \"{0}\" был создан в директории \"{1}\" ", filename, path);
-                            }
-                            catch (FileNotFoundException e)
-                            {
-                                Log.Logger.Warning("Пустой файл \"{0}\" не был создан с ошибкой \"{1}\"", filename, e.Message);
-                            }
+                            if (FileProvider.AppendAllText(filename, path, content)) return true;
+                            else return false;
                         }
                     }
                     else
                     {
-                        try
-                        {
-                            System.IO.File.WriteAllText(fullPath, content);
-                            Log.Logger.Information("Файл \"{0}\" в директории \"{1}\" был перезаписан ", filename, path);
-                        }
-                        catch (FileNotFoundException e)
-                        {
-                            Log.Logger.Warning("Файл \"{0}\" не был перезаписан с ошибкой \"{1}\"", filename, e.Message);
-                        }
+                        if (FileProvider.WriteAllText(filename, path, content)) return true;
+                        else return false;
                     }
+
                 }
                 else
                 {
-                    throw new FileExtensionException("Файл \"{0}\" не является текстовым файлом", filename);
-                    Log.Logger.Warning("Файл \"{0}\" не является текстовым файлом", filename);
+                    throw new FileExtensionException("Файл " + filename + " не является текстовым файлом");
                 }
             }
             else
             {
                 throw new NoFileNameException("Имя файла отсутствует");
-                Log.Logger.Warning("Имя файла отсутствует");
             }
         }
-        public void Delete(string filename, string path)
+
+        public bool Delete(string filename, string path)
         {
             if (string.IsNullOrWhiteSpace(path)) path = UserDirectory.Get();
-            string fullpath = Path.Combine(path, filename);
-            string notfullpath = fullpath.Replace("\\", "");
+            string fullpath = PathProvider.Combine(path, filename);
             if (string.IsNullOrWhiteSpace(filename))
             {
                 Log.Logger.Warning("Имя файла отсутствует");
                 throw new NoFileNameException("Имя файла отсутствует");
             }
-            if (string.IsNullOrWhiteSpace(fullpath))
-            {
-                Log.Logger.Warning("Путь до файла \"{0}\"  введен не верно", filename);
-                throw new ArgumentNullException("Путь до файла \"{0}\"  введен не верно", filename);
-            }
-            if (System.IO.File.Exists(fullpath)) System.IO.File.Delete(fullpath);
-            else
-            {
-                Log.Logger.Warning("Файла \"{0}\" по указанному пути \"{1}\"  не существует",filename, path);
-                throw new FileExistException("Файла \"{0}\" по указанному пути \"{1}\"  не существует", filename, path);
-            }
 
-            if (IsExist(filename, path))
+            if (FileProvider.Exist(fullpath))
             {
-                Log.Logger.Warning("Файл \"{0}\" по указанному пути \"{1}\"  не  был удален", filename, path);
-                throw new FileExistException("Файл \"{0}\" по указанному пути \"{1}\"  не  был удален", filename, path);
+                FileProvider.Delete(fullpath);
+                return true;
             }
             else
             {
-                Log.Logger.Information("Файл \"{0}\" по указанному пути \"{1}\"   был успешно удален", filename, path);
+                Log.Logger.Warning("Файла по указанному пути не существует");
+                throw new FileExistException("Файла  в директории \"{0}\" не существует", path);
             }
         }
         public string Get()
