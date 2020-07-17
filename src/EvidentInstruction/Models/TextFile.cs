@@ -1,7 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Net;
-using System.Threading;
 using EvidentInstruction.Exceptions;
 using EvidentInstruction.Helpers;
 using EvidentInstruction.Models.inerfaces;
@@ -9,17 +6,8 @@ using EvidentInstruction.Models.inerfaces;
 namespace EvidentInstruction.Models
 {
     public class TextFile : IFile, IDisposable
-    { 
-        private ThreadLocal<UserDirectory> _userDirectory { get; } = new ThreadLocal<UserDirectory>();
-        public UserDirectory UserDirectory
-        {
-            get
-            {
-                if (_userDirectory != null) return _userDirectory.Value;
-                return null;
-            }
-            set => _userDirectory.Value = value;
-        }
+    {
+        public IDirectory UserDirectory { get; set; } = new UserDirectory();
         public string Filename { get; set; }
         public string Path { get; set; }
         public string Content { get; set; }
@@ -28,22 +16,12 @@ namespace EvidentInstruction.Models
         public IFileProvider FileProvider = new FileProvider();
         public IPathProvider PathProvider = new PathProvider();
         public IWebProvider WebProvider = new WebProvider();
-        public TextFile()
-        {
-            UserDirectory = new UserDirectory();
-        }
-        protected bool CheckFileExtension(string filename)
-        {
-            string extension = System.IO.Path.GetExtension(filename);
-            string extMustBeTxt = FileExtensions.TXT;
-            bool result = (extension == extMustBeTxt) ? true : false;
-            return result;
-        }
+        
         public bool IsExist(string filename, string path)
         {
             if (string.IsNullOrWhiteSpace(path)) path = UserDirectory.Get();
-            string fullpath = System.IO.Path.Combine(path, filename);
-            bool result = (System.IO.File.Exists(fullpath)) ? true : false;
+            string fullpath = PathProvider.Combine(path, filename);
+            bool result = (FileProvider.Exist(fullpath)) ? true : false;
             return result;
         }
         public bool DownloadFile(string url, string filename, string pathToSave)
@@ -64,8 +42,8 @@ namespace EvidentInstruction.Models
                 }
                 else
                 {
-                    throw new ValidFileNameException("Проверьте, что файл \"{filename}\"  имеет расширение .txt");
-                    Log.Logger.Warning("Проверьте, что файл \"{filename}\"  имеет расширение .txt");
+                    throw new ValidFileNameException($"Проверьте, что файл \"{filename}\"  имеет расширение .txt");
+                    Log.Logger.Warning($"Проверьте, что файл \"{filename}\"  имеет расширение .txt");
                 }
             }
         }
@@ -105,7 +83,7 @@ namespace EvidentInstruction.Models
                 }
                 else
                 {
-                    throw new FileExtensionException("Файл " + filename + " не является текстовым файлом");
+                    throw new FileExtensionException($"Файл \"{filename}\" не является текстовым файлом");
                 }
             }
             else
@@ -132,12 +110,8 @@ namespace EvidentInstruction.Models
             else
             {
                 Log.Logger.Warning("Файла по указанному пути не существует");
-                throw new FileExistException("Файла  в директории \"{0}\" не существует", path);
+                throw new FileExistException("Файла в директории  не существует");
             }
-        }
-        public string Get()
-        {
-            throw new NotImplementedException();
         }
         public void Dispose()
         {

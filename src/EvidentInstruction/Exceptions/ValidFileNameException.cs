@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EvidentInstruction.Exceptions
 {
+    [Serializable]
     public class ValidFileNameException: ArgumentException
     {
         public ValidFileNameException(string message) : base(message) { }

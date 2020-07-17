@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
-using System.Text;
 using EvidentInstruction.Helpers;
 using EvidentInstruction.Models.inerfaces;
 
 namespace EvidentInstruction.Models
 {
+    [ExcludeFromCodeCoverage]
     public class WebProvider: IWebProvider
     {
         public bool Download(string url, string pathToSave, string filename)
@@ -21,20 +21,20 @@ namespace EvidentInstruction.Models
                     bool isExist = new EvidentInstruction.Models.TextFile().IsExist(filename, pathToSave);
                     if (isExist)
                     {
-                        Log.Logger.Warning( "Файл  \"{0}\" был скачан в директорию \"{1}\" ", filename, endPath);
+                        Log.Logger.Warning( $"Файл  \"{filename}\" был скачан в директорию \"{endPath}\" ");
                         return true;
                     }
                     else
                     {
-                        Log.Logger.Warning("Файл " + filename + " не скачан");
-                        throw new FileNotFoundException("Файл " + filename + " не скачан");
+                        Log.Logger.Warning($"Файл \"{filename}\" не скачан");
+                        throw new FileNotFoundException($"Файл \"{filename}\" не скачан");
                     }
                 }
             }
 
             catch (WebException e)
             {
-                Log.Logger.Error("Файл не скачан из за ошибки \"{e.Message}\"");
+                Log.Logger.Error($"Файл не скачан из за ошибки \"{e.Message}\"");
                 return false;
             }
         }

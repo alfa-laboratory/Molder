@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace EvidentInstruction.Models.inerfaces
+﻿namespace EvidentInstruction.Models.Interfaces
 {
     public interface IFileProvider
     {

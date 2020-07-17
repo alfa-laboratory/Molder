@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace EvidentInstruction.Models
 {
+    [ExcludeFromCodeCoverage]
     static class FileExtensions
     {
         public static string TXT = ".txt";

@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EvidentInstruction.Models
 {
+    [ExcludeFromCodeCoverage]
     public class UserDirectory: IDirectory
     { 
         public string Get()

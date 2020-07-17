@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 using EvidentInstruction.Models.inerfaces;
 
 namespace EvidentInstruction.Models
 {
+    [ExcludeFromCodeCoverage]
     public class PathProvider: IPathProvider
     {
         public string Combine(string path1, string path2)
