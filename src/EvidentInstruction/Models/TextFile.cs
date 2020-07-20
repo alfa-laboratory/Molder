@@ -1,8 +1,7 @@
 ﻿using System;
 using EvidentInstruction.Exceptions;
 using EvidentInstruction.Helpers;
-using EvidentInstruction.Models.inerfaces;
-
+using EvidentInstruction.Models.Interfaces;
 namespace EvidentInstruction.Models
 {
     public class TextFile : IFile, IDisposable

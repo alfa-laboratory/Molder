@@ -2,11 +2,10 @@
 using System.Diagnostics.CodeAnalysis;
 using EvidentInstruction.Exceptions;
 using EvidentInstruction.Models;
-using EvidentInstruction.Models.inerfaces;
+using EvidentInstruction.Models.Interfaces;
 using FluentAssertions;
 using Moq;
 using Xunit;
-using Xunit.Sdk;
 
 namespace EvidentInstruction.Tests
 {
@@ -110,7 +109,7 @@ namespace EvidentInstruction.Tests
             bool result = file.Create(file.Filename, file.Path, file.Content);
             result.Should().BeTrue();
         }
-        //FileProvider AppendAllText return false;
+
         [Fact]
         public void Create_CorrectNameAndPathAndContent_IncorrectAppendAllText_ReturnFalse()
         {
@@ -129,7 +128,6 @@ namespace EvidentInstruction.Tests
             result.Should().BeFalse();
         }
 
-        //FileProvider Create return true
         [Fact]
         public void Create_CorrectNameAndPathNullContent_ReturnTrue()
         {
@@ -148,7 +146,6 @@ namespace EvidentInstruction.Tests
             result.Should().BeTrue();
         }
 
-        //FileProvider Create return false
         [Fact]
         public void Create_CorrectNameAndPathNullContent_IncorrectCreateMethod_ReturnFalse()
         {
@@ -166,7 +163,7 @@ namespace EvidentInstruction.Tests
             bool result = file.Create(file.Filename, file.Path, file.Content);
             result.Should().BeFalse();
         }
-        //FileProvider WriteAllText return true
+
         [Fact]
         public void Create_CorrectNameAndPathAndContent_PathIsDoesNotExist_ReturnTrue()
         {
@@ -185,7 +182,6 @@ namespace EvidentInstruction.Tests
             result.Should().BeTrue();
         }
 
-        //FileProvider WriteAllText return false
         [Fact]
         public void Create_CorrectNameAndPathAndContent_PathIsExist_WriteAllTextReturnFalse_ReturnFalse()
         {
@@ -203,7 +199,7 @@ namespace EvidentInstruction.Tests
             bool result = file.Create(file.Filename, file.Path, file.Content);
             result.Should().BeFalse();
         }
-        // FileProvider CheckFileExtension return false
+
         [Fact]
         public void Create_CorrectNameAndPathAndContent_ExtensionIsNotTXT_ReturnFileExtensionException()
         {

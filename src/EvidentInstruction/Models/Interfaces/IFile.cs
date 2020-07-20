@@ -1,4 +1,4 @@
-﻿namespace EvidentInstruction.Models
+﻿namespace EvidentInstruction.Models.Interfaces
 {
     public interface IFile
     {

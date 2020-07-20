@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using EvidentInstruction.Helpers;
-using EvidentInstruction.Models.inerfaces;
+using EvidentInstruction.Models.Interfaces;
 
 namespace EvidentInstruction.Models
 {

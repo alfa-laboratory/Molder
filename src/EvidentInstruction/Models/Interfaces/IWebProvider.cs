@@ -1,4 +1,4 @@
-﻿namespace EvidentInstruction.Models.inerfaces
+﻿namespace EvidentInstruction.Models.Interfaces
 {
     public interface IWebProvider
     {

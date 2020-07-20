@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using EvidentInstruction.Models.inerfaces;
+using EvidentInstruction.Models.Interfaces;
 
 namespace EvidentInstruction.Models
 {

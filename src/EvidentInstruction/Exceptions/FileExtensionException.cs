@@ -6,6 +6,5 @@ namespace EvidentInstruction.Exceptions
     public class FileExtensionException : ArgumentException
     {
         public FileExtensionException(string message) : base(message) { }
-
     }
 }
