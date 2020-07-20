@@ -41,8 +41,9 @@ namespace EvidentInstruction.Models
                 }
                 else
                 {
-                    throw new ValidFileNameException($"Проверьте, что файл \"{filename}\"  имеет расширение .txt");
                     Log.Logger.Warning($"Проверьте, что файл \"{filename}\"  имеет расширение .txt");
+                    throw new ValidFileNameException($"Проверьте, что файл \"{filename}\"  имеет расширение .txt");
+
                 }
             }
         }
