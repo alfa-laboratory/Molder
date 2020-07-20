@@ -27,6 +27,7 @@ namespace EvidentInstruction.Models
             }
             catch (FileNotFoundException e)
             {
+                Log.Logger.Warning($"Файл \"{fullpath}\" не найден с ошибкой \"{e.Message}\" ");
                 return false;
             }
         }

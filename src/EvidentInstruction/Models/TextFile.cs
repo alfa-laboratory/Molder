@@ -16,14 +16,14 @@ namespace EvidentInstruction.Models
         public IPathProvider PathProvider = new PathProvider();
         public IWebProvider WebProvider = new WebProvider();
         
-        public bool IsExist(string filename, string path)
+        public bool IsExist(string filename, string path = null)
         {
             if (string.IsNullOrWhiteSpace(path)) path = UserDirectory.Get();
             string fullpath = PathProvider.Combine(path, filename);
             bool result = (FileProvider.Exist(fullpath)) ? true : false;
             return result;
         }
-        public bool DownloadFile(string url, string filename, string pathToSave)
+        public bool DownloadFile(string url, string filename, string pathToSave = null)
         {
             if (string.IsNullOrWhiteSpace(pathToSave)) pathToSave = UserDirectory.Get();
             if (string.IsNullOrWhiteSpace(filename))
@@ -47,7 +47,7 @@ namespace EvidentInstruction.Models
             }
         }
 
-        public bool Create(string filename, string path, string content = null)
+        public bool Create(string filename, string path = null, string content = null)
         {
             if (string.IsNullOrWhiteSpace(path)) path = UserDirectory.Get();
             bool isNull = string.IsNullOrEmpty(filename);
@@ -91,7 +91,7 @@ namespace EvidentInstruction.Models
             }
         }
 
-        public bool Delete(string filename, string path)
+        public bool Delete(string filename, string path = null)
         {
             if (string.IsNullOrWhiteSpace(path)) path = UserDirectory.Get();
             string fullpath = PathProvider.Combine(path, filename);

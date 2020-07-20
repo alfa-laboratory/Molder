@@ -34,7 +34,7 @@ namespace EvidentInstruction.Models
 
             catch (WebException e)
             {
-                Log.Logger.Error($"Файл не скачан из за ошибки \"{e.Message}\"");
+                Log.Logger.Error($"Файл \"{filename}\" не скачан из за ошибки \"{e.Message}\"");
                 return false;
             }
         }

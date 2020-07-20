@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using EvidentInstruction.Helpers;
 using EvidentInstruction.Models.Interfaces;
 
 namespace EvidentInstruction.Models
@@ -15,10 +16,12 @@ namespace EvidentInstruction.Models
             }
             catch (ArgumentNullException e)
             {
+                Log.Logger.Warning($"Ошибка при объеденении строки \"{path1}\" и \"{path2}\" : \"{e.Message}\" ");
                 return null;
             }
-            catch (ArgumentException)
+            catch (ArgumentException e)
             {
+                Log.Logger.Warning($"Ошибка при объеденении строки \"{path1}\" и \"{path2}\" : \"{e.Message}\" ");
                 return null;
             }
         }
