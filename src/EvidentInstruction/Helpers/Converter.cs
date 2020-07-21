@@ -73,22 +73,23 @@ namespace EvidentInstruction.Helpers
             }
         }
 
-        public static XDocument CreateCData(XElement xElement)
+        public static XDocument CreateCData(string str)
         {
             try
             {
-                var data = ((XText)xElement.FirstNode).Value;
+                var element = XElement.Parse(str);
+                if(element.FirstNode.NodeType != XmlNodeType.CDATA)
+                {
+                    Log.Logger.Warning($"Значение переменной для преобразования в CDATA равно null");
+                    return null;
+                }
+                var data = ((XText)element.FirstNode).Value;
                 var xDocument = XDocument.Parse(data);
                 return xDocument;
             }
-            catch(ArgumentNullException)
-            {
-                Log.Logger.Warning($"Значение переменной для преобразования в CDATA равно null");
-                return null;
-            }
             catch (XmlException ex)
             {
-                Log.Logger.Warning(ex.Message);
+                Log.Logger.Warning($"Значение переменной для преобразования в CDATA не создалось из-за ошибки: {ex.Message}");
                 return null;
             }
         }
