@@ -5,7 +5,7 @@
     "log-level": "info",
     "log-file": false,
     "timeout-ms": 10000,
-    "project-file": "AlfaBank.Core",
+    "project-file": "EvidentInstruction",
     "max-concurrent-test-runners": 4,
     "threshold-high": 80,
     "threshold-low": 70,
