@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Database
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Service", "src\EvidentInstruction.Service\EvidentInstruction.Service.csproj", "{AA067607-0A8C-47B5-933E-D06C2DBDFAF6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.ReportPortal", "src\EvidentInstruction.ReportPortal\EvidentInstruction.ReportPortal.csproj", "{0D585BC3-897D-465D-8327-E702C49A77D3}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Generator.Tests", "test\EvidentInstruction.Generator.Tests\EvidentInstruction.Generator.Tests.csproj", "{1705FE8B-E0A9-4A5F-94A1-246397E0AFC2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EvidentInstruction.Config", "src\EvidentInstruction.Config\EvidentInstruction.Config.csproj", "{69324447-06D0-417B-934B-F90FFC4C326A}"
@@ -89,18 +87,6 @@ Global
 		{AA067607-0A8C-47B5-933E-D06C2DBDFAF6}.Release|x64.Build.0 = Release|Any CPU
 		{AA067607-0A8C-47B5-933E-D06C2DBDFAF6}.Release|x86.ActiveCfg = Release|Any CPU
 		{AA067607-0A8C-47B5-933E-D06C2DBDFAF6}.Release|x86.Build.0 = Release|Any CPU
-		{0D585BC3-897D-465D-8327-E702C49A77D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0D585BC3-897D-465D-8327-E702C49A77D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0D585BC3-897D-465D-8327-E702C49A77D3}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{0D585BC3-897D-465D-8327-E702C49A77D3}.Debug|x64.Build.0 = Debug|Any CPU
-		{0D585BC3-897D-465D-8327-E702C49A77D3}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{0D585BC3-897D-465D-8327-E702C49A77D3}.Debug|x86.Build.0 = Debug|Any CPU
-		{0D585BC3-897D-465D-8327-E702C49A77D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0D585BC3-897D-465D-8327-E702C49A77D3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0D585BC3-897D-465D-8327-E702C49A77D3}.Release|x64.ActiveCfg = Release|Any CPU
-		{0D585BC3-897D-465D-8327-E702C49A77D3}.Release|x64.Build.0 = Release|Any CPU
-		{0D585BC3-897D-465D-8327-E702C49A77D3}.Release|x86.ActiveCfg = Release|Any CPU
-		{0D585BC3-897D-465D-8327-E702C49A77D3}.Release|x86.Build.0 = Release|Any CPU
 		{1705FE8B-E0A9-4A5F-94A1-246397E0AFC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1705FE8B-E0A9-4A5F-94A1-246397E0AFC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1705FE8B-E0A9-4A5F-94A1-246397E0AFC2}.Debug|x64.ActiveCfg = Debug|Any CPU
