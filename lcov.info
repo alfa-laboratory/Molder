@@ -1,0 +1,1256 @@
+SF:D:\Projects\AlfaBank.AFT.Core.Library\src\EvidentInstruction\Models\TextFile.cs
+FN:8,EvidentInstruction.Models.Interfaces.IDirectory EvidentInstruction.Models.TextFile::get_UserDirectory()
+FNDA:0,EvidentInstruction.Models.Interfaces.IDirectory EvidentInstruction.Models.TextFile::get_UserDirectory()
+DA:9,0
+FN:9,System.String EvidentInstruction.Models.TextFile::get_Filename()
+FNDA:0,System.String EvidentInstruction.Models.TextFile::get_Filename()
+DA:10,0
+FN:10,System.String EvidentInstruction.Models.TextFile::get_Path()
+FNDA:0,System.String EvidentInstruction.Models.TextFile::get_Path()
+DA:11,0
+FN:11,System.String EvidentInstruction.Models.TextFile::get_Content()
+FNDA:0,System.String EvidentInstruction.Models.TextFile::get_Content()
+DA:12,0
+FN:12,System.String EvidentInstruction.Models.TextFile::get_Url()
+FNDA:0,System.String EvidentInstruction.Models.TextFile::get_Url()
+DA:13,0
+FN:20,System.Boolean EvidentInstruction.Models.TextFile::IsExist(System.String,System.String)
+FNDA:0,System.Boolean EvidentInstruction.Models.TextFile::IsExist(System.String,System.String)
+DA:21,0
+DA:22,0
+DA:23,0
+DA:24,0
+BRDA:21,6,0,0
+BRDA:21,6,1,0
+BRDA:23,47,0,0
+BRDA:23,47,1,0
+FN:27,System.Boolean EvidentInstruction.Models.TextFile::DownloadFile(System.String,System.String,System.String)
+FNDA:0,System.Boolean EvidentInstruction.Models.TextFile::DownloadFile(System.String,System.String,System.String)
+DA:28,0
+DA:29,0
+DA:31,0
+DA:32,0
+DA:36,0
+DA:37,0
+DA:39,0
+DA:40,0
+DA:44,0
+DA:45,0
+BRDA:28,6,0,0
+BRDA:28,6,1,0
+BRDA:29,27,0,0
+BRDA:29,27,1,0
+BRDA:37,67,0,0
+BRDA:39,83,0,0
+BRDA:39,83,1,0
+BRDA:37,67,1,0
+FN:52,System.Boolean EvidentInstruction.Models.TextFile::Create(System.String,System.String,System.String)
+FNDA:0,System.Boolean EvidentInstruction.Models.TextFile::Create(System.String,System.String,System.String)
+DA:53,0
+DA:54,0
+DA:55,0
+DA:57,0
+DA:58,0
+DA:60,0
+DA:62,0
+DA:63,0
+DA:65,0
+DA:67,0
+DA:68,0
+DA:73,0
+DA:74,0
+DA:79,0
+DA:80,0
+DA:86,0
+DA:91,0
+BRDA:53,6,0,0
+BRDA:53,6,1,0
+BRDA:55,27,0,0
+BRDA:60,49,0,0
+BRDA:63,63,0,0
+BRDA:65,71,0,0
+BRDA:67,87,0,0
+BRDA:67,87,1,0
+BRDA:65,71,1,0
+BRDA:73,107,0,0
+BRDA:73,107,1,0
+BRDA:63,63,1,0
+BRDA:79,127,0,0
+BRDA:79,127,1,0
+BRDA:60,49,1,0
+BRDA:55,27,1,0
+FN:96,System.Boolean EvidentInstruction.Models.TextFile::Delete(System.String,System.String)
+FNDA:0,System.Boolean EvidentInstruction.Models.TextFile::Delete(System.String,System.String)
+DA:97,0
+DA:98,0
+DA:99,0
+DA:101,0
+DA:102,0
+DA:105,0
+DA:107,0
+DA:108,0
+DA:112,0
+DA:113,0
+BRDA:97,6,0,0
+BRDA:97,6,1,0
+BRDA:99,41,0,0
+BRDA:99,41,1,0
+BRDA:105,81,0,0
+BRDA:105,81,1,0
+FN:117,System.Void EvidentInstruction.Models.TextFile::Dispose()
+FNDA:0,System.Void EvidentInstruction.Models.TextFile::Dispose()
+DA:118,0
+DA:119,0
+FN:14,System.Void EvidentInstruction.Models.TextFile::.ctor()
+FNDA:0,System.Void EvidentInstruction.Models.TextFile::.ctor()
+DA:15,0
+DA:16,0
+DA:17,0
+LF:51
+LH:0
+BRF:34
+BRH:0
+FNF:11
+FNH:0
+end_of_record
+SF:D:\Projects\AlfaBank.AFT.Core.Library\src\EvidentInstruction\Helpers\Compare.cs
+FN:10,System.Boolean EvidentInstruction.Helpers.Compare::AreTablesTheSame(System.Data.DataTable,System.Data.DataTable)
+FNDA:0,System.Boolean EvidentInstruction.Helpers.Compare::AreTablesTheSame(System.Data.DataTable,System.Data.DataTable)
+DA:11,0
+DA:12,0
+DA:14,0
+DA:15,0
+DA:16,0
+DA:19,0
+DA:21,0
+DA:23,0
+DA:25,0
+DA:29,0
+DA:31,0
+DA:32,0
+DA:35,0
+BRDA:12,28,0,0
+BRDA:12,28,1,0
+BRDA:12,52,0,0
+BRDA:12,52,1,0
+BRDA:19,331,1,0
+BRDA:21,310,1,0
+BRDA:23,210,0,0
+BRDA:23,210,1,0
+BRDA:21,310,0,0
+BRDA:19,331,0,0
+BRDA:29,342,0,0
+BRDA:29,342,1,0
+LF:13
+LH:0
+BRF:12
+BRH:0
+FNF:1
+FNH:0
+end_of_record
+SF:D:\Projects\AlfaBank.AFT.Core.Library\src\EvidentInstruction\Helpers\Converter.cs
+FN:17,System.Collections.IEnumerable EvidentInstruction.Helpers.Converter::CreateEnumerable(System.String,System.String)
+FNDA:0,System.Collections.IEnumerable EvidentInstruction.Helpers.Converter::CreateEnumerable(System.String,System.String)
+DA:18,0
+DA:19,0
+DA:20,0
+DA:22,0
+DA:24,0
+DA:26,0
+DA:27,0
+DA:31,0
+DA:32,0
+DA:35,0
+BRDA:24,64,0,0
+BRDA:24,64,1,0
+FN:40,System.Xml.Linq.XDocument EvidentInstruction.Helpers.Converter::CreateXDoc(System.String)
+FNDA:0,System.Xml.Linq.XDocument EvidentInstruction.Helpers.Converter::CreateXDoc(System.String)
+DA:41,0
+DA:43,0
+DA:45,0
+DA:46,0
+DA:48,0
+FN:53,System.Xml.XmlDocument EvidentInstruction.Helpers.Converter::CreateXmlDoc(System.String)
+FNDA:2,System.Xml.XmlDocument EvidentInstruction.Helpers.Converter::CreateXmlDoc(System.String)
+DA:54,2
+DA:55,2
+DA:56,1
+DA:57,1
+DA:59,1
+DA:60,1
+DA:62,2
+FN:67,Newtonsoft.Json.Linq.JObject EvidentInstruction.Helpers.Converter::CreateJson(System.String)
+FNDA:0,Newtonsoft.Json.Linq.JObject EvidentInstruction.Helpers.Converter::CreateJson(System.String)
+DA:68,0
+DA:69,0
+DA:71,0
+DA:72,0
+DA:74,0
+FN:79,System.Xml.Linq.XDocument EvidentInstruction.Helpers.Converter::CreateCData(System.String)
+FNDA:0,System.Xml.Linq.XDocument EvidentInstruction.Helpers.Converter::CreateCData(System.String)
+DA:80,0
+DA:81,0
+DA:83,0
+DA:84,0
+DA:86,0
+DA:87,0
+DA:88,0
+DA:90,0
+DA:92,0
+DA:93,0
+DA:95,0
+BRDA:81,19,0,0
+BRDA:81,19,1,0
+LF:38
+LH:7
+BRF:4
+BRH:0
+FNF:5
+FNH:1
+end_of_record
+SF:D:\Projects\AlfaBank.AFT.Core.Library\src\EvidentInstruction\Helpers\Credentials.cs
+FN:10,System.Net.CredentialCache EvidentInstruction.Helpers.Credentials::CreateCredential(System.String,EvidentInstruction.Infrastructure.AuthType,System.String,System.String,System.String)
+FNDA:0,System.Net.CredentialCache EvidentInstruction.Helpers.Credentials::CreateCredential(System.String,EvidentInstruction.Infrastructure.AuthType,System.String,System.String,System.String)
+DA:11,0
+DA:12,0
+DA:13,0
+DA:14,0
+LF:4
+LH:0
+BRF:0
+BRH:0
+FNF:1
+FNH:0
+end_of_record
+SF:D:\Projects\AlfaBank.AFT.Core.Library\src\EvidentInstruction\Helpers\Generator.cs
+FN:10,System.DateTime EvidentInstruction.Helpers.Generator::get_DefaultStart()
+FNDA:0,System.DateTime EvidentInstruction.Helpers.Generator::get_DefaultStart()
+DA:11,0
+FN:11,System.DateTime EvidentInstruction.Helpers.Generator::get_DefaultEnd()
+FNDA:0,System.DateTime EvidentInstruction.Helpers.Generator::get_DefaultEnd()
+DA:12,0
+FN:15,System.String EvidentInstruction.Helpers.Generator::get_UpperChars()
+FNDA:0,System.String EvidentInstruction.Helpers.Generator::get_UpperChars()
+DA:16,0
+FN:16,System.String EvidentInstruction.Helpers.Generator::get_LowerChars()
+FNDA:0,System.String EvidentInstruction.Helpers.Generator::get_LowerChars()
+DA:17,0
+FN:17,System.String EvidentInstruction.Helpers.Generator::get_Numbers()
+FNDA:0,System.String EvidentInstruction.Helpers.Generator::get_Numbers()
+DA:18,0
+FN:21,System.String EvidentInstruction.Helpers.Generator::GetRandomString(System.Int32,System.String)
+FNDA:0,System.String EvidentInstruction.Helpers.Generator::GetRandomString(System.Int32,System.String)
+DA:22,0
+BRDA:22,11,0,0
+BRDA:22,11,1,0
+FN:25,System.String EvidentInstruction.Helpers.Generator::GetRandomChars(System.Int32,System.String)
+FNDA:0,System.String EvidentInstruction.Helpers.Generator::GetRandomChars(System.Int32,System.String)
+DA:26,0
+BRDA:26,11,0,0
+BRDA:26,11,1,0
+FN:29,System.String EvidentInstruction.Helpers.Generator::GetRandomNumbers(System.Int32,System.String,System.Boolean)
+FNDA:0,System.String EvidentInstruction.Helpers.Generator::GetRandomNumbers(System.Int32,System.String,System.Boolean)
+DA:30,0
+DA:31,0
+BRDA:30,1,0,0
+BRDA:30,1,1,0
+BRDA:31,34,0,0
+BRDA:31,34,1,0
+FN:34,System.String EvidentInstruction.Helpers.Generator::GetGuid()
+FNDA:0,System.String EvidentInstruction.Helpers.Generator::GetGuid()
+DA:35,0
+FN:38,System.String EvidentInstruction.Helpers.Generator::GetRandomPhone(System.String)
+FNDA:0,System.String EvidentInstruction.Helpers.Generator::GetRandomPhone(System.String)
+DA:39,0
+DA:40,0
+DA:41,0
+DA:43,0
+DA:45,0
+DA:46,0
+DA:49,0
+DA:51,0
+DA:54,0
+DA:55,0
+DA:57,0
+DA:58,0
+DA:61,0
+DA:64,0
+DA:68,0
+DA:70,0
+DA:73,0
+BRDA:41,208,1,0
+BRDA:43,30,0,0
+BRDA:43,36,0,0
+BRDA:43,42,0,0
+BRDA:43,48,0,0
+BRDA:43,30,1,0
+BRDA:43,36,1,0
+BRDA:43,42,1,0
+BRDA:43,48,1,0
+BRDA:43,54,0,0
+BRDA:43,54,1,0
+BRDA:49,75,0,0
+BRDA:49,75,1,0
+BRDA:54,92,0,0
+BRDA:54,98,0,0
+BRDA:54,104,0,0
+BRDA:54,110,0,0
+BRDA:54,116,0,0
+BRDA:54,122,0,0
+BRDA:54,128,0,0
+BRDA:54,134,0,0
+BRDA:54,140,0,0
+BRDA:54,92,1,0
+BRDA:54,98,1,0
+BRDA:54,104,1,0
+BRDA:54,110,1,0
+BRDA:54,116,1,0
+BRDA:54,122,1,0
+BRDA:54,128,1,0
+BRDA:54,134,1,0
+BRDA:54,140,1,0
+BRDA:54,146,0,0
+BRDA:54,146,1,0
+BRDA:41,208,0,0
+BRDA:68,215,0,0
+BRDA:68,215,1,0
+FN:79,System.Nullable`1<System.DateTime> EvidentInstruction.Helpers.Generator::GetDate(System.Int32,System.Int32,System.Int32)
+FNDA:1,System.Nullable`1<System.DateTime> EvidentInstruction.Helpers.Generator::GetDate(System.Int32,System.Int32,System.Int32)
+DA:80,1
+DA:81,1
+DA:83,0
+DA:85,0
+DA:86,0
+DA:88,1
+FN:92,System.Nullable`1<System.DateTime> EvidentInstruction.Helpers.Generator::GetTime(System.Int32,System.Int32,System.Int32,System.Int32)
+FNDA:0,System.Nullable`1<System.DateTime> EvidentInstruction.Helpers.Generator::GetTime(System.Int32,System.Int32,System.Int32,System.Int32)
+DA:93,0
+DA:94,0
+DA:95,0
+DA:97,0
+DA:99,0
+DA:100,0
+DA:102,0
+FN:106,System.Nullable`1<System.DateTime> EvidentInstruction.Helpers.Generator::GetDateTime(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)
+FNDA:0,System.Nullable`1<System.DateTime> EvidentInstruction.Helpers.Generator::GetDateTime(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)
+DA:107,0
+DA:108,0
+DA:110,0
+DA:112,0
+DA:113,0
+DA:115,0
+FN:117,System.DateTime EvidentInstruction.Helpers.Generator::GetCurrentDateTime()
+FNDA:0,System.DateTime EvidentInstruction.Helpers.Generator::GetCurrentDateTime()
+DA:118,0
+DA:119,0
+FN:122,System.Nullable`1<System.DateTime> EvidentInstruction.Helpers.Generator::GetOtherDate(System.Int32,System.Int32,System.Int32,System.Boolean,System.Nullable`1<System.DateTime>)
+FNDA:0,System.Nullable`1<System.DateTime> EvidentInstruction.Helpers.Generator::GetOtherDate(System.Int32,System.Int32,System.Int32,System.Boolean,System.Nullable`1<System.DateTime>)
+DA:123,0
+DA:124,0
+DA:126,0
+DA:127,0
+DA:129,0
+DA:130,0
+DA:133,0
+DA:136,0
+DA:138,0
+DA:139,0
+DA:140,0
+DA:141,0
+DA:143,0
+DA:144,0
+BRDA:124,3,0,0
+BRDA:124,3,1,0
+BRDA:127,26,0,0
+BRDA:127,26,1,0
+BRDA:136,52,0,0
+BRDA:136,56,0,0
+BRDA:136,60,0,0
+BRDA:138,69,0,0
+BRDA:138,69,1,0
+BRDA:136,52,1,0
+BRDA:136,56,1,0
+BRDA:136,60,1,0
+FN:148,System.Nullable`1<System.DateTime> EvidentInstruction.Helpers.Generator::GetRandomDateTime(System.Nullable`1<System.DateTime>,System.Nullable`1<System.DateTime>)
+FNDA:0,System.Nullable`1<System.DateTime> EvidentInstruction.Helpers.Generator::GetRandomDateTime(System.Nullable`1<System.DateTime>,System.Nullable`1<System.DateTime>)
+DA:149,0
+DA:150,0
+DA:151,0
+DA:153,0
+DA:154,0
+DA:155,0
+DA:156,0
+DA:158,0
+DA:159,0
+BRDA:150,18,0,0
+BRDA:150,18,1,0
+BRDA:151,51,0,0
+BRDA:151,51,1,0
+BRDA:155,103,0,0
+BRDA:155,103,1,0
+FN:163,System.String EvidentInstruction.Helpers.Generator::RandomString(System.Int32,System.String)
+FNDA:0,System.String EvidentInstruction.Helpers.Generator::RandomString(System.Int32,System.String)
+DA:164,0
+DA:165,0
+DA:167,0
+DA:168,0
+DA:171,0
+DA:173,0
+DA:176,0
+BRDA:165,8,0,0
+BRDA:165,8,1,0
+BRDA:171,84,1,0
+BRDA:171,84,0,0
+FN:8,System.Void EvidentInstruction.Helpers.Generator::.cctor()
+FNDA:0,System.Void EvidentInstruction.Helpers.Generator::.cctor()
+DA:9,0
+DA:14,0
+LF:80
+LH:3
+BRF:66
+BRH:0
+FNF:18
+FNH:1
+end_of_record
+SF:D:\Projects\AlfaBank.AFT.Core.Library\src\EvidentInstruction\Helpers\Message.cs
+FN:13,System.String EvidentInstruction.Helpers.Message::CreateMessage(System.Collections.Generic.IEnumerable`1<System.String>)
+FNDA:0,System.String EvidentInstruction.Helpers.Message::CreateMessage(System.Collections.Generic.IEnumerable`1<System.String>)
+DA:14,0
+DA:16,0
+DA:17,0
+DA:18,0
+DA:22,0
+DA:23,0
+DA:26,0
+DA:28,0
+DA:29,0
+DA:32,0
+BRDA:14,6,0,0
+BRDA:14,6,1,0
+FN:37,System.String EvidentInstruction.Helpers.Message::CreateMessage(System.Collections.Generic.ICollection`1<System.ComponentModel.DataAnnotations.ValidationResult>)
+FNDA:0,System.String EvidentInstruction.Helpers.Message::CreateMessage(System.Collections.Generic.ICollection`1<System.ComponentModel.DataAnnotations.ValidationResult>)
+DA:38,0
+DA:40,0
+DA:41,0
+DA:42,0
+DA:46,0
+DA:47,0
+DA:50,0
+DA:52,0
+DA:53,0
+DA:55,0
+BRDA:38,6,0,0
+BRDA:38,6,1,0
+FN:60,System.String EvidentInstruction.Helpers.Message::CreateMessage(System.Data.DataTable)
+FNDA:0,System.String EvidentInstruction.Helpers.Message::CreateMessage(System.Data.DataTable)
+DA:61,0
+DA:62,0
+DA:63,0
+DA:65,0
+DA:67,0
+DA:68,0
+DA:69,0
+DA:71,0
+DA:73,0
+DA:75,0
+DA:78,0
+DA:79,0
+DA:81,0
+DA:83,0
+DA:84,0
+DA:86,0
+BRDA:63,110,1,0
+BRDA:63,110,0,0
+BRDA:69,269,1,0
+BRDA:71,248,1,0
+BRDA:71,248,0,0
+BRDA:69,269,0,0
+LF:36
+LH:0
+BRF:10
+BRH:0
+FNF:3
+FNH:0
+end_of_record
+SF:D:\Projects\AlfaBank.AFT.Core.Library\src\EvidentInstruction\Helpers\Validate.cs
+FN:9,System.ValueTuple`2<System.Boolean,System.Collections.Generic.ICollection`1<System.ComponentModel.DataAnnotations.ValidationResult>> EvidentInstruction.Helpers.Validate::ValidateModel(System.Object)
+FNDA:0,System.ValueTuple`2<System.Boolean,System.Collections.Generic.ICollection`1<System.ComponentModel.DataAnnotations.ValidationResult>> EvidentInstruction.Helpers.Validate::ValidateModel(System.Object)
+DA:10,0
+DA:11,0
+DA:12,0
+DA:13,0
+LF:4
+LH:0
+BRF:0
+BRH:0
+FNF:1
+FNH:0
+end_of_record
+SF:D:\Projects\AlfaBank.AFT.Core.Library\src\EvidentInstruction\Exceptions\FileExistException.cs
+FN:7,System.Void EvidentInstruction.Exceptions.FileExistException::.ctor(System.String)
+FNDA:0,System.Void EvidentInstruction.Exceptions.FileExistException::.ctor(System.String)
+DA:8,0
+LF:1
+LH:0
+BRF:0
+BRH:0
+FNF:1
+FNH:0
+end_of_record
+SF:D:\Projects\AlfaBank.AFT.Core.Library\src\EvidentInstruction\Exceptions\FileExtensionException.cs
+FN:7,System.Void EvidentInstruction.Exceptions.FileExtensionException::.ctor(System.String)
+FNDA:0,System.Void EvidentInstruction.Exceptions.FileExtensionException::.ctor(System.String)
+DA:8,0
+LF:1
+LH:0
+BRF:0
+BRH:0
+FNF:1
+FNH:0
+end_of_record
+SF:D:\Projects\AlfaBank.AFT.Core.Library\src\EvidentInstruction\Exceptions\GeneratorException.cs
+FN:8,System.Void EvidentInstruction.Exceptions.GeneratorException::.ctor(System.String)
+FNDA:0,System.Void EvidentInstruction.Exceptions.GeneratorException::.ctor(System.String)
+DA:9,0
+LF:1
+LH:0
+BRF:0
+BRH:0
+FNF:1
+FNH:0
+end_of_record
+SF:D:\Projects\AlfaBank.AFT.Core.Library\src\EvidentInstruction\Exceptions\NoFileNameException.cs
+FN:7,System.Void EvidentInstruction.Exceptions.NoFileNameException::.ctor(System.String)
+FNDA:0,System.Void EvidentInstruction.Exceptions.NoFileNameException::.ctor(System.String)
+DA:8,0
+LF:1
+LH:0
+BRF:0
+BRH:0
+FNF:1
+FNH:0
+end_of_record
+SF:D:\Projects\AlfaBank.AFT.Core.Library\src\EvidentInstruction\Exceptions\ValidFileNameException.cs
+FN:7,System.Void EvidentInstruction.Exceptions.ValidFileNameException::.ctor(System.String)
+FNDA:0,System.Void EvidentInstruction.Exceptions.ValidFileNameException::.ctor(System.String)
+DA:8,0
+LF:1
+LH:0
+BRF:0
+BRH:0
+FNF:1
+FNH:0
+end_of_record
+SF:D:\Projects\AlfaBank.AFT.Core.Library\src\EvidentInstruction\Controllers\VariableController.cs
+FN:30,System.String EvidentInstruction.Controllers.VariableController::GetVariableName(System.String)
+FNDA:34,System.String EvidentInstruction.Controllers.VariableController::GetVariableName(System.String)
+DA:31,34
+DA:33,34
+DA:34,34
+DA:36,0
+DA:39,34
+DA:41,0
+DA:44,34
+DA:48,0
+BRDA:31,6,0,34
+BRDA:34,19,0,0
+BRDA:34,19,1,34
+BRDA:39,46,0,0
+BRDA:39,46,1,34
+BRDA:31,6,1,0
+FN:52,EvidentInstruction.Models.Variable EvidentInstruction.Controllers.VariableController::GetVariable(System.String)
+FNDA:35,EvidentInstruction.Models.Variable EvidentInstruction.Controllers.VariableController::GetVariable(System.String)
+DA:53,35
+FN:56,System.Boolean EvidentInstruction.Controllers.VariableController::CheckVariableByKey(System.String)
+FNDA:0,System.Boolean EvidentInstruction.Controllers.VariableController::CheckVariableByKey(System.String)
+DA:57,0
+FN:60,System.Void EvidentInstruction.Controllers.VariableController::SetVariable(System.String,System.Type,System.Object)
+FNDA:13,System.Void EvidentInstruction.Controllers.VariableController::SetVariable(System.String,System.Type,System.Object)
+DA:61,13
+DA:62,13
+DA:63,13
+DA:65,17
+DA:66,13
+DA:67,13
+FN:71,System.Object EvidentInstruction.Controllers.VariableController::GetVariableValue(System.String)
+FNDA:61,System.Object EvidentInstruction.Controllers.VariableController::GetVariableValue(System.String)
+DA:72,61
+DA:73,61
+DA:74,61
+DA:75,61
+DA:76,61
+DA:78,0
+DA:79,0
+DA:82,61
+DA:84,0
+DA:86,0
+DA:89,0
+DA:91,0
+DA:94,154
+DA:95,61
+DA:97,0
+DA:100,61
+DA:101,61
+DA:103,61
+DA:105,16
+DA:108,45
+DA:110,0
+DA:111,0
+DA:112,0
+DA:115,45
+DA:117,0
+DA:118,0
+DA:121,45
+DA:123,0
+DA:124,0
+DA:127,45
+DA:129,0
+DA:130,0
+DA:133,45
+DA:135,0
+DA:138,45
+DA:140,0
+DA:145,45
+DA:147,0
+DA:149,0
+DA:151,0
+DA:153,0
+DA:155,0
+DA:158,45
+DA:160,45
+DA:163,0
+DA:165,0
+DA:168,0
+DA:170,0
+DA:173,0
+DA:175,0
+DA:177,0
+DA:179,0
+DA:181,0
+DA:184,0
+DA:186,0
+DA:188,0
+DA:189,0
+DA:192,0
+DA:194,0
+DA:195,0
+DA:197,61
+BRDA:76,32,0,0
+BRDA:76,32,1,61
+BRDA:82,86,0,0
+BRDA:82,117,0,0
+BRDA:84,185,0,0
+BRDA:84,185,1,0
+BRDA:91,219,0,0
+BRDA:91,219,1,0
+BRDA:82,86,1,61
+BRDA:82,117,1,61
+BRDA:95,290,0,0
+BRDA:95,290,1,61
+BRDA:103,320,0,16
+BRDA:103,320,1,45
+BRDA:108,343,0,0
+BRDA:108,347,0,0
+BRDA:108,343,1,45
+BRDA:108,347,1,45
+BRDA:115,396,0,0
+BRDA:118,440,0,0
+BRDA:118,440,1,0
+BRDA:118,454,0,0
+BRDA:118,454,1,0
+BRDA:118,468,0,0
+BRDA:118,468,1,0
+BRDA:115,396,1,45
+BRDA:121,497,0,0
+BRDA:124,512,0,0
+BRDA:124,512,1,0
+BRDA:124,526,0,0
+BRDA:124,526,1,0
+BRDA:124,540,0,0
+BRDA:124,540,1,0
+BRDA:121,497,1,45
+BRDA:127,568,0,0
+BRDA:130,583,0,0
+BRDA:130,583,1,0
+BRDA:130,597,0,0
+BRDA:130,597,1,0
+BRDA:130,611,0,0
+BRDA:130,611,1,0
+BRDA:127,568,1,45
+BRDA:133,639,0,0
+BRDA:135,650,0,0
+BRDA:135,650,1,0
+BRDA:133,639,1,45
+BRDA:138,687,0,0
+BRDA:140,698,0,0
+BRDA:140,698,1,0
+BRDA:138,687,1,45
+BRDA:145,736,0,0
+BRDA:147,749,0,0
+BRDA:147,749,1,0
+BRDA:151,773,0,0
+BRDA:151,773,1,0
+BRDA:145,736,1,45
+BRDA:158,844,0,45
+BRDA:158,844,1,0
+BRDA:163,866,0,0
+BRDA:163,866,1,0
+BRDA:163,879,0,0
+BRDA:163,879,1,0
+BRDA:168,932,0,0
+BRDA:168,932,1,0
+BRDA:179,990,0,0
+BRDA:179,990,1,0
+BRDA:184,1049,0,0
+BRDA:184,1049,1,0
+FN:199,System.String EvidentInstruction.Controllers.VariableController::GetVariableValueText(System.String)
+FNDA:50,System.String EvidentInstruction.Controllers.VariableController::GetVariableValueText(System.String)
+DA:200,50
+DA:202,50
+DA:204,12
+DA:210,0
+DA:212,0
+DA:213,0
+DA:215,0
+DA:217,0
+DA:218,0
+DA:221,0
+DA:223,0
+DA:224,0
+DA:226,0
+DA:228,0
+DA:229,0
+DA:232,0
+DA:234,0
+DA:235,0
+DA:239,38
+DA:243,38
+BRDA:202,9,0,12
+BRDA:202,9,1,38
+BRDA:204,21,0,38
+BRDA:221,157,1,0
+BRDA:204,31,0,38
+BRDA:204,21,1,0
+BRDA:210,78,0,0
+BRDA:210,78,1,0
+BRDA:215,98,0,0
+BRDA:204,31,1,0
+BRDA:221,157,0,0
+BRDA:204,45,1,0
+BRDA:226,180,0,0
+BRDA:204,62,1,0
+BRDA:232,217,0,0
+BRDA:204,45,0,38
+BRDA:204,62,0,38
+BRDA:215,98,1,38
+BRDA:226,180,1,38
+BRDA:232,217,1,38
+FN:247,System.String EvidentInstruction.Controllers.VariableController::ReplaceVariables(System.String,System.Func`2<System.Object,System.String>,System.Func`2<System.String,System.String>)
+FNDA:2,System.String EvidentInstruction.Controllers.VariableController::ReplaceVariables(System.String,System.Func`2<System.Object,System.String>,System.Func`2<System.String,System.String>)
+DA:248,2
+FN:253,System.String EvidentInstruction.Controllers.VariableController::ReplaceVariables(System.String,System.String,System.Func`2<System.Object,System.String>,System.Func`2<System.String,System.String>)
+FNDA:2,System.String EvidentInstruction.Controllers.VariableController::ReplaceVariables(System.String,System.String,System.Func`2<System.Object,System.String>,System.Func`2<System.String,System.String>)
+DA:254,2
+DA:255,2
+DA:256,2
+DA:257,2
+DA:258,2
+DA:259,0
+DA:260,2
+DA:261,0
+DA:262,2
+DA:263,2
+DA:264,0
+DA:265,2
+DA:266,0
+DA:267,2
+DA:268,2
+DA:269,0
+DA:270,0
+DA:271,2
+DA:272,2
+DA:273,2
+BRDA:254,30,0,0
+BRDA:254,30,1,2
+BRDA:259,23,0,0
+BRDA:259,23,1,0
+BRDA:259,50,0,0
+BRDA:261,70,0,0
+BRDA:261,70,1,0
+BRDA:259,50,1,0
+BRDA:264,107,0,0
+BRDA:266,115,0,0
+BRDA:266,115,1,0
+BRDA:264,107,1,0
+BRDA:270,204,0,0
+BRDA:270,204,1,0
+FN:23,System.Void EvidentInstruction.Controllers.VariableController::.ctor()
+FNDA:112,System.Void EvidentInstruction.Controllers.VariableController::.ctor()
+DA:24,112
+DA:26,112
+DA:27,112
+LF:121
+LH:57
+BRF:108
+BRH:28
+FNF:9
+FNH:8
+end_of_record
+SF:D:\Projects\AlfaBank.AFT.Core.Library\src\EvidentInstruction.Generator\Steps\Generator.Steps.cs
+FN:38,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableDate(System.Int32,System.Int32,System.Int32,System.String)
+FNDA:1,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableDate(System.Int32,System.Int32,System.Int32,System.String)
+DA:39,1
+DA:40,1
+DA:41,1
+DA:42,1
+DA:43,1
+FN:55,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableDateWithFormat(System.Int32,System.Int32,System.Int32,System.String,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableDateWithFormat(System.Int32,System.Int32,System.Int32,System.String,System.String)
+DA:56,0
+DA:57,0
+DA:59,0
+DA:60,0
+DA:62,0
+DA:63,0
+BRDA:60,89,0,0
+BRDA:60,89,1,0
+FN:74,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableTime(System.Int32,System.Int32,System.Int32,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableTime(System.Int32,System.Int32,System.Int32,System.String)
+DA:75,0
+DA:77,0
+DA:78,0
+DA:80,0
+DA:81,0
+FN:93,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableTimeWithFormat(System.Int32,System.Int32,System.Int32,System.String,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableTimeWithFormat(System.Int32,System.Int32,System.Int32,System.String,System.String)
+DA:94,0
+DA:96,0
+DA:97,0
+DA:98,0
+DA:100,0
+DA:101,0
+BRDA:98,90,0,0
+BRDA:98,90,1,0
+FN:113,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableTimeLong(System.Int32,System.Int32,System.Int32,System.Int32,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableTimeLong(System.Int32,System.Int32,System.Int32,System.Int32,System.String)
+DA:114,0
+DA:115,0
+DA:116,0
+DA:117,0
+FN:130,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableTimeLongWithFormat(System.Int32,System.Int32,System.Int32,System.Int32,System.String,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableTimeLongWithFormat(System.Int32,System.Int32,System.Int32,System.Int32,System.String,System.String)
+DA:131,0
+DA:133,0
+DA:134,0
+DA:135,0
+DA:137,0
+DA:138,0
+BRDA:135,91,0,0
+BRDA:135,91,1,0
+FN:152,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableDateTime(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableDateTime(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.String)
+DA:153,0
+DA:155,0
+DA:156,0
+DA:158,0
+DA:159,0
+FN:174,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableDateTimeWithFormat(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.String,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableDateTimeWithFormat(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.String,System.String)
+DA:175,0
+DA:177,0
+DA:178,0
+DA:179,0
+DA:181,0
+DA:182,0
+BRDA:179,96,0,0
+BRDA:179,96,1,0
+FN:197,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableOtherDateTime(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableOtherDateTime(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.String)
+DA:198,0
+DA:200,0
+DA:201,0
+DA:203,0
+DA:204,0
+FN:220,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableOtherDateTimeWithFormat(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.String,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableOtherDateTimeWithFormat(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.String,System.String)
+DA:221,0
+DA:223,0
+DA:224,0
+DA:225,0
+DA:227,0
+DA:228,0
+BRDA:225,97,0,0
+BRDA:225,97,1,0
+FN:236,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableCurrentDate(System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableCurrentDate(System.String)
+DA:237,0
+DA:239,0
+DA:241,0
+DA:242,0
+FN:251,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableCurrentDateWithFormat(System.String,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableCurrentDateWithFormat(System.String,System.String)
+DA:252,0
+DA:254,0
+DA:256,0
+DA:257,0
+FN:269,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableFutureDateTimeWithDifference(System.Int32,System.Int32,System.Int32,System.String,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableFutureDateTimeWithDifference(System.Int32,System.Int32,System.Int32,System.String,System.String)
+DA:270,0
+DA:272,0
+DA:273,0
+DA:274,0
+DA:276,0
+DA:277,0
+BRDA:274,99,0,0
+BRDA:274,99,1,0
+FN:290,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableFutureDateTime(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.String,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableFutureDateTime(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.String,System.String)
+DA:291,0
+DA:293,0
+DA:294,0
+DA:296,0
+DA:297,0
+DA:298,0
+DA:300,0
+DA:301,0
+BRDA:298,125,0,0
+BRDA:298,125,1,0
+FN:314,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariablePastDateTimeWithDifference(System.Int32,System.Int32,System.Int32,System.String,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariablePastDateTimeWithDifference(System.Int32,System.Int32,System.Int32,System.String,System.String)
+DA:315,0
+DA:317,0
+DA:318,0
+DA:319,0
+DA:321,0
+DA:322,0
+BRDA:319,99,0,0
+BRDA:319,99,1,0
+FN:334,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariablePastDateTime(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.String,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariablePastDateTime(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.String,System.String)
+DA:335,0
+DA:338,0
+DA:339,0
+DA:341,0
+DA:342,0
+DA:343,0
+DA:345,0
+DA:346,0
+BRDA:343,125,0,0
+BRDA:343,125,1,0
+FN:356,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableRandomStringWithPrefix(System.Int32,System.String,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableRandomStringWithPrefix(System.Int32,System.String,System.String)
+DA:357,0
+DA:358,0
+DA:359,0
+DA:360,0
+FN:370,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableRandomCharWithPrefix(System.Int32,System.String,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableRandomCharWithPrefix(System.Int32,System.String,System.String)
+DA:371,0
+DA:372,0
+DA:373,0
+DA:374,0
+FN:384,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableRandomNumberWithPrefix(System.Int32,System.String,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableRandomNumberWithPrefix(System.Int32,System.String,System.String)
+DA:385,0
+DA:386,0
+DA:387,0
+DA:388,0
+FN:397,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableRandomString(System.Int32,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableRandomString(System.Int32,System.String)
+DA:398,0
+DA:399,0
+DA:400,0
+DA:401,0
+FN:410,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableRandomChar(System.Int32,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableRandomChar(System.Int32,System.String)
+DA:411,0
+DA:412,0
+DA:413,0
+DA:414,0
+FN:423,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableRandomNumber(System.Int32,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableRandomNumber(System.Int32,System.String)
+DA:424,0
+DA:425,0
+DA:426,0
+DA:427,0
+FN:437,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableRandomPhone(System.String,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableRandomPhone(System.String,System.String)
+DA:438,0
+DA:439,0
+DA:440,0
+DA:441,0
+FN:449,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableUuid(System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreAsVariableUuid(System.String)
+DA:450,0
+DA:451,0
+DA:452,0
+DA:453,0
+FN:466,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreCredentialsForHostToVariable(System.String,EvidentInstruction.Infrastructure.AuthType,System.String,System.String,System.String,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreCredentialsForHostToVariable(System.String,EvidentInstruction.Infrastructure.AuthType,System.String,System.String,System.String,System.String)
+DA:467,0
+DA:468,0
+DA:469,0
+DA:470,0
+DA:471,0
+FN:481,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreVariableValueToArrayVariable(System.String,System.String,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::StoreVariableValueToArrayVariable(System.String,System.String,System.String)
+DA:482,0
+DA:483,0
+DA:485,0
+DA:486,0
+DA:488,0
+DA:490,0
+DA:491,0
+FN:23,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::.ctor(EvidentInstruction.Controllers.VariableController)
+FNDA:1,System.Void EvidentInstruction.Generator.Steps.GeneratorSteps::.ctor(EvidentInstruction.Controllers.VariableController)
+DA:24,1
+DA:26,1
+DA:27,1
+LF:137
+LH:8
+BRF:18
+BRH:0
+FNF:27
+FNH:2
+end_of_record
+SF:D:\Projects\AlfaBank.AFT.Core.Library\src\EvidentInstruction.Generator\Steps\Variable.Steps.cs
+FN:49,System.Void EvidentInstruction.Generator.Steps.VariableSteps::DeleteVariable(System.String)
+FNDA:2,System.Void EvidentInstruction.Generator.Steps.VariableSteps::DeleteVariable(System.String)
+DA:50,2
+DA:51,1
+DA:52,1
+FN:60,System.Void EvidentInstruction.Generator.Steps.VariableSteps::EmtpyVariable(System.String)
+FNDA:2,System.Void EvidentInstruction.Generator.Steps.VariableSteps::EmtpyVariable(System.String)
+DA:61,2
+DA:62,1
+DA:63,1
+FN:72,System.Void EvidentInstruction.Generator.Steps.VariableSteps::ChangeVariable(System.String,System.Object)
+FNDA:4,System.Void EvidentInstruction.Generator.Steps.VariableSteps::ChangeVariable(System.String,System.Object)
+DA:73,4
+DA:74,3
+DA:75,3
+FN:84,System.Void EvidentInstruction.Generator.Steps.VariableSteps::StoreAsVariableString(System.String,System.String)
+FNDA:2,System.Void EvidentInstruction.Generator.Steps.VariableSteps::StoreAsVariableString(System.String,System.String)
+DA:85,2
+DA:86,1
+DA:87,1
+FN:96,System.Void EvidentInstruction.Generator.Steps.VariableSteps::StoreAsVariableEncriptedString(System.String,System.String)
+FNDA:2,System.Void EvidentInstruction.Generator.Steps.VariableSteps::StoreAsVariableEncriptedString(System.String,System.String)
+DA:97,2
+DA:98,1
+DA:99,1
+FN:108,System.Void EvidentInstruction.Generator.Steps.VariableSteps::StoreAsVariableText(System.String,System.String)
+FNDA:2,System.Void EvidentInstruction.Generator.Steps.VariableSteps::StoreAsVariableText(System.String,System.String)
+DA:109,2
+DA:110,1
+DA:111,1
+FN:120,System.Void EvidentInstruction.Generator.Steps.VariableSteps::StoreAsVariableNumber(System.String,System.String)
+FNDA:5,System.Void EvidentInstruction.Generator.Steps.VariableSteps::StoreAsVariableNumber(System.String,System.String)
+DA:121,5
+DA:122,4
+DA:124,2
+DA:125,2
+DA:128,2
+DA:130,1
+DA:131,1
+DA:134,1
+DA:136,0
+DA:137,0
+DA:140,1
+DA:141,0
+BRDA:122,67,0,2
+BRDA:122,67,1,2
+BRDA:128,149,0,1
+BRDA:128,149,1,1
+BRDA:134,231,0,0
+BRDA:134,231,1,1
+FN:150,System.Void EvidentInstruction.Generator.Steps.VariableSteps::StoreAsVariableXmlFromText(System.String,System.String)
+FNDA:3,System.Void EvidentInstruction.Generator.Steps.VariableSteps::StoreAsVariableXmlFromText(System.String,System.String)
+DA:151,3
+DA:152,2
+DA:154,2
+DA:156,2
+DA:157,2
+DA:159,1
+DA:160,1
+FN:169,System.Void EvidentInstruction.Generator.Steps.VariableSteps::StoreVariableValueToVariable(System.String,System.String)
+FNDA:3,System.Void EvidentInstruction.Generator.Steps.VariableSteps::StoreVariableValueToVariable(System.String,System.String)
+DA:170,3
+DA:171,2
+DA:172,1
+DA:173,1
+DA:175,1
+DA:176,1
+FN:186,System.Void EvidentInstruction.Generator.Steps.VariableSteps::StoreCDataVariable_ToVariable(System.String,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.VariableSteps::StoreCDataVariable_ToVariable(System.String,System.String)
+DA:187,0
+DA:188,0
+DA:190,0
+DA:191,0
+DA:192,0
+DA:194,0
+DA:195,0
+BRDA:192,164,0,0
+BRDA:192,164,1,0
+FN:205,System.Void EvidentInstruction.Generator.Steps.VariableSteps::StoreAsVariableStringFormat(System.String,System.String,System.String)
+FNDA:0,System.Void EvidentInstruction.Generator.Steps.VariableSteps::StoreAsVariableStringFormat(System.String,System.String,System.String)
+DA:206,0
+DA:207,0
+DA:208,0
+DA:210,0
+DA:212,0
+DA:213,0
+DA:215,0
+DA:217,0
+DA:218,0
+DA:221,0
+DA:225,0
+DA:226,0
+BRDA:212,165,0,0
+BRDA:212,179,0,0
+BRDA:215,218,0,0
+BRDA:215,218,1,0
+BRDA:212,165,1,0
+BRDA:212,179,1,0
+BRDA:225,276,0,0
+BRDA:225,276,1,0
+FN:235,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableIsNotNull(System.String)
+FNDA:6,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableIsNotNull(System.String)
+DA:236,6
+DA:237,2
+DA:238,2
+DA:239,1
+FN:249,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableIsNull(System.String)
+FNDA:2,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableIsNull(System.String)
+DA:250,2
+DA:251,2
+DA:252,2
+DA:253,1
+FN:261,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableIsNotEmpty(System.String)
+FNDA:5,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableIsNotEmpty(System.String)
+DA:262,5
+DA:263,3
+DA:264,3
+DA:265,2
+DA:267,2
+DA:269,1
+BRDA:265,86,0,0
+BRDA:265,86,1,2
+BRDA:265,112,0,2
+BRDA:265,112,1,1
+FN:278,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableIsEmpty(System.String)
+FNDA:5,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableIsEmpty(System.String)
+DA:279,5
+DA:280,3
+DA:281,3
+DA:282,2
+DA:284,2
+DA:286,1
+BRDA:282,86,0,0
+BRDA:282,86,1,2
+BRDA:282,112,0,2
+BRDA:282,112,1,1
+FN:295,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableEquals(System.String,System.Object)
+FNDA:6,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableEquals(System.String,System.Object)
+DA:296,6
+DA:297,4
+DA:299,3
+DA:300,3
+DA:301,2
+DA:302,1
+FN:311,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableNotEquals(System.String,System.Object)
+FNDA:6,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableNotEquals(System.String,System.Object)
+DA:312,6
+DA:313,4
+DA:315,3
+DA:316,3
+DA:317,2
+DA:318,1
+FN:327,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableContains(System.String,System.String)
+FNDA:6,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableContains(System.String,System.String)
+DA:328,6
+DA:329,4
+DA:331,3
+DA:332,3
+DA:333,2
+DA:334,1
+FN:343,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableNotContains(System.String,System.String)
+FNDA:6,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableNotContains(System.String,System.String)
+DA:344,6
+DA:345,4
+DA:347,3
+DA:348,3
+DA:349,2
+DA:350,1
+FN:359,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableStartsWith(System.String,System.String)
+FNDA:6,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableStartsWith(System.String,System.String)
+DA:360,6
+DA:361,4
+DA:362,3
+DA:363,3
+DA:364,2
+DA:365,1
+FN:374,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableEndsWith(System.String,System.String)
+FNDA:6,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableEndsWith(System.String,System.String)
+DA:375,6
+DA:376,4
+DA:377,3
+DA:378,3
+DA:379,2
+DA:380,1
+FN:389,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariablesAreEqual(System.String,System.String)
+FNDA:14,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariablesAreEqual(System.String,System.String)
+DA:390,14
+DA:391,10
+DA:393,6
+DA:394,6
+DA:396,6
+DA:397,4
+DA:399,2
+DA:400,2
+DA:401,2
+DA:402,1
+FN:411,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariablesAreNotEqual(System.String,System.String)
+FNDA:2,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariablesAreNotEqual(System.String,System.String)
+DA:412,2
+DA:413,2
+DA:415,2
+DA:416,2
+DA:418,2
+DA:419,2
+DA:421,2
+DA:422,2
+DA:423,2
+DA:424,1
+FN:433,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableAreContains(System.String,System.String)
+FNDA:8,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableAreContains(System.String,System.String)
+DA:434,8
+DA:435,6
+DA:437,4
+DA:438,4
+DA:440,4
+DA:441,3
+DA:443,2
+DA:444,1
+FN:453,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableAreNotContains(System.String,System.String)
+FNDA:8,System.Void EvidentInstruction.Generator.Steps.VariableSteps::CheckVariableAreNotContains(System.String,System.String)
+DA:454,8
+DA:455,6
+DA:457,4
+DA:458,4
+DA:460,4
+DA:461,3
+DA:463,2
+DA:464,1
+FN:24,System.Void EvidentInstruction.Generator.Steps.VariableSteps::.ctor(EvidentInstruction.Controllers.VariableController)
+FNDA:111,System.Void EvidentInstruction.Generator.Steps.VariableSteps::.ctor(EvidentInstruction.Controllers.VariableController)
+DA:25,111
+DA:27,111
+DA:28,111
+LF:157
+LH:135
+BRF:24
+BRH:11
+FNF:26
+FNH:24
+end_of_record
