@@ -72,7 +72,7 @@ namespace EvidentInstruction.Controllers
             {
                 if (accessType == TypeOfAccess.Local && Variables[varName].TypeOfAccess == TypeOfAccess.Global)
                 {
-                    Log.Logger.Information($"Element with key: \"{key}\" has already created ");
+                    Log.Logger.Information($"Element with key: \"{key}\" has already created  with type 'Global'");
                     return;
                 }                    
 

@@ -1,0 +1,22 @@
+﻿{
+  "config": [
+    {
+      "tag": "WebServiceAuth",
+      "parameters": {
+        "auth_login": "U_00ASC",
+        "auth_pass": "awe",
+        "auth_token": "Cddf32"
+      }
+    },
+    {
+      "tag": "Service",
+      "parameters": {
+        "auth_login": "U_00AZC",
+        "auth_pass": "asd",
+        "auth_token": "C34df32"
+      }
+    }
+
+  ]
+}
+    
