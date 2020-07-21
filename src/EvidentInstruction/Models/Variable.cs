@@ -1,8 +1,9 @@
-﻿using System;
+﻿using EvidentInstruction.Infrastructures;
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace EvidentInstruction.Models
-{
+{    
     [ExcludeFromCodeCoverage]
     public class Variable
     {
@@ -15,5 +16,7 @@ namespace EvidentInstruction.Models
         {
             get; set;
         }
+
+        public TypeOfAccess TypeOfAccess { get; set; } = TypeOfAccess.Local;
     }
 }
