@@ -133,7 +133,8 @@ namespace EvidentInstruction.Controllers
 
                 if (varType.HasElementType && index >= 0)
                 {
-                    varValue = ((object[])varValue)[index];
+                    var objArray = ((Array)varValue).Cast<object>().ToArray();
+                    varValue = (objArray)[index];
                     varType = varType.GetElementType();
                 }
 
@@ -185,6 +186,11 @@ namespace EvidentInstruction.Controllers
                         return varValue;
                     }
 
+                    if(!key.Contains("[") || !key.Contains("["))
+                    {
+                        return varValue;
+                    }
+
                     if (!int.TryParse(key.Substring(key.IndexOf('[') + 1, key.IndexOf(']') - key.IndexOf('[') - 1), out index))
                     {
                         index = -1;
@@ -208,14 +214,7 @@ namespace EvidentInstruction.Controllers
                     Log.Logger.Warning($"Проверьте корректность переданного ключа \"{key}\"");
                     return null;
                 }
-                catch (ArgumentException)
-                {
-                    if (typeof(DataTable).IsAssignableFrom(varType))
-                    {
-                        return varValue;
-                    }
-                    return null;
-                }
+
             }catch (NullReferenceException)
             {
                 Log.Logger.Warning($"Передан NULL параметр в функцию \"GetVariableValue\"/\"GetVariableValueText\"");

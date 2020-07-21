@@ -468,5 +468,35 @@ namespace EvidentInstruction.Tests
 
             variable.Should().BeNull();
         }
+
+        [Fact]
+        public void GetVariableValue_ListValue_ReturnList()
+        {
+            var list = new List<int> { 1, 2, 3 };
+            var variable = new Variable
+            {
+                Type = list.GetType(),
+                Value = list
+            };
+            variableContext.Variables.TryAdd("list", variable);
+
+            var value = variableContext.GetVariableValue("list");
+            value.Should().Be(list);
+        }
+
+        [Fact]
+        public void GetVariableValue_ListValue_ReturnListValue()
+        {
+            int[] nums = { 1, 2, 3 };
+            var variable = new Variable
+            {
+                Type = nums.GetType(),
+                Value = nums
+            };
+            variableContext.Variables.TryAdd("nums", variable);
+
+            var value = variableContext.GetVariableValue("nums[0]");
+            value.Should().Be(1);
+        }
     }
 }
