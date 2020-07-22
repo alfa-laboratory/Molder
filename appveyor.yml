@@ -27,3 +27,6 @@ deploy:
   on:
       branch: develop                # release from master branch only
       appveyor_repo_tag: true       # deploy on tag push only
+  after_test:
+  - codecov -f test\EvidentInstruction.Generator.Tests\Coverage.*.xml
+  - codecov -f test\EvidentInstruction.Tests\Coverage.*.xml
