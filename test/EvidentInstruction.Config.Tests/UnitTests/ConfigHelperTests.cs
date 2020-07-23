@@ -1,0 +1,210 @@
+﻿using EvidentInstruction.Config.Helpers;
+using EvidentInstruction.Models;
+using EvidentInstruction.Models.Interfaces;
+using FluentAssertions;
+using Moq;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Text;
+using Xunit;
+
+namespace EvidentInstruction.Config.Tests.UnitTests
+{
+    public class ConfigHelperTests
+    {
+        private readonly string json =
+              @"{
+               'config': [
+                           {
+                              'tag': 'WebServiceAuth',
+                              'parameters': {
+                                'auth_login': 'U_00ASC',
+                                'auth_pass': 'awe',
+                                'auth_token': 'Cddf32'
+                              }
+                            }                           
+                          ]
+              }";
+
+        private readonly string jsonWithDublicates =
+              @"{
+                  'config': [
+                    {
+                      'tag': 'WebServiceAuth',
+                      'parameters': {
+                        'auth_login': 'U_00ASC'                        
+                      }
+                    },
+                    {
+                      'tag': 'Service',
+                      'parameters': {
+                        'auth_login': 'U_00AZC'                        
+                      }
+                    }
+                  ]
+                }";
+
+        private readonly string jsonWithEmptyParameters =
+             @"{
+               'config': [
+                           {
+                              'tag': 'WebServiceAuth',
+                              'parameters': {                                
+                              }
+                            }                           
+                          ]
+              }";
+
+        private readonly string incorrectjson =
+           @"{
+               'library': [
+                           {
+                            'books': 'Action'                              
+                           }                                                      
+                          ]
+              }";
+
+        [Fact]
+        public void AddParameters_CorrectJson_ReturnDictionaryAndList() 
+        {
+            var config = DeserializeHelper.DeserializeObject<Models.Config>(json);
+
+            var result = ConfigHelper.AddParameters(config);            
+
+            result.Should().NotBeNull();
+            result.Item1.Should().HaveCountLessOrEqualTo(3);
+            result.Item2.Should().HaveCountLessOrEqualTo(0);
+        }
+
+        [Fact]
+        public void AddParameters_InCorrectJson_ReturnEmptyDictionaryAndList()
+        {
+            var config = DeserializeHelper.DeserializeObject<Models.Config>(incorrectjson);
+
+            var result = ConfigHelper.AddParameters(config);
+
+            result.Item1.Should().HaveCountLessOrEqualTo(0);
+            result.Item2.Should().HaveCountLessOrEqualTo(0);
+        }
+
+        [Fact]
+        public void AddParameters_JsonWithEmptyParameters_ReturnEmptyDictionaryAndList()
+        {
+            var config = DeserializeHelper.DeserializeObject<Models.Config>(jsonWithEmptyParameters);
+
+            var result = ConfigHelper.AddParameters(config);
+
+            result.Should().NotBeNull();
+            result.Item1.Should().HaveCountLessOrEqualTo(0);
+            result.Item2.Should().HaveCountLessOrEqualTo(0);
+        }        
+
+       /* [Theory]
+        [InlineData(" ")]
+        [InlineData(null)]
+        [InlineData("null")] //проверка, что не может прийти null
+        public void AddParameters_NULLValue_ReturnNULL(string config)
+        {
+            var jsonconfig = DeserializeHelper.DeserializeObject<Models.Config>(config);
+            var result = ConfigHelper.AddParameters(jsonconfig);
+
+            result.Should().NotBeNull();
+            result.Item1.Should().HaveCountLessOrEqualTo(0);
+            result.Item2.Should().HaveCountLessOrEqualTo(0);
+        }*/
+
+        [Fact]
+        public void GetTagsDictionary_JsonWithDublicates_ReturnExeption()
+        {
+            var config = DeserializeHelper.DeserializeObject<Models.Config>(jsonWithDublicates);            
+
+            Action action = () => ConfigHelper.GetTagsDictionary(config);
+
+            action.Should().Throw<Exception>().WithMessage("Есть дубли в Листе");
+        }
+
+        [Fact]
+        public void GetTagsDictionary_JsonCorrect_ReturnDictionaryAndList()
+        {
+            var config = DeserializeHelper.DeserializeObject<Models.Config>(json);
+
+            var result = ConfigHelper.GetTagsDictionary(config);
+
+            result.Should().NotBeNull();
+            result.Should().HaveCount(3);
+        }
+
+        [Fact]
+        public void GetTagsDictionary_JsonWithEmptyParametes_ReturnDictionaryAndList()
+        {
+            var config = DeserializeHelper.DeserializeObject<Models.Config>(jsonWithEmptyParameters);
+
+            var result = ConfigHelper.GetTagsDictionary(config);            
+
+            result.Should().NotBeNull();
+            result.Should().HaveCount(0);
+        }
+
+        [Fact]
+        public void GetTagsDictionary_IncorrectJson_ReturnDictionaryAndList()
+        {
+            var config = DeserializeHelper.DeserializeObject<Models.Config>(incorrectjson);
+
+            var result = ConfigHelper.GetTagsDictionary(config);
+
+            result.Should().NotBeNull();
+            result.Should().HaveCount(0);
+        }
+
+        /*[Fact] //надо убедить на пустую строку, что она не придет
+        public void GetTagsDictionary_EmptyJson_ReturnDictionaryAndList()
+        {
+            var config = DeserializeHelper.DeserializeObject<Models.Config>("");            
+
+            var result = ConfigHelper.GetTagsDictionary(config);
+
+            result.Should().NotBeNull();
+            result.Should().HaveCount(0);
+        }*/
+
+    /*    [Fact]
+        public void GetDictionary_IncorrectJson_ReturnDictionaryAndList()
+        {
+            var config = DeserializeHelper.DeserializeObject<Models.Config>(incorrectjson);
+
+            var result = ConfigHelper.GetTagsDictionary(config);
+
+            result.Should().NotBeNull();
+            result.Should().HaveCount(0);
+        }*/
+
+
+        [Fact]
+        public void GetDictionary_EmpryFile_ReturnFileNotEmpty()
+        {
+            var file = new TextFile()
+            {
+                Filename = "tets.txt",
+                Path = "Correct path",
+                Content = " "
+            };
+
+            var mockFile = new Mock<IFile>();
+            var mockUserDir = new Mock<IDirectory>();
+            var mockFileProvider = new Mock<IFileProvider>();
+            var mockPathProvider = new Mock<IPathProvider>();
+            /*mockPathProvider.Setup(f => f.Combine(It.IsAny<string>(), It.IsAny<string>())).Returns(It.IsAny<string>());
+            mockFileProvider.Setup(f => f.Exist(It.IsAny<string>())).Returns(true);*/
+            mockFile.Setup(f => f.GetContent(It.IsAny<string>(), It.IsAny<string>())).Returns(" ");
+
+            file.UserDirectory = mockUserDir.Object;
+            file.FileProvider = mockFileProvider.Object;
+            file.PathProvider = mockPathProvider.Object;
+            //file.GetContent = mockFile.ToString();
+
+            var result = ConfigHelper.GetDictionary(file.Filename, file.Path);           
+        }
+
+    }
+}

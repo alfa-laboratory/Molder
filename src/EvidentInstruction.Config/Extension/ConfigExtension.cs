@@ -1,5 +1,5 @@
 ﻿using EvidentInstruction.Controllers;
-using Newtonsoft.Json.Linq;
+using EvidentInstruction.Models.Interfaces;
 using System;
 using EvidentInstruction.Helpers;
 using System.IO;
@@ -7,92 +7,46 @@ using EvidentInstruction.Config.Infrastructures;
 using EvidentInstruction.Config.Helpers;
 using EvidentInstruction.Infrastructures;
 using Newtonsoft.Json;
+using EvidentInstruction.Config.Models;
+using EvidentInstruction.Models;
+using System.Collections.Concurrent;
+using System.Linq;
 
 namespace EvidentInstruction.Config.Extension
 {   
-     public static class ConfigExtension 
-     {       
+     public static class ConfigExtension
+    {
+        private static IDirectory BinDirectory = new BinDirectory();
+        private static IFile textFile = new TextFile(); 
+        private static IPathProvider pathProvider = new PathProvider();
+
+        /// <summary>
+        /// Задать значения в контроллере из словаря DictionaryTags
+        /// </summary>       
         public static VariableController AddConfig(this VariableController variableController) 
-        {
+        {            
             var controller = variableController;
 
-            foreach (var param in ParseJsonHelper.GetTagsDictionary()) //try catch
-                controller.SetVariable(param.Key, typeof(string), param.Value, TypeOfAccess.Global);
+            var path = Environment.GetEnvironmentVariable(DefaultFileName.EXTERNAL_JSON);
 
+            string fullpath = null;
+            if (string.IsNullOrWhiteSpace(path))
+            {                
+                path = BinDirectory.Get();
+                fullpath = pathProvider.Combine(path, DefaultFileName.DEFAULT_JSON);
+            }
+
+            var filename = pathProvider.GetFileName(fullpath); //переделать
+
+            var dictionary = ConfigHelper.GetDictionary(filename, path); //работает с локальным файлом, но с глобальным нет
+                            
+            foreach (var element in dictionary)
+            {
+                        controller.SetVariable(element.Key, element.Value.GetType(), element.Value, TypeOfAccess.Global);
+            }
             return controller;
+              
         }
 
-        private static string GetFilePath()
-        {
-            var path = Environment.CurrentDirectory;  // bin\\Debug\\netstandard2.0"
-            string fileName = null;
-
-                if (DefaultFileName.EXTERNAL_JSOM.Contains(".json")) 
-                {
-                    fileName = DefaultFileName.EXTERNAL_JSOM;
-                    Log.Logger.Information($"Get file \"{path}\" is't Json");
-                }
-                else
-                {
-                    fileName = DefaultFileName.DEFAULT_JSON;
-                    Log.Logger.Information($"Get local file \"{path}{Path.DirectorySeparatorChar}{fileName}\" ");
-                }
-
-            return $"{path}{Path.DirectorySeparatorChar}{fileName}"; 
-        }
-
-        private static string IsFileExists() //тест на то, что название файлов совпадают
-        {
-            var path = GetFilePath();
-            if (File.Exists(path))
-            {
-                Log.Logger.Information($"Get file \"{path}\" ");
-                return path;
-            }                        
-            else
-            {
-                Log.Logger.Error($"File:\"{path}\" not found");
-                throw new ArgumentException($"File with path:{path} not found");                
-            }  
-        }      
-
-        private static string ReadJsonFile() //path входной 
-        {
-            string file = null;
-
-            try
-            {
-                file = File.ReadAllText(IsFileExists()); //из другой библиотеки
-                Log.Logger.Information($"File \" {GetFilePath()} \" has been read");
-            }
-            catch(FileNotFoundException e)
-            {
-                Log.Logger.Information($"File \"{GetFilePath()}\" not found. Exception: \" {e.Message}\"");
-                return null;
-            }
-
-            return file;    
-        }
-
-        public static Models.Config ParseJsonFile() 
-        {
-            var jsonString = ReadJsonFile();
-            try
-            {
-                if (!string.IsNullOrWhiteSpace(jsonString)) 
-                {
-                    var JsonObject = JsonConvert.DeserializeObject<Models.Config>(jsonString);
-                   //проверку что не пустой
-                    return JsonObject;
-                }
-            }
-            catch
-            {
-                Log.Logger.Error($"File \"{GetFilePath()}\" is Empty"); 
-                throw new ArgumentNullException($"File \"{GetFilePath()}\" is Empty");             
-            }
-
-            return null;
-        }       
-    }
+     }
 }

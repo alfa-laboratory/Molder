@@ -1,7 +1,10 @@
 ﻿using System;
 using EvidentInstruction.Exceptions;
 using EvidentInstruction.Helpers;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using EvidentInstruction.Models.Interfaces;
+
 namespace EvidentInstruction.Models
 {
     public class TextFile : IFile, IDisposable
@@ -113,6 +116,30 @@ namespace EvidentInstruction.Models
                 throw new FileExistException("Файла в директории  не существует");
             }
         }
+
+        public string GetContent(string filename, string path)
+        {
+            if (string.IsNullOrWhiteSpace(path)) path = UserDirectory.Get();
+            
+            if (string.IsNullOrWhiteSpace(filename))
+            {
+                Log.Logger.Warning("Имя файла отсутствует");
+                throw new NoFileNameException("Имя файла отсутствует");
+            }
+            
+            var fullpath = PathProvider.Combine(path, filename);
+
+            if (FileProvider.Exist(fullpath))
+            {
+                return FileProvider.ReadAllText(filename, path);
+            }
+            else
+            {
+                Log.Logger.Warning("Файла по указанному пути не существует");
+                throw new FileExistException("Файла в директории не существует");
+            }
+        }
+
         public void Dispose()
         {
             GC.SuppressFinalize(this);

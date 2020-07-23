@@ -25,5 +25,19 @@ namespace EvidentInstruction.Models
                 return null;
             }
         }
+              
+        public string GetFileName(string path)
+        {    
+            try
+            {
+                return System.IO.Path.GetFileName(path);
+            }
+            catch (ArgumentException e)
+            {
+                Log.Logger.Warning($"Ошибка при получении имени файла \"{path} \" : \"{e.Message}\" ");
+                return null;
+            }
+
+        }
     }
 }

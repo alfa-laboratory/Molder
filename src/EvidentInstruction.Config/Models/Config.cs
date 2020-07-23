@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EvidentInstruction.Config.Models
 {
-   public class Config
+    [ExcludeFromCodeCoverage]
+    public class Config
     {
         [JsonProperty("config")]
         public Parameters[] Parameters { get; set; }

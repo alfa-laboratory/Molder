@@ -232,12 +232,12 @@ namespace EvidentInstruction.Tests
         }
 
         [Theory]
-        [InlineData("second", typeof(string), "second", TypeOfAccess.Global)]
+        [InlineData("second", typeof(string), "newsecond", TypeOfAccess.Global)]
         public void GetDoubleVariable_TypeOfAccessGlobal_ReturnException(string key, Type type, string value, TypeOfAccess typeOfAccess)
         {
             variableContext.SetVariable(key, type, value, typeOfAccess);
 
-            Action act = () => variableContext.SetVariable(key, type, value+1, typeOfAccess);
+            Action act = () => variableContext.SetVariable(key, type, value, typeOfAccess);
             act
               .Should().Throw<ArgumentException>()
               .WithMessage("Element is duplicate");

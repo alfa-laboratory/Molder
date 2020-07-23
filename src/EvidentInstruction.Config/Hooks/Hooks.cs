@@ -1,9 +1,11 @@
 ﻿using EvidentInstruction.Config.Extension;
 using EvidentInstruction.Controllers;
+using System.Diagnostics.CodeAnalysis;
 using TechTalk.SpecFlow;
 
 namespace EvidentInstruction.Config.Hooks
 {
+    [ExcludeFromCodeCoverage]
     [Binding]
     public sealed class Hooks
     {
@@ -14,7 +16,7 @@ namespace EvidentInstruction.Config.Hooks
             variableController = controller;
         }
 
-        [BeforeTestRun(Order =-3000)]
+        [BeforeTestRun(Order = -30000)]
         public void BeforeTestRun()
         {
             variableController.AddConfig();

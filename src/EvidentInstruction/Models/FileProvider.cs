@@ -125,6 +125,34 @@ namespace EvidentInstruction.Models
                 return false;
             }
         }
+
+        public string ReadAllText(string filename, string path)
+        {
+            var fullpath = Path.Combine(path, filename);    
+            try
+            {
+                var content = File.ReadAllText(fullpath);
+                Log.Logger.Information($"File \" {fullpath} \" has been read.");
+
+                return content;
+            }
+            catch(FileNotFoundException e)
+            {
+                Log.Logger.Warning($"File \"{fullpath}\" not found. \" {e.Message}\" ");
+                return null;
+            }
+            catch(PathTooLongException e)
+            {
+                Log.Logger.Warning($"File \"{fullpath}\" not found. \" {e.Message}\" ");
+                return null;
+            }
+            catch(IOException e)
+            {
+                Log.Logger.Warning($"File \"{fullpath}\" not found. \" {e.Message}\" ");
+                return null;
+            }
+            
+        }
     }
 }
 
