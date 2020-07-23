@@ -15,7 +15,6 @@ namespace EvidentInstruction.Service.Models
         [Required(ErrorMessage = "HttpMethod is required")]
         public HttpMethod Method { get; set; }
 
-        [Required(ErrorMessage = "Content is required")]
         public HttpContent Content { get; set; }
     }
 }

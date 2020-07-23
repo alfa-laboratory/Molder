@@ -3,7 +3,7 @@ using System.Net.Http.Headers;
 
 namespace EvidentInstruction.Service.Models
 {
-    public class ResponceInfo
+    public class ResponseInfo
     {
         public RequestInfo Request { get; set; }
         public HttpStatusCode StatusCode { get; set; }

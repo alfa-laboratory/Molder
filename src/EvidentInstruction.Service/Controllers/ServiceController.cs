@@ -5,11 +5,11 @@ namespace EvidentInstruction.Service.Controllers
 {
     public class ServiceController
     {   
-        public ConcurrentDictionary<string, ResponceInfo> Services { get; set; }
+        public ConcurrentDictionary<string, ResponseInfo> Services { get; set; }
 
         public ServiceController()
         {
-            Services = new ConcurrentDictionary<string, ResponceInfo>();
+            Services = new ConcurrentDictionary<string, ResponseInfo>();
         }
     }
 }

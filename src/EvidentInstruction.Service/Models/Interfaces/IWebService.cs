@@ -2,6 +2,6 @@
 {
     interface IWebService
     {
-        ResponceInfo SendMessage(RequestInfo request);
+        ResponseInfo SendMessage(RequestInfo request);
     }
 }
