@@ -2,12 +2,12 @@
 using EvidentInstruction.Config.Exceptions;
 using FluentAssertions;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EvidentInstruction.Config.Tests.UnitTests
 {
+    [ExcludeFromCodeCoverage]
     public class DeserializeHelperTests
     {
         private readonly string json =
@@ -16,7 +16,7 @@ namespace EvidentInstruction.Config.Tests.UnitTests
                            {
                               'tag': 'WebServiceAuth',
                               'parameters': {
-                                'auth_login': 'U_00ASC',
+                                'auth_login': 'login',
                                 'auth_pass': 'awe',
                                 'auth_token': 'Cddf32'
                               }
@@ -38,7 +38,7 @@ namespace EvidentInstruction.Config.Tests.UnitTests
         public void DeserializeObject_InCorrectValue_ReturnExeption(string config)
         {
             Action action = () => DeserializeHelper.DeserializeObject<Models.Config>(config);
-            action.Should().Throw<NewconfigExeption>().WithMessage($"Deserialize string \"{config}\" failed");
+            action.Should().Throw<DeserializeExeption>().WithMessage($"Deserialize string \"{config}\" failed");
         }
 
         [Theory] //тоже лишний

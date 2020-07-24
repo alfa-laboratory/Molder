@@ -78,6 +78,16 @@ namespace EvidentInstruction.Tests
         }
 
         [Theory]
+        [InlineData("first", typeof(string))]       
+        public void GetVariable_TypeofAccessGlobal_ReturnVariable(string key, Type type)
+        {
+            variableContext.SetVariable("first", typeof(string), "1", TypeOfAccess.Global);
+            var variable = variableContext.GetVariable(key);
+            variable.Type.Should().Be(type);
+            variable.Value.Should().Be("1");
+        }
+
+        [Theory]
         [InlineData("first", typeof(string), "first", TypeOfAccess.Local)]
         [InlineData("second", typeof(string), "second", TypeOfAccess.Global)]        
         public void GetVariable_CorrectTypeOfAccess_ReturnVariable(string key, Type type, string value, TypeOfAccess typeOfAccess)
@@ -260,7 +270,7 @@ namespace EvidentInstruction.Tests
             Action act = () => variableContext.SetVariable(key, type, value, typeOfAccess);
             act
               .Should().Throw<ArgumentException>()
-              .WithMessage("Element is duplicate");
+              .WithMessage($"Element with key: \"{key}\" has already created with type 'Global'");
         }        
 
         [Fact]

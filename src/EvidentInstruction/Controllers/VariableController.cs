@@ -85,7 +85,7 @@ namespace EvidentInstruction.Controllers
                 if (Variables[varName].TypeOfAccess == TypeOfAccess.Global)
                 {
                         Log.Logger.Warning($"Element with key: \"{key}\" has already created with type 'Global'");
-                        throw new ArgumentException($"Element is duplicate");
+                        throw new ArgumentException($"Element with key: \"{key}\" has already created with type 'Global'");
                 }
             }
             var vars = Variables;

@@ -1,18 +1,16 @@
 ﻿using EvidentInstruction.Config.Exceptions;
 using EvidentInstruction.Config.Helpers;
 using EvidentInstruction.Helpers;
-using EvidentInstruction.Models;
 using EvidentInstruction.Models.Interfaces;
 using FluentAssertions;
 using Moq;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 using Xunit;
 
 namespace EvidentInstruction.Config.Tests.UnitTests
 {
+    [ExcludeFromCodeCoverage]
     public class ConfigHelperTests
     {
         private readonly string json =
@@ -21,7 +19,7 @@ namespace EvidentInstruction.Config.Tests.UnitTests
                            {
                               'tag': 'WebServiceAuth',
                               'parameters': {
-                                'auth_login': 'U_00ASC',
+                                'auth_login': 'login',
                                 'auth_pass': 'awe',
                                 'auth_token': 'Cddf32'
                               }
@@ -35,7 +33,7 @@ namespace EvidentInstruction.Config.Tests.UnitTests
                     {
                       'tag': 'WebServiceAuth',
                       'parameters': {
-                        'auth_login': 'U_00ASC'                        
+                        'auth_login': 'login2'                        
                       }
                     },
                     {
@@ -75,8 +73,8 @@ namespace EvidentInstruction.Config.Tests.UnitTests
             var result = ConfigHelper.AddParameters(config);            
 
             result.Should().NotBeNull();
-            result.Item1.Should().HaveCountLessOrEqualTo(3);
-            result.Item2.Should().HaveCountLessOrEqualTo(0);
+            result.Item1.Should().HaveCount(3);
+            result.Item2.Should().HaveCount(0);
         }
 
         [Fact]
@@ -86,8 +84,8 @@ namespace EvidentInstruction.Config.Tests.UnitTests
 
             var result = ConfigHelper.AddParameters(config);
 
-            result.Item1.Should().HaveCountLessOrEqualTo(0);
-            result.Item2.Should().HaveCountLessOrEqualTo(0);
+            result.Item1.Should().HaveCount(0);
+            result.Item2.Should().HaveCount(0);
         }
 
         [Fact]
@@ -98,23 +96,9 @@ namespace EvidentInstruction.Config.Tests.UnitTests
             var result = ConfigHelper.AddParameters(config);
 
             result.Should().NotBeNull();
-            result.Item1.Should().HaveCountLessOrEqualTo(0);
-            result.Item2.Should().HaveCountLessOrEqualTo(0);
-        }        
-
-        [Theory]
-        [InlineData(" ")]
-        [InlineData(null)]
-        [InlineData("null")] //проверка, что не может прийти null
-        public void AddParameters_NULLValue_ReturnNULL(string config)
-        {
-            var jsonconfig = DeserializeHelper.DeserializeObject<Models.Config>(config);
-            var result = ConfigHelper.AddParameters(jsonconfig);
-
-            result.Should().NotBeNull();
-            result.Item1.Should().HaveCountLessOrEqualTo(0);
-            result.Item2.Should().HaveCountLessOrEqualTo(0);
-        }
+            result.Item1.Should().HaveCount(0);
+            result.Item2.Should().HaveCount(0);
+        } 
 
         [Fact]
         public void GetTagsDictionary_JsonWithDublicates_ReturnExeption()
@@ -160,54 +144,61 @@ namespace EvidentInstruction.Config.Tests.UnitTests
 
             result.Should().NotBeNull();
             result.Should().HaveCount(0);
-        }
+        }        
 
-        /*[Fact] //надо проверку на пустую строку, что она не придет
-        public void GetTagsDictionary_EmptyJson_ReturnDictionaryAndList()
+        [Theory]
+        [InlineData(" ")]
+        [InlineData(null)]
+        public void GetDictionary_EmpryFile_ReturnDictWithoutElement(string content)
         {
-            var config = DeserializeHelper.DeserializeObject<Models.Config>("");            
+            var mockFile = new Mock<IFile>();
+            
+            mockFile.Setup(f=>f.GetContent(It.IsAny<string>(), It.IsAny<string>())).Returns(content);
+            ConfigHelper.File = mockFile.Object;
 
-            var result = ConfigHelper.GetTagsDictionary(config);
+            var result = ConfigHelper.GetDictionary(new Guid().ToString(), new Guid().ToString());
 
-            result.Should().NotBeNull();
-            result.Should().HaveCount(0);
-        }*/        
+            result.Should().HaveCount(0);  
+        }
 
         [Fact]
-        public void GetDictionary_EmpryFile_ReturnFileNotEmpty()
+        public void GetDictionary_CorrectJson_ReturnCorrectDict() 
         {
-            var file = new TextFile()
-            {
-                Filename = "tets.txt",
-                Path = null
-            };
+            var mockFile = new Mock<IFile>();
 
-            var mockFile = new Mock<IFile>()
-            {
-                CallBase = true
-            };
-            var mockUserDir = new Mock<IDirectory>()
-            {
-                CallBase = true
-            };
-            var mockFileProvider = new Mock<IFileProvider>()
-            {
-                CallBase = true
-            };
-            var mockPathProvider = new Mock<IPathProvider>()
-            {
-                CallBase = true
-            };
-           mockPathProvider.Setup(f => f.Combine(It.IsAny<string>(), It.IsAny<string>())).Returns(It.IsAny<string>());
-           mockFileProvider.Setup(f => f.Exist(It.IsAny<string>())).Returns(true);
-           mockFile.Setup(f => f.GetContent(It.IsAny<string>(), It.IsAny<string>())).Returns(" ");
+            mockFile.Setup(f => f.GetContent(It.IsAny<string>(), It.IsAny<string>())).Returns(json);
+            ConfigHelper.File = mockFile.Object;
 
-                        file.UserDirectory = mockUserDir.Object;
-                        file.FileProvider = mockFileProvider.Object;
-                        file.PathProvider = mockPathProvider.Object;            
+            var result = ConfigHelper.GetDictionary(new Guid().ToString(), new Guid().ToString());
 
-            var result = ConfigHelper.GetDictionary(file.Filename, file.Path);           
+            result.Should().HaveCount(3);
         }
 
+        [Fact]
+        public void GetDictionary_InCorrect_ReturnEmptyDict() 
+        {
+            var mockFile = new Mock<IFile>();
+
+            mockFile.Setup(f => f.GetContent(It.IsAny<string>(), It.IsAny<string>())).Returns(incorrectjson);
+            ConfigHelper.File = mockFile.Object;
+
+            var result = ConfigHelper.GetDictionary(new Guid().ToString(), new Guid().ToString());
+
+            result.Should().HaveCount(0);
+        }
+
+        [Theory]        
+        [InlineData("null")]        
+        public void GetDictionary_IncorrectContent_ReturnEmptyDict( string content)
+        {
+            var mockFile = new Mock<IFile>();
+
+            mockFile.Setup(f => f.GetContent(It.IsAny<string>(), It.IsAny<string>())).Returns(content);
+            ConfigHelper.File = mockFile.Object;
+
+            var result = ConfigHelper.GetDictionary(new Guid().ToString(), new Guid().ToString());
+
+            result.Should().HaveCount(0);
+        }
     }
 }

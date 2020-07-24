@@ -9,9 +9,9 @@ namespace EvidentInstruction.Config.Helpers
 {
     public static class DeserializeHelper
     {
-        public static T DeserializeObject<T>(string json) //where T:  Models.Config
+        public static T DeserializeObject<T>(string json) 
         {
-            if (string.IsNullOrWhiteSpace(json)) return default(T); //возвращает неиницилизированный объект
+            if (string.IsNullOrWhiteSpace(json)) return default(T); 
 
             try
             {
@@ -20,7 +20,7 @@ namespace EvidentInstruction.Config.Helpers
             catch(JsonException e)
             {                
                 Log.Logger.Error($"File is empty \"{e.Message}\"");                
-                throw new NewconfigExeption($"Deserialize string \"{json}\" failed");                
+                throw new DeserializeExeption($"Deserialize string \"{json}\" failed");                
             }            
         }
     }

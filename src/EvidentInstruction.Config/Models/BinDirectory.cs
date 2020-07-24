@@ -1,10 +1,10 @@
 ﻿using EvidentInstruction.Models.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EvidentInstruction.Config.Models
 {
+    [ExcludeFromCodeCoverage]
     public class BinDirectory : IDirectory
     {
         public string Get()

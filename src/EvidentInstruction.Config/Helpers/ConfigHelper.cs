@@ -1,12 +1,7 @@
 ﻿using System.Collections.Concurrent;
-using EvidentInstruction.Config.Extension;
-using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
 using EvidentInstruction.Helpers;
-using System;
-using System.Text;
-using Newtonsoft.Json;
 using EvidentInstruction.Models;
 using EvidentInstruction.Models.Interfaces;
 using EvidentInstruction.Config.Exceptions;
@@ -15,7 +10,7 @@ namespace EvidentInstruction.Config.Helpers
 {
     public static class ConfigHelper 
     {       
-        private static IFile file = new TextFile();
+        public static IFile File = new TextFile();
 
         /// <summary>
         /// Получение словаря dictionaryTags и списка повторных параметров dublicatesTagsList и проверить dublicatesTagsList
@@ -49,20 +44,20 @@ namespace EvidentInstruction.Config.Helpers
         /// </summary>        
         public static ConcurrentDictionary<string, object> GetDictionary(string filename, string path)
         {            
-            var content = file.GetContent(filename, path);
+            var content = File.GetContent(filename, path);
 
             if(string.IsNullOrWhiteSpace(content)) 
             {
                 Log.Logger.Warning($"File \"{filename}\" is empty");
-                return null;
+                return new ConcurrentDictionary<string, object>(); //возвращаем пустой словарь
             }       
 
             var config = DeserializeHelper.DeserializeObject<Models.Config>(content);
-            //тут будет ошибка NUllReferenseExeption
-            if(config==null) //не та проверка
+            
+            if(config == null) 
             {
                 Log.Logger.Warning("Json model is empty");
-                return null;
+                return new ConcurrentDictionary<string, object>(); //возвращаем пустой словарь
             }
 
             return GetTagsDictionary(config);
