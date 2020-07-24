@@ -17,29 +17,29 @@ namespace EvidentInstruction.Config.Tests.UnitTests
               @"{
                'config': [
                            {
-                              'tag': 'WebServiceAuth',
+                              'tag': 'Browser',
                               'parameters': {
-                                'auth_login': 'login',
-                                'auth_pass': 'awe',
-                                'auth_token': 'Cddf32'
+                                'broId': '1231',
+                                'version': '2.3',
+                                'name': 'Opera'
                               }
                             }                           
                           ]
               }";
 
         private readonly string jsonWithDublicates =
-              @"{
+               @"{
                   'config': [
                     {
-                      'tag': 'WebServiceAuth',
+                      'tag': 'Browser',
                       'parameters': {
-                        'auth_login': 'login2'                        
+                        'broId': '1231'                        
                       }
                     },
                     {
-                      'tag': 'Service',
+                      'tag': 'Programm',
                       'parameters': {
-                        'auth_login': 'U_00AZC'                        
+                        'broId': '1231213123'                        
                       }
                     }
                   ]
@@ -49,7 +49,7 @@ namespace EvidentInstruction.Config.Tests.UnitTests
              @"{
                'config': [
                            {
-                              'tag': 'WebServiceAuth',
+                              'tag': 'Browser',
                               'parameters': {                                
                               }
                             }                           

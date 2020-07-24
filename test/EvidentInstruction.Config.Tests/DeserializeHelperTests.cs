@@ -41,7 +41,7 @@ namespace EvidentInstruction.Config.Tests.UnitTests
             action.Should().Throw<DeserializeExeption>().WithMessage($"Deserialize string \"{config}\" failed");
         }
 
-        [Theory] //тоже лишний
+        [Theory] 
         [InlineData(" ")]
         [InlineData(null)]
         [InlineData("null")]

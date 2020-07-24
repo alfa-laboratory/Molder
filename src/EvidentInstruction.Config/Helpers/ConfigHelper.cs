@@ -1,10 +1,12 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using EvidentInstruction.Helpers;
 using EvidentInstruction.Models;
 using EvidentInstruction.Models.Interfaces;
 using EvidentInstruction.Config.Exceptions;
+using EvidentInstruction.Exceptions;
 
 namespace EvidentInstruction.Config.Helpers
 {
@@ -43,24 +45,38 @@ namespace EvidentInstruction.Config.Helpers
         /// Получить словарь с тегами
         /// </summary>        
         public static ConcurrentDictionary<string, object> GetDictionary(string filename, string path)
-        {            
-            var content = File.GetContent(filename, path);
-
-            if(string.IsNullOrWhiteSpace(content)) 
+        {
+            try
             {
-                Log.Logger.Warning($"File \"{filename}\" is empty");
-                return new ConcurrentDictionary<string, object>(); //возвращаем пустой словарь
-            }       
+                var content = File.GetContent(filename, path);
 
-            var config = DeserializeHelper.DeserializeObject<Models.Config>(content);
-            
-            if(config == null) 
-            {
-                Log.Logger.Warning("Json model is empty");
-                return new ConcurrentDictionary<string, object>(); //возвращаем пустой словарь
+                if (string.IsNullOrWhiteSpace(content))
+                {
+                    Log.Logger.Warning($"File \"{filename}\" is empty");
+                    return new ConcurrentDictionary<string, object>(); //возвращаем пустой словарь
+                }
+
+                var config = DeserializeHelper.DeserializeObject<Models.Config>(content);
+
+                if (config == null)
+                {
+                    Log.Logger.Warning("Json model is empty");
+                    return new ConcurrentDictionary<string, object>(); //возвращаем пустой словарь
+                }
+
+                return GetTagsDictionary(config);
             }
-
-            return GetTagsDictionary(config);
+            catch(FileExistException e)
+            {
+                Log.Logger.Warning($"File \"{filename}\" not found {e.Message}"); 
+                throw new GetContentException($"File is empty or not found");
+            }
+            catch (NoFileNameException e)
+            {
+                Log.Logger.Warning($"File \"{filename}\" not found {e.Message}");
+                throw new GetContentException($"File is empty or not found");
+               
+            }
         }
 
         /// <summary>

@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Generato
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Config", "src\EvidentInstruction.Config\EvidentInstruction.Config.csproj", "{69324447-06D0-417B-934B-F90FFC4C326A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EvidentInstruction.Config.Tests", "test\EvidentInstruction.Config.Tests\EvidentInstruction.Config.Tests.csproj", "{6F830FB2-0FD7-458B-91B3-8BB2217FAD80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Config.Tests", "test\EvidentInstruction.Config.Tests\EvidentInstruction.Config.Tests.csproj", "{6F830FB2-0FD7-458B-91B3-8BB2217FAD80}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

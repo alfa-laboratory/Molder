@@ -25,11 +25,11 @@ namespace EvidentInstruction.Config.Tests
              @"{
                'config': [
                            {
-                              'tag': 'WebServiceAuth',
+                              'tag': 'Browser',
                               'parameters': {
-                                'auth_login': 'login',
-                                'auth_pass': 'awe',
-                                'auth_token': 'Cddf32'
+                                'broId': '1231',
+                                'version': '2.3',
+                                'name': 'Opera'
                               }
                             }                           
                           ]
@@ -39,15 +39,15 @@ namespace EvidentInstruction.Config.Tests
               @"{
                   'config': [
                     {
-                      'tag': 'WebServiceAuth',
+                      'tag': 'Browser',
                       'parameters': {
-                        'auth_login': 'login2'                        
+                        'broId': '1231'                        
                       }
                     },
                     {
-                      'tag': 'Service',
+                      'tag': 'Programm',
                       'parameters': {
-                        'auth_login': 'U_00AZC'                        
+                        'broId': '1231213123'                        
                       }
                     }
                   ]
@@ -61,10 +61,17 @@ namespace EvidentInstruction.Config.Tests
                            }                                                      
                           ]
               }";
+        /*[Fact]
+        public void AddConfig_WithoutFiles_ReturnExeption()
+        {
+            Action act = () => ConfigExtension.AddConfig(variableContext);
+            act
+                .Should().Throw<FileIsExistException>()
+                .WithMessage($"File is empty or not found.");
+        }*/
 
-        [Theory]
-        [InlineData(@"C:\\")]
-        [InlineData("windir")]
+       /* [Theory]
+        [InlineData(@"C:\\")]        
         public void AddConfig_IncorrectPath_ReturnExeption(string content)
         {
             var mockPathProvider = new Mock<IPathProvider>();
@@ -75,17 +82,8 @@ namespace EvidentInstruction.Config.Tests
             Action act = () => ConfigExtension.AddConfig(variableContext);
             act
               .Should().Throw<FileIsExistException>()
-              .WithMessage($"File \"{content}\" not found.");
-        }
-
-       [Fact]
-        public void AddConfig_WithoutFiles_ReturnExeption()
-        {          
-            Action act = () => ConfigExtension.AddConfig(variableContext);
-            act
-              .Should().Throw<FileIsExistException>()
-              .WithMessage($"File \"{string.Empty}\" not found.");
-        }
+              .WithMessage($"File is empty or not found.");
+        }*/
 
         [Fact]
         public void AddConfig_DefaultFile_ReturnVariables()
@@ -112,8 +110,8 @@ namespace EvidentInstruction.Config.Tests
 
             Action act = () => ConfigExtension.AddConfig(variableContext);
             act
-              .Should().Throw<ConfigException>()
-              .WithMessage($"Json Exeption. Json has 1 dublicates:"+"\nauth_login");
+              .Should().Throw<DublicateTagsException>()
+              .WithMessage($"Json Exeption. Json has 1 dublicates:"+ "\nbroId");
         }
 
         [Fact]

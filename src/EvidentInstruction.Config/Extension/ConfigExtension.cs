@@ -48,17 +48,17 @@ namespace EvidentInstruction.Config.Extension
             catch(NoFileNameException e)
             {
                 Log.Logger.Warning($"File \"{fullpath}\" not found.{e.Message}");
-                throw new FileIsExistException($"File \"{fullpath}\" not found.");
+                throw new FileIsExistException($"File is empty or not found.");
             }
-            catch (FileExistException e)
+            catch (GetContentException e)
             {
-                Log.Logger.Warning($"File \"{fullpath}\" not found {e.Message}");
-                throw new FileIsExistException($"File \"{fullpath}\" not found.");
+                Log.Logger.Warning($"File is empty or not found \"{e.Message}\"");
+                throw new FileIsExistException($"File is empty or not found.");
             }
             catch (ConfigException e)
             {
                 Log.Logger.Warning($"Json Exeption. {e.Message}");
-                throw new ConfigException($"Json Exeption. {e.Message}");
+                throw new DublicateTagsException($"Json Exeption. {e.Message}");
             }
         }
      }
