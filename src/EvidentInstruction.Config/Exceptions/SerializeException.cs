@@ -8,7 +8,6 @@ namespace EvidentInstruction.Config.Exceptions
     [Serializable]
     public class SerializeException: JsonException
     {
-        public SerializeException(string message)
-       : base(message) { }
+        public SerializeException(string message) : base(message) { }
     }
 }
