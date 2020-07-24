@@ -13,6 +13,8 @@ namespace EvidentInstruction.Tests
     public class ConverterTests 
     {
         private const string Xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><addresses xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation='test.xsd'><address><name>Joe Tester</name><street>Baker street</street><house>5</house></address></addresses>";
+        private const string Json = "{\"address\": {\"name\": \"Joe Tester\",\"street\": \"Baker street\",\"house\": \"5\" }}";
+        private const string Cdata = "<addresses><![CDATA[<address><name>Joe Tester</name><street>Baker street</street><house>5</house></address>]]></addresses>";
 
         public static IEnumerable<object[]> ConvertedData()
         {
@@ -60,6 +62,41 @@ namespace EvidentInstruction.Tests
         {
             var xml = Converter.CreateXmlDoc("test");
             xml.Should().BeNull();
+        }
+
+        [Fact]
+        public void CreateJson_ValidJson_ReturnJObject()
+        {
+            var json = Converter.CreateJson(Json);
+            json.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void CreateJson_NotValidJson_ReturnNull()
+        {
+            var json = Converter.CreateJson("test");
+            json.Should().BeNull();
+        }
+
+        [Fact]
+        public void CreateXmlCData_ValidXml_ReturnXml()
+        {
+            var cdata = Converter.CreateCData(Cdata);
+            cdata.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void CreateXmlCData_NotValidXml_ReturnNull()
+        {
+            var cdata = Converter.CreateCData("test");
+            cdata.Should().BeNull();
+        }
+
+        [Fact]
+        public void CreateXmlCData_NotValidCData_ReturnNull()
+        {
+            var cdata = Converter.CreateCData(Xml);
+            cdata.Should().BeNull();
         }
     }
 }
