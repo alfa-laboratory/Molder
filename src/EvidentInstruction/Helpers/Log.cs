@@ -4,6 +4,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace EvidentInstruction.Helpers
 {
+    /// <summary>
+    /// Статичный класс для логирования.
+    /// </summary>
     [ExcludeFromCodeCoverage]
     public static class Log
     {
