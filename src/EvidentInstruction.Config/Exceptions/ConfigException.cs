@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EvidentInstruction.Config.Exceptions
 {
+    [ExcludeFromCodeCoverage]
     [Serializable]
     public class ConfigException : Exception
     {

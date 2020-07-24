@@ -55,8 +55,12 @@ namespace EvidentInstruction.Controllers
             if (correcKey == null) return null;
 
             if (Variables.ContainsKey(correcKey))
+            {
                 if (Variables[correcKey].TypeOfAccess == TypeOfAccess.Global)
-                   Log.Logger.Information($"Element with key: \"{key}\" contains value {Variables[correcKey].Value} with type 'Global'");
+                {
+                    Log.Logger.Information($"Element with key: \"{key}\" contains value {Variables[correcKey].Value} with type 'Global'");
+                }
+            }
 
             return Variables.SingleOrDefault(_ => _.Key == GetVariableName(key)).Value;            
         }

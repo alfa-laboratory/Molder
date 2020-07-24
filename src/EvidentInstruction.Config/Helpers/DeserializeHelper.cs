@@ -20,7 +20,7 @@ namespace EvidentInstruction.Config.Helpers
             catch(JsonException e)
             {                
                 Log.Logger.Error($"File is empty \"{e.Message}\"");                
-                throw new NewconfigExeption($"Deserialize string \"{json}\" failed");                
+                throw new SerializeException($"Deserialize string \"{json}\" failed");                
             }            
         }
     }
