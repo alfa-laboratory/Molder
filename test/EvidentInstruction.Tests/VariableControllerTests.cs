@@ -98,6 +98,26 @@ namespace EvidentInstruction.Tests
         }
 
         [Theory]
+        [InlineData(null, typeof(string), "", TypeOfAccess.Local)]
+        [InlineData("", typeof(string), "", TypeOfAccess.Local)]        
+        public void SetVariable_KeyIsNull_ReturnVariables(string key, Type type, string value, TypeOfAccess typeOfAccess)
+        {
+            variableContext.SetVariable(key, type, value, typeOfAccess);            
+            variableContext.Variables.Count.Should().Be(3);
+        }
+
+        [Theory]
+        [InlineData("first", typeof(string), "newfirst", TypeOfAccess.Global)]       
+        public void SetVariable_DublKeyWithDiffTypeOfAccess_ReturnVariables(string key, Type type, string value, TypeOfAccess typeOfAccess)
+        {
+
+            variableContext.SetVariable(key, type, value, typeOfAccess);
+            variableContext.SetVariable("first", typeof(string), "newvalue", TypeOfAccess.Local);
+            variableContext.Variables[key].TypeOfAccess.Should().Be(typeOfAccess);
+            variableContext.Variables[key].Value.Should().Be(value);
+        }
+
+        [Theory]
         [InlineData("first", true)]
         [InlineData("second", true)]
         [InlineData("four", false)]

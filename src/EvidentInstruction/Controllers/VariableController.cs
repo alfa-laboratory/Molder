@@ -68,29 +68,33 @@ namespace EvidentInstruction.Controllers
         {
             var varName = GetVariableName(key);
 
+            if(string.IsNullOrWhiteSpace(varName)) //или завернуть в try catch
+            {
+                Log.Logger.Information($"Key: \"{key}\" is empty");
+                return;
+            }
+            
             if (Variables.ContainsKey(varName))
             {
                 if (accessType == TypeOfAccess.Local && Variables[varName].TypeOfAccess == TypeOfAccess.Global)
                 {
-                    Log.Logger.Information($"Element with key: \"{key}\" has already created  with type 'Global'");
-                    return;
-                }                    
+                        Log.Logger.Information($"Element with key: \"{key}\" has already created  with type 'Global'");
+                        return;
+                }
 
                 if (Variables[varName].TypeOfAccess == TypeOfAccess.Global)
                 {
-                    Log.Logger.Warning($"Element with key: \"{key}\" has already created with type 'Global'");
-                    throw new ArgumentException($"Element is duplicate");
-                }                
+                        Log.Logger.Warning($"Element with key: \"{key}\" has already created with type 'Global'");
+                        throw new ArgumentException($"Element is duplicate");
+                }
             }
-
             var vars = Variables;
             var variable = new Variable() { Type = type, Value = value, TypeOfAccess = accessType };
 
             vars.AddOrUpdate(varName, variable, (k, v) => variable);
             Variables = vars;
-        }
-
-
+           
+        } 
         public object GetVariableValue(string key)
         {
             try
