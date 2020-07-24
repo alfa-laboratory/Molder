@@ -35,8 +35,8 @@ namespace EvidentInstruction.Generator.Steps
         [StepDefinition(@"я жду ([0-9]+) сек\.")]
         public void WaitForSeconds(int seconds)
         {
-            seconds.Should().BePositive("Waiting time must be greater");
-            seconds.Should().NotBe(0, "Waiting time cannot be equals zero");
+            seconds.Should().BePositive("Время ожидания должно быть положительным");
+            seconds.Should().NotBe(0, "Время ожидания не может равняться нулю");
             Thread.Sleep(seconds * 1000);
         }
 

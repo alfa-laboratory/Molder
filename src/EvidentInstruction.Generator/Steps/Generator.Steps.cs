@@ -2,9 +2,9 @@
 using System.Net;
 using FluentAssertions;
 using EvidentInstruction.Controllers;
-using EvidentInstruction.Helpers;
 using EvidentInstruction.Infrastructure;
 using TechTalk.SpecFlow;
+using EvidentInstruction.Generator.Models;
 
 namespace EvidentInstruction.Generator.Steps
 {
@@ -15,15 +15,17 @@ namespace EvidentInstruction.Generator.Steps
     public class GeneratorSteps
     {
         private readonly VariableController variableController;
+        private readonly IGenerator generator;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Generator"/> class.
         /// Привязка общих шагов к работе с переменным через контекст.
+        /// Инициализация генератора.
         /// </summary>
         /// <param name="variableController">Контекст для работы с переменными.</param>
-        public GeneratorSteps(VariableController variableController)
+        public GeneratorSteps(VariableController variableController, IGenerator generator)
         {
             this.variableController = variableController;
+            this.generator = generator;
         }
 
         /// <summary>
@@ -37,8 +39,8 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableDate(int day, int month, int year, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная \"{varName}\" уже существует");
-            var dt = EvidentInstruction.Helpers.Generator.GetDate(day, month, year);
-            dt.Should().NotBeNull($"Проверьте корректность создания даты day:{day},month:{month},year:{year}");
+            var dt = generator.GetDate(day, month, year);
+            dt.Should().NotBeNull($"Проверьте корректность создания даты день:{day},месяц:{month},год:{year}");
             this.variableController.SetVariable(varName, dt.GetType(), dt);
         }
 
@@ -54,11 +56,10 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableDateWithFormat(int day, int month, int year, string format, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var dt = EvidentInstruction.Helpers.Generator.GetDate(day, month, year);
+            var dt = generator.GetDate(day, month, year);
+            dt.Should().NotBeNull($"Проверьте корректность создания даты день:{day},месяц:{month},год:{year}");
 
-            dt.Should().NotBeNull();
             dt?.ToString(format);
-
             this.variableController.SetVariable(varName, dt.GetType(), dt);
         }
 
@@ -73,10 +74,8 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableTime(int hours, int minutes, int seconds, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-
-            var dt = EvidentInstruction.Helpers.Generator.GetTime(hours, minutes, seconds);
-            dt.Should().NotBeNull();
-
+            var dt = generator.GetTime(hours, minutes, seconds);
+            dt.Should().NotBeNull($"Проверьте корректность создания время часы:{hours},минуты:{minutes},секунды:{seconds}");
             this.variableController.SetVariable(varName, dt.GetType(), dt);
         }
 
@@ -92,11 +91,10 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableTimeWithFormat(int hours, int minutes, int seconds, string format, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var dt = generator.GetTime(hours, minutes, seconds);
+            dt.Should().NotBeNull($"Проверьте корректность создания время часы:{hours},минуты:{minutes},секунды:{seconds}");
 
-            var dt = EvidentInstruction.Helpers.Generator.GetTime(hours, minutes, seconds);
-            dt.Should().NotBeNull();
             dt?.ToString(format);
-            
             this.variableController.SetVariable(varName, dt.GetType(), dt);
         }
 
@@ -112,7 +110,8 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableTimeLong(int hours, int minutes, int seconds, int milliseconds, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var dt = new DateTime(1, 1, 1, hours, minutes, seconds, milliseconds);
+            var dt = generator.GetTime(hours, minutes, seconds, milliseconds);
+            dt.Should().NotBeNull($"Проверьте корректность создания время часы:{hours},минуты:{minutes},секунды:{seconds},милисекунды:{milliseconds}");
             this.variableController.SetVariable(varName, dt.GetType(), dt);
         }
 
@@ -129,11 +128,10 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableTimeLongWithFormat(int hours, int minutes, int seconds, int milliseconds, string format, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var dt = generator.GetTime(hours, minutes, seconds, milliseconds);
+            dt.Should().NotBeNull($"Проверьте корректность создания время часы:{hours},минуты:{minutes},секунды:{seconds},милисекунды:{milliseconds}");
 
-            var dt = EvidentInstruction.Helpers.Generator.GetTime(hours, minutes, seconds, milliseconds);
-            dt.Should().NotBeNull();
             dt?.ToString(format);
-
             this.variableController.SetVariable(varName, dt.GetType(), dt);
         }
 
@@ -151,10 +149,8 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableDateTime(int day, int month, int year, int hours, int minutes, int seconds, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-
-            var dt = EvidentInstruction.Helpers.Generator.GetDateTime(day, month, year, hours, minutes, seconds);
-            dt.Should().NotBeNull();
-
+            var dt = generator.GetDateTime(day, month, year, hours, minutes, seconds);
+            dt.Should().NotBeNull($"Проверьте корректность создания даты день:{day},месяц:{month},год:{year} и время часы:{hours},минуты:{minutes},секунды:{seconds}");
             this.variableController.SetVariable(varName, dt.GetType(), dt);
         }
 
@@ -173,11 +169,10 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableDateTimeWithFormat(int day, int month, int year, int hours, int minutes, int seconds, string format, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var dt = generator.GetDateTime(day, month, year, hours, minutes, seconds);
+            dt.Should().NotBeNull($"Проверьте корректность создания даты день:{day},месяц:{month},год:{year} и время часы:{hours},минуты:{minutes},секунды:{seconds}");
 
-            var dt = EvidentInstruction.Helpers.Generator.GetDateTime(day, month, year, hours, minutes, seconds);
-            dt.Should().NotBeNull();
             dt?.ToString(format);
-
             this.variableController.SetVariable(varName, dt.GetType(), dt);
         }
 
@@ -196,10 +191,8 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableOtherDateTime(int day, int month, int year, int hours, int minutes, int seconds, int milliseconds, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-
-            var dt = EvidentInstruction.Helpers.Generator.GetDateTime(day, month, year, hours, minutes, seconds, milliseconds);
-            dt.Should().NotBeNull();
-
+            var dt = generator.GetDateTime(day, month, year, hours, minutes, seconds, milliseconds);
+            dt.Should().NotBeNull($"Проверьте корректность создания даты день:{day},месяц:{month},год:{year} и время часы:{hours},минуты:{minutes},секунды:{seconds},милисекунды:{milliseconds}");
             this.variableController.SetVariable(varName, dt.GetType(), dt);
         }
 
@@ -219,11 +212,10 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableOtherDateTimeWithFormat(int day, int month, int year, int hours, int minutes, int seconds, int milliseconds, string format, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var dt = generator.GetDateTime(day, month, year, hours, minutes, seconds, milliseconds);
+            dt.Should().NotBeNull($"Проверьте корректность создания даты день:{day},месяц:{month},год:{year} и время часы:{hours},минуты:{minutes},секунды:{seconds},милисекунды:{milliseconds}");
 
-            var dt = EvidentInstruction.Helpers.Generator.GetDateTime(day, month, year, hours, minutes, seconds, milliseconds);
-            dt.Should().NotBeNull();
             dt?.ToString(format);
-
             this.variableController.SetVariable(varName, dt.GetType(), dt);
         }
 
@@ -235,9 +227,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableCurrentDate(string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-
-            var now = EvidentInstruction.Helpers.Generator.GetCurrentDateTime();
-
+            var now = generator.GetCurrentDateTime();
             this.variableController.SetVariable(varName, now.GetType(), now);
         }
 
@@ -250,99 +240,89 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableCurrentDateWithFormat(string format, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-
-            var now = EvidentInstruction.Helpers.Generator.GetCurrentDateTime().ToString(format);
-
+            var now = generator.GetCurrentDateTime().ToString(format);
             this.variableController.SetVariable(varName, now.GetType(), now);
         }
 
         /// <summary>
-        /// Шаг для сохранения будущей даты, которая отличается от текущей на определенный срок в переменную, используя конкретный формат.
+        /// Шаг для сохранения даты, которая отличается от текущей на определенный срок в переменную.
         /// </summary>
         /// <param name="year">Количество лет от текущей даты.</param>
         /// <param name="month">Количество месяцев от текущей даты.</param>
         /// <param name="day">Количество дней от текущей даты.</param>
-        /// <param name="format">Формат представления даты.</param>
         /// <param name="varName">Идентификатор переменной.</param>
-        [StepDefinition(@"я сохраняю будущую дату, которая отличается от текущей на ""([0-9]+)"" (?:лет|год[а]?) ""([0-9]+)"" (?:месяц|месяц(?:а|ев)) ""([0-9]+)"" (?:день|дн(?:я|ей)) в формате ""(.+)"" в переменную ""(.+)""")]
-        public void StoreAsVariableFutureDateTimeWithDifference(int year, int month, int day, string format, string varName)
+        [StepDefinition(@"я сохраняю дату, которая отличается от текущей на ""([0-9]+)"" (?:лет|год[а]?) ""([0-9]+)"" (?:месяц|месяц(?:а|ев)) ""([0-9]+)"" (?:день|дн(?:я|ей)) в переменную ""(.+)""")]
+        public void StoreAsVariableFutureDateTimeWithDifference(int year, int month, int day, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-
-            var dt = EvidentInstruction.Helpers.Generator.GetOtherDate(day, month, year);
+            var dt = generator.GetOtherDate(day, month, year);
             dt.Should().NotBeNull();
-            dt?.ToString(format);
-
             this.variableController.SetVariable(varName, dt.GetType(), dt);
         }
 
-
         /// <summary>
-        /// Шаг для сохранения будущей даты, которая отличается от даты на определенный срок в переменную, используя конкретный формат.
+        /// Шаг для сохранения даты, которая отличается от даты на определенный срок в переменную.
         /// </summary>
-        /// <param name="year">Количество лет от текущей даты.</param>
-        /// <param name="month">Количество месяцев от текущей даты.</param>
-        /// <param name="day">Количество дней от текущей даты.</param>
-        /// <param name="format">Формат представления даты.</param>
+        /// <param name="fYear">Количество лет изначальной даты.</param>
+        /// <param name="fMonth">Количество месяцев изначальной даты.</param>
+        /// <param name="fDay">Количество дней изначальной даты.</param>
+        /// <param name="year">Количество лет от даты.</param>
+        /// <param name="month">Количество месяцев от даты.</param>
+        /// <param name="day">Количество дней от даты.</param>
         /// <param name="varName">Идентификатор переменной.</param>
-        [StepDefinition(@"я сохраняю будущую дату, которая отличается от ([0-9]{1,2})\.([0-9]{2})\.([0-9]+) на ""([0-9]+)"" (?:лет|год[а]?) ""([0-9]+)"" (?:месяц|месяц(?:а|ев)) ""([0-9]+)"" (?:день|дн(?:я|ей)) в формате ""(.+)"" в переменную ""(.+)""")]
-        public void StoreAsVariableFutureDateTime(int fYear, int fMonth, int fDay, int year, int month, int day, string format, string varName)
+        [StepDefinition(@"я сохраняю дату, которая отличается от ([0-9]{1,2})\.([0-9]{2})\.([0-9]+) на ""([0-9]+)"" (?:лет|год[а]?) ""([0-9]+)"" (?:месяц|месяц(?:а|ев)) ""([0-9]+)"" (?:день|дн(?:я|ей)) в формате ""(.+)"" в переменную ""(.+)""")]
+        public void StoreAsVariableFutureDateTime(int fYear, int fMonth, int fDay, int year, int month, int day, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var dt = generator.GetDate(fDay, fMonth, fYear);
+            dt.Should().NotBeNull($"Проверьте корректность создания даты день:{fDay},месяц:{fMonth},год:{fYear}");
 
-            var dt = EvidentInstruction.Helpers.Generator.GetDate(fDay, fMonth, fYear);
-            dt.Should().NotBeNull();
-
-            var fdt = EvidentInstruction.Helpers.Generator.GetOtherDate(day, month, year, date:dt);
+            var fdt = generator.GetOtherDate(day, month, year, dt);
             fdt.Should().NotBeNull();
-            fdt?.ToString(format);
-
             this.variableController.SetVariable(varName, fdt.GetType(), fdt);
         }
 
 
         /// <summary>
-        /// Шаг для сохранения прошедшей даты, которая отличается от текущей на определенный срок в переменную, используя конкретный формат.
+        /// Шаг для сохранения даты, которая отличается от текущей на определенный срок в переменную, используя конкретный формат.
         /// </summary>
         /// <param name="year">Количество лет от текущей даты.</param>
         /// <param name="month">Количество месяцев от текущей даты.</param>
         /// <param name="day">Количество дней от текущей даты.</param>
         /// <param name="format">Формат представления даты.</param>
         /// <param name="varName">Идентификатор переменной.</param>
-        [StepDefinition(@"я сохраняю прошедшую дату, которая отличается от текущей на ""([0-9]+)"" (?:лет|год[а]?) ""([0-9]+)"" (?:месяц|месяц(?:а|ев)) ""([0-9]+)"" (?:день|дн(?:я|ей)) в формате ""(.+)"" в переменную ""(.+)""")]
+        [StepDefinition(@"я сохраняю дату, которая отличается от текущей на ""([0-9]+)"" (?:лет|год[а]?) ""([0-9]+)"" (?:месяц|месяц(?:а|ев)) ""([0-9]+)"" (?:день|дн(?:я|ей)) в формате ""(.+)"" в переменную ""(.+)""")]
         public void StoreAsVariablePastDateTimeWithDifference(int year, int month, int day, string format, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-
-            var dt = EvidentInstruction.Helpers.Generator.GetOtherDate(day, month, year, false);
+            var dt = generator.GetOtherDate(day, month, year);
             dt.Should().NotBeNull();
             dt?.ToString(format);
-
             this.variableController.SetVariable(varName, dt.GetType(), dt);
         }
 
         /// <summary>
         /// Шаг для сохранения прошедшей даты, которая отличается от текущей на определенный срок в переменную, используя конкретный формат.
         /// </summary>
+        /// <param name="fYear">Количество лет изначальной даты.</param>
+        /// <param name="fMonth">Количество месяцев изначальной даты.</param>
+        /// <param name="fDay">Количество дней изначальной даты.</param>
         /// <param name="year">Количество лет от текущей даты.</param>
         /// <param name="month">Количество месяцев от текущей даты.</param>
         /// <param name="day">Количество дней от текущей даты.</param>
         /// <param name="format">Формат представления даты.</param>
         /// <param name="varName">Идентификатор переменной.</param>
-        [StepDefinition(@"я сохраняю прошедшую дату, которая отличается от ([0-9]{1,2})\.([0-9]{2})\.([0-9]+) на ""([0-9]+)"" (?:лет|год[а]?) ""([0-9]+)"" (?:месяц|месяц(?:а|ев)) ""([0-9]+)"" (?:день|дн(?:я|ей)) в формате ""(.+)"" в переменную ""(.+)""")]
+        [StepDefinition(@"я сохраняю дату, которая отличается от ([0-9]{1,2})\.([0-9]{2})\.([0-9]+) на ""([0-9]+)"" (?:лет|год[а]?) ""([0-9]+)"" (?:месяц|месяц(?:а|ев)) ""([0-9]+)"" (?:день|дн(?:я|ей)) в формате ""(.+)"" в переменную ""(.+)""")]
         public void StoreAsVariablePastDateTime(int fYear, int fMonth, int fDay, int year, int month, int day, string format, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var dt = generator.GetDate(fDay, fMonth, fYear);
+            dt.Should().NotBeNull($"Проверьте корректность создания даты день:{fDay},месяц:{fMonth},год:{fYear}");
 
-
-            var dt = EvidentInstruction.Helpers.Generator.GetDate(fDay, fMonth, fYear);
-            dt.Should().NotBeNull();
-
-            var pdt = EvidentInstruction.Helpers.Generator.GetOtherDate(day, month, year, false, dt);
-            pdt.Should().NotBeNull();
-            pdt?.ToString(format);
-
-            this.variableController.SetVariable(varName, pdt.GetType(), pdt);
+            var fdt = generator.GetOtherDate(day, month, year, dt);
+            fdt.Should().NotBeNull();
+            fdt?.ToString(format);
+            this.variableController.SetVariable(varName, fdt.GetType(), fdt);
         }
 
         /// <summary>
@@ -355,7 +335,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomStringWithPrefix(int len, string prefix, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = Helpers.Generator.GetRandomString(len, prefix);
+            var str = generator.GetRandomString(len, prefix);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -369,7 +349,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomCharWithPrefix(int len, string prefix, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = Helpers.Generator.GetRandomChars(len, prefix);
+            var str = generator.GetRandomChars(len, prefix);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -383,7 +363,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomNumberWithPrefix(int len, string prefix, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = Helpers.Generator.GetRandomNumbers(len, prefix);
+            var str = generator.GetRandomNumbers(len, prefix);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -396,7 +376,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomString(int len, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = Helpers.Generator.GetRandomString(len, string.Empty);
+            var str = generator.GetRandomString(len, string.Empty);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -409,7 +389,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomChar(int len, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = Helpers.Generator.GetRandomChars(len, string.Empty);
+            var str = generator.GetRandomChars(len, string.Empty);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -422,13 +402,13 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomNumber(int len, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = Helpers.Generator.GetRandomNumbers(len, string.Empty);
+            var str = generator.GetRandomNumbers(len, string.Empty);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
         /// <summary>
         /// Шаг для сохранения случайного номера телефона в переменную, используя конкретный формат.
-        /// Пример формата: 7XXXXXXXXX.
+        /// Пример формата: (###)###-####.
         /// </summary>
         /// <param name="mask">Маска для телефона.</param>
         /// <param name="varName">Идентификатор переменной.</param>
@@ -436,7 +416,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomPhone(string mask, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = Helpers.Generator.GetRandomPhone(mask);
+            var str = generator.GetRandomPhone(mask);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -448,7 +428,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableUuid(string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = Helpers.Generator.GetGuid();
+            var str = generator.GetGuid();
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -465,7 +445,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreCredentialsForHostToVariable(string host, AuthType authType, string domain, string username, string password, string varName)
         {
             var credentialCache = new CredentialCache();
-            var networkCredential = new NetworkCredential(username, Encryptor.Decrypt(password), domain);
+            var networkCredential = new NetworkCredential(username, EvidentInstruction.Helpers.Encryptor.Decrypt(password), domain);
             credentialCache.Add(new Uri(host), authType.ToString(), networkCredential);
             this.variableController.SetVariable(varName, credentialCache.GetType(), credentialCache);
         }
