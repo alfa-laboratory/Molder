@@ -9,9 +9,9 @@ namespace EvidentInstruction.Config.Helpers
 {
     public static class DeserializeHelper
     {
-        public static T DeserializeObject<T>(string json) 
+        public static T DeserializeObject<T>(string json) //where T:  Models.Config
         {
-            if (string.IsNullOrWhiteSpace(json)) return default(T);
+            if (string.IsNullOrWhiteSpace(json)) return default(T); //возвращает неиницилизированный объект
 
             try
             {

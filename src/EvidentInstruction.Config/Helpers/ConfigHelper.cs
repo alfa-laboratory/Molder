@@ -18,7 +18,7 @@ namespace EvidentInstruction.Config.Helpers
         private static IFile file = new TextFile();
 
         /// <summary>
-        /// Получение словаря dictionaryTags и списка повторных параметров dublicatesTagsList
+        /// Получение словаря dictionaryTags и списка повторных параметров dublicatesTagsList и проверить dublicatesTagsList
         /// </summary>
         public static ConcurrentDictionary<string, object> GetTagsDictionary(Models.Config config) 
         {
@@ -44,7 +44,9 @@ namespace EvidentInstruction.Config.Helpers
 
             return tags;
         }
-
+        /// <summary>
+        /// Получить словарь с тегами
+        /// </summary>        
         public static ConcurrentDictionary<string, object> GetDictionary(string filename, string path)
         {            
             var content = file.GetContent(filename, path);
@@ -56,8 +58,8 @@ namespace EvidentInstruction.Config.Helpers
             }       
 
             var config = DeserializeHelper.DeserializeObject<Models.Config>(content);
-
-            if(config==null)
+            //тут будет ошибка NUllReferenseExeption
+            if(config==null) //не та проверка
             {
                 Log.Logger.Warning("Json model is empty");
                 return null;

@@ -26,10 +26,10 @@ namespace EvidentInstruction.Config.Extension
         public static VariableController AddConfig(this VariableController variableController) 
         {            
             var controller = variableController;
-
-            var path = Environment.GetEnvironmentVariable(DefaultFileName.EXTERNAL_JSON);
-
             string fullpath = null;
+
+            var path = Environment.GetEnvironmentVariable(DefaultFileName.EXTERNAL_JSON);          
+
             if (string.IsNullOrWhiteSpace(path))
             {                
                 path = BinDirectory.Get();
@@ -42,11 +42,10 @@ namespace EvidentInstruction.Config.Extension
                             
             foreach (var element in dictionary)
             {
-                        controller.SetVariable(element.Key, element.Value.GetType(), element.Value, TypeOfAccess.Global);
+               controller.SetVariable(element.Key, element.Value.GetType(), element.Value, TypeOfAccess.Global);
             }
-            return controller;
-              
-        }
 
+            return controller;              
+        }
      }
 }
