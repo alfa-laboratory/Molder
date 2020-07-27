@@ -1,7 +1,9 @@
-﻿namespace EvidentInstruction.Service.Models.Interfaces
+﻿using System.Net.Http;
+
+namespace EvidentInstruction.Service.Models.Interfaces
 {
     public interface IContent
     {
-        string Get(object content);
+        StringContent Get(HttpContent content);
     }
 }
