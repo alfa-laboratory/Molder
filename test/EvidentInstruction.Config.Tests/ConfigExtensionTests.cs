@@ -61,16 +61,17 @@ namespace EvidentInstruction.Config.Tests
                            }                                                      
                           ]
               }";
-        /*[Fact]
+
+       /* [Fact]
         public void AddConfig_WithoutFiles_ReturnExeption()
-        {
+        {           
             Action act = () => ConfigExtension.AddConfig(variableContext);
             act
                 .Should().Throw<FileIsExistException>()
                 .WithMessage($"File is empty or not found.");
-        }*/
+        }
 
-       /* [Theory]
+        [Theory]
         [InlineData(@"C:\\")]        
         public void AddConfig_IncorrectPath_ReturnExeption(string content)
         {

@@ -17,13 +17,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="EvidentInstruction.Config.json">
+    <Content Include="EvidentInstruction.config.Template.json">
       <PackageCopyToOutput>true</PackageCopyToOutput>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SpecFlow" Version="3.3.30" />
+    <PackageReference Include="SpecFlow" Version="3.3.57" />
   </ItemGroup>
 
   <ItemGroup>

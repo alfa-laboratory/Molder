@@ -5,7 +5,6 @@ using EvidentInstruction.Config.Helpers;
 using EvidentInstruction.Infrastructures;
 using EvidentInstruction.Config.Models;
 using EvidentInstruction.Models;
-using System;
 using EvidentInstruction.Helpers;
 using EvidentInstruction.Exceptions;
 using EvidentInstruction.Config.Exceptions;
@@ -46,12 +45,12 @@ namespace EvidentInstruction.Config.Extension
                 return controller;
             }
             catch(NoFileNameException e)
-            {
+            {               
                 Log.Logger.Warning($"File \"{fullpath}\" not found.{e.Message}");
                 throw new FileIsExistException($"File is empty or not found.");
             }
             catch (GetContentException e)
-            {
+            {                
                 Log.Logger.Warning($"File is empty or not found \"{e.Message}\"");
                 throw new FileIsExistException($"File is empty or not found.");
             }
