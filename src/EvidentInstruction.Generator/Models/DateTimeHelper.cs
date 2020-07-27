@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace EvidentInstruction.Models.DateTimeHelpers
+namespace EvidentInstruction.Generator.Models
 {
     [ExcludeFromCodeCoverage]
     public class DateTimeHelper : IDateTimeHelper

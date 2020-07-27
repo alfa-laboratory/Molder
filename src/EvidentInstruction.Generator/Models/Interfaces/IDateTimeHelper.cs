@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EvidentInstruction.Models.DateTimeHelpers
+namespace EvidentInstruction.Generator.Models
 {
     public interface IDateTimeHelper
     {

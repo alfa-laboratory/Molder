@@ -5,6 +5,7 @@ using EvidentInstruction.Controllers;
 using EvidentInstruction.Infrastructure;
 using TechTalk.SpecFlow;
 using EvidentInstruction.Generator.Models;
+using EvidentInstruction.Helpers;
 
 namespace EvidentInstruction.Generator.Steps
 {
@@ -22,10 +23,9 @@ namespace EvidentInstruction.Generator.Steps
         /// Инициализация генератора.
         /// </summary>
         /// <param name="variableController">Контекст для работы с переменными.</param>
-        public GeneratorSteps(VariableController variableController, IGenerator generator)
+        public GeneratorSteps(VariableController variableController)
         {
             this.variableController = variableController;
-            this.generator = generator;
         }
 
         /// <summary>
@@ -326,6 +326,36 @@ namespace EvidentInstruction.Generator.Steps
         }
 
         /// <summary>
+        /// Шаг для сохранения случанойго набора букв и цифр в переменную, используя конкретные префикс и постфикс.
+        /// </summary>
+        /// <param name="len">Длина строки.</param>
+        /// <param name="prefix">Префикс.</param>
+        /// <param name="postfix">Постфикс.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайный набор букв и цифр длиной ([0-9]+) знаков с префиксом ""(.+)"" и постфиксом ""(.+)"" в переменную ""(.+)""")]
+        public void StoreAsVariableRandomStringWithPrefixAndPostfix(int len, string prefix, string postfix, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var str = generator.GetRandomString(len, prefix, postfix);
+            this.variableController.SetVariable(varName, str.GetType(), str);
+        }
+
+        /// <summary>
+        /// Шаг для сохранения случанойго набора русских букв и цифр в переменную, используя конкретные префикс и постфикс.
+        /// </summary>
+        /// <param name="len">Длина строки.</param>
+        /// <param name="prefix">Префикс.</param>
+        /// <param name="postfix">Постфикс.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайный набор русских букв и цифр длиной ([0-9]+) знаков с префиксом ""(.+)"" и постфиксом ""(.+)"" в переменную ""(.+)""")]
+        public void StoreAsVariableRandomRusStringWithPrefixAndPostfix(int len, string prefix, string postfix, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var str = generator.GetRandomString(len, prefix, postfix, false);
+            this.variableController.SetVariable(varName, str.GetType(), str);
+        }
+
+        /// <summary>
         /// Шаг для сохранения случанойго набора букв и цифр в переменную, используя конкретный префикс.
         /// </summary>
         /// <param name="len">Длина строки.</param>
@@ -335,7 +365,105 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomStringWithPrefix(int len, string prefix, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomString(len, prefix);
+            var str = generator.GetRandomString(len, prefix, string.Empty);
+            this.variableController.SetVariable(varName, str.GetType(), str);
+        }
+
+        /// <summary>
+        /// Шаг для сохранения случанойго набора русских букв и цифр в переменную, используя конкретный префикс.
+        /// </summary>
+        /// <param name="len">Длина строки.</param>
+        /// <param name="prefix">Префикс.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайный набор русских букв и цифр длиной ([0-9]+) знаков с префиксом ""(.+)"" в переменную ""(.+)""")]
+        public void StoreAsVariableRandomRusStringWithPrefix(int len, string prefix, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var str = generator.GetRandomString(len, prefix, string.Empty, false);
+            this.variableController.SetVariable(varName, str.GetType(), str);
+        }
+
+        /// <summary>
+        /// Шаг для сохранения случанойго набора букв и цифр в переменную, используя конкретный постфикс.
+        /// </summary>
+        /// <param name="len">Длина строки.</param>
+        /// <param name="postfix">Постфикс.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайный набор букв и цифр длиной ([0-9]+) знаков с постфиксом ""(.+)"" в переменную ""(.+)""")]
+        public void StoreAsVariableRandomStringWithPostfix(int len, string postfix, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var str = generator.GetRandomString(len, string.Empty, postfix);
+            this.variableController.SetVariable(varName, str.GetType(), str);
+        }
+
+        /// <summary>
+        /// Шаг для сохранения случанойго набора русских букв и цифр в переменную, используя конкретный постфикс.
+        /// </summary>
+        /// <param name="len">Длина строки.</param>
+        /// <param name="postfix">Постфикс.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайный набор русских букв и цифр длиной ([0-9]+) знаков с постфиксом ""(.+)"" в переменную ""(.+)""")]
+        public void StoreAsVariableRandomRusStringWithPostfix(int len, string postfix, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var str = generator.GetRandomString(len, string.Empty, postfix, false);
+            this.variableController.SetVariable(varName, str.GetType(), str);
+        }
+
+        /// <summary>
+        /// Шаг для добавления случайного набора букв и цифр в переменную.
+        /// </summary>
+        /// <param name="len">Длина строки.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайный набор букв и цифр длиной ([0-9]+) знаков в переменную ""(.+)""")]
+        public void StoreAsVariableRandomString(int len, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var str = generator.GetRandomString(len, string.Empty, string.Empty);
+            this.variableController.SetVariable(varName, str.GetType(), str);
+        }
+
+        /// <summary>
+        /// Шаг для добавления случайного набора русских букв и цифр в переменную.
+        /// </summary>
+        /// <param name="len">Длина строки.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайный набор русских букв и цифр длиной ([0-9]+) знаков в переменную ""(.+)""")]
+        public void StoreAsVariableRandomRusString(int len, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var str = generator.GetRandomString(len, string.Empty, string.Empty, false);
+            this.variableController.SetVariable(varName, str.GetType(), str);
+        }
+
+        /// <summary>
+        /// Шаг для добавления случайного набора букв в переменную, используя конкретные префикс и постфикс.
+        /// </summary>
+        /// <param name="len">Длина строки.</param>
+        /// <param name="prefix">Префикс.</param>
+        /// <param name="postfix">Постфикс.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайный набор букв длиной ([0-9]+) знаков с префиксом ""(.+)"" и постфиксом ""(.+)"" в переменную ""(.+)""")]
+        public void StoreAsVariableRandomCharWithPrefixAndPostfix(int len, string prefix, string postfix, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var str = generator.GetRandomChars(len, prefix, postfix);
+            this.variableController.SetVariable(varName, str.GetType(), str);
+        }
+
+        /// <summary>
+        /// Шаг для добавления случайного набора русских букв в переменную, используя конкретные префикс и постфикс.
+        /// </summary>
+        /// <param name="len">Длина строки.</param>
+        /// <param name="prefix">Префикс.</param>
+        /// <param name="postfix">Постфикс.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайный набор русских букв длиной ([0-9]+) знаков с префиксом ""(.+)"" и постфиксом ""(.+)"" в переменную ""(.+)""")]
+        public void StoreAsVariableRandomRusCharWithPrefixAndPostfix(int len, string prefix, string postfix, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var str = generator.GetRandomChars(len, prefix, postfix, false);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -349,7 +477,90 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomCharWithPrefix(int len, string prefix, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomChars(len, prefix);
+            var str = generator.GetRandomChars(len, prefix, string.Empty);
+            this.variableController.SetVariable(varName, str.GetType(), str);
+        }
+
+        /// <summary>
+        /// Шаг для добавления случайного набора русских букв в переменную, используя конкретный префикс.
+        /// </summary>
+        /// <param name="len">Длина строки.</param>
+        /// <param name="prefix">Префикс.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайный набор русских букв длиной ([0-9]+) знаков с префиксом ""(.+)"" в переменную ""(.+)""")]
+        public void StoreAsVariableRandomRusCharWithPrefix(int len, string prefix, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var str = generator.GetRandomChars(len, prefix, string.Empty, false);
+            this.variableController.SetVariable(varName, str.GetType(), str);
+        }
+
+        /// <summary>
+        /// Шаг для добавления случайного набора букв в переменную, используя конкретный постфикс.
+        /// </summary>
+        /// <param name="len">Длина строки.</param>
+        /// <param name="postfix">Постфикс.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайный набор букв длиной ([0-9]+) знаков с постфиксом ""(.+)"" в переменную ""(.+)""")]
+        public void StoreAsVariableRandomCharWithPostfix(int len, string postfix, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var str = generator.GetRandomChars(len, string.Empty, postfix);
+            this.variableController.SetVariable(varName, str.GetType(), str);
+        }
+
+        /// <summary>
+        /// Шаг для добавления случайного набора русских букв в переменную, используя конкретный постфикс.
+        /// </summary>
+        /// <param name="len">Длина строки.</param>
+        /// <param name="postfix">Постфикс.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайный набор русских букв длиной ([0-9]+) знаков с постфиксом ""(.+)"" в переменную ""(.+)""")]
+        public void StoreAsVariableRandomRusCharWithPostfix(int len, string postfix, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var str = generator.GetRandomChars(len, string.Empty, postfix, false);
+            this.variableController.SetVariable(varName, str.GetType(), str);
+        }
+
+        /// <summary>
+        /// Шаг для добавления случайного набора букв в переменную.
+        /// </summary>
+        /// <param name="len">Длина строки.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайный набор букв длиной ([0-9]+) знаков в переменную ""(.+)""")]
+        public void StoreAsVariableRandomChar(int len, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var str = generator.GetRandomChars(len, string.Empty, string.Empty);
+            this.variableController.SetVariable(varName, str.GetType(), str);
+        }
+
+        /// <summary>
+        /// Шаг для добавления случайного набора русских букв в переменную.
+        /// </summary>
+        /// <param name="len">Длина строки.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайный набор русских букв длиной ([0-9]+) знаков в переменную ""(.+)""")]
+        public void StoreAsVariableRandomRusChar(int len, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var str = generator.GetRandomChars(len, string.Empty, string.Empty, false);
+            this.variableController.SetVariable(varName, str.GetType(), str);
+        }
+
+        /// <summary>
+        /// Шаг для добавления случайного набора цифр в переменную, ипользуя конкретные префикс и постфикс.
+        /// </summary>
+        /// <param name="len">Длина строки.</param>
+        /// <param name="prefix">Префикс.</param>
+        /// <param name="postfix">Постфикс.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайный набор цифр длиной ([0-9]+) знаков с префиксом ""(.+)"" и постфиксом ""(.+)"" в переменную ""(.+)""")]
+        public void StoreAsVariableRandomNumberWithPrefixAndPostfix(int len, string prefix, string postfix, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var str = generator.GetRandomStringNumbers(len, prefix, postfix);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -363,33 +574,21 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomNumberWithPrefix(int len, string prefix, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomNumbers(len, prefix);
+            var str = generator.GetRandomStringNumbers(len, prefix, string.Empty);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
         /// <summary>
-        /// Шаг для добавления случайного набора букв и цифр в переменную.
+        /// Шаг для добавления случайного набора цифр в переменную, ипользуя конкретный постфикс.
         /// </summary>
         /// <param name="len">Длина строки.</param>
+        /// <param name="postfix">Постфикс.</param>
         /// <param name="varName">Идентификатор переменной.</param>
-        [StepDefinition(@"я сохраняю случайный набор букв и цифр длиной ([0-9]+) знаков в переменную ""(.+)""")]
-        public void StoreAsVariableRandomString(int len, string varName)
+        [StepDefinition(@"я сохраняю случайный набор цифр длиной ([0-9]+) знаков с постфиксом ""(.+)"" в переменную ""(.+)""")]
+        public void StoreAsVariableRandomNumberWithPostfix(int len, string postfix, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomString(len, string.Empty);
-            this.variableController.SetVariable(varName, str.GetType(), str);
-        }
-
-        /// <summary>
-        /// Шаг для добавления случайного набора букв в переменную.
-        /// </summary>
-        /// <param name="len">Длина строки.</param>
-        /// <param name="varName">Идентификатор переменной.</param>
-        [StepDefinition(@"я сохраняю случайный набор букв длиной ([0-9]+) знаков в переменную ""(.+)""")]
-        public void StoreAsVariableRandomChar(int len, string varName)
-        {
-            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomChars(len, string.Empty);
+            var str = generator.GetRandomStringNumbers(len, string.Empty, postfix);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -402,8 +601,64 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomNumber(int len, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomNumbers(len, string.Empty);
+            var str = generator.GetRandomStringNumbers(len, string.Empty, string.Empty);
             this.variableController.SetVariable(varName, str.GetType(), str);
+        }
+
+        /// <summary>
+        /// Шаг для добавления случайного целового числа в переменную с ограничением по длине.
+        /// </summary>
+        /// <param name="len">Длина числа.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайное целое число длиной ([0-9]+) в переменную ""(.+)""")]
+        public void StoreAsVariableRandomIntNumber(int len, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var number = generator.GetRandomInt(len: len);
+            this.variableController.SetVariable(varName, number.GetType(), number);
+        }
+
+        /// <summary>
+        /// Шаг для добавления случайного целового числа, ограниченное промежутком, в переменную.
+        /// </summary>
+        /// <param name="min">Минимальное значение числа.</param>
+        /// <param name="max">Максимальное значение числа.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайное целое число в промежутке от ([0-9]+) до ([0-9]+) в переменную ""(.+)""")]
+        public void StoreAsVariableRandomIntNumberFromTo(int min, int max, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var number = generator.GetRandomInt(min: min, max: max);
+            this.variableController.SetVariable(varName, number.GetType(), number);
+        }
+
+        /// <summary>
+        /// Шаг для добавления случайного дробного числа в переменную с ограничением по длине.
+        /// </summary>
+        /// <param name="len">Длина числа.</param>
+        /// <param name="limit">Ограничение количества символов после запятой.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайное дробное число длиной ([0-9]+) с ([0-9]+) символами после запятой в переменную ""(.+)""")]
+        public void StoreAsVariableRandomDoubleNumber(int len, int limit, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var number = generator.GetRandomDouble(limit, len: len);
+            this.variableController.SetVariable(varName, number.GetType(), number);
+        }
+
+        /// <summary>
+        /// Шаг для добавления случайного дробного числа, ограниченное промежутком, в переменную.
+        /// </summary>
+        /// <param name="min">Минимальное значение числа.</param>
+        /// <param name="max">Максимальное значение числа.</param>
+        /// <param name="limit">Ограничение количества символов после запятой.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайное дробное число в промежутке от ([0-9]+)\,?\.?([0-9]+)? до ([0-9]+)\,?\.?([0-9]+)? с ([0-9]+) символами после запятой в переменную ""(.+)""")]
+        public void StoreAsVariableRandomDoubleNumberFromTo(int min, int max, int limit, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var number = generator.GetRandomDouble(limit, min: min, max: max);
+            this.variableController.SetVariable(varName, number.GetType(), number);
         }
 
         /// <summary>
@@ -430,6 +685,56 @@ namespace EvidentInstruction.Generator.Steps
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
             var str = generator.GetGuid();
             this.variableController.SetVariable(varName, str.GetType(), str);
+        }
+
+        /// <summary>
+        /// Шаг для сохранения случайного месяца в переменную.
+        /// </summary>
+        /// <param name="lang">Язык месяца.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайный месяц на (русском|английском) языке в переменную ""(.+)""")]
+        public void StoreAsVariableMonth(string lang, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            string month;
+            switch (lang)
+            {
+                case "русском":
+                    month = generator.GetMonth(false);
+                    break;
+                case "английском":
+                    month = generator.GetMonth();
+                    break;
+                default:
+                    Log.Logger.Error("Введите русский или английский язык.");
+                    return;
+            }
+            this.variableController.SetVariable(varName, month.GetType(), month);
+        }
+
+        /// <summary>
+        /// Шаг для сохранения случайного дня недели в переменную.
+        /// </summary>
+        /// <param name="lang">Язык дня недели.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайный день недели на (русском|английском) языке в переменную ""(.+)""")]
+        public void StoreAsVariableWeekday(string lang, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            string weekday;
+            switch (lang)
+            {
+                case "русском":
+                    weekday = generator.GetWeekday(false);
+                    break;
+                case "английском":
+                    weekday = generator.GetWeekday();
+                    break;
+                default:
+                    Log.Logger.Error("Введите русский или английский язык.");
+                    return;
+            }
+            this.variableController.SetVariable(varName, weekday.GetType(), weekday);
         }
 
         /// <summary>
