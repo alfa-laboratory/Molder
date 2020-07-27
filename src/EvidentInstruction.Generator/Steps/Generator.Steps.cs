@@ -738,6 +738,182 @@ namespace EvidentInstruction.Generator.Steps
         }
 
         /// <summary>
+        /// Шаг для сохранения случайной электронной почты в переменную.
+        /// </summary>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайную электронную почту в переменную ""(.+)""")]
+        public void StoreAsVariableEmail(string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var email = generator.GetEmail();
+            this.variableController.SetVariable(varName, email.GetType(), email);
+        }
+
+        /// <summary>
+        /// Шаг для сохранения случайной электронной почты в переменную.
+        /// </summary>
+        /// <param name="domen">Домен почты.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайную электронную почту с доменом ""(.+)"" в переменную ""(.+)""")]
+        public void StoreAsVariableEmailWithDomen(string domen, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var email = generator.GetEmail(domen);
+            this.variableController.SetVariable(varName, email.GetType(), email);
+        }
+
+        /// <summary>
+        /// Шаг для сохранения случайного IP-адреса в переменную.
+        /// </summary>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайную электронную почту в переменную ""(.+)""")]
+        public void StoreAsVariableIP(string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var Ip = generator.GetIp();
+            this.variableController.SetVariable(varName, Ip.GetType(), Ip);
+        }
+
+        /// <summary>
+        /// Шаг для сохранения случайного url в переменную.
+        /// </summary>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайный url в переменную ""(.+)""")]
+        public void StoreAsVariableUrl(string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            var Url = generator.GetUrl();
+            this.variableController.SetVariable(varName, Url.GetType(), Url);
+        }
+
+        /// <summary>
+        /// Шаг для сохранения случайного предложения в переменную.
+        /// </summary>
+        /// <param name="lang">Язык предложения.</param>
+        /// <param name="count">Количество слов.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайное предложение на (русском|английском) языке из ([0-9]+) слов в переменную ""(.+)""")]
+        public void StoreAsVariableSentence(string lang, int count, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            string sentence;
+            switch (lang)
+            {
+                case "русском":
+                    sentence = generator.GetSentence(count, false);
+                    break;
+                case "английском":
+                    sentence = generator.GetSentence(count);
+                    break;
+                default:
+                    Log.Logger.Error("Введите русский или английский язык.");
+                    return;
+            }
+            this.variableController.SetVariable(varName, sentence.GetType(), sentence);
+        }
+
+        /// <summary>
+        /// Шаг для сохранения случайного абзаца в переменную.
+        /// </summary>
+        /// <param name="lang">Язык абзаца.</param>
+        /// <param name="min">Минимальное количество предложений.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайное абзац на (русском|английском) языке как минимум из ([0-9]+) предложений в переменную ""(.+)""")]
+        public void StoreAsVariableParagraph(string lang, int min, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            string paragraph;
+            switch (lang)
+            {
+                case "русском":
+                    paragraph = generator.GetParagraph(min, false);
+                    break;
+                case "английском":
+                    paragraph = generator.GetParagraph(min);
+                    break;
+                default:
+                    Log.Logger.Error("Введите русский или английский язык.");
+                    return;
+            }
+            this.variableController.SetVariable(varName, paragraph.GetType(), paragraph);
+        }
+
+        /// <summary>
+        /// Шаг для сохранения случайного имени в переменную.
+        /// </summary>
+        /// <param name="lang">Язык имени.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайное имя на (русском|английском) языке в переменную ""(.+)""")]
+        public void StoreAsVariableFirstName(string lang, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            string firstName;
+            switch (lang)
+            {
+                case "русском":
+                    firstName = generator.GetFirstName(false);
+                    break;
+                case "английском":
+                    firstName = generator.GetFirstName();
+                    break;
+                default:
+                    Log.Logger.Error("Введите русский или английский язык.");
+                    return;
+            }
+            this.variableController.SetVariable(varName, firstName.GetType(), firstName);
+        }
+
+        /// <summary>
+        /// Шаг для сохранения случайной фамилии в переменную.
+        /// </summary>
+        /// <param name="lang">Язык фамилии.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайную фамилию на (русском|английском) языке в переменную ""(.+)""")]
+        public void StoreAsVariableLastName(string lang, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            string lastName;
+            switch (lang)
+            {
+                case "русском":
+                    lastName = generator.GetLastName(false);
+                    break;
+                case "английском":
+                    lastName = generator.GetLastName();
+                    break;
+                default:
+                    Log.Logger.Error("Введите русский или английский язык.");
+                    return;
+            }
+            this.variableController.SetVariable(varName, lastName.GetType(), lastName);
+        }
+
+        /// <summary>
+        /// Шаг для сохранения случайных фамилии и имени в переменную.
+        /// </summary>
+        /// <param name="lang">Язык фамилии и имени.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я сохраняю случайные фамилию и имя на (русском|английском) языке в переменную ""(.+)""")]
+        public void StoreAsVariableFullName(string lang, string varName)
+        {
+            this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
+            string fullName;
+            switch (lang)
+            {
+                case "русском":
+                    fullName = generator.GetFullName(false);
+                    break;
+                case "английском":
+                    fullName = generator.GetFullName();
+                    break;
+                default:
+                    Log.Logger.Error("Введите русский или английский язык.");
+                    return;
+            }
+            this.variableController.SetVariable(varName, fullName.GetType(), fullName);
+        }
+
+        /// <summary>
         /// Шаг для сохранения Credentials в переменную.
         /// </summary>
         /// <param name="host">Хост.</param>

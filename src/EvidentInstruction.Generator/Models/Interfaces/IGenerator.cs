@@ -27,7 +27,6 @@ namespace EvidentInstruction.Generator.Models
         string GetFirstName(bool isEng = true);
         string GetLastName(bool isEng = true);
         string GetFullName(bool isEng = true);
-
     }
 }
 
