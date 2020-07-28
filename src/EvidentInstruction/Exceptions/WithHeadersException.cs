@@ -4,6 +4,6 @@ namespace EvidentInstruction.Exceptions
 {
     public class WithHeadersException: Exception
     {
-        public WithHeadersException(string message): base(message) {}
+        public WithHeadersException(string message, Exception e): base(message, e) {}
     }
 }

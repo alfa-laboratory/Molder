@@ -101,7 +101,7 @@ namespace EvidentInstruction.Service.Steps
                 Url = url
             };
 
-            using (var service = new WebService())
+            using (var service = new FlurlService())
             {
                 var responceInfo = service.SendMessage(request);
                 this.serviceController.Services.TryAdd(name, responceInfo);

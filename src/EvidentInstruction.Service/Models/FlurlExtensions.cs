@@ -19,9 +19,9 @@ namespace EvidentInstruction.Service.Models
             {
                 if (e.InnerException is FlurlHttpException ex)
                 {
-                    throw new ServiceException("Произошла ошибка flurl сервиса");
+                    throw new ServiceException(call:new HttpCall(), "Произошла ошибка flurl сервиса",ex);
                 }
-                else throw new ServiceTimeoutException("Время запроса истекло ", e);
+                else throw new ServiceTimeoutException(call: new HttpCall(), "Время запроса истекло ", e);
             }
         }
 
@@ -34,7 +34,7 @@ namespace EvidentInstruction.Service.Models
             catch (WithHeadersException e)
             {
                 Log.Logger.Warning($" \"{e.Message}\" ");
-                throw new WithHeadersException(e.Message);
+                throw new WithHeadersException(e.Message, e);
             }
         }
 
@@ -47,7 +47,7 @@ namespace EvidentInstruction.Service.Models
             catch (WithTimeoutException e)
             {
                 Log.Logger.Warning($" \"{e.Message}\" ");
-                throw new WithTimeoutException(e.Message);
+                throw new WithTimeoutException(e.Message, e);
             }
         }
     }

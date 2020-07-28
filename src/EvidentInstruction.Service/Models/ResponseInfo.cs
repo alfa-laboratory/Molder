@@ -10,6 +10,5 @@ namespace EvidentInstruction.Service.Models
         public HttpStatusCode StatusCode { get; set; }
         public HttpResponseHeaders Headers { get; set; }
         public object Content { get; set; }
-        public Exception Exception { get; set; }
     }
 }

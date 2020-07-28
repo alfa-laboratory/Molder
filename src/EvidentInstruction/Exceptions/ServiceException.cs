@@ -1,9 +1,10 @@
 ﻿using System;
+using Flurl.Http;
 
 namespace EvidentInstruction.Exceptions
 {
-    public class ServiceException: Exception
+    public class ServiceException: FlurlHttpException
     {
-        public ServiceException(string message) : base(message) { }
+        public ServiceException(HttpCall call,string message, Exception inner) : base(call,message,inner) { }
     }
 }

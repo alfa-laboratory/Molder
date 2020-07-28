@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using EvidentInstruction.Exceptions;
 using EvidentInstruction.Service.Helpers;
+using Flurl.Http;
 
 namespace EvidentInstruction.Service.Models
 {
      public class FlurlProvider: Interfaces.IServiceProvider
     {
-        private const int timeoutDefault = 60;
-        public ResponseInfo Send(RequestInfo request, HttpMethod method, Dictionary<string, string> headers, HttpContent content, int timeout = timeoutDefault)
+        public HttpResponseMessage Send(RequestInfo request, HttpMethod method, Dictionary<string, string> headers, HttpContent content, int timeout = Definitions.DefaultTimeout)
         {
 
             try
@@ -18,43 +19,28 @@ namespace EvidentInstruction.Service.Models
                     .FlTimeout(request.Url, timeout)
                     .FlHeaders(headerz, request.Url)
                     .FlSend(request.Url, request.Method, request.Content);
-                var response = new ResponseInfo()
-                {
-                    Content = ServiceHelpers.GetObjectFromString(message.Result.Content.ReadAsStringAsync().Result),
-                    Headers = message.Result.Headers,
-                    Request = request,
-                    StatusCode = message.Result.StatusCode,
-                    Exception = null
-                };
-                return response;
+              
+                return message.Result;
+            }
+            catch (AggregateException e)
+            {
+                throw new ServiceException(call: new HttpCall(), e.Message, e);
             }
             catch (WithHeadersException e)
             {
-                return new ResponseInfo()
-                {
-                    Exception = e
-                };
-            }
-            catch (ServiceException e)
-            {
-                return new ResponseInfo()
-                {
-                    Exception = e
-                };
+                throw new WithHeadersException(e.Message, e);
             }
             catch (ServiceTimeoutException e)
             {
-                return new ResponseInfo()
-                {
-                    Exception = e
-                };
+                throw new ServiceTimeoutException(call: new HttpCall(), e.Message, e);
+            }
+            catch (ServiceException e)
+            {
+                throw new ServiceException(call: new HttpCall(), e.Message, e);
             }
             catch (WithTimeoutException e)
             {
-                return new ResponseInfo()
-                {
-                    Exception = e
-                };
+                throw new WithTimeoutException(e.Message, e);
             }
         }
     }

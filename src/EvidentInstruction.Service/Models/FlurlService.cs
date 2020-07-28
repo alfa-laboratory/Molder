@@ -2,7 +2,7 @@
 using EvidentInstruction.Exceptions;
 using EvidentInstruction.Helpers;
 using EvidentInstruction.Service.Models.Interfaces;
-using IServiceProvider = EvidentInstruction.Service.Models.Interfaces.IServiceProvider;
+using Flurl.Http;
 
 namespace EvidentInstruction.Service.Models
 {
@@ -10,7 +10,7 @@ namespace EvidentInstruction.Service.Models
     {
         public int Timeout { get; set; }
 
-        IServiceProvider flurProvider = new FlurlProvider();
+        Interfaces.IServiceProvider flurProvider = new FlurlProvider();
 
         public FlurlService(int timeout = 60)
         {
@@ -23,58 +23,41 @@ namespace EvidentInstruction.Service.Models
             var response = new ResponseInfo();
             if (isValid)
             {
-                Log.Logger.Information(
-                    $"Сервисс с именем \"{request.Name}\" был вызван со следующими параметрами \"{request}\" ");
-                var result = flurProvider.Send(request, request.Method, request.Headers, request.Content, Timeout);
-                switch (result.Exception)
+                try
                 {
-                    case WithHeadersException e:
-                        {
-                            return response.CreateResponse(result);
-                            Log.Logger.Warning(
-                                $"Результат вызова сервиса  с именем \"{request.Name}\" закончился с ошибкой \"{e.Message}\" ");
-                            break;
-                        }
-                    case ServiceException e:
-                        {
-                            return response.CreateResponse(result);
-                            Log.Logger.Warning(
-                                $"Результат вызова сервиса  с именем \"{request.Name}\" закончился с ошибкой \"{e.Message}\" ");
-                            break;
-                        }
-                    case ServiceTimeoutException e:
-                        {
-                            return response.CreateResponse(result);
-                            Log.Logger.Warning(
-                                $"Результат вызова сервиса  с именем \"{request.Name}\" закончился с ошибкой \"{e.Message}\" ");
-                            break;
-                        }
-                    case WithTimeoutException e:
-                        {
-                            return response.CreateResponse(result);
-                            Log.Logger.Warning(
-                                $"Результат вызова сервиса  с именем \"{request.Name}\" закончился с ошибкой \"{e.Message}\" ");
-                            break;
-                        }
-                    default:
-                        {
-                            return response.CreateResponse(result);
-                            Log.Logger.Information($"Результат вызова сервиса  с именем \"{request.Name}\" Результат: \"{result}\" ");
-                            break;
-                        }
-
+                    Log.Logger.Information(
+                        $"Сервисс с именем \"{request.Name}\" был вызван со следующими параметрами \"{request}\" ");
+                    var result = flurProvider.Send(request, request.Method, request.Headers, request.Content, Timeout);
+                    response.CreateResponse(result);
+                    return response;
                 }
-
+                catch (WithHeadersException e)
+                {
+                    response.CreateResponse(e);
+                    return response;
+                }
+                catch (WithTimeoutException e)
+                {
+                    response.CreateResponse(e);
+                    return response;
+                }
+                catch (ServiceTimeoutException e)
+                {
+                    response.CreateResponse(e);
+                    return response;
+                }
+                catch (ServiceException e)
+                {
+                    response.CreateResponse(e);
+                    return response;
+                }
             }
             else
             {
-                Log.Logger.Warning($"Модель для  вызова сервиса  с именем \"{request.Name}\" некорректна Ошибки: \"{results}\" ");
-                throw new ServiceException($"Модель для  вызова сервиса  с именем \"{request.Name}\" некорректна Ошибки: \"{results}\" ");
+                Log.Logger.Warning($"Модель для  вызова сервиса  с именем \"{request.Name}\" некорректна. Ошибки: \"{results}\" ");
+                throw new ServiceException(call:new HttpCall(), $"Модель для  вызова сервиса  с именем \"{request.Name}\" некорректна. Ошибки: \"{results}\" ", null);
             }
         }
-
-
-
         public void Dispose()
         {
             GC.SuppressFinalize(this);

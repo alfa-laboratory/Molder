@@ -1,9 +1,10 @@
 ﻿using System;
+using Flurl.Http;
 
 namespace EvidentInstruction.Exceptions
 {
-    public class ServiceTimeoutException: Exception
+    public class ServiceTimeoutException: ServiceException
     {
-        public ServiceTimeoutException(string message, Exception e) : base(message, e) { }
+        public ServiceTimeoutException(HttpCall call, string message, Exception e) : base(call, message, e) { }
     }
 }
