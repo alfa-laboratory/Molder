@@ -11,9 +11,11 @@ using System.Xml;
 using System.Xml.Linq;
 using Xunit;
 using EvidentInstruction.Models;
+using EvidentInstruction.Infrastructures;
 
 namespace EvidentInstruction.Tests
 {
+
     [ExcludeFromCodeCoverage]
     public class VariableControllerTests
     {
@@ -44,16 +46,16 @@ namespace EvidentInstruction.Tests
             var varName = variableContext.GetVariableName(key);
             varName.Should().Be(name);
         }
-
+       
         [Theory]
         [InlineData("pointTest.test", "pointTest")]
         [InlineData("bracessTest[test]", "bracessTest")]
         public void GetVariableName_NameWithBracessAndPoint_ReturnName(string key, string name)
         {
-            variableContext.SetVariable(key, typeof(string), "1");
-            var varName = variableContext.GetVariableName(key);
-            varName.Should().Be(name);
-        }
+            variableContext.SetVariable(key, typeof(string), "1"); 
+            var varName = variableContext.GetVariableName(key);                     
+            varName.Should().Be(name);            
+        }  
 
         [Theory]
         [InlineData(null)]
@@ -76,6 +78,26 @@ namespace EvidentInstruction.Tests
         }
 
         [Theory]
+        [InlineData("first", typeof(string))]       
+        public void GetVariable_TypeofAccessGlobal_ReturnVariable(string key, Type type)
+        {
+            variableContext.SetVariable("first", typeof(string), "1", TypeOfAccess.Global);
+            var variable = variableContext.GetVariable(key);
+            variable.Type.Should().Be(type);
+            variable.Value.Should().Be("1");
+        }
+
+        [Theory]
+        [InlineData("first", typeof(string), "first", TypeOfAccess.Local)]
+        [InlineData("second", typeof(string), "second", TypeOfAccess.Global)]        
+        public void GetVariable_CorrectTypeOfAccess_ReturnVariable(string key, Type type, string value, TypeOfAccess typeOfAccess)
+        {
+            variableContext.SetVariable(key, type, value, typeOfAccess);
+            variableContext.Variables[key].TypeOfAccess.Should().Be(typeOfAccess);
+            variableContext.Variables[key].Value.Should().Be(value);
+        }   
+
+        [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData("four")]
@@ -83,6 +105,26 @@ namespace EvidentInstruction.Tests
         {
             var variable = variableContext.GetVariable(key);
             variable.Should().BeNull();
+        }
+
+        [Theory]
+        [InlineData(null, typeof(string), "", TypeOfAccess.Local)]
+        [InlineData("", typeof(string), "", TypeOfAccess.Local)]        
+        public void SetVariable_KeyIsNull_ReturnVariables(string key, Type type, string value, TypeOfAccess typeOfAccess)
+        {
+            variableContext.SetVariable(key, type, value, typeOfAccess);            
+            variableContext.Variables.Count.Should().Be(3);
+        }
+
+        [Theory]
+        [InlineData("first", typeof(string), "newfirst", TypeOfAccess.Global)]       
+        public void SetVariable_DublKeyWithDiffTypeOfAccess_ReturnVariables(string key, Type type, string value, TypeOfAccess typeOfAccess)
+        {
+
+            variableContext.SetVariable(key, type, value, typeOfAccess);
+            variableContext.SetVariable("first", typeof(string), "newvalue", TypeOfAccess.Local);
+            variableContext.Variables[key].TypeOfAccess.Should().Be(typeOfAccess);
+            variableContext.Variables[key].Value.Should().Be(value);
         }
 
         [Theory]
@@ -219,6 +261,18 @@ namespace EvidentInstruction.Tests
             ((JValue)variable).Value.Should().Be(searchValue);
         }
 
+        [Theory]
+        [InlineData("second", typeof(string), "newsecond", TypeOfAccess.Global)]
+        public void GetDoubleVariable_TypeOfAccessGlobal_ReturnException(string key, Type type, string value, TypeOfAccess typeOfAccess)
+        {
+            variableContext.SetVariable(key, type, value, typeOfAccess);
+
+            Action act = () => variableContext.SetVariable(key, type, value, typeOfAccess);
+            act
+              .Should().Throw<ArgumentException>()
+              .WithMessage($"Element with key: \"{key}\" has already created with type 'Global'");
+        }        
+
         [Fact]
         public void GetVariableValue_SearchDataTable_ReturnValue()
         {
@@ -258,7 +312,7 @@ namespace EvidentInstruction.Tests
 
             var variable = variableContext.GetVariableValue("DataTable[0]");
             (variable is DataRow).Should().BeTrue();
-        }
+        }       
 
         [Fact]
         public void GetVariableValue_VariableValueNullByName_ReturnNull()

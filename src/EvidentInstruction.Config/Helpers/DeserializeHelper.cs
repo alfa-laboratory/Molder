@@ -1,0 +1,27 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using Newtonsoft.Json;
+using EvidentInstruction.Helpers;
+using EvidentInstruction.Config.Exceptions;
+
+namespace EvidentInstruction.Config.Helpers
+{
+    public static class DeserializeHelper
+    {
+        public static T DeserializeObject<T>(string json) 
+        {
+            if (string.IsNullOrWhiteSpace(json)) return default(T); 
+
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(json);
+            }
+            catch(JsonException e)
+            {                
+                Log.Logger.Error($"File is empty \"{e.Message}\"");                
+                throw new DeserializeExeption($"Deserialize string \"{json}\" failed");                
+            }            
+        }
+    }
+}

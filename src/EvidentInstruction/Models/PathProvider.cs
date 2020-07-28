@@ -25,5 +25,31 @@ namespace EvidentInstruction.Models
                 return null;
             }
         }
+
+        public string GetEnviromentVariable(string varible)
+        {
+            try
+            {
+                return Environment.GetEnvironmentVariable(varible);
+            }
+            catch (ArgumentException e)
+            {
+                Log.Logger.Warning($"Ошибка при получении имени файла \"{varible} \" : \"{e.Message}\" ");
+                return null;
+            }
+        }
+
+        public (string,string) CutFullpath(string fullpath)
+        {    
+            try
+            {
+                return (System.IO.Path.GetDirectoryName(fullpath), System.IO.Path.GetFileName(fullpath));                
+            }
+            catch (ArgumentException e)
+            {
+                Log.Logger.Warning($"Ошибка при получении имени файла \"{fullpath} \" : \"{e.Message}\" ");
+                return (null, null);
+            }
+        }        
     }
 }

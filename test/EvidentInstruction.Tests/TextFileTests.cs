@@ -29,6 +29,7 @@ namespace EvidentInstruction.Tests
             file.UserDirectory = mockUserDir.Object;
             file.FileProvider = mockFileProvider.Object;
             file.PathProvider = mockPathProvider.Object;
+
             bool result = file.IsExist(file.Filename, file.Path);
             result.Should().BeTrue();
         }
