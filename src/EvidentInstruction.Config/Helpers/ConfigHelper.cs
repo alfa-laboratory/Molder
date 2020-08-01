@@ -6,12 +6,13 @@ using EvidentInstruction.Models;
 using EvidentInstruction.Models.Interfaces;
 using EvidentInstruction.Config.Exceptions;
 using EvidentInstruction.Exceptions;
+using System;
 
 namespace EvidentInstruction.Config.Helpers
 {
     public static class ConfigHelper 
-    {       
-        public static IFile File = new TextFile();
+    {
+        [ThreadStatic] public static IFile File = new TextFile();
 
         /// <summary>
         /// Получение словаря dictionaryTags и списка повторных параметров dublicatesTagsList и проверить dublicatesTagsList
