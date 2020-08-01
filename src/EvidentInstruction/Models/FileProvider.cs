@@ -11,7 +11,7 @@ namespace EvidentInstruction.Models
     {
         public bool CheckFileExtension(string filename)
         {
-            string extension = System.IO.Path.GetExtension(filename);
+            string extension = Path.GetExtension(filename);
             string extMustBeTxt = FileExtensions.TXT;
             bool result = (extension == extMustBeTxt) ? true : false;
             return result;
@@ -21,7 +21,7 @@ namespace EvidentInstruction.Models
         {
             try
             {
-                bool isExist = System.IO.File.Exists(fullpath);
+                bool isExist = File.Exists(fullpath);
                 if (isExist) return true;
                 else return false;
             }
@@ -37,8 +37,8 @@ namespace EvidentInstruction.Models
             try
             {
                 var fullPath = Path.Combine(path, filename);
-                System.IO.File.AppendAllText(fullPath, content);
-                if (System.IO.File.Exists(fullPath))
+                File.AppendAllText(fullPath, content);
+                if (Exist(fullPath))
                 {
                     Log.Logger.Information($"Файл \"{filename}\" в директории \"{path}\" был создан ");
                     return true;
@@ -59,7 +59,7 @@ namespace EvidentInstruction.Models
             {
                 var fullpath = Path.Combine(path, filename);
                 File.Create(fullpath);
-                if (File.Exists(fullpath))
+                if (Exist(fullpath))
                 {
                     Log.Logger.Information($"Пустой файл \"{filename}\" в директории \"{fullpath}\" был создан ");
                     return true;
@@ -78,8 +78,8 @@ namespace EvidentInstruction.Models
             try
             {
                 var fullpath = Path.Combine(path, filename);
-                System.IO.File.WriteAllText(fullpath, content);
-                if (System.IO.File.Exists(fullpath))
+                File.WriteAllText(fullpath, content);
+                if (Exist(fullpath))
                 {
                     Log.Logger.Warning($"Файл \"{filename}\" в директории \"{fullpath}\" перезаписан");
                     return true;
@@ -97,8 +97,8 @@ namespace EvidentInstruction.Models
         {
             try
             {
-                System.IO.File.Delete(fullpath);
-                if (System.IO.File.Exists(fullpath))
+                File.Delete(fullpath);
+                if (Exist(fullpath))
                 {
                     Log.Logger.Information($"Файл\"{fullpath}\" не был удален");
                     return false;

@@ -1,8 +1,6 @@
 ﻿using System;
 using EvidentInstruction.Exceptions;
 using EvidentInstruction.Helpers;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using EvidentInstruction.Models.Interfaces;
 
 namespace EvidentInstruction.Models
@@ -21,14 +19,23 @@ namespace EvidentInstruction.Models
         
         public bool IsExist(string filename, string path = null)
         {
-            if (string.IsNullOrWhiteSpace(path)) path = UserDirectory.Get();
-            string fullpath = PathProvider.Combine(path, filename);
-            bool result = (FileProvider.Exist(fullpath)) ? true : false;
-            return result;
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                path = UserDirectory.Get();
+            }
+
+            var fullpath = PathProvider.Combine(path, filename);
+
+            return FileProvider.Exist(fullpath) ? true : false;
         }
+
         public bool DownloadFile(string url, string filename, string pathToSave = null)
         {
-            if (string.IsNullOrWhiteSpace(pathToSave)) pathToSave = UserDirectory.Get();
+            if (string.IsNullOrWhiteSpace(pathToSave))
+            {
+                pathToSave = UserDirectory.Get();
+            }
+
             if (string.IsNullOrWhiteSpace(filename))
             {
                 Log.Logger.Warning("Имя файла отсутствует");
@@ -44,43 +51,42 @@ namespace EvidentInstruction.Models
                 }
                 else
                 {
-                    Log.Logger.Warning($"Проверьте, что файл \"{filename}\"  имеет расширение .txt");
-                    throw new ValidFileNameException($"Проверьте, что файл \"{filename}\"  имеет расширение .txt");
-
+                    Log.Logger.Warning($"Проверьте, что файл \"{filename}\" имеет расширение .txt");
+                    throw new ValidFileNameException($"Проверьте, что файл \"{filename}\" имеет расширение .txt");
                 }
             }
         }
 
         public bool Create(string filename, string path = null, string content = null)
         {
-            if (string.IsNullOrWhiteSpace(path)) path = UserDirectory.Get();
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                path = UserDirectory.Get();
+            }
+
             bool isNull = string.IsNullOrEmpty(filename);
             if (!isNull)
             {
-                string fullPath = System.IO.Path.Combine(path, filename);
                 bool IsTxt = FileProvider.CheckFileExtension(filename);
 
                 if (IsTxt)
                 {
-                    var exist = FileProvider.Exist(fullPath);
+                    var exist = IsExist(filename, path);
                     if (!exist)
                     {
                         if (string.IsNullOrWhiteSpace(content))
                         {
-                            if (FileProvider.Create(filename, path, content)) return true;
-                            else return false;
+                            return FileProvider.Create(filename, path, content);
 
                         }
                         else
                         {
-                            if (FileProvider.AppendAllText(filename, path, content)) return true;
-                            else return false;
+                            return FileProvider.AppendAllText(filename, path, content);
                         }
                     }
                     else
                     {
-                        if (FileProvider.WriteAllText(filename, path, content)) return true;
-                        else return false;
+                        return FileProvider.WriteAllText(filename, path, content);
                     }
 
                 }
@@ -97,46 +103,50 @@ namespace EvidentInstruction.Models
 
         public bool Delete(string filename, string path = null)
         {
-            if (string.IsNullOrWhiteSpace(path)) path = UserDirectory.Get();
-            string fullpath = PathProvider.Combine(path, filename);
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                path = UserDirectory.Get();
+            }
+
             if (string.IsNullOrWhiteSpace(filename))
             {
                 Log.Logger.Warning("Имя файла отсутствует");
                 throw new NoFileNameException("Имя файла отсутствует");
             }
 
-            if (FileProvider.Exist(fullpath))
+            if (IsExist(filename, path))
             {
-                FileProvider.Delete(fullpath);
-                return true;
+                var fullpath = PathProvider.Combine(path, filename);
+                return FileProvider.Delete(fullpath);
             }
             else
             {
-                Log.Logger.Warning("Файла по указанному пути не существует");
-                throw new FileExistException("Файла в директории  не существует");
+                Log.Logger.Warning($"Файла \"{filename}\" в директории \"{path}\" не существует");
+                throw new FileExistException($"Файла \"{filename}\" в директории \"{path}\" не существует");
             }
         }
 
-        public string GetContent(string filename, string path)
+        public string GetContent(string filename, string path = null)
         {
-            if (string.IsNullOrWhiteSpace(path)) path = UserDirectory.Get();
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                path = UserDirectory.Get();
+            }
             
             if (string.IsNullOrWhiteSpace(filename))
             {
                 Log.Logger.Warning("Имя файла отсутствует");
                 throw new NoFileNameException("Имя файла отсутствует");
             }
-            
-            var fullpath = PathProvider.Combine(path, filename);
 
-            if (FileProvider.Exist(fullpath))
+            if (IsExist(filename, path))
             {
                 return FileProvider.ReadAllText(filename, path);
             }
             else
             {
-                Log.Logger.Warning("Файла по указанному пути не существует");
-                throw new FileExistException("Файла в директории не существует");
+                Log.Logger.Warning($"Файла \"{filename}\" в директории \"{path}\" не существует");
+                throw new FileExistException($"Файла \"{filename}\" в директории \"{path}\" не существует");
             }
         }
 

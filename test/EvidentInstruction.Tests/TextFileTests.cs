@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using EvidentInstruction.Exceptions;
 using EvidentInstruction.Models;
 using EvidentInstruction.Models.Interfaces;
@@ -15,80 +16,106 @@ namespace EvidentInstruction.Tests
         [Fact]
         public void IsExist_NULLPath_ReturnTrue()
         {
+            // Act
             var file = new TextFile()
             {
-                Filename = "tets.txt",
+                Filename = Guid.NewGuid().ToString(),
                 Path = null
             };
             var mockUserDir = new Mock<IDirectory>();
             var mockFileProvider = new Mock<IFileProvider>();
             var mockPathProvider = new Mock<IPathProvider>();
+
             mockUserDir.Setup(f => f.Get()).Returns(It.IsAny<string>());
             mockPathProvider.Setup(f => f.Combine(It.IsAny<string>(), It.IsAny<string>())).Returns(It.IsAny<string>());
             mockFileProvider.Setup(f => f.Exist(It.IsAny<string>())).Returns(true);
+
             file.UserDirectory = mockUserDir.Object;
             file.FileProvider = mockFileProvider.Object;
             file.PathProvider = mockPathProvider.Object;
 
+            // Arrange
+
             bool result = file.IsExist(file.Filename, file.Path);
+
+            // Assert
             result.Should().BeTrue();
         }
 
         [Fact]
         public void IsExist_CorrectNameAndPath_ReturnTrue()
         {
+            // Act
             var file = new TextFile()
             {
                 Filename = "tets.txt",
                 Path = "Correct path"
             };
+
             var mockUserDir = new Mock<IDirectory>();
             var mockFileProvider = new Mock<IFileProvider>();
             var mockPathProvider = new Mock<IPathProvider>();
+
             mockPathProvider.Setup(f => f.Combine(It.IsAny<string>(), It.IsAny<string>())).Returns(It.IsAny<string>());
             mockFileProvider.Setup(f => f.Exist(It.IsAny<string>())).Returns(true);
             file.FileProvider = mockFileProvider.Object;
             file.PathProvider = mockPathProvider.Object;
+            
+            // Arrange
             bool result = file.IsExist(file.Filename, file.Path);
+
+            // Assert
             result.Should().BeTrue();
         }
         [Fact]
         public void IsExist_CorrectNameAndPathButFileDoesNotExist_ReturnFalse()
         {
+            // Act
             var file = new TextFile()
             {
                 Filename = "tets.txt",
                 Path = "Correct path"
             };
+
             var mockUserDir = new Mock<IDirectory>();
             var mockFileProvider = new Mock<IFileProvider>();
             var mockPathProvider = new Mock<IPathProvider>();
+
             mockPathProvider.Setup(f => f.Combine(It.IsAny<string>(), It.IsAny<string>())).Returns(It.IsAny<string>());
             mockFileProvider.Setup(f => f.Exist(It.IsAny<string>())).Returns(false);
             file.FileProvider = mockFileProvider.Object;
             file.PathProvider = mockPathProvider.Object;
+
+            // Arrange
             bool result = file.IsExist(file.Filename, file.Path);
+
+            // Assert
             result.Should().BeFalse();
         }
 
         [Fact]
         public void Create_NULLPath_ReturnTrue()
         {
+            // Act
             var file = new TextFile()
             {
                 Filename = "test.txt",
                 Path = null,
                 Content = "just some content"
             };
+
             var mockUserDirectoryProvider = new Mock<IDirectory>();
             var mockFileProvider = new Mock<IFileProvider>();
+
             mockUserDirectoryProvider.Setup(f => f.Get()).Returns("This is UserDirectory");
             mockFileProvider.Setup(f => f.CheckFileExtension(It.IsAny<string>())).Returns(true);
             mockFileProvider.Setup(f => f.Exist(It.IsAny<string>())).Returns(false);
             mockFileProvider.Setup(f => f.AppendAllText(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(true);
+
             file.UserDirectory = mockUserDirectoryProvider.Object;
             file.FileProvider = mockFileProvider.Object;
+            // Assert
             file.Create(file.Filename, file.Path, file.Content).Should().BeTrue();
         }
 
@@ -257,6 +284,7 @@ namespace EvidentInstruction.Tests
             var mockFileProvider = new Mock<IFileProvider>();
             mockPathProvider.Setup(f => f.Combine(It.IsAny<string>(), It.IsAny<string>())).Returns(It.IsAny<string>());
             mockFileProvider.Setup(f => f.Exist(It.IsAny<string>())).Returns(true);
+            mockFileProvider.Setup(f => f.Delete(It.IsAny<string>())).Returns(true);
             file.PathProvider = mockPathProvider.Object;
             file.FileProvider = mockFileProvider.Object;
             bool result = file.Delete(file.Filename, file.Path);
@@ -295,6 +323,7 @@ namespace EvidentInstruction.Tests
             mockUserDirectory.Setup(f => f.Get()).Returns("This is User Directory");
             mockPathProvider.Setup(f => f.Combine(It.IsAny<string>(), It.IsAny<string>())).Returns(It.IsAny<string>());
             mockFileProvider.Setup(f => f.Exist(It.IsAny<string>())).Returns(true);
+            mockFileProvider.Setup(f => f.Delete(It.IsAny<string>())).Returns(true);
             file.FileProvider = mockFileProvider.Object;
             file.PathProvider = mockPathProvider.Object;
             file.UserDirectory = mockUserDirectory.Object;
@@ -322,6 +351,30 @@ namespace EvidentInstruction.Tests
             Action action = () => file.Delete(file.Filename, file.Path);
             action.Should().Throw<FileExistException>();
 
+        }
+
+        [Theory]
+        [InlineData("filename", "path")]
+        public void Delete_FileIsNotExist_ReturnFileExistException(string filename, string path)
+        {
+            // Act
+            var file = new TextFile();
+
+            var mockPathProvider = new Mock<IPathProvider>();
+            var mockFileProvider = new Mock<IFileProvider>();
+
+            mockPathProvider.Setup(p => p.Combine(It.IsAny<string>(), It.IsAny<string>())).Returns(Guid.NewGuid().ToString());
+            mockFileProvider.Setup(f => f.Exist(It.IsAny<string>())).Returns(false);
+
+            file.FileProvider = mockFileProvider.Object;
+            file.PathProvider = mockPathProvider.Object;
+
+            // Arrange 
+            Action action = () => file.Delete(filename, path);
+
+            // Assert
+            action.Should().Throw<FileExistException>()
+                .And.Message.Contains($"Файла \"{filename}\" в директории \"{path}\" не существует");
         }
 
         [Fact]
@@ -390,7 +443,7 @@ namespace EvidentInstruction.Tests
             file.FileProvider = mockFileProvider.Object;
             Action action = () => file.DownloadFile(file.Url, file.Filename, file.Path);
             action.Should().Throw<ValidFileNameException>()
-                .WithMessage($"Проверьте, что файл \"{file.Filename}\"  имеет расширение .txt");
+                .WithMessage($"Проверьте, что файл \"{file.Filename}\" имеет расширение .txt");
         }
 
         [Fact]
@@ -413,6 +466,100 @@ namespace EvidentInstruction.Tests
             file.WebProvider = mockWebProvider.Object;
            bool result = file.DownloadFile(file.Url, file.Filename, file.Path);
            result.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData("test")]
+        [InlineData("<a></a>")]
+        [InlineData("1")]
+        public void GetContent_CorrectFileData_ReturnContent(string testString)
+        {
+            // Act
+            var file = new TextFile();
+
+            var mockPathProvider = new Mock<IPathProvider>();
+            var mockFileProvider = new Mock<IFileProvider>();
+
+            mockPathProvider.Setup(p => p.Combine(It.IsAny<string>(), It.IsAny<string>())).Returns(Guid.NewGuid().ToString());
+            mockFileProvider.Setup(f => f.Exist(It.IsAny<string>())).Returns(true);
+            mockFileProvider.Setup(f => f.ReadAllText(It.IsAny<string>(), It.IsAny<string>())).Returns(testString);
+
+            file.FileProvider = mockFileProvider.Object;
+            file.PathProvider = mockPathProvider.Object;
+
+            // Arrange 
+            var content = file.GetContent(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+
+            // Assert
+            content.Should().Equals(testString);
+        }
+
+
+        [Theory]
+        [InlineData("test")]
+        [InlineData("<a></a>")]
+        [InlineData("1")]
+        public void GetContent_CorrectFileDataWithoutPath_ReturnContent(string testString)
+        {
+            // Act
+            var file = new TextFile();
+
+            var mockPathProvider = new Mock<IPathProvider>();
+            var mockFileProvider = new Mock<IFileProvider>();
+
+            mockPathProvider.Setup(p => p.Combine(It.IsAny<string>(), It.IsAny<string>())).Returns(Guid.NewGuid().ToString());
+            mockFileProvider.Setup(f => f.Exist(It.IsAny<string>())).Returns(true);
+            mockFileProvider.Setup(f => f.ReadAllText(It.IsAny<string>(), It.IsAny<string>())).Returns(testString);
+
+            file.FileProvider = mockFileProvider.Object;
+            file.PathProvider = mockPathProvider.Object;
+
+            // Arrange 
+            var content = file.GetContent(Guid.NewGuid().ToString(), null);
+
+            // Assert
+            content.Should().Equals(testString);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void GetContent_EmptyFileName_ReturnNoFileNameException(string filename)
+        {
+            // Act
+            var file = new TextFile();
+
+            // Arrange 
+            Action action = () => file.GetContent(filename, Guid.NewGuid().ToString());
+
+            // Assert
+            action.Should().Throw<NoFileNameException>()
+                .WithMessage($"Имя файла отсутствует");
+        }
+
+        [Theory]
+        [InlineData("filename", "path")]
+        public void GetContent_FileIsNotExist_ReturnFileExistException(string filename, string path)
+        {
+            // Act
+            var file = new TextFile();
+
+            var mockPathProvider = new Mock<IPathProvider>();
+            var mockFileProvider = new Mock<IFileProvider>();
+
+            mockPathProvider.Setup(p => p.Combine(It.IsAny<string>(), It.IsAny<string>())).Returns(Guid.NewGuid().ToString());
+            mockFileProvider.Setup(f => f.Exist(It.IsAny<string>())).Returns(false);
+
+            file.FileProvider = mockFileProvider.Object;
+            file.PathProvider = mockPathProvider.Object;
+
+            // Arrange 
+            Action action = () => file.GetContent(filename, path);
+
+            // Assert
+            action.Should().Throw<FileExistException>()
+                .And.Message.Contains($"Файла \"{filename}\" в директории \"{path}\" не существует");
         }
 
         [Fact]

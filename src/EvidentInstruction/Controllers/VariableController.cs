@@ -148,7 +148,7 @@ namespace EvidentInstruction.Controllers
 
                 if (typeof(BsonDocument).IsAssignableFrom(varType))
                 {
-                    var json = JObject.Parse(((BsonDocument)varValue).ToJson(new JsonWriterSettings { OutputMode = JsonOutputMode.Strict }));
+                    var json = JObject.Parse(((BsonDocument)varValue).ToJson(new JsonWriterSettings { OutputMode = JsonOutputMode.CanonicalExtendedJson }));
                     return json.SelectToken(path?.Remove(0, 2) ?? "/*") ?? varValue;
                 }
 

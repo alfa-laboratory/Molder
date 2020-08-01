@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using EvidentInstruction.Helpers;
@@ -28,7 +27,7 @@ namespace EvidentInstruction.Config.Helpers
                 }
                 else
                 {
-                    Log.Logger.Information($"Dublicates not found");
+                    Log.Logger.Information($"Dublicates in config file not found");
                 }
                 if (tags.Any())
                 {
@@ -53,29 +52,28 @@ namespace EvidentInstruction.Config.Helpers
                 if (string.IsNullOrWhiteSpace(content))
                 {
                     Log.Logger.Warning($"File \"{filename}\" is empty");
-                    return new ConcurrentDictionary<string, object>(); //возвращаем пустой словарь
+                    return new ConcurrentDictionary<string, object>();
                 }
 
                 var config = DeserializeHelper.DeserializeObject<Models.Config>(content);
 
                 if (config == null)
                 {
-                    Log.Logger.Warning("Json model is empty");
-                    return new ConcurrentDictionary<string, object>(); //возвращаем пустой словарь
+                    Log.Logger.Warning("Json model is empty for config file");
+                    return new ConcurrentDictionary<string, object>();
                 }
 
                 return GetTagsDictionary(config);
             }
             catch(FileExistException e)
             {
-                Log.Logger.Warning($"File \"{filename}\" not found {e.Message}"); 
-                throw new GetContentException($"File is empty or not found");
+                Log.Logger.Warning($"Config file \"{filename}\" not found: {e.Message}"); 
+                throw new FileExistException($"Config file \"{filename}\" not found in path \"{path}\"");
             }
             catch (NoFileNameException e)
             {
-                Log.Logger.Warning($"File \"{filename}\" not found {e.Message}");
-                throw new GetContentException($"File is empty or not found");
-               
+                Log.Logger.Warning($"Config filename \"{filename}\" is empty: {e.Message}");
+                throw new NoFileNameException($"Config filename is empty");
             }
         }
 
