@@ -6,6 +6,7 @@ using Moq;
 using EvidentInstruction.Exceptions;
 using Xunit;
 using EvidentInstruction.Generator.Models;
+using Xunit.Sdk;
 
 namespace EvidentInstruction.Generator.Tests
 {
@@ -18,11 +19,6 @@ namespace EvidentInstruction.Generator.Tests
         private readonly string _prefix = "test";
         private readonly IGenerator generator = new BogusGenerator();
 
-        //public BogusGeneratorTests(IGenerator generator)
-        //{
-        //    this.generator = generator;
-        //}
-
         public static IEnumerable<object[]> RandomDateTime()
         {
             yield return new object[] { new DateTime(2000, 1, 1), new DateTime(2002, 1, 1) };
@@ -31,85 +27,242 @@ namespace EvidentInstruction.Generator.Tests
         }
 
         [Theory]
-        [InlineData(1), InlineData(2), InlineData(10)]
-        public void GetRandomString_CorrectParams_ReturnRandomString(int expectedLength)
+        [InlineData(1), InlineData(2), InlineData(10), InlineData(30)]
+        public void GetRandomString_CorrectLength_ReturnRandomRuString(int expectedLength)
         {
-            var randomString = generator.GetRandomString(expectedLength, string.Empty);
+            var randomString = generator.GetRandomString(expectedLength, string.Empty, string.Empty, Constants.russian);
             randomString.Should().HaveLength(expectedLength);
+            foreach(char ch in randomString)
+            {
+                (Constants.ruChars + Constants.digits).Should().Contain(ch.ToString());
+            }
+        }
+
+        [Theory]
+        [InlineData(1), InlineData(2), InlineData(10), InlineData(30)]
+        public void GetRandomString_CorrectLength_ReturnRandomEnString(int expectedLength)
+        {
+            var randomString = generator.GetRandomString(expectedLength, string.Empty, string.Empty, Constants.english);
+            randomString.Should().HaveLength(expectedLength);
+            foreach (char ch in randomString)
+            {
+                (Constants.chars + Constants.digits).Should().Contain(ch.ToString());
+            }
         }
 
         [Theory]
         [InlineData(-1), InlineData(0)]
-        public void GetRandomStringWithPrefix_ZeroOrNegativeParams_ReturnException(int expectedLength)
+        public void GetRandomString_ZeroOrNegativeLength_ReturnException(int expectedLength)
         {
-            Action act = () => generator.GetRandomString(expectedLength, string.Empty); ;
-            act
-              .Should().Throw<GeneratorException>()
-              .WithMessage("Размер генерируемой строки отрицательный или равен нулю");
+            Action act = () => generator.GetRandomString(expectedLength, string.Empty, string.Empty, Constants.english); ;
+            act.Should().Throw<XunitException>()
+                .And.Message.Contains("Длина строки должна быть положительной.");
         }
 
         [Theory]
-        [InlineData(1), InlineData(2), InlineData(10)]
-        public void GetRandomStringWithPrefix_CorrectParams_ReturnRandomString(int expectedLength)
+        [InlineData(""), InlineData("de")]
+        public void GetRandomString_IncorrectLanguage_ReturnNull(string expectedLocale)
         {
-            var randomString = generator.GetRandomString(expectedLength, _prefix);
-            randomString.Should().HaveLength(expectedLength + _prefix.Length);
+            var randomString = generator.GetRandomString(10, string.Empty, string.Empty, expectedLocale);
+            randomString.Should().BeNull();
         }
 
         [Theory]
-        [InlineData(1), InlineData(2), InlineData(10)]
-        public void GetRandomChars_CorrectParams_ReturnRandomString(int expectedLength)
+        [InlineData(""), InlineData("AUTO"), InlineData("AUTOAUTOA")]
+        public void GetRandomString_CorrectParams_ReturnRandomStringWithPrefix(string expectedPrefix)
         {
-            var randomString = generator.GetRandomChars(expectedLength, string.Empty);
-            randomString.Should().HaveLength(expectedLength);
+            var randomString = generator.GetRandomString(10, expectedPrefix, string.Empty, Constants.english);
+            randomString.Should().HaveLength(10);
+            randomString.IndexOf(expectedPrefix).Should().Be(0);
+        }
+
+        [Theory]
+        [InlineData(""), InlineData("AUTO"), InlineData("AUTOAUTOA")]
+        public void GetRandomString_CorrectParams_ReturnRandomStringWithPostfix(string expectedPostfix)
+        {
+            var randomString = generator.GetRandomString(10, string.Empty, expectedPostfix, Constants.english);
+            randomString.Should().HaveLength(10);
+            if(expectedPostfix != "")
+            {
+                randomString.IndexOf(expectedPostfix).Should().Be(10 - expectedPostfix.Length);
+            }
+        }
+
+        [Theory]
+        [InlineData("", ""), InlineData("AUTO_", "АВТО")]
+        public void GetRandomString_CorrectParams_ReturnRandomStringWithPrefixAndPostfix(string expectedPrefix, string expectedPostfix)
+        {
+            var randomString = generator.GetRandomString(10, expectedPrefix, expectedPostfix, Constants.english);
+            randomString.Should().HaveLength(10);
+            randomString.IndexOf(expectedPrefix).Should().Be(0);
+            if (expectedPostfix != "")
+            {
+                randomString.IndexOf(expectedPostfix).Should().Be(10 - expectedPostfix.Length);
+            }
+
+        }
+
+        [Theory]
+        [InlineData("AUTOAUTOAUTO", ""), InlineData("", "AUTOAUTOAUTO"), InlineData("AUTOA", "TOAUT")]
+        public void GetRandomString_IncorrectParams_ReturnException(string expectedPrefix, string expectedPostfix)
+        {
+            Action act = () => generator.GetRandomString(10, expectedPrefix, expectedPostfix, Constants.english);
+            act.Should().Throw<XunitException>()
+                .And.Message.Contains("Постфикс и префикс в сумме длинее самой строки.");
+        }
+
+        [Theory]
+        [InlineData(1), InlineData(2), InlineData(10), InlineData(30)]
+        public void GetRandomChars_CorrectLength_ReturnRandomRuChars(int expectedLength)
+        {
+            var randomChars = generator.GetRandomChars(expectedLength, string.Empty, string.Empty, Constants.russian);
+            randomChars.Should().HaveLength(expectedLength);
+            foreach (char ch in randomChars)
+            {
+                (Constants.ruChars).Should().Contain(ch.ToString());
+            }
+        }
+
+        [Theory]
+        [InlineData(1), InlineData(2), InlineData(10), InlineData(30)]
+        public void GetRandomChars_CorrectLength_ReturnRandomEnChars(int expectedLength)
+        {
+            var randomChars = generator.GetRandomChars(expectedLength, string.Empty, string.Empty, Constants.english);
+            randomChars.Should().HaveLength(expectedLength);
+            foreach (char ch in randomChars)
+            {
+                (Constants.chars).Should().Contain(ch.ToString());
+            }
         }
 
         [Theory]
         [InlineData(-1), InlineData(0)]
-        public void GetRandomCharsWithPrefix_ZeroOrNegativeParams_ReturnException(int expectedLength)
+        public void GetRandomChars_ZeroOrNegativeLength_ReturnException(int expectedLength)
         {
-            Action act = () => generator.GetRandomChars(expectedLength, string.Empty); ;
-            act
-              .Should().Throw<GeneratorException>()
-              .WithMessage("Размер генерируемой строки отрицательный или равен нулю");
+            Action act = () => generator.GetRandomChars(expectedLength, string.Empty, string.Empty, Constants.english); ;
+            act.Should().Throw<XunitException>()
+                .And.Message.Contains("Длина строки должна быть положительной.");
         }
 
         [Theory]
-        [InlineData(1), InlineData(2), InlineData(10)]
-        public void GetRandomCharsWithPrefix_CorrectParams_ReturnRandomString(int expectedLength)
+        [InlineData(""), InlineData("de")]
+        public void GetRandomChars_IncorrectLanguage_ReturnNull(string expectedLocale)
         {
-            var randomString = generator.GetRandomChars(expectedLength, _prefix);
-            randomString.Should().HaveLength(expectedLength + _prefix.Length);
+            var randomChars = generator.GetRandomChars(10, string.Empty, string.Empty, expectedLocale);
+            randomChars.Should().BeNull();
         }
 
         [Theory]
-        [InlineData(1), InlineData(2), InlineData(10)]
-        public void GetRandomNumbers_CorrectParams_ReturnRandomString(int expectedLength)
+        [InlineData(""), InlineData("AUTO"), InlineData("AUTOAUTOA")]
+        public void GetRandomChars_CorrectParams_ReturnRandomCharsWithPrefix(string expectedPrefix)
         {
-            var randomString = generator.GetRandomStringNumbers(expectedLength, string.Empty);
-            randomString.Should().HaveLength(expectedLength);
+            var randomChars = generator.GetRandomChars(10, expectedPrefix, string.Empty, Constants.english);
+            randomChars.Should().HaveLength(10);
+            randomChars.IndexOf(expectedPrefix).Should().Be(0);
+        }
+
+        [Theory]
+        [InlineData(""), InlineData("AUTO"), InlineData("AUTOAUTOA")]
+        public void GetRandomChars_CorrectParams_ReturnRandomCharsWithPostfix(string expectedPostfix)
+        {
+            var randomChars = generator.GetRandomChars(10, string.Empty, expectedPostfix, Constants.english);
+            randomChars.Should().HaveLength(10);
+            if (expectedPostfix != "")
+            {
+                randomChars.IndexOf(expectedPostfix).Should().Be(10 - expectedPostfix.Length);
+            }
+        }
+
+        [Theory]
+        [InlineData("", ""), InlineData("AUTO_", "АВТО")]
+        public void GetRandomChars_CorrectParams_ReturnRandomCharsWithPrefixAndPostfix(string expectedPrefix, string expectedPostfix)
+        {
+            var randomChars = generator.GetRandomChars(10, expectedPrefix, expectedPostfix, Constants.english);
+            randomChars.Should().HaveLength(10);
+            randomChars.IndexOf(expectedPrefix).Should().Be(0);
+            if (expectedPostfix != "")
+            {
+                randomChars.IndexOf(expectedPostfix).Should().Be(10 - expectedPostfix.Length);
+            }
+
+        }
+
+        [Theory]
+        [InlineData("AUTOAUTOAUTO", ""), InlineData("", "AUTOAUTOAUTO"), InlineData("AUTOA", "TOAUT")]
+        public void GetRandomChars_IncorrectParams_ReturnException(string expectedPrefix, string expectedPostfix)
+        {
+            Action act = () => generator.GetRandomChars(10, expectedPrefix, expectedPostfix, Constants.english);
+            act.Should().Throw<XunitException>()
+                .And.Message.Contains("Постфикс и префикс в сумме длинее самой строки.");
+        }
+
+        [Theory]
+        [InlineData(1), InlineData(2), InlineData(10), InlineData(30)]
+        public void GetRandomStringNumbers_CorrectLength_ReturnRandomStringNumbers(int expectedLength)
+        {
+            var randomStringNumbers = generator.GetRandomStringNumbers(expectedLength, string.Empty, string.Empty);
+            randomStringNumbers.Should().HaveLength(expectedLength);
+            foreach (char ch in randomStringNumbers)
+            {
+                (Constants.digits).Should().Contain(ch.ToString());
+            }
         }
 
         [Theory]
         [InlineData(-1), InlineData(0)]
-        public void GetRandomNumbersWithPrefix_ZeroOrNegativeParams_ReturnException(int expectedLength)
+        public void GetRandomStringNumbers_ZeroOrNegativeLength_ReturnException(int expectedLength)
         {
-            Action act = () => generator.GetRandomStringNumbers(expectedLength, string.Empty); ;
-            act
-              .Should().Throw<GeneratorException>()
-              .WithMessage("Размер генерируемой строки отрицательный или равен нулю");
+            Action act = () => generator.GetRandomStringNumbers(expectedLength, string.Empty, string.Empty); ;
+            act.Should().Throw<XunitException>()
+                .And.Message.Contains("Длина строки должна быть положительной.");
         }
 
         [Theory]
-        [InlineData(1), InlineData(2), InlineData(10)]
-        public void GetRandomNumbersWithPrefix_CorrectParams_ReturnRandomString(int expectedLength)
+        [InlineData(""), InlineData("AUTO"), InlineData("AUTOAUTOA")]
+        public void GetRandomStringNumbers_CorrectParams_ReturnRandomStringNumbersWithPrefix(string expectedPrefix)
         {
-            var randomString = generator.GetRandomStringNumbers(expectedLength, _prefix);
-            randomString.Should().HaveLength(expectedLength + _prefix.Length);
+            var randomStringNumbers = generator.GetRandomStringNumbers(10, expectedPrefix, string.Empty);
+            randomStringNumbers.Should().HaveLength(10);
+            randomStringNumbers.IndexOf(expectedPrefix).Should().Be(0);
+        }
+
+        [Theory]
+        [InlineData(""), InlineData("AUTO"), InlineData("AUTOAUTOA")]
+        public void GetRandomStringNumbers_CorrectParams_ReturnRandomStringNumbersWithPostfix(string expectedPostfix)
+        {
+            var randomStringNumbers = generator.GetRandomStringNumbers(10, string.Empty, expectedPostfix);
+            randomStringNumbers.Should().HaveLength(10);
+            if (expectedPostfix != "")
+            {
+                randomStringNumbers.IndexOf(expectedPostfix).Should().Be(10 - expectedPostfix.Length);
+            }
+        }
+
+        [Theory]
+        [InlineData("", ""), InlineData("AUTO", "АВТО"), InlineData("AUTO_", "АВТО")]
+        public void GetRandomStringNumbers_CorrectParams_ReturnRandomStringNumbersWithPrefixAndPostfix(string expectedPrefix, string expectedPostfix)
+        {
+            var randomStringNumbers = generator.GetRandomStringNumbers(10, expectedPrefix, expectedPostfix);
+            randomStringNumbers.Should().HaveLength(10);
+            randomStringNumbers.IndexOf(expectedPrefix).Should().Be(0);
+            if (expectedPostfix != "")
+            {
+                randomStringNumbers.IndexOf(expectedPostfix).Should().Be(10 - expectedPostfix.Length);
+            }
+
+        }
+
+        [Theory]
+        [InlineData("AUTOAUTOAUTO", ""), InlineData("", "AUTOAUTOAUTO"), InlineData("AUTOA", "TOAUT")]
+        public void GetRandomStringNumbers_IncorrectParams_ReturnException(string expectedPrefix, string expectedPostfix)
+        {
+            Action act = () => generator.GetRandomStringNumbers(10, expectedPrefix, expectedPostfix);
+            act.Should().Throw<XunitException>()
+                .And.Message.Contains("Постфикс и префикс в сумме длинее самой строки.");
         }
 
         [Fact]
-        public void TryValidGuid()
+        public void GetGuid_ValidGuid()
         {
             var str = generator.GetGuid();
             bool isValid = Guid.TryParse(str, out Guid guid);
@@ -118,32 +271,32 @@ namespace EvidentInstruction.Generator.Tests
         }
 
         [Theory]
-        [InlineData("+7XXXXXXXXXX"), InlineData("+7XXX-XXX-XX-XX"), InlineData("+7 XXX XXX XX XX"), InlineData("+7(XXX)XXX-XX-XX")]
+        [InlineData(null), InlineData("+7##########"), InlineData("+7###-###-##-##"), InlineData("+7 ### ### ## ##"), InlineData("+7(###)###-##-##"), InlineData("+7###########"), InlineData("+7 ### ### ## ## ## ##"), InlineData("+7#"), InlineData("+7")]
         public void GetRandomPhone_CorrectParams_ReturnRandomPhone(string expectedMask)
         {
             var randomPhone = generator.GetRandomPhone(expectedMask);
             randomPhone.Should().HaveLength(randomPhone.Length);
         }
 
-        [Theory]
-        [InlineData("+7XXXXXXXXXXX"), InlineData("+7 XXX XXX XX XX XX XX")]
-        public void GetRandomPhone_OverTenParams_ReturnException(string expectedMask)
-        {
-            Action act = () => generator.GetRandomPhone(expectedMask);
-            act
-              .Should().Throw<FormatException>()
-              .WithMessage("Phone number can have up to 10 digits");
-        }
-
-        [Theory]
-        [InlineData("+7X"), InlineData("+7")]
-        public void GetRandomPhone_LessTenParams_ReturnException(string expectedMask)
-        {
-            Action act = () => generator.GetRandomPhone(expectedMask);
-            act
-              .Should().Throw<FormatException>()
-              .WithMessage("Номер телефона должен содержать не менее 10 цифр.");
-        }
+        //[Theory]
+        //[InlineData("+7###########"), InlineData("+7 ### ### ## ## ## ##"), InlineData("+7#"), InlineData("+7")]
+        //public void GetRandomPhone_OverTenParams_ReturnException(string expectedMask)
+        //{
+        //    Action act = () => generator.GetRandomPhone(expectedMask);
+        //    act
+        //      .Should().Throw<FormatException>()
+        //      .WithMessage("Phone number can have up to 10 digits");
+        //}
+        //
+        //[Theory]
+        //[InlineData("+7#"), InlineData("+7")]
+        //public void GetRandomPhone_LessTenParams_ReturnException(string expectedMask)
+        //{
+        //    Action act = () => generator.GetRandomPhone(expectedMask);
+        //    act
+        //      .Should().Throw<FormatException>()
+        //      .WithMessage("Номер телефона должен содержать не менее 10 цифр.");
+        //}
 
         [Theory]
         [InlineData(1,1,1990), InlineData(15, 6, 1990), InlineData(31, 12, 1990)]
@@ -151,16 +304,14 @@ namespace EvidentInstruction.Generator.Tests
         {
             var expDt = new DateTime(year, month, day);
             var dt = generator.GetDate(day, month, year);
-
             dt.Should().Be(expDt);
         }
 
         [Theory]
         [InlineData(0, 1, 1990), InlineData(40, 6, 1990), InlineData(31, 13, 1990)]
-        public void GetDate_InCorrectParams_ReturnNull(int day, int month, int year)
+        public void GetDate_IncorrectParams_ReturnNull(int day, int month, int year)
         {
             var dt = generator.GetDate(day, month, year);
-
             dt.Should().BeNull();
         }
 
@@ -180,7 +331,7 @@ namespace EvidentInstruction.Generator.Tests
         [Theory]
         [InlineData(0, 0, 0, -1), InlineData(0, 0, -1, 0), InlineData(0, -1, 0, 0), InlineData(-1, 0, 0, 0),
             InlineData(24, 60, 60, 60), InlineData(100, 100, 100, 100)]
-        public void GetTime_InCorrectParams_ReturnNull(int hours, int minutes, int seconds, int milliseconds)
+        public void GetTime_IncorrectParams_ReturnNull(int hours, int minutes, int seconds, int milliseconds)
         {
             var tm = generator.GetTime(hours, minutes, seconds, milliseconds);
 
@@ -194,7 +345,7 @@ namespace EvidentInstruction.Generator.Tests
         //    var fakeDate = new DateTime(2000, 1, 1, 1, 1, 1);
         //    mockDateTimeHelper.Setup(o => o.GetDateTimeNow())
         //        .Returns(fakeDate);
-        //    DateTimeHelper = mockDateTimeHelper.Object;
+        //    generator.dateTimeHelper = mockDateTimeHelper.Object;
         //    var dt = generator.GetCurrentDateTime();
         //    dt.Should().Be(fakeDate);
         //}
@@ -215,7 +366,7 @@ namespace EvidentInstruction.Generator.Tests
         [InlineData(1, 1, 1990, 0, 0, 0, -1), InlineData(1, 1, 1990, 0, 0, -1, 0), InlineData(1, 1, 1990, 0, -1, 0, 0), InlineData(1, 1, 1990, -1, 0, 0, 0),
             InlineData(0, 0, -1, 0, 0, 0, 0), InlineData(0, -1, 0, 0, 0, 0, 0), InlineData(-1, 0, 0, 0, 0, 0, 0),
             InlineData(40, 6, 1990, 24, 60, 60, 60), InlineData(31, 13, 1990, 100, 100, 100, 100)]
-        public void GetDateTime_InCorrectParams_ReturnNull(int day, int month, int year, int hours, int minutes, int seconds, int milliseconds)
+        public void GetDateTime_IncorrectParams_ReturnNull(int day, int month, int year, int hours, int minutes, int seconds, int milliseconds)
         {
             var dt = generator.GetDateTime(day, month, year, hours, minutes, seconds, milliseconds);
 
@@ -276,13 +427,13 @@ namespace EvidentInstruction.Generator.Tests
         //    dt.Day.Should().Be(1);
         //}
 
-        [Theory]
-        [InlineData(0, 0, -1), InlineData(0, -1, 0), InlineData(-1, 0, 0)]
-        public void GetOtherFutureDate_InCorrectParams_ReturnNull(int day, int month, int year)
-        {
-            var dt = generator.GetOtherDate(day, month, year);
-            dt.Should().BeNull();
-        }
+        //[Theory]
+        //[InlineData(0, 0, -1), InlineData(0, -1, 0), InlineData(-1, 0, 0)]
+        //public void GetOtherFutureDate_IncorrectParams_ReturnNull(int day, int month, int year)
+        //{
+        //    var dt = generator.GetOtherDate(day, month, year);
+        //    dt.Should().BeNull();
+        //}
 
         //[Theory]
         //[InlineData(1, 31, 1), InlineData(16, 16, 1), InlineData(0, 1, 2)]

@@ -336,7 +336,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomStringWithPrefixAndPostfix(int len, string prefix, string postfix, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomString(len, prefix, postfix);
+            var str = generator.GetRandomString(len, prefix, postfix, Constants.english);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -351,7 +351,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomRusStringWithPrefixAndPostfix(int len, string prefix, string postfix, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomString(len, prefix, postfix, false);
+            var str = generator.GetRandomString(len, prefix, postfix, Constants.russian);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -365,7 +365,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomStringWithPrefix(int len, string prefix, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomString(len, prefix, string.Empty);
+            var str = generator.GetRandomString(len, prefix, string.Empty, Constants.english);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -379,7 +379,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomRusStringWithPrefix(int len, string prefix, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomString(len, prefix, string.Empty, false);
+            var str = generator.GetRandomString(len, prefix, string.Empty, Constants.russian);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -393,7 +393,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomStringWithPostfix(int len, string postfix, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomString(len, string.Empty, postfix);
+            var str = generator.GetRandomString(len, string.Empty, postfix, Constants.english);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -407,7 +407,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomRusStringWithPostfix(int len, string postfix, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomString(len, string.Empty, postfix, false);
+            var str = generator.GetRandomString(len, string.Empty, postfix, Constants.russian);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -420,7 +420,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomString(int len, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomString(len, string.Empty, string.Empty);
+            var str = generator.GetRandomString(len, string.Empty, string.Empty, Constants.english);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -433,7 +433,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomRusString(int len, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomString(len, string.Empty, string.Empty, false);
+            var str = generator.GetRandomString(len, string.Empty, string.Empty, Constants.russian);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -448,7 +448,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomCharWithPrefixAndPostfix(int len, string prefix, string postfix, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomChars(len, prefix, postfix);
+            var str = generator.GetRandomChars(len, prefix, postfix, Constants.english);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -463,7 +463,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomRusCharWithPrefixAndPostfix(int len, string prefix, string postfix, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomChars(len, prefix, postfix, false);
+            var str = generator.GetRandomChars(len, prefix, postfix, Constants.russian);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -477,7 +477,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomCharWithPrefix(int len, string prefix, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomChars(len, prefix, string.Empty);
+            var str = generator.GetRandomChars(len, prefix, string.Empty, Constants.english);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -491,7 +491,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomRusCharWithPrefix(int len, string prefix, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomChars(len, prefix, string.Empty, false);
+            var str = generator.GetRandomChars(len, prefix, string.Empty, Constants.russian);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -505,7 +505,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomCharWithPostfix(int len, string postfix, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomChars(len, string.Empty, postfix);
+            var str = generator.GetRandomChars(len, string.Empty, postfix, Constants.english);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -519,7 +519,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomRusCharWithPostfix(int len, string postfix, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomChars(len, string.Empty, postfix, false);
+            var str = generator.GetRandomChars(len, string.Empty, postfix, Constants.russian);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -532,7 +532,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomChar(int len, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomChars(len, string.Empty, string.Empty);
+            var str = generator.GetRandomChars(len, string.Empty, string.Empty, Constants.english);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -545,7 +545,7 @@ namespace EvidentInstruction.Generator.Steps
         public void StoreAsVariableRandomRusChar(int len, string varName)
         {
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная '{varName}' уже существует");
-            var str = generator.GetRandomChars(len, string.Empty, string.Empty, false);
+            var str = generator.GetRandomChars(len, string.Empty, string.Empty, Constants.russian);
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -700,10 +700,10 @@ namespace EvidentInstruction.Generator.Steps
             switch (lang)
             {
                 case "русском":
-                    month = generator.GetMonth(false);
+                    month = generator.GetMonth(Constants.russian);
                     break;
                 case "английском":
-                    month = generator.GetMonth();
+                    month = generator.GetMonth(Constants.english);
                     break;
                 default:
                     Log.Logger.Error("Введите русский или английский язык.");
@@ -725,10 +725,10 @@ namespace EvidentInstruction.Generator.Steps
             switch (lang)
             {
                 case "русском":
-                    weekday = generator.GetWeekday(false);
+                    weekday = generator.GetWeekday(Constants.russian);
                     break;
                 case "английском":
-                    weekday = generator.GetWeekday();
+                    weekday = generator.GetWeekday(Constants.english);
                     break;
                 default:
                     Log.Logger.Error("Введите русский или английский язык.");
@@ -800,10 +800,10 @@ namespace EvidentInstruction.Generator.Steps
             switch (lang)
             {
                 case "русском":
-                    sentence = generator.GetSentence(count, false);
+                    sentence = generator.GetSentence(count, Constants.russian);
                     break;
                 case "английском":
-                    sentence = generator.GetSentence(count);
+                    sentence = generator.GetSentence(count, Constants.english);
                     break;
                 default:
                     Log.Logger.Error("Введите русский или английский язык.");
@@ -826,10 +826,10 @@ namespace EvidentInstruction.Generator.Steps
             switch (lang)
             {
                 case "русском":
-                    paragraph = generator.GetParagraph(min, false);
+                    paragraph = generator.GetParagraph(min, Constants.russian);
                     break;
                 case "английском":
-                    paragraph = generator.GetParagraph(min);
+                    paragraph = generator.GetParagraph(min, Constants.english);
                     break;
                 default:
                     Log.Logger.Error("Введите русский или английский язык.");
@@ -851,10 +851,10 @@ namespace EvidentInstruction.Generator.Steps
             switch (lang)
             {
                 case "русском":
-                    firstName = generator.GetFirstName(false);
+                    firstName = generator.GetFirstName(Constants.russian);
                     break;
                 case "английском":
-                    firstName = generator.GetFirstName();
+                    firstName = generator.GetFirstName(Constants.english);
                     break;
                 default:
                     Log.Logger.Error("Введите русский или английский язык.");
@@ -876,10 +876,10 @@ namespace EvidentInstruction.Generator.Steps
             switch (lang)
             {
                 case "русском":
-                    lastName = generator.GetLastName(false);
+                    lastName = generator.GetLastName(Constants.russian);
                     break;
                 case "английском":
-                    lastName = generator.GetLastName();
+                    lastName = generator.GetLastName(Constants.english);
                     break;
                 default:
                     Log.Logger.Error("Введите русский или английский язык.");
@@ -901,10 +901,10 @@ namespace EvidentInstruction.Generator.Steps
             switch (lang)
             {
                 case "русском":
-                    fullName = generator.GetFullName(false);
+                    fullName = generator.GetFullName(Constants.russian);
                     break;
                 case "английском":
-                    fullName = generator.GetFullName();
+                    fullName = generator.GetFullName(Constants.english);
                     break;
                 default:
                     Log.Logger.Error("Введите русский или английский язык.");

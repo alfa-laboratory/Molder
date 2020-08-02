@@ -1,4 +1,6 @@
-﻿using EvidentInstruction.Helpers;
+﻿using EvidentInstruction.Exceptions;
+using EvidentInstruction.Helpers;
+using FluentAssertions;
 using System;
 
 /// <summary>
@@ -8,10 +10,10 @@ namespace EvidentInstruction.Generator.Models
 {
     public class BogusGenerator : IGenerator
     {
-        public BogusProvider bogusProvider = new BogusProvider();
-        public BogusProvider ruBogusProvider = new BogusProvider("ru");
-        public DateTimeHelper dateTimeHelper;
-
+        public BogusProvider bogusProvider = new BogusProvider(Constants.english);
+        public BogusProvider ruBogusProvider = new BogusProvider(Constants.russian);
+        public DateTimeHelper dateTimeHelper = new DateTimeHelper();
+        //Как это тестировать?
         public DateTime GetCurrentDateTime()
         {
             return dateTimeHelper.GetDateTimeNow();
@@ -75,30 +77,43 @@ namespace EvidentInstruction.Generator.Models
 
         public string GetRandomStringNumbers(int len, string prefix, string postfix)
         {
-            return prefix + bogusProvider.DoubleNumbers(len - prefix.Length - postfix.Length, 0).ToString() + postfix;
+            CorrectParams.ForString(len, prefix, postfix);
+            return prefix + bogusProvider.DoubleNumbers(len - prefix.Length - postfix.Length, 0).ToString("F0") + postfix;
         }
 
-        public string GetRandomPhone(string mask)
+        public string GetRandomPhone(string mask = Constants.phoneMask)
         {
             return bogusProvider.Phone(mask);
         }
 
-        public string GetRandomString(int len, string prefix, string postfix, bool isEng = true)
+        public string GetRandomString(int len, string prefix, string postfix, string locale)
         {
-            if (isEng)
+            CorrectParams.ForString(len, prefix, postfix);
+            switch (locale)
             {
-                return prefix + bogusProvider.String(len - prefix.Length - postfix.Length) + postfix;
+                case Constants.english:
+                    return prefix + bogusProvider.String(len - prefix.Length - postfix.Length) + postfix;
+                case Constants.russian:
+                    return prefix + ruBogusProvider.RuString(len - prefix.Length - postfix.Length) + postfix;
+                default:
+                    Log.Logger.Warning("Choose russian or english language.");
+                    return null;
             }
-            return prefix + ruBogusProvider.String(len - prefix.Length - postfix.Length) + postfix;
         }
 
-        public string GetRandomChars(int len, string prefix, string postfix, bool isEng = true)
+        public string GetRandomChars(int len, string prefix, string postfix, string locale)
         {
-            if (isEng)
+            CorrectParams.ForString(len, prefix, postfix);
+            switch (locale)
             {
-                return prefix + bogusProvider.Chars(len - prefix.Length - postfix.Length) + postfix;
+                case Constants.english:
+                    return prefix + bogusProvider.Chars(len - prefix.Length - postfix.Length) + postfix;
+                case Constants.russian:
+                    return prefix + ruBogusProvider.RuChars(len - prefix.Length - postfix.Length) + postfix;
+                default:
+                    Log.Logger.Warning("Choose russian or english language.");
+                    return null;
             }
-            return prefix + ruBogusProvider.Chars(len - prefix.Length - postfix.Length) + postfix;
         }
 
         public DateTime? GetTime(int hours, int minutes, int seconds, int milliseconds = 0)
@@ -116,8 +131,13 @@ namespace EvidentInstruction.Generator.Models
             }
         }
 
-        public int GetRandomInt(int len = 0, int min = 0, int max = 0)
+        public int? GetRandomInt(int len = 0, int min = 0, int max = 0)
         {
+            if (len == 0 && min == 0 && max == 0)
+            {
+                Log.Logger.Warning($"Every parameter cannot equal 0.");
+                return null;
+            }
             if (len == 0)
             {
                 return bogusProvider.IntFromTo(min, max);
@@ -125,8 +145,13 @@ namespace EvidentInstruction.Generator.Models
             return bogusProvider.IntNumbers(len);
         }
 
-        public double GetRandomDouble(int limit, int len = 0, double min = 0, double max = 0)
+        public double? GetRandomDouble(int limit, int len = 0, double min = 0, double max = 0)
         {
+            if (len == 0 && min == 0 && max == 0)
+            {
+                Log.Logger.Warning($"Every parameter cannot equal 0.");
+                return null;
+            }
             if (len == 0)
             {
                 return bogusProvider.DoubleFromTo(min, max, limit);
@@ -134,27 +159,37 @@ namespace EvidentInstruction.Generator.Models
             return bogusProvider.DoubleNumbers(len, limit);
         }
 
-        public string GetMonth(bool isEng = true)
+        public string GetMonth(string locale)
         {
-            if (isEng)
+            switch (locale)
             {
-                return bogusProvider.Month();
+                case Constants.english:
+                    return bogusProvider.Month();
+                case Constants.russian:
+                    return ruBogusProvider.Month();
+                default:
+                    Log.Logger.Warning("Choose russian or english language.");
+                    return null;
             }
-            return ruBogusProvider.Month();
         }
 
-        public string GetWeekday(bool isEng = true)
+        public string GetWeekday(string locale)
         {
-            if (isEng)
+            switch (locale)
             {
-                return bogusProvider.Weekday();
+                case Constants.english:
+                    return bogusProvider.Weekday();
+                case Constants.russian:
+                    return ruBogusProvider.Weekday();
+                default:
+                    Log.Logger.Warning("Choose russian or english language.");
+                    return null;
             }
-            return ruBogusProvider.Weekday();
         }
 
-        public string GetEmail(string provider = "gmail.com")
+        public string GetEmail(string domen = "gmail.com")
         {
-            return ruBogusProvider.Email(provider);
+            return ruBogusProvider.Email(domen);
         }
 
         public string GetIp()
@@ -167,49 +202,74 @@ namespace EvidentInstruction.Generator.Models
             return ruBogusProvider.Url();
         }
 
-        public string GetSentence(int count, bool isEng = true)
+        public string GetSentence(int count, string locale)
         {
-            if (isEng)
+            switch (locale)
             {
-                return bogusProvider.Sentence(count);
+                case Constants.english:
+                    return bogusProvider.Sentence(count);
+                case Constants.russian:
+                    return ruBogusProvider.Sentence(count);
+                default:
+                    Log.Logger.Warning("Choose russian or english language.");
+                    return null;
             }
-            return ruBogusProvider.Sentence(count);
         }
 
-        public string GetParagraph(int min, bool isEng = true)
+        public string GetParagraph(int min, string locale)
         {
-            if (isEng)
+            switch (locale)
             {
-                return bogusProvider.Paragraph(min);
+                case Constants.english:
+                    return bogusProvider.Paragraph(min);
+                case Constants.russian:
+                    return ruBogusProvider.Paragraph(min);
+                default:
+                    Log.Logger.Warning("Choose russian or english language.");
+                    return null;
             }
-            return ruBogusProvider.Paragraph(min);
         }
 
-        public string GetFirstName(bool isEng = true)
+        public string GetFirstName(string locale)
         {
-            if (isEng)
+            switch (locale)
             {
-                return bogusProvider.FirstName();
+                case Constants.english:
+                    return bogusProvider.FirstName();
+                case Constants.russian:
+                    return ruBogusProvider.FirstName();
+                default:
+                    Log.Logger.Warning("Choose russian or english language.");
+                    return null;
             }
-            return ruBogusProvider.FirstName();
         }
 
-        public string GetLastName(bool isEng = true)
+        public string GetLastName(string locale)
         {
-            if (isEng)
+            switch (locale)
             {
-                return bogusProvider.LastName();
+                case Constants.english:
+                    return bogusProvider.LastName();
+                case Constants.russian:
+                    return ruBogusProvider.LastName();
+                default:
+                    Log.Logger.Warning("Choose russian or english language.");
+                    return null;
             }
-            return ruBogusProvider.LastName();
         }
 
-        public string GetFullName(bool isEng = true)
+        public string GetFullName(string locale)
         {
-            if (isEng)
+            switch (locale)
             {
-                return bogusProvider.FullName();
+                case Constants.english:
+                    return bogusProvider.FullName();
+                case Constants.russian:
+                    return ruBogusProvider.FullName();
+                default:
+                    Log.Logger.Warning("Choose russian or english language.");
+                    return null;
             }
-            return ruBogusProvider.FullName();
         }
     }
 }

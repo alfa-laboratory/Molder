@@ -8,14 +8,7 @@ namespace EvidentInstruction.Generator.Models
     public class BogusProvider : IBogusProvider
     {
         private readonly Faker faker;
-        private string digits = "0123456789";
-        private string chars = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm";
-        private string ruChars = "ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮйцукенгшщзхъфывапролджэячсмитьбю";
 
-        public BogusProvider()
-        {
-            this.faker = new Faker();
-        }
         public BogusProvider(string locale)
         {
             this.faker = new Faker(locale);
@@ -26,39 +19,39 @@ namespace EvidentInstruction.Generator.Models
         }
         public DateTime Between(DateTime? start = null, DateTime? end = null)
         {
-            start = start ?? new DateTime(1900, 01, 01);
-            end = end ?? new DateTime(2100, 12, 31);
+            start = start ?? Constants.startDate;
+            end = end ?? Constants.endDate;
             return faker.Date.Between((DateTime)start, (DateTime)end);
         }
         public int IntNumbers(int len)
         {
-            return faker.Random.Int((int)Math.Pow(10, len), (int)Math.Pow(10, len + 1) - 1);
+            return faker.Random.Int((int)Math.Pow(10, len - 1), (int)Math.Pow(10, len) - 1);
         }
         public double DoubleNumbers(int len, int limit)
         {
-            var number = faker.Random.Double(Math.Pow(10, len), Math.Pow(10, len + 1) - 1);
+            var number = faker.Random.Double(Math.Pow(10, len - 1), Math.Pow(10, len) - 1);
             return Math.Round(number, limit);
         }
         //в формате  (###)###-####
-        public string Phone(string format)
+        public string Phone(string format = "(###)###-####")
         {
             return faker.Phone.PhoneNumber(format);
         }
         public virtual string String(int len)
         {
-            return faker.Random.String2(len, chars + digits);
+            return faker.Random.String2(len, Constants.chars + Constants.digits);
         }
         public virtual string RuString(int len)
         {
-            return faker.Random.String2(len, ruChars + digits);
+            return faker.Random.String2(len, Constants.ruChars + Constants.digits);
         }
         public virtual string Chars(int len)
         {
-            return faker.Random.String2(len, chars);
+            return faker.Random.String2(len, Constants.chars);
         }
         public virtual string RuChars(int len)
         {
-            return faker.Random.String2(len, ruChars);
+            return faker.Random.String2(len, Constants.ruChars);
         }
 
         public int IntFromTo(int min, int max)
@@ -82,9 +75,9 @@ namespace EvidentInstruction.Generator.Models
             return faker.Date.Weekday();
         }
 
-        public string Email(string provider)
+        public string Email(string domen)
         {
-            return faker.Internet.Email(provider: provider);
+            return faker.Internet.Email(provider: domen);
         }
 
         public string Ip()

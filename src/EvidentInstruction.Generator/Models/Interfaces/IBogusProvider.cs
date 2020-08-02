@@ -12,14 +12,14 @@ namespace EvidentInstruction.Generator.Models
         int IntFromTo(int min, int max);
         double DoubleNumbers(int len, int limit);
         double DoubleFromTo(double min, double max, int limit);
-        string Phone(string format);
+        string Phone(string format = "(###)###-####");
         string String(int len);
         string RuString(int len);
         string Chars(int len);
         string RuChars(int len);
         string Month();
         string Weekday();
-        string Email(string provider);
+        string Email(string domen);
         string Ip();
         string Url();
         string Sentence(int count);
