@@ -1,20 +1,25 @@
 ﻿using System;
+using System.Net.Http;
 using EvidentInstruction.Exceptions;
 using EvidentInstruction.Helpers;
 using EvidentInstruction.Service.Models.Interfaces;
 using Flurl.Http;
+using TechTalk.SpecFlow;
 
 namespace EvidentInstruction.Service.Models
 {
     public class FlurlService : WebService, IWebService, IDisposable
     {
-        public int Timeout { get; set; }
+        public int? Timeout { get; set; }
+        public Table paramsValue { get; set; }
 
         Interfaces.IServiceProvider flurProvider = new FlurlProvider();
 
-        public FlurlService(int timeout = 60)
+        public FlurlService(int? timeout = null, Table paramsValue = null)
         {
-            this.Timeout = timeout;
+            if (timeout == null) this.Timeout = Definitions.DefaultTimeout;
+            else this.Timeout = timeout;
+            this.paramsValue = paramsValue;
         }
 
         public override ResponseInfo SendMessage(RequestInfo request)
@@ -25,11 +30,14 @@ namespace EvidentInstruction.Service.Models
             {
                 try
                 {
+                    HttpResponseMessage result;
                     Log.Logger.Information(
-                        $"Сервисс с именем \"{request.Name}\" был вызван со следующими параметрами \"{request}\" ");
-                    var result = flurProvider.Send(request, request.Method, request.Headers, request.Content, Timeout);
+                                  $"Сервисс с именем \"{request.Name}\" был вызван со следующими параметрами \"{request}\" ");
+                    if (paramsValue != null) result = flurProvider.Send(request, request.Method, request.Headers, request.Content, paramsValue = this.paramsValue, Timeout = this.Timeout);
+                    else result = flurProvider.Send(request, request.Method, request.Headers, request.Content, Timeout = this.Timeout);
                     response.CreateResponse(result);
                     return response;
+
                 }
                 catch (WithHeadersException e)
                 {
@@ -55,9 +63,10 @@ namespace EvidentInstruction.Service.Models
             else
             {
                 Log.Logger.Warning($"Модель для  вызова сервиса  с именем \"{request.Name}\" некорректна. Ошибки: \"{results}\" ");
-                throw new ServiceException(call:new HttpCall(), $"Модель для  вызова сервиса  с именем \"{request.Name}\" некорректна. Ошибки: \"{results}\" ", null);
+                throw new ServiceException(call: new HttpCall(), $"Модель для  вызова сервиса  с именем \"{request.Name}\" некорректна. Ошибки: \"{results}\" ", null);
             }
         }
+
         public void Dispose()
         {
             GC.SuppressFinalize(this);

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using TechTalk.SpecFlow;
 
 namespace EvidentInstruction.Helpers
 {
@@ -91,6 +92,23 @@ namespace EvidentInstruction.Helpers
                 Log.Logger.Warning(ex.Message);
                 return null;
             }
+        }
+
+        public static string[] ConvertTable(Table table)
+        {
+            var list = new List<string>();
+            int pointer = 0;
+            foreach (var head in table.Header)
+            {
+                foreach (var row in table.Rows)
+                {
+                    list.Add($"{head}={row[pointer]}");
+                }
+
+                pointer++;
+            }
+
+            return list.ToArray();
         }
     }
 }

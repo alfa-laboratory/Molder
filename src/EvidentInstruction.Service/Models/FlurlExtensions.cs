@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using EvidentInstruction.Exceptions;
 using EvidentInstruction.Helpers;
+using Flurl;
 using Flurl.Http;
 
 namespace EvidentInstruction.Service.Models
@@ -25,7 +27,7 @@ namespace EvidentInstruction.Service.Models
             }
         }
 
-        public static T FlHeaders<T>(this T ur, object headers, string url) where T : IHttpSettingsContainer
+        public static T FlHeaders<T>(this T ur, object headers) where T : IHttpSettingsContainer
         {
             try
             {
@@ -38,7 +40,7 @@ namespace EvidentInstruction.Service.Models
             }
         }
 
-        public static IFlurlRequest FlTimeout(this string ur, string url, int seconds)
+        public static IFlurlRequest FlTimeout(this string url, int seconds)
         {
             try
             {
@@ -48,6 +50,19 @@ namespace EvidentInstruction.Service.Models
             {
                 Log.Logger.Warning($" \"{e.Message}\" ");
                 throw new WithTimeoutException(e.Message, e);
+            }
+        }
+
+        public static Url FlSetParams(this string url, IEnumerable<string> names)
+        {
+            try
+            {
+                return new Url(url).SetQueryParams(names);
+            }
+            catch (ArgumentNullException e)
+            {
+                Log.Logger.Warning($" \"{e.Message}\" ");
+                throw new ArgumentNullException(e.Message, e);
             }
         }
     }
