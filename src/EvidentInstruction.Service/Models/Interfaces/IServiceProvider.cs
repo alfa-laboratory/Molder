@@ -10,6 +10,6 @@ namespace EvidentInstruction.Service.Models.Interfaces
         HttpResponseMessage Send(RequestInfo request, HttpMethod method, Dictionary<string, string> headers,
             HttpContent content, int? timeout);
         HttpResponseMessage Send(RequestInfo request, HttpMethod method, Dictionary<string, string> headers,
-            HttpContent content, Table paramsValue, int? timeout);
+            HttpContent content, Dictionary<string, string> paramsValue, int? timeout);
     }
 }

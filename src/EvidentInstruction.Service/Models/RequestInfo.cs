@@ -17,5 +17,6 @@ namespace EvidentInstruction.Service.Models
 
         public string Name { get; set; } = null;
         public HttpContent Content { get; set; }
+        public Dictionary<string, string> Params { get; set; }
     }
 }

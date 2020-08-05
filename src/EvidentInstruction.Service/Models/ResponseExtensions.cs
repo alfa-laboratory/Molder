@@ -5,7 +5,7 @@ using EvidentInstruction.Exceptions;
 
 namespace EvidentInstruction.Service.Models
 {
-    public static class ResponseExtenssions
+    public static class ResponseExtensions
     {
         public static ResponseInfo CreateResponse(this ResponseInfo r, HttpResponseMessage message)
         {
@@ -13,7 +13,6 @@ namespace EvidentInstruction.Service.Models
             r.Content = ServiceHelpers.GetObjectFromString(message.Content.ReadAsStringAsync().Result);
             r.Headers = message.Headers;
             r.StatusCode = HttpStatusCode.OK;
-
             return r;
         }
 

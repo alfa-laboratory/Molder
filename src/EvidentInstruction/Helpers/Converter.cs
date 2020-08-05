@@ -15,12 +15,12 @@ namespace EvidentInstruction.Helpers
         public static IEnumerable CreateEnumerable(string str, string splitChars)
         {
             try
-            { 
+            {
                 var arrayStrings = str.Split(splitChars.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                 var enumerable = arrayStrings.Select(word => word.Trim()).ToArray();
                 return enumerable;
             }
-            catch(NullReferenceException)
+            catch (NullReferenceException)
             {
                 if (string.IsNullOrEmpty(str))
                 {
@@ -55,7 +55,8 @@ namespace EvidentInstruction.Helpers
                 var doc = new XmlDocument();
                 doc.LoadXml(str);
                 return doc;
-            }catch(XmlException ex)
+            }
+            catch (XmlException ex)
             {
                 Log.Logger.Warning(ex.Message);
                 return null;
@@ -67,7 +68,8 @@ namespace EvidentInstruction.Helpers
             try
             {
                 return JObject.Parse(str);
-            }catch(JsonException ex)
+            }
+            catch (JsonException ex)
             {
                 Log.Logger.Warning(ex.Message);
                 return null;
@@ -82,7 +84,7 @@ namespace EvidentInstruction.Helpers
                 var xDocument = XDocument.Parse(data);
                 return xDocument;
             }
-            catch(ArgumentNullException)
+            catch (ArgumentNullException)
             {
                 Log.Logger.Warning($"Значение переменной для преобразования в CDATA равно null");
                 return null;
@@ -94,20 +96,13 @@ namespace EvidentInstruction.Helpers
             }
         }
 
-        public static string[] ConvertTable(Table table)
+        public static string[] ConvertDictionary(Dictionary<string, string> parameters)
         {
             var list = new List<string>();
-            int pointer = 0;
-            foreach (var head in table.Header)
+            foreach (var p in parameters)
             {
-                foreach (var row in table.Rows)
-                {
-                    list.Add($"{head}={row[pointer]}");
-                }
-
-                pointer++;
+                list.Add($"{p.Key}={p.Value}");
             }
-
             return list.ToArray();
         }
     }

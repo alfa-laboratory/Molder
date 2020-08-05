@@ -5,7 +5,6 @@ using EvidentInstruction.Exceptions;
 using EvidentInstruction.Helpers;
 using EvidentInstruction.Service.Helpers;
 using Flurl.Http;
-using TechTalk.SpecFlow;
 
 namespace EvidentInstruction.Service.Models
 {
@@ -15,10 +14,10 @@ namespace EvidentInstruction.Service.Models
         {
             try
             {
-                var headerz = ReplaceHeaders.Replace(request.Headers, request.Content.ReadAsStringAsync().Result);
+                var endHeader = ReplaceHeaders.Replace(request.Headers, request.Content.ReadAsStringAsync().Result);
                 var message = request.Url
                     .FlTimeout((int)timeout)
-                    .FlHeaders(headerz)
+                    .FlHeaders(endHeader)
                     .FlSend(request.Url, request.Method, request.Content);
 
                 return message.Result;
@@ -45,17 +44,17 @@ namespace EvidentInstruction.Service.Models
             }
         }
 
-        public HttpResponseMessage Send(RequestInfo request, HttpMethod method, Dictionary<string, string> headers, HttpContent content, Table paramsValue, int? timeout)
+        public HttpResponseMessage Send(RequestInfo request, HttpMethod method, Dictionary<string, string> headers, HttpContent content, Dictionary<string, string> paramsValue, int? timeout)
         {
             try
             {
-                var headerz = ReplaceHeaders.Replace(request.Headers, request.Content.ReadAsStringAsync().Result);
+                var endHeader = ReplaceHeaders.Replace(request.Headers, request.Content.ReadAsStringAsync().Result);
                 var urlWithParams = request.Url
-                    .FlSetParams(Converter.ConvertTable(paramsValue))
+                    .FlSetParams(Converter.ConvertDictionary(paramsValue))
                     .ToString();
                 var message = request.Url
                     .FlTimeout((int)timeout)
-                    .FlHeaders(headerz)
+                    .FlHeaders(endHeader)
                     .FlSend(urlWithParams, request.Method, request.Content);
 
                 return message.Result;
