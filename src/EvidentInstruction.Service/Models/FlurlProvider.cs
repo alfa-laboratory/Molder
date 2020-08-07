@@ -14,7 +14,7 @@ namespace EvidentInstruction.Service.Models
         {
             try
             {
-                var endHeader = ReplaceHeaders.Replace(request.Headers, request.Content.ReadAsStringAsync().Result);
+                var endHeader = ReplaceHeaders.Replace(request.ServiceAttribute.Headers, request.Content.ReadAsStringAsync().Result);
                 var message = request.Url
                     .FlTimeout((int)timeout)
                     .FlHeaders(endHeader)
@@ -48,7 +48,7 @@ namespace EvidentInstruction.Service.Models
         {
             try
             {
-                var endHeader = ReplaceHeaders.Replace(request.Headers, request.Content.ReadAsStringAsync().Result);
+                var endHeader = ReplaceHeaders.Replace(request.ServiceAttribute.Headers, request.Content.ReadAsStringAsync().Result);
                 var urlWithParams = request.Url
                     .FlSetParams(Converter.ConvertDictionary(paramsValue))
                     .ToString();

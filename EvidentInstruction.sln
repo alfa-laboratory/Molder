@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.1082
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction", "src\EvidentInstruction\EvidentInstruction.csproj", "{2F008A06-7F5C-4205-ABBF-75CD3E7F75E7}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.ReportPortal", "src\EvidentInstruction.ReportPortal\EvidentInstruction.ReportPortal.csproj", "{0D585BC3-897D-465D-8327-E702C49A77D3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Generator.Tests", "test\EvidentInstruction.Generator.Tests\EvidentInstruction.Generator.Tests.csproj", "{1705FE8B-E0A9-4A5F-94A1-246397E0AFC2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XUnitTestProject1", "XUnitTestProject1\XUnitTestProject1.csproj", "{B468BEEE-88B4-4BB1-8A32-ECBCBBAE1D78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,6 +113,18 @@ Global
 		{1705FE8B-E0A9-4A5F-94A1-246397E0AFC2}.Release|x64.Build.0 = Release|Any CPU
 		{1705FE8B-E0A9-4A5F-94A1-246397E0AFC2}.Release|x86.ActiveCfg = Release|Any CPU
 		{1705FE8B-E0A9-4A5F-94A1-246397E0AFC2}.Release|x86.Build.0 = Release|Any CPU
+		{B468BEEE-88B4-4BB1-8A32-ECBCBBAE1D78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B468BEEE-88B4-4BB1-8A32-ECBCBBAE1D78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B468BEEE-88B4-4BB1-8A32-ECBCBBAE1D78}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B468BEEE-88B4-4BB1-8A32-ECBCBBAE1D78}.Debug|x64.Build.0 = Debug|Any CPU
+		{B468BEEE-88B4-4BB1-8A32-ECBCBBAE1D78}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B468BEEE-88B4-4BB1-8A32-ECBCBBAE1D78}.Debug|x86.Build.0 = Debug|Any CPU
+		{B468BEEE-88B4-4BB1-8A32-ECBCBBAE1D78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B468BEEE-88B4-4BB1-8A32-ECBCBBAE1D78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B468BEEE-88B4-4BB1-8A32-ECBCBBAE1D78}.Release|x64.ActiveCfg = Release|Any CPU
+		{B468BEEE-88B4-4BB1-8A32-ECBCBBAE1D78}.Release|x64.Build.0 = Release|Any CPU
+		{B468BEEE-88B4-4BB1-8A32-ECBCBBAE1D78}.Release|x86.ActiveCfg = Release|Any CPU
+		{B468BEEE-88B4-4BB1-8A32-ECBCBBAE1D78}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

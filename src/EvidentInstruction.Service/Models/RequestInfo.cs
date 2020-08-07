@@ -9,14 +9,12 @@ namespace EvidentInstruction.Service.Models
         [Required(ErrorMessage = "Url is required")]
         public string Url { get; set; }
 
-        [Required(ErrorMessage = "Headers is required")]
-        public Dictionary<string, string> Headers { get; set; }
-
         [Required(ErrorMessage = "HttpMethod is required")]
         public HttpMethod Method { get; set; }
 
         public string Name { get; set; } = null;
         public HttpContent Content { get; set; }
-        public Dictionary<string, string> Params { get; set; }
+        public ServiceAttribute ServiceAttribute { get; set; }
+
     }
 }

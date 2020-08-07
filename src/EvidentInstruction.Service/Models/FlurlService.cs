@@ -4,18 +4,27 @@ using EvidentInstruction.Exceptions;
 using EvidentInstruction.Helpers;
 using EvidentInstruction.Service.Models.Interfaces;
 using Flurl.Http;
+using IServiceProvider = EvidentInstruction.Service.Models.Interfaces.IServiceProvider;
 
 namespace EvidentInstruction.Service.Models
 {
     public class FlurlService : WebService, IWebService, IDisposable
     {
-        public int? Timeout { get; set; }
-        Interfaces.IServiceProvider flurProvider = new FlurlProvider();
+        public ServiceAttribute ServiceAttribute { get; set; } = new ServiceAttribute();
+        IServiceProvider flurProvider = new FlurlProvider();
 
-        public FlurlService(int? timeout = null)
+        public FlurlService(ServiceAttribute parameters)
         {
-            if (timeout == null) this.Timeout = Definitions.DefaultTimeout;
-            else this.Timeout = timeout;
+            if (parameters.Timeout == null)
+            {
+                ServiceAttribute.Timeout = Definitions.DefaultTimeout;
+            }
+            else
+            {
+                ServiceAttribute.Timeout = parameters.Timeout;
+            }
+            ServiceAttribute.Headers = parameters.Headers;
+            ServiceAttribute.Parameters = parameters.Parameters;
         }
 
         public override ResponseInfo SendMessage(RequestInfo request)
@@ -27,17 +36,17 @@ namespace EvidentInstruction.Service.Models
                 try
                 {
                     HttpResponseMessage result;
-                    Log.Logger.Information(
-                                  $"Сервисс с именем \"{request.Name}\" был вызван со следующими параметрами \"{request}\" ");
-                    if (request.Params != null)
+                    Log.Logger.Information(Message.CreateMessage(request));
+                    if (request.ServiceAttribute.Parameters != null)
                     {
-                        result = flurProvider.Send(request, request.Method, request.Headers, request.Content, request.Params, Timeout = this.Timeout);
+                        result = flurProvider.Send(request, request.Method, request.ServiceAttribute.Headers, request.Content, request.ServiceAttribute.Parameters, ServiceAttribute.Timeout = this.ServiceAttribute.Timeout);
                     }
                     else
                     {
-                        result = flurProvider.Send(request, request.Method, request.Headers, request.Content, Timeout = this.Timeout);
+                        result = flurProvider.Send(request, request.Method, request.ServiceAttribute.Headers, request.Content, ServiceAttribute.Timeout = this.ServiceAttribute.Timeout);
                     }
                     response.CreateResponse(result);
+                    Log.Logger.Information(Message.CreateMessage(response));
                     return response;
 
                 }

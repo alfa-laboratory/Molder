@@ -4,6 +4,6 @@ namespace EvidentInstruction.Service.Models.Interfaces
 {
     public interface IContent
     {
-        StringContent Get(HttpContent content);
+        HttpContent Get(string content);
     }
 }

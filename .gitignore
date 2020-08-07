@@ -263,3 +263,4 @@ __pycache__/
 
 # Feature cs files
 *.feature.cs
+/XUnitTestProject1

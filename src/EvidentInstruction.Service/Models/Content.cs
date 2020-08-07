@@ -10,7 +10,7 @@ namespace EvidentInstruction.Service.Models
 {
     public class Content : IContent
     {
-        public StringContent Get(HttpContent content)
+        public HttpContent Get(string content)
         {
             var type = ServiceHelpers.GetObjectFromString(content.GetType().ToString());
             switch (type)

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -77,6 +78,27 @@ namespace EvidentInstruction.Service.Steps
             return stringContent;
         }
 
+
+        [StepArgumentTransformation]
+        public ServiceAttribute TableTrans(Table table)
+        {
+            ServiceAttribute result = new ServiceAttribute();
+            var paramsObject = table.CreateSet<Parameters>();
+            foreach (var i in paramsObject)
+            {
+                variableController.ReplaceVariables(i.Value);
+            }
+
+            result.Headers = paramsObject.Where(c => c.Type == ParameterType.Header)
+                .ToDictionary(c => c.Name, c => c.Value);
+            result.Parameters = paramsObject.Where(c => c.Type == ParameterType.Query)
+                .ToDictionary(c => c.Name, c => c.Value);
+            result.Timeout = Convert.ToInt32(paramsObject.Where(c => c.Type == ParameterType.Timeout).Select(c => c.Value).Last());
+            return result;
+
+        }
+
+
         /// <summary>
         /// Вызов Rest сервиса.
         /// </summary>
@@ -86,26 +108,27 @@ namespace EvidentInstruction.Service.Steps
         /// <param name="parameters">Параметры вызова.</param>
         [Scope(Tag = "WebService")]
         [When(@"я вызываю веб-сервис \""([A-z]+)\"" по адресу \""(.+)\"" с методом \""(POST|GET|PUT|DELETE)\"", используя заголовки и тело")]
-        public void SendToRestService(string name, string url, HttpMethod method, StringContent content, Table table)
+        public void SendToRestService(string name, string url, HttpMethod method, HttpContent content, ServiceAttribute attributes)
         {
             this.variableController.Variables.ContainsKey(name).Should().BeFalse($"Данные по сервису с именем \"{name}\" уже существуют");
             this.serviceController.Services.ContainsKey(name).Should().BeFalse($"Данные по сервису с именем \"{name}\" уже существуют");
 
-            var headers = table.CreateSet<Header>().ToDictionary(header => header.Name, header => this.variableController.ReplaceVariables(header.Value));
 
             var request = new RequestInfo
             {
+                Name = name,
                 Content = content,
-                Headers = headers,
                 Method = method,
-                Url = url
+                Url = url,
+                ServiceAttribute = attributes
             };
 
-            using (var service = new FlurlService())
+            using (var service = new FlurlService(attributes))
             {
-                var responceInfo = service.SendMessage(request);
-                this.serviceController.Services.TryAdd(name, responceInfo);
-                this.variableController.SetVariable(name, responceInfo.Content.GetType(), responceInfo.Content);
+                var responseInfo = service.SendMessage(request);
+                this.serviceController.Services.TryAdd(name, responseInfo);
+                // тип ответа и записать его в нужном типе (выходной контент в свой тип)
+                this.variableController.SetVariable(name, responseInfo.Content.GetType(), responseInfo.Content);
             }
         }
 
