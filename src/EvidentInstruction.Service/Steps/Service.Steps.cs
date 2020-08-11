@@ -13,6 +13,7 @@ using EvidentInstruction.Service.Helpers;
 using EvidentInstruction.Service.Models;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
+using System.Collections.Generic;
 
 namespace EvidentInstruction.Service.Steps
 {
@@ -91,33 +92,58 @@ namespace EvidentInstruction.Service.Steps
 
             result.Headers = paramsObject.Where(c => c.Type == ParameterType.Header)
                 .ToDictionary(c => c.Name, c => c.Value);
+
             result.Parameters = paramsObject.Where(c => c.Type == ParameterType.Query)
                 .ToDictionary(c => c.Name, c => c.Value);
-            result.Timeout = Convert.ToInt32(paramsObject.Where(c => c.Type == ParameterType.Timeout).Select(c => c.Value).Last());
-            return result;
+           
+                result.Timeout = Convert.ToInt32(paramsObject.Where(c => c.Type == ParameterType.Timeout)
+                               .Select(c => c.Value).LastOrDefault());
+            
 
+
+            return result;
+        }
+
+        [StepArgumentTransformation]
+        public HttpMethod MethodTrans(string method)
+        {
+            HttpMethod result = new HttpMethod(method);
+            return result;
+        }
+
+        [StepArgumentTransformation]
+        public StringContent ContentTrans(string content)
+        {
+            return (StringContent)Content.Get(content);
+        }
+
+        [StepDefinition(@"я создаю тело для вызова в веб-сервисе \""([A-z]+)\""")]
+        public void CreateServiceBody(string name, StringContent content)
+        {
+            variableController.Variables.ContainsKey(name).Should().BeFalse($"Данные по сервису с именем \"{name}\" уже существуют");
+            variableController.SetVariable(name, content.GetType(), content);
+            variableController.ReplaceVariables(content.ToString());
         }
 
 
         /// <summary>
         /// Вызов Rest сервиса.
         /// </summary>
+        /// <param name="name">Название сервиса.</param>
         /// <param name="url">Ссылка на сервис.</param>
         /// <param name="method">Метод сервиса.</param>
-        /// <param name="service">Название сервиса.</param>
-        /// <param name="parameters">Параметры вызова.</param>
+        /// <param name="attributes">Параметры вызова.</param>
         [Scope(Tag = "WebService")]
         [When(@"я вызываю веб-сервис \""([A-z]+)\"" по адресу \""(.+)\"" с методом \""(POST|GET|PUT|DELETE)\"", используя заголовки и тело")]
-        public void SendToRestService(string name, string url, HttpMethod method, HttpContent content, ServiceAttribute attributes)
+        public void SendToRestService(string name, string url, HttpMethod method, ServiceAttribute attributes)
         {
-            this.variableController.Variables.ContainsKey(name).Should().BeFalse($"Данные по сервису с именем \"{name}\" уже существуют");
+            this.variableController.Variables.ContainsKey(name).Should().BeTrue($"Данные по сервису с именем \"{name}\" не существуют");
             this.serviceController.Services.ContainsKey(name).Should().BeFalse($"Данные по сервису с именем \"{name}\" уже существуют");
-
-
+            var content = variableController.GetVariableValue(name);
             var request = new RequestInfo
             {
                 Name = name,
-                Content = content,
+                Content = (HttpContent)content,
                 Method = method,
                 Url = url,
                 ServiceAttribute = attributes
@@ -127,7 +153,6 @@ namespace EvidentInstruction.Service.Steps
             {
                 var responseInfo = service.SendMessage(request);
                 this.serviceController.Services.TryAdd(name, responseInfo);
-                // тип ответа и записать его в нужном типе (выходной контент в свой тип)
                 this.variableController.SetVariable(name, responseInfo.Content.GetType(), responseInfo.Content);
             }
         }

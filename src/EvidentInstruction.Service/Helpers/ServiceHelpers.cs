@@ -1,4 +1,6 @@
-﻿using EvidentInstruction.Helpers;
+﻿using System.Net.Http;
+using System.Net.Http.Headers;
+using EvidentInstruction.Helpers;
 
 
 namespace EvidentInstruction.Service.Helpers
@@ -33,5 +35,6 @@ namespace EvidentInstruction.Service.Helpers
                 return xDoc;
             }
         }
+
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace EvidentInstruction.Service.Models
+﻿namespace EvidentInstruction.Service.Models
 {
     public static class Definitions
     {

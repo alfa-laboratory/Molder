@@ -33,12 +33,14 @@ namespace EvidentInstruction.Service.Models
         public static ResponseInfo CreateResponse(this ResponseInfo r, WithTimeoutException e)
         {
             r.Content = ServiceHelpers.GetObjectFromString(e.Message);
+            r.StatusCode = HttpStatusCode.RequestTimeout;
             return r;
         }
 
         public static ResponseInfo CreateResponse(this ResponseInfo r, WithHeadersException e)
         {
             r.Content = ServiceHelpers.GetObjectFromString(e.Message);
+            r.StatusCode = HttpStatusCode.RequestEntityTooLarge;
             return r;
         }
     }

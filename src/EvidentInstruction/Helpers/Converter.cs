@@ -105,5 +105,16 @@ namespace EvidentInstruction.Helpers
             }
             return list.ToArray();
         }
+        public static string DictToString(Dictionary<string, string> dict)
+        {
+            string result = null;
+            for (int i = 0; i < dict.Count; i++)
+            {
+                if (i == dict.Count) result += dict.Keys.ElementAt(i) + "-" + dict.Values.ElementAt(i);
+                result += dict.Keys.ElementAt(i) + "-" + dict.Values.ElementAt(i) + Environment.NewLine;
+            }
+
+            return result;
+        }
     }
 }
