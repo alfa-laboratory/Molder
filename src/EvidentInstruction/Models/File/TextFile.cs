@@ -123,8 +123,8 @@ namespace EvidentInstruction.Models
             }
             else
             {
-                Log.Logger.Warning($"Файла \"{filename}\" в директории \"{path}\" не существует");
-                throw new FileExistException($"Файла \"{filename}\" в директории \"{path}\" не существует");
+                Log.Logger.Warning($"The file \"{filename}\" does not exist in the \"{path}\" directory");
+                throw new FileExistException($"The file \"{filename}\" does not exist in the \"{path}\" directory");
             }
         }
 

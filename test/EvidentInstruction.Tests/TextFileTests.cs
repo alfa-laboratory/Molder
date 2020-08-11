@@ -350,7 +350,6 @@ namespace EvidentInstruction.Tests
             file.FileProvider = mockFile.Object;
             Action action = () => file.Delete(file.Filename, file.Path);
             action.Should().Throw<FileExistException>();
-
         }
 
         [Theory]
@@ -373,8 +372,7 @@ namespace EvidentInstruction.Tests
             Action action = () => file.Delete(filename, path);
 
             // Assert
-            action.Should().Throw<FileExistException>()
-                .And.Message.Contains($"Файла \"{filename}\" в директории \"{path}\" не существует");
+            action.Should().Throw<FileExistException>().Where(e => e.ParamName.Equals($"The file \"{filename}\" does not exist in the \"{path}\" directory"));
         }
 
         [Fact]
@@ -559,7 +557,7 @@ namespace EvidentInstruction.Tests
 
             // Assert
             action.Should().Throw<FileExistException>()
-                .And.Message.Contains($"Файла \"{filename}\" в директории \"{path}\" не существует");
+                .Where(e => e.ParamName.Equals($"The file \"{filename}\" does not exist in the \"{path}\" directory"));
         }
 
         [Fact]
