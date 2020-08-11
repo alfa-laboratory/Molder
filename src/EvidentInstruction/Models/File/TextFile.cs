@@ -113,7 +113,7 @@ namespace EvidentInstruction.Models
             if (string.IsNullOrWhiteSpace(filename))
             {
                 Log.Logger.Warning("DELETE: FileName is missing");
-                throw new NoFileNameException("FileName is missing");
+                throw new NoFileNameException("DELETE: FileName is missing");
             }
 
             if (IsExist(filename, path))
@@ -138,7 +138,7 @@ namespace EvidentInstruction.Models
             if (string.IsNullOrWhiteSpace(filename))
             {
                 Log.Logger.Warning("GET CONTENT: FileName is missing");
-                throw new NoFileNameException("FileName is missing");
+                throw new NoFileNameException("GET CONTENT: FileName is missing");
             }
 
             if (IsExist(filename, path))

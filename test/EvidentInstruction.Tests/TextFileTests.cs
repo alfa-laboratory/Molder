@@ -241,7 +241,7 @@ namespace EvidentInstruction.Tests
             mockFileProvider.Setup(f => f.CheckFileExtension(It.IsAny<string>())).Returns(false);
             file.FileProvider = mockFileProvider.Object;
             Action action = () => file.Create(file.Filename, file.Path, file.Content);
-            action.Should().Throw<FileExtensionException>().WithMessage($"Файл \"{file.Filename}\" не является текстовым файлом");
+            action.Should().Throw<FileExtensionException>().WithMessage($"The file \"{file.Filename}\" is not a text file");
         }
 
         [Fact]
@@ -254,7 +254,7 @@ namespace EvidentInstruction.Tests
                 Path = "just path"
             };
             Action action = () => file.Create(file.Filename, file.Path, file.Content);
-            action.Should().Throw<NoFileNameException>().WithMessage("Имя файла отсутствует");
+            action.Should().Throw<NoFileNameException>().WithMessage("CREATE: FileName is missing");
         }
 
         [Fact]
@@ -269,7 +269,7 @@ namespace EvidentInstruction.Tests
             mockPathProvider.Setup(f => f.Combine(It.IsAny<string>(), It.IsAny<string>())).Returns(It.IsAny<string>());
             file.PathProvider = mockPathProvider.Object;
             Action action = () => file.Delete(file.Filename, file.Path);
-            action.Should().Throw<NoFileNameException>().WithMessage("Имя файла отсутствует");
+            action.Should().Throw<NoFileNameException>().WithMessage("DELETE: FileName is missing");
         }
 
         [Fact]
@@ -387,7 +387,7 @@ namespace EvidentInstruction.Tests
                 Url = "just URL"
             };
             Action acvtion = () => file.DownloadFile(file.Url, file.Filename, file.Path);
-            acvtion.Should().Throw<ArgumentException>().WithMessage("Имя файла отсутствует");
+            acvtion.Should().Throw<ArgumentException>().WithMessage("DOWNLOAD: FileName is missing");
         }
 
         [Fact]
@@ -443,7 +443,7 @@ namespace EvidentInstruction.Tests
             file.FileProvider = mockFileProvider.Object;
             Action action = () => file.DownloadFile(file.Url, file.Filename, file.Path);
             action.Should().Throw<ValidFileNameException>()
-                .WithMessage($"Проверьте, что файл \"{file.Filename}\" имеет расширение .txt");
+                .WithMessage($"Check that the file \"{file.Filename}\" has a .txt extension");
         }
 
         [Fact]
@@ -535,7 +535,7 @@ namespace EvidentInstruction.Tests
 
             // Assert
             action.Should().Throw<NoFileNameException>()
-                .WithMessage($"Имя файла отсутствует");
+                .WithMessage($"GET CONTENT: FileName is missing");
         }
 
         [Theory]
