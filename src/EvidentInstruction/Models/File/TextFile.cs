@@ -1,7 +1,9 @@
 ﻿using System;
 using EvidentInstruction.Exceptions;
 using EvidentInstruction.Helpers;
-using EvidentInstruction.Models.Interfaces;
+using EvidentInstruction.Models.Directory.Interfaces;
+using EvidentInstruction.Models.File.Interfaces;
+using EvidentInstruction.Models.Profider.Interfaces;
 
 namespace EvidentInstruction.Models
 {
@@ -38,8 +40,8 @@ namespace EvidentInstruction.Models
 
             if (string.IsNullOrWhiteSpace(filename))
             {
-                Log.Logger.Warning("Имя файла отсутствует");
-                throw new ArgumentException("Имя файла отсутствует");
+                Log.Logger.Warning("DOWNLOAD: FileName is missing");
+                throw new ArgumentException("DOWNLOAD: FileName is missing");
             }
             else
             {
@@ -51,8 +53,8 @@ namespace EvidentInstruction.Models
                 }
                 else
                 {
-                    Log.Logger.Warning($"Проверьте, что файл \"{filename}\" имеет расширение .txt");
-                    throw new ValidFileNameException($"Проверьте, что файл \"{filename}\" имеет расширение .txt");
+                    Log.Logger.Warning($"Check that the file \"{filename}\" has a .txt extension");
+                    throw new ValidFileNameException($"Check that the file \"{filename}\" has a .txt extension");
                 }
             }
         }
@@ -92,12 +94,12 @@ namespace EvidentInstruction.Models
                 }
                 else
                 {
-                    throw new FileExtensionException($"Файл \"{filename}\" не является текстовым файлом");
+                    throw new FileExtensionException($"The file \"{filename}\" is not a text file");
                 }
             }
             else
             {
-                throw new NoFileNameException("Имя файла отсутствует");
+                throw new NoFileNameException("CREATE: FileName is missing");
             }
         }
 
@@ -110,8 +112,8 @@ namespace EvidentInstruction.Models
 
             if (string.IsNullOrWhiteSpace(filename))
             {
-                Log.Logger.Warning("Имя файла отсутствует");
-                throw new NoFileNameException("Имя файла отсутствует");
+                Log.Logger.Warning("DELETE: FileName is missing");
+                throw new NoFileNameException("FileName is missing");
             }
 
             if (IsExist(filename, path))
@@ -135,8 +137,8 @@ namespace EvidentInstruction.Models
             
             if (string.IsNullOrWhiteSpace(filename))
             {
-                Log.Logger.Warning("Имя файла отсутствует");
-                throw new NoFileNameException("Имя файла отсутствует");
+                Log.Logger.Warning("GET CONTENT: FileName is missing");
+                throw new NoFileNameException("FileName is missing");
             }
 
             if (IsExist(filename, path))
@@ -145,8 +147,8 @@ namespace EvidentInstruction.Models
             }
             else
             {
-                Log.Logger.Warning($"Файла \"{filename}\" в директории \"{path}\" не существует");
-                throw new FileExistException($"Файла \"{filename}\" в директории \"{path}\" не существует");
+                Log.Logger.Warning($"The file \"{filename}\" does not exist in the \"{path}\" directory");
+                throw new FileExistException($"The file \"{filename}\" does not exist in the \"{path}\" directory");
             }
         }
 

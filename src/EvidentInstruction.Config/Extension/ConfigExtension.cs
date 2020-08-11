@@ -1,14 +1,15 @@
 ﻿using EvidentInstruction.Controllers;
-using EvidentInstruction.Models.Interfaces;
 using EvidentInstruction.Config.Infrastructures;
 using EvidentInstruction.Config.Helpers;
 using EvidentInstruction.Infrastructures;
-using EvidentInstruction.Config.Models;
 using EvidentInstruction.Models;
 using EvidentInstruction.Helpers;
 using EvidentInstruction.Exceptions;
 using EvidentInstruction.Config.Exceptions;
 using System;
+using EvidentInstruction.Models.Profider.Interfaces;
+using EvidentInstruction.Models.Directory.Interfaces;
+using EvidentInstruction.Config.Models.Directory;
 
 namespace EvidentInstruction.Config.Extension
 {   

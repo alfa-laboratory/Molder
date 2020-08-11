@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using EvidentInstruction.Helpers;
-using EvidentInstruction.Models.Interfaces;
+using EvidentInstruction.Models.Profider.Interfaces;
 
 namespace EvidentInstruction.Models
 {
@@ -16,25 +16,25 @@ namespace EvidentInstruction.Models
             }
             catch (ArgumentNullException e)
             {
-                Log.Logger.Warning($"Ошибка при объеденении строки \"{path1}\" и \"{path2}\" : \"{e.Message}\" ");
+                Log.Logger.Warning($"Error while concatenating the string \"{path1}\" and \"{path2}\": \"{e.Message}\"");
                 return null;
             }
             catch (ArgumentException e)
             {
-                Log.Logger.Warning($"Ошибка при объеденении строки \"{path1}\" и \"{path2}\" : \"{e.Message}\" ");
+                Log.Logger.Warning($"Error while concatenating the string \"{path1}\" and \"{path2}\": \"{e.Message}\"");
                 return null;
             }
         }
 
-        public string GetEnviromentVariable(string varible)
+        public string GetEnviromentVariable(string variable)
         {
             try
             {
-                return Environment.GetEnvironmentVariable(varible);
+                return Environment.GetEnvironmentVariable(variable);
             }
             catch (ArgumentException e)
             {
-                Log.Logger.Warning($"Ошибка при получении имени файла \"{varible} \" : \"{e.Message}\" ");
+                Log.Logger.Warning($"Error getting filename \"{variable}\":\"{e.Message}\"");
                 return null;
             }
         }
@@ -47,7 +47,7 @@ namespace EvidentInstruction.Models
             }
             catch (ArgumentException e)
             {
-                Log.Logger.Warning($"Ошибка при получении имени файла \"{fullpath} \" : \"{e.Message}\" ");
+                Log.Logger.Warning($"Error getting filename \"{fullpath}\": \"{e.Message}\"");
                 return (null, null);
             }
         }        

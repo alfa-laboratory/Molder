@@ -23,12 +23,12 @@ namespace EvidentInstruction.Helpers
             {
                 if (string.IsNullOrEmpty(str))
                 {
-                    Log.Logger.Warning("Входная строка для создания списка не задана");
+                    Log.Logger.Warning("Input string for creating the list is not specified");
                     return null;
                 }
                 else
                 {
-                    Log.Logger.Warning("Входная строка для создания списка не задана");
+                    Log.Logger.Warning("Input string for creating the list is not specified");
                     return new List<string>() { str };
                 }
             }
@@ -80,7 +80,7 @@ namespace EvidentInstruction.Helpers
                 var element = XElement.Parse(str);
                 if(element.FirstNode.NodeType != XmlNodeType.CDATA)
                 {
-                    Log.Logger.Warning($"Значение переменной для преобразования в CDATA равно null");
+                    Log.Logger.Warning($"The variable value to convert to CDATA is null");
                     return null;
                 }
                 var data = ((XText)element.FirstNode).Value;
@@ -89,7 +89,7 @@ namespace EvidentInstruction.Helpers
             }
             catch (XmlException ex)
             {
-                Log.Logger.Warning($"Значение переменной для преобразования в CDATA не создалось из-за ошибки: {ex.Message}");
+                Log.Logger.Warning($"Variable value to convert to CDATA was not created due to error: {ex.Message}");
                 return null;
             }
         }

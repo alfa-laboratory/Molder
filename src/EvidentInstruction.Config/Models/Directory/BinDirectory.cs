@@ -1,8 +1,8 @@
-﻿using EvidentInstruction.Models.Interfaces;
+﻿using EvidentInstruction.Models.Directory.Interfaces;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace EvidentInstruction.Config.Models
+namespace EvidentInstruction.Config.Models.Directory
 {
     [ExcludeFromCodeCoverage]
     public class BinDirectory : IDirectory

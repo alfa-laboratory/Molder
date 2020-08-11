@@ -17,9 +17,6 @@ namespace EvidentInstruction.Controllers
 {
     public class VariableController
     {
-        private const string BracesPattern = @"\[([.\w]*)\]";
-        private const string SearchPattern = @"{([а-яА-я \w-_]*)}";
-
         public ConcurrentDictionary<string, Variable> Variables = null; 
 
         public VariableController()
@@ -122,7 +119,7 @@ namespace EvidentInstruction.Controllers
 
                     name = key.Split('[').First();
 
-                    keyPath = Regex.Match(key ?? string.Empty, BracesPattern).Groups[1].Value;
+                    keyPath = Regex.Match(key ?? string.Empty, StringPattern.BRACES).Groups[1].Value;
                 }
 
                 var var = Variables.SingleOrDefault(_ => _.Key == name).Value;
@@ -219,13 +216,13 @@ namespace EvidentInstruction.Controllers
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    Log.Logger.Warning($"Проверьте корректность переданного ключа \"{key}\"");
+                    Log.Logger.Warning($"Check the correctness of the key: \"{key}\"");
                     return null;
                 }
 
             }catch (NullReferenceException)
             {
-                Log.Logger.Warning($"Передан NULL параметр в функцию \"GetVariableValue\"/\"GetVariableValueText\"");
+                Log.Logger.Warning($"Set NULL value in \"GetVariableValue\"/\"GetVariableValueText\"");
                 return null;
             }
         }
@@ -248,7 +245,7 @@ namespace EvidentInstruction.Controllers
                     }
                 case XElement element when element.HasElements == true:
                     {
-                        Log.Logger.Warning($"Элемент с ключем \"{key}\" является узлом (XElement)");
+                        Log.Logger.Warning($"Key \"{key}\" is root for (XElement)");
                         return null;
                     }
 
@@ -259,7 +256,7 @@ namespace EvidentInstruction.Controllers
                     }
                 case XmlElement element when element.HasChildNodes == true:
                     {
-                        Log.Logger.Warning($"Элемент с ключем \"{key}\" является узлом (XmlElement)");
+                        Log.Logger.Warning($"Key \"{key}\" is root for (XmlElement)");
                         return null;
                     }
 
@@ -279,7 +276,7 @@ namespace EvidentInstruction.Controllers
 
         public string ReplaceVariables(string str, Func<object, string> foundReplace = null, Func<string, string> notFoundReplace = null)
         {
-            return ReplaceVariables(str, SearchPattern, foundReplace, notFoundReplace);
+            return ReplaceVariables(str, StringPattern.SEARCH, foundReplace, notFoundReplace);
         }
 
         private string ReplaceVariables(string str, string pattern, Func<object, string> foundReplace = null, Func<string, string> notFoundReplace = null)

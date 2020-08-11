@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using EvidentInstruction.Helpers;
 using EvidentInstruction.Models;
-using EvidentInstruction.Models.Interfaces;
 using EvidentInstruction.Config.Exceptions;
 using EvidentInstruction.Exceptions;
 using System;
+using EvidentInstruction.Models.File.Interfaces;
 
 namespace EvidentInstruction.Config.Helpers
 {

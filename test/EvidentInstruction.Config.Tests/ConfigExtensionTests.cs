@@ -4,11 +4,12 @@ using FluentAssertions;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
-using EvidentInstruction.Models.Interfaces;
 using Moq;
 using EvidentInstruction.Config.Helpers;
 using EvidentInstruction.Config.Exceptions;
 using EvidentInstruction.Exceptions;
+using EvidentInstruction.Models.File.Interfaces;
+using EvidentInstruction.Models.Profider.Interfaces;
 
 namespace EvidentInstruction.Config.Tests
 {

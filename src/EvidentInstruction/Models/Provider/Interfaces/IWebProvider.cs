@@ -1,4 +1,4 @@
-﻿namespace EvidentInstruction.Models.Interfaces
+﻿namespace EvidentInstruction.Models.Profider.Interfaces
 {
     public interface IWebProvider
     {

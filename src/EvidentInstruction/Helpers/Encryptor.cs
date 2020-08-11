@@ -7,9 +7,6 @@ using System.Text;
 
 namespace EvidentInstruction.Helpers
 {
-    /// <summary>
-    /// Тесты проверки credentials.
-    /// </summary>
     [ExcludeFromCodeCoverage]
     public static class Encryptor
     {

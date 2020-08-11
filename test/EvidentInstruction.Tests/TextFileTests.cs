@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using EvidentInstruction.Exceptions;
 using EvidentInstruction.Models;
-using EvidentInstruction.Models.Interfaces;
+using EvidentInstruction.Models.Directory.Interfaces;
+using EvidentInstruction.Models.Profider.Interfaces;
 using FluentAssertions;
 using Moq;
 using Xunit;
