@@ -78,24 +78,73 @@ namespace EvidentInstruction.Tests
         }
 
         [Theory]
-        [InlineData("first", typeof(string))]       
-        public void GetVariable_TypeofAccessGlobal_ReturnVariable(string key, Type type)
+        [InlineData("zero", typeof(int), 0)]       
+        public void GetVariable_TypeofAccessGlobal_ReturnVariable(string key, Type type, int value)
         {
-            variableContext.SetVariable("first", typeof(string), "1", TypeOfAccess.Global);
+            variableContext.SetVariable(key, type, value, TypeOfAccess.Global);
             var variable = variableContext.GetVariable(key);
             variable.Type.Should().Be(type);
-            variable.Value.Should().Be("1");
+            variable.Value.Should().Be(value);
         }
 
         [Theory]
-        [InlineData("first", typeof(string), "first", TypeOfAccess.Local)]
-        [InlineData("second", typeof(string), "second", TypeOfAccess.Global)]        
-        public void GetVariable_CorrectTypeOfAccess_ReturnVariable(string key, Type type, string value, TypeOfAccess typeOfAccess)
+        [InlineData("zero", typeof(int), 0)]
+        public void GetVariable_TypeofAccessLocal_ReturnVariable(string key, Type type, int value)
         {
+            variableContext.SetVariable(key, type, value, TypeOfAccess.Local);
+            var variable = variableContext.GetVariable(key);
+            variable.Type.Should().Be(type);
+            variable.Value.Should().Be(value);
+        }
+
+        [Theory]
+        [InlineData("zero", typeof(int), 0)]
+        public void GetVariable_TypeofAccessDefault_ReturnVariable(string key, Type type, int value)
+        {
+            variableContext.SetVariable(key, type, value, TypeOfAccess.Default);
+            var variable = variableContext.GetVariable(key);
+            variable.Type.Should().Be(type);
+            variable.Value.Should().Be(value);
+        }
+
+        [Theory]
+        [InlineData(null, typeof(string), "", TypeOfAccess.Local)]
+        [InlineData("", typeof(string), "", TypeOfAccess.Local)]
+        public void SetVariable_KeyIsNull_ReturnVariables(string key, Type type, string value, TypeOfAccess typeOfAccess)
+        {
+            variableContext.SetVariable(key, type, value, typeOfAccess);
+            variableContext.Variables.Count.Should().Be(3);
+        }
+
+        [Theory]
+        [InlineData("zero", typeof(string), "0", TypeOfAccess.Default)]
+        public void SetVariable_GlobalAndDefault_ReturnVariables(string key, Type type, string value, TypeOfAccess typeOfAccess)
+        {
+            variableContext.SetVariable(key, type, key, TypeOfAccess.Global);
+            variableContext.SetVariable(key, type, value, typeOfAccess);
+            variableContext.Variables[key].TypeOfAccess.Should().Be(TypeOfAccess.Global);
+            variableContext.Variables[key].Value.Should().Be(key);
+        }
+
+        [Theory]
+        [InlineData("zero", typeof(string), "0", TypeOfAccess.Local)]
+        public void SetVariable_LocalAndDefault_ReturnVariables(string key, Type type, string value, TypeOfAccess typeOfAccess)
+        {
+            variableContext.SetVariable(key, type, key, TypeOfAccess.Default);
             variableContext.SetVariable(key, type, value, typeOfAccess);
             variableContext.Variables[key].TypeOfAccess.Should().Be(typeOfAccess);
             variableContext.Variables[key].Value.Should().Be(value);
-        }   
+        }
+
+        [Theory]
+        [InlineData("zero", typeof(string), "0", TypeOfAccess.Local)]
+        public void SetVariable_GlobalAndLocal_ReturnVariables(string key, Type type, string value, TypeOfAccess typeOfAccess)
+        {
+            variableContext.SetVariable(key, type, key, TypeOfAccess.Global);
+            variableContext.SetVariable(key, type, value, typeOfAccess);
+            variableContext.Variables[key].TypeOfAccess.Should().Be(TypeOfAccess.Local);
+            variableContext.Variables[key].Value.Should().Be(value);
+        }
 
         [Theory]
         [InlineData(null)]
@@ -105,26 +154,6 @@ namespace EvidentInstruction.Tests
         {
             var variable = variableContext.GetVariable(key);
             variable.Should().BeNull();
-        }
-
-        [Theory]
-        [InlineData(null, typeof(string), "", TypeOfAccess.Local)]
-        [InlineData("", typeof(string), "", TypeOfAccess.Local)]        
-        public void SetVariable_KeyIsNull_ReturnVariables(string key, Type type, string value, TypeOfAccess typeOfAccess)
-        {
-            variableContext.SetVariable(key, type, value, typeOfAccess);            
-            variableContext.Variables.Count.Should().Be(3);
-        }
-
-        [Theory]
-        [InlineData("first", typeof(string), "newfirst", TypeOfAccess.Global)]       
-        public void SetVariable_DublKeyWithDiffTypeOfAccess_ReturnVariables(string key, Type type, string value, TypeOfAccess typeOfAccess)
-        {
-
-            variableContext.SetVariable(key, type, value, typeOfAccess);
-            variableContext.SetVariable("first", typeof(string), "newvalue", TypeOfAccess.Local);
-            variableContext.Variables[key].TypeOfAccess.Should().Be(typeOfAccess);
-            variableContext.Variables[key].Value.Should().Be(value);
         }
 
         [Theory]

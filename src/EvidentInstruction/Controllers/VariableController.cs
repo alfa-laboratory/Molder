@@ -53,9 +53,9 @@ namespace EvidentInstruction.Controllers
 
             if (Variables.ContainsKey(correcKey))
             {
-                if (Variables[correcKey].TypeOfAccess == TypeOfAccess.Global)
+                if (Variables[correcKey].TypeOfAccess == TypeOfAccess.Global || Variables[correcKey].TypeOfAccess == TypeOfAccess.Default)
                 {
-                    Log.Logger.Information($"Element with key: \"{key}\" contains value {Variables[correcKey].Value} with type 'Global'");
+                    Log.Logger.Information($"Element with key: \"{key}\" contains value {Variables[correcKey].Value} with type '{Variables[correcKey].TypeOfAccess}'");
                 }
             }
 
@@ -69,7 +69,7 @@ namespace EvidentInstruction.Controllers
         {
             var varName = GetVariableName(key);
 
-            if(string.IsNullOrWhiteSpace(varName)) //или завернуть в try catch
+            if(string.IsNullOrWhiteSpace(varName))
             {
                 Log.Logger.Information($"Key: \"{key}\" is empty");
                 return;
@@ -77,18 +77,46 @@ namespace EvidentInstruction.Controllers
             
             if (Variables.ContainsKey(varName))
             {
-                if (accessType == TypeOfAccess.Local && Variables[varName].TypeOfAccess == TypeOfAccess.Global)
+                switch(Variables[varName].TypeOfAccess)
                 {
-                        Log.Logger.Information($"Element with key: \"{key}\" has already created  with type 'Global'");
-                        return;
+                    case TypeOfAccess.Global:
+                        {
+                            switch(accessType)
+                            {
+                                case TypeOfAccess.Local:
+                                    {
+                                        Log.Logger.Information($"Element with key: \"{key}\" and '{Variables[varName].TypeOfAccess}' type has been replaced with type '{accessType}'");
+                                        break;
+                                    }
+                                case TypeOfAccess.Default:
+                                    {
+                                        Log.Logger.Information($"Element with key: \"{key}\" has already created  with type '{Variables[varName].TypeOfAccess}'");
+                                        return;
+                                    }
+                                case TypeOfAccess.Global:
+                                    {
+                                        Log.Logger.Warning($"Element with key: \"{key}\" has already created with type 'Global'");
+                                        throw new ArgumentException($"Element with key: \"{key}\" has already created with type 'Global'");
+                                    }
+                            }
+                            break;
+                        }
+                    case TypeOfAccess.Default:
+                        {
+                            switch (accessType)
+                            {
+                                case TypeOfAccess.Local:
+                                    {
+                                        Log.Logger.Information($"Element with key: \"{key}\" and '{Variables[varName].TypeOfAccess}' type has been replaced with type '{accessType}'");
+                                        break;
+                                    }
+                            }
+                            break;
+                        }
                 }
 
-                if (Variables[varName].TypeOfAccess == TypeOfAccess.Global)
-                {
-                        Log.Logger.Warning($"Element with key: \"{key}\" has already created with type 'Global'");
-                        throw new ArgumentException($"Element with key: \"{key}\" has already created with type 'Global'");
-                }
             }
+
             var vars = Variables;
             var variable = new Variable() { Type = type, Value = value, TypeOfAccess = accessType };
 
