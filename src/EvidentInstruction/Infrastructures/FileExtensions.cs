@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace EvidentInstruction.Models
+namespace EvidentInstruction.Infrastructures
 {
     [ExcludeFromCodeCoverage]
     static class FileExtensions

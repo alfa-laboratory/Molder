@@ -4,10 +4,12 @@ using FluentAssertions;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
-using EvidentInstruction.Models.Interfaces;
 using Moq;
 using EvidentInstruction.Config.Helpers;
 using EvidentInstruction.Config.Exceptions;
+using EvidentInstruction.Exceptions;
+using EvidentInstruction.Models.File.Interfaces;
+using EvidentInstruction.Models.Profider.Interfaces;
 
 namespace EvidentInstruction.Config.Tests
 {
@@ -62,30 +64,6 @@ namespace EvidentInstruction.Config.Tests
                           ]
               }";
 
-       /* [Fact]
-        public void AddConfig_WithoutFiles_ReturnExeption()
-        {           
-            Action act = () => ConfigExtension.AddConfig(variableContext);
-            act
-                .Should().Throw<FileIsExistException>()
-                .WithMessage($"File is empty or not found.");
-        }
-
-        [Theory]
-        [InlineData(@"C:\\")]        
-        public void AddConfig_IncorrectPath_ReturnExeption(string content)
-        {
-            var mockPathProvider = new Mock<IPathProvider>();
-
-            mockPathProvider.Setup(f => f.GetEnviromentVariable(It.IsAny<string>())).Returns(content);
-            ConfigExtension.PathProvider = mockPathProvider.Object;
-
-            Action act = () => ConfigExtension.AddConfig(variableContext);
-            act
-              .Should().Throw<FileIsExistException>()
-              .WithMessage($"File is empty or not found.");
-        }*/
-
         [Fact]
         public void AddConfig_DefaultFile_ReturnVariables()
         {
@@ -97,6 +75,26 @@ namespace EvidentInstruction.Config.Tests
 
             var result = ConfigExtension.AddConfig(variableContext);
            
+            result.Variables.Count.Should().Be(3);
+        }
+
+
+        [Theory]
+        [InlineData("filepath")]
+        public void AddConfig_NotEmptyExternalVariable_ReturnVariables(string path)
+        {
+            var mockFile = new Mock<IFile>();
+            var mockPath = new Mock<IPathProvider>();
+
+            mockFile.Setup(f => f.GetContent(It.IsAny<string>(), It.IsAny<string>())).Returns(json);
+            mockPath.Setup(p => p.GetEnviromentVariable(It.IsAny<string>())).Returns(path);
+            mockPath.Setup(p => p.CutFullpath(It.IsAny<string>())).Returns((Guid.NewGuid().ToString(), Guid.NewGuid().ToString()));
+
+            ConfigHelper.File = mockFile.Object;
+            ConfigExtension.PathProvider = mockPath.Object;
+
+            var result = ConfigExtension.AddConfig(variableContext);
+
             result.Variables.Count.Should().Be(3);
         }
 
@@ -112,7 +110,7 @@ namespace EvidentInstruction.Config.Tests
             Action act = () => ConfigExtension.AddConfig(variableContext);
             act
               .Should().Throw<DublicateTagsException>()
-              .WithMessage($"Json Exeption. Json has 1 dublicates:"+ "\nbroId");
+              .WithMessage($"Json Exception in config file: Json has 1 dublicates:" + "\nbroId");
         }
 
         [Fact]
@@ -127,6 +125,102 @@ namespace EvidentInstruction.Config.Tests
             var result = ConfigExtension.AddConfig(variableContext);
 
             result.Variables.Count.Should().Be(0);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void GetContent_EmptyFileName_ReturnNoFileNameException(string filename)
+        {
+            // Act
+            var mockFile = new Mock<IFile>();
+
+            mockFile.Setup(f => f.GetContent(It.IsAny<string>(), It.IsAny<string>())).Throws(new NoFileNameException(Guid.NewGuid().ToString()));
+
+            ConfigHelper.File = mockFile.Object;
+
+            // Arrange 
+            Action action = () => ConfigHelper.GetDictionary(filename, Guid.NewGuid().ToString());
+
+            // Assert
+            action.Should().Throw<NoFileNameException>()
+                .WithMessage($"Config filename is empty");
+        }
+
+        [Theory]
+        [InlineData("filename", "path")]
+        public void GetContent_FileIsNotExist_ReturnFileExistException(string filename, string path)
+        {
+            // Act
+            var mockFile = new Mock<IFile>();
+
+            mockFile.Setup(f => f.GetContent(It.IsAny<string>(), It.IsAny<string>())).Throws(new FileExistException(Guid.NewGuid().ToString()));
+
+            ConfigHelper.File = mockFile.Object;
+
+            // Arrange 
+            Action action = () => ConfigHelper.GetDictionary(filename, path);
+
+            // Assert
+            action.Should().Throw<FileExistException>()
+                .And.Message.Contains($"Config file \"{filename}\" not found in path \"{path}\"");
+        }
+
+
+        [Theory]
+        [InlineData("filename", "path")]
+        public void AddConfig_FileIsNotExist_ReturnFileExistException(string filename, string path)
+        {
+            // Act
+            var mockFile = new Mock<IFile>();
+
+            mockFile.Setup(f => f.GetContent(It.IsAny<string>(), It.IsAny<string>())).Throws(new FileExistException(Guid.NewGuid().ToString()));
+
+            ConfigHelper.File = mockFile.Object;
+
+            // Arrange 
+            Action action = () => ConfigExtension.AddConfig(variableContext);
+
+            // Assert
+            action.Should().Throw<FileExistException>()
+                .And.Message.Contains($"Config file \"{filename}\" not found in path \"{path}\"");
+        }
+
+        [Fact]
+        public void AddConfig_FileNameIsEmpty_ReturnNoFileNameException()
+        {
+            // Act
+            var mockFile = new Mock<IFile>();
+
+            mockFile.Setup(f => f.GetContent(It.IsAny<string>(), It.IsAny<string>())).Throws(new NoFileNameException(Guid.NewGuid().ToString()));
+
+            ConfigHelper.File = mockFile.Object;
+
+            // Arrange 
+            Action action = () => ConfigExtension.AddConfig(variableContext);
+
+            // Assert
+            action.Should().Throw<NoFileNameException>()
+                .WithMessage($"Config filename is empty");
+        }
+
+        [Fact]
+        public void AddConfig_FileWithDublicates_ReturnDublicateTagsException()
+        {
+            // Act
+            var mockFile = new Mock<IFile>();
+
+            mockFile.Setup(f => f.GetContent(It.IsAny<string>(), It.IsAny<string>())).Returns(jsonWithDublicates);
+
+            ConfigHelper.File = mockFile.Object;
+
+            // Arrange 
+            Action action = () => ConfigExtension.AddConfig(variableContext);
+
+            // Assert
+            action.Should().Throw<DublicateTagsException>()
+                .WithMessage($"Json Exception in config file: Json has 1 dublicates:broId");
         }
     }
 }

@@ -1,8 +1,7 @@
-﻿namespace EvidentInstruction.Models.Interfaces
+﻿namespace EvidentInstruction.Models.File.Interfaces
 {
     public interface IFile
     {
-
         string Filename { get; set; }
         string Path { get; set; }
         string Content { get; set; }
@@ -12,6 +11,5 @@
         bool Delete(string filename, string path);
         bool DownloadFile(string url, string filename, string pathToSave);
         bool IsExist(string filename, string path);
-
     }
 }

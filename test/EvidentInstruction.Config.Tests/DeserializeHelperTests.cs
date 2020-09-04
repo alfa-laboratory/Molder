@@ -38,7 +38,7 @@ namespace EvidentInstruction.Config.Tests.UnitTests
         public void DeserializeObject_InCorrectValue_ReturnExeption(string config)
         {
             Action action = () => DeserializeHelper.DeserializeObject<Models.Config>(config);
-            action.Should().Throw<DeserializeExeption>().WithMessage($"Deserialize string \"{config}\" failed");
+            action.Should().Throw<DeserializeException>().WithMessage($"Deserialize string \"{config}\" failed");
         }
 
         [Theory] 

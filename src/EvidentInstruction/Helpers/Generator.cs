@@ -1,5 +1,6 @@
 ﻿using EvidentInstruction.Exceptions;
-using EvidentInstruction.Models.DateTimeHelpers;
+using EvidentInstruction.Models;
+using EvidentInstruction.Models.DateTimeHelpers.Interfaces;
 using System;
 
 namespace EvidentInstruction.Helpers

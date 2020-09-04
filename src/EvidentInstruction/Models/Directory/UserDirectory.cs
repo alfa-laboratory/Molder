@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using EvidentInstruction.Models.Interfaces;
+using EvidentInstruction.Helpers;
+using EvidentInstruction.Models.Directory.Interfaces;
 
 namespace EvidentInstruction.Models
 {
@@ -9,6 +10,7 @@ namespace EvidentInstruction.Models
     { 
         public string Get()
         {
+            Log.Logger.Information("Work with UserDirectory");
             return Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         }
     }

@@ -1,21 +1,22 @@
 ﻿using EvidentInstruction.Controllers;
-using EvidentInstruction.Models.Interfaces;
 using EvidentInstruction.Config.Infrastructures;
 using EvidentInstruction.Config.Helpers;
 using EvidentInstruction.Infrastructures;
-using EvidentInstruction.Config.Models;
 using EvidentInstruction.Models;
 using EvidentInstruction.Helpers;
 using EvidentInstruction.Exceptions;
 using EvidentInstruction.Config.Exceptions;
+using System;
+using EvidentInstruction.Models.Profider.Interfaces;
+using EvidentInstruction.Models.Directory.Interfaces;
+using EvidentInstruction.Config.Models.Directory;
 
 namespace EvidentInstruction.Config.Extension
 {   
      public static class ConfigExtension
     {
-        public static  IDirectory BinDirectory = new BinDirectory();
-        public static  IFile TextFile = new TextFile();
-        public static  IPathProvider PathProvider = new PathProvider();
+        [ThreadStatic] public static IDirectory BinDirectory = new BinDirectory();
+        [ThreadStatic] public static IPathProvider PathProvider = new PathProvider();
 
         /// <summary>
         /// Задать значения в контроллере из словаря DictionaryTags
@@ -23,6 +24,7 @@ namespace EvidentInstruction.Config.Extension
         public static VariableController AddConfig(this VariableController variableController) 
         {   
            var controller = variableController;
+
            var filename = DefaultFileName.DEFAULT_JSON;
            var path = BinDirectory.Get(); 
             
@@ -46,18 +48,18 @@ namespace EvidentInstruction.Config.Extension
             }
             catch(NoFileNameException e)
             {               
-                Log.Logger.Warning($"File \"{fullpath}\" not found.{e.Message}");
-                throw new FileIsExistException($"File is empty or not found.");
+                Log.Logger.Warning($"Config filename \"{filename}\" is empty: {e.Message}");
+                throw new NoFileNameException($"Config filename is empty");
             }
-            catch (GetContentException e)
+            catch (FileExistException e)
             {                
-                Log.Logger.Warning($"File is empty or not found \"{e.Message}\"");
-                throw new FileIsExistException($"File is empty or not found.");
+                Log.Logger.Warning($"Config file \"{filename}\" not found: {e.Message}");
+                throw new FileExistException($"Config file \"{filename}\" not found in path \"{path}\"");
             }
             catch (ConfigException e)
             {
-                Log.Logger.Warning($"Json Exeption. {e.Message}");
-                throw new DublicateTagsException($"Json Exeption. {e.Message}");
+                Log.Logger.Warning($"Json Exception in config file: {e.Message}");
+                throw new DublicateTagsException($"Json Exception in config file: {e.Message}");
             }
         }
      }

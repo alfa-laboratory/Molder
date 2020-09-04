@@ -1,7 +1,7 @@
 ﻿using EvidentInstruction.Config.Exceptions;
 using EvidentInstruction.Config.Helpers;
 using EvidentInstruction.Helpers;
-using EvidentInstruction.Models.Interfaces;
+using EvidentInstruction.Models.File.Interfaces;
 using FluentAssertions;
 using Moq;
 using System;
