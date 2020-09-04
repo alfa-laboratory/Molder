@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
 using EvidentInstruction.Helpers;
-using EvidentInstruction.Models.Interfaces;
+using EvidentInstruction.Models.Profider.Interfaces;
 
 namespace EvidentInstruction.Models
 {
@@ -16,25 +16,25 @@ namespace EvidentInstruction.Models
             {
                 using (var webclient = new WebClient())
                 {
-                    string endPath = new EvidentInstruction.Models.TextFile().PathProvider.Combine(pathToSave, filename);
+                    string endPath = new TextFile().PathProvider.Combine(pathToSave, filename);
                     webclient.DownloadFile(new Uri(url), endPath);
-                    bool isExist = new EvidentInstruction.Models.TextFile().IsExist(filename, pathToSave);
+                    bool isExist = new TextFile().IsExist(filename, pathToSave);
                     if (isExist)
                     {
-                        Log.Logger.Warning( $"Файл  \"{filename}\" был скачан в директорию \"{endPath}\" ");
+                        Log.Logger.Warning($"The file \"{filename}\" has been downloaded to the \"{endPath}\"");
                         return true;
                     }
                     else
                     {
-                        Log.Logger.Warning($"Файл \"{filename}\" не скачан");
-                        throw new FileNotFoundException($"Файл \"{filename}\" не скачан");
+                        Log.Logger.Warning($"File \"{filename}\" not downloaded");
+                        throw new FileNotFoundException($"File \"{filename}\" not downloaded");
                     }
                 }
             }
 
             catch (WebException e)
             {
-                Log.Logger.Error($"Файл \"{filename}\" не скачан из за ошибки \"{e.Message}\"");
+                Log.Logger.Error($"File \"{filename}\" not downloaded due to error \"{e.Message}\"");
                 return false;
             }
         }

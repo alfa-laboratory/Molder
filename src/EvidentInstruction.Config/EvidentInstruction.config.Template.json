@@ -1,0 +1,13 @@
+﻿{
+  "config": [
+    {
+      "tag": "Browser",
+      "parameters": {
+        "browserId": "12345",
+        "version": "3.4",
+        "name": "Opera"
+      }
+    }
+  ]
+}
+    

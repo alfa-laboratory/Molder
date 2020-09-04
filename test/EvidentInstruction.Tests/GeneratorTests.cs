@@ -5,8 +5,8 @@ using FluentAssertions;
 using Moq;
 using EvidentInstruction.Exceptions;
 using EvidentInstruction.Helpers;
-using EvidentInstruction.Models.DateTimeHelpers;
 using Xunit;
+using EvidentInstruction.Models.DateTimeHelpers.Interfaces;
 
 namespace EvidentInstruction.Tests
 {

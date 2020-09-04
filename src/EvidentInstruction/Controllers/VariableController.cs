@@ -17,9 +17,6 @@ namespace EvidentInstruction.Controllers
 {
     public class VariableController
     {
-        private const string BracesPattern = @"\[([.\w]*)\]";
-        private const string SearchPattern = @"{([а-яА-я \w-_]*)}";
-
         public ConcurrentDictionary<string, Variable> Variables = null; 
 
         public VariableController()
@@ -55,8 +52,12 @@ namespace EvidentInstruction.Controllers
             if (correcKey == null) return null;
 
             if (Variables.ContainsKey(correcKey))
-                if (Variables[correcKey].TypeOfAccess == TypeOfAccess.Global)
-                   Log.Logger.Information($"Element with key: \"{key}\" contains value {Variables[correcKey].Value} with type 'Global'");
+            {
+                if (Variables[correcKey].TypeOfAccess == TypeOfAccess.Global || Variables[correcKey].TypeOfAccess == TypeOfAccess.Default)
+                {
+                    Log.Logger.Information($"Element with key: \"{key}\" contains value {Variables[correcKey].Value} with type '{Variables[correcKey].TypeOfAccess}'");
+                }
+            }
 
             return Variables.SingleOrDefault(_ => _.Key == GetVariableName(key)).Value;            
         }
@@ -68,19 +69,52 @@ namespace EvidentInstruction.Controllers
         {
             var varName = GetVariableName(key);
 
+            if(string.IsNullOrWhiteSpace(varName))
+            {
+                Log.Logger.Information($"Key: \"{key}\" is empty");
+                return;
+            }
+            
             if (Variables.ContainsKey(varName))
             {
-                if (accessType == TypeOfAccess.Local && Variables[varName].TypeOfAccess == TypeOfAccess.Global)
+                switch(Variables[varName].TypeOfAccess)
                 {
-                    Log.Logger.Information($"Element with key: \"{key}\" has already created ");
-                    return;
-                }                    
+                    case TypeOfAccess.Global:
+                        {
+                            switch(accessType)
+                            {
+                                case TypeOfAccess.Local:
+                                    {
+                                        Log.Logger.Information($"Element with key: \"{key}\" and '{Variables[varName].TypeOfAccess}' type has been replaced with type '{accessType}'");
+                                        break;
+                                    }
+                                case TypeOfAccess.Default:
+                                    {
+                                        Log.Logger.Information($"Element with key: \"{key}\" has already created  with type '{Variables[varName].TypeOfAccess}'");
+                                        return;
+                                    }
+                                case TypeOfAccess.Global:
+                                    {
+                                        Log.Logger.Warning($"Element with key: \"{key}\" has already created with type 'Global'");
+                                        throw new ArgumentException($"Element with key: \"{key}\" has already created with type 'Global'");
+                                    }
+                            }
+                            break;
+                        }
+                    case TypeOfAccess.Default:
+                        {
+                            switch (accessType)
+                            {
+                                case TypeOfAccess.Local:
+                                    {
+                                        Log.Logger.Information($"Element with key: \"{key}\" and '{Variables[varName].TypeOfAccess}' type has been replaced with type '{accessType}'");
+                                        break;
+                                    }
+                            }
+                            break;
+                        }
+                }
 
-                if (Variables[varName].TypeOfAccess == TypeOfAccess.Global)
-                {
-                    Log.Logger.Warning($"Element with key: \"{key}\" has already created with type 'Global'");
-                    throw new ArgumentException($"Element is duplicate");
-                }                
             }
 
             var vars = Variables;
@@ -88,9 +122,8 @@ namespace EvidentInstruction.Controllers
 
             vars.AddOrUpdate(varName, variable, (k, v) => variable);
             Variables = vars;
-        }
-
-
+           
+        } 
         public object GetVariableValue(string key)
         {
             try
@@ -114,7 +147,7 @@ namespace EvidentInstruction.Controllers
 
                     name = key.Split('[').First();
 
-                    keyPath = Regex.Match(key ?? string.Empty, BracesPattern).Groups[1].Value;
+                    keyPath = Regex.Match(key ?? string.Empty, StringPattern.BRACES).Groups[1].Value;
                 }
 
                 var var = Variables.SingleOrDefault(_ => _.Key == name).Value;
@@ -140,7 +173,7 @@ namespace EvidentInstruction.Controllers
 
                 if (typeof(BsonDocument).IsAssignableFrom(varType))
                 {
-                    var json = JObject.Parse(((BsonDocument)varValue).ToJson(new JsonWriterSettings { OutputMode = JsonOutputMode.Strict }));
+                    var json = JObject.Parse(((BsonDocument)varValue).ToJson(new JsonWriterSettings { OutputMode = JsonOutputMode.CanonicalExtendedJson }));
                     return json.SelectToken(path?.Remove(0, 2) ?? "/*") ?? varValue;
                 }
 
@@ -211,13 +244,13 @@ namespace EvidentInstruction.Controllers
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    Log.Logger.Warning($"Проверьте корректность переданного ключа \"{key}\"");
+                    Log.Logger.Warning($"Check the correctness of the key: \"{key}\"");
                     return null;
                 }
 
             }catch (NullReferenceException)
             {
-                Log.Logger.Warning($"Передан NULL параметр в функцию \"GetVariableValue\"/\"GetVariableValueText\"");
+                Log.Logger.Warning($"Set NULL value in \"GetVariableValue\"/\"GetVariableValueText\"");
                 return null;
             }
         }
@@ -240,7 +273,7 @@ namespace EvidentInstruction.Controllers
                     }
                 case XElement element when element.HasElements == true:
                     {
-                        Log.Logger.Warning($"Элемент с ключем \"{key}\" является узлом (XElement)");
+                        Log.Logger.Warning($"Key \"{key}\" is root for (XElement)");
                         return null;
                     }
 
@@ -251,7 +284,7 @@ namespace EvidentInstruction.Controllers
                     }
                 case XmlElement element when element.HasChildNodes == true:
                     {
-                        Log.Logger.Warning($"Элемент с ключем \"{key}\" является узлом (XmlElement)");
+                        Log.Logger.Warning($"Key \"{key}\" is root for (XmlElement)");
                         return null;
                     }
 
@@ -271,7 +304,7 @@ namespace EvidentInstruction.Controllers
 
         public string ReplaceVariables(string str, Func<object, string> foundReplace = null, Func<string, string> notFoundReplace = null)
         {
-            return ReplaceVariables(str, SearchPattern, foundReplace, notFoundReplace);
+            return ReplaceVariables(str, StringPattern.SEARCH, foundReplace, notFoundReplace);
         }
 
         private string ReplaceVariables(string str, string pattern, Func<object, string> foundReplace = null, Func<string, string> notFoundReplace = null)
