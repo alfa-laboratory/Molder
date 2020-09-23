@@ -1,15 +1,11 @@
 ﻿using EvidentInstruction.Database.Controllers;
-using EvidentInstruction.Database.Models.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 using TechTalk.SpecFlow;
 
 namespace EvidentInstruction.Database.Steps
 {
-    /// <summary>
-    /// Шаги для работы с БД.
-    /// </summary>
+
+    [ExcludeFromCodeCoverage]
     [Binding]
     public class DatabaseSteps
     {

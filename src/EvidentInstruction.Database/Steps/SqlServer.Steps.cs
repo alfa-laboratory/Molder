@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using FluentAssertions;
-using MongoDB.Bson;
-using Newtonsoft.Json.Linq;
 using EvidentInstruction.Controllers;
 using EvidentInstruction.Database.Controllers;
-using EvidentInstruction.Database.Helpers;
 using EvidentInstruction.Database.Models;
 using EvidentInstruction.Helpers;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
+using EvidentInstruction.Database.Infrastructures;
+using System.Data;
+using EvidentInstruction.Database.Helpers;
 
 namespace EvidentInstruction.Database.Steps
 {
@@ -40,6 +39,32 @@ namespace EvidentInstruction.Database.Steps
             return table;
         }
 
+        /// <summary>
+        /// Выполнение ExecuteQuery или ExecuteNonQuery
+        /// </summary>      
+        private (object, int) ExecuteAnyRequest(QueryType queryType, string connectionName, string query)
+        {
+            this.databaseController.Connections.ContainsKey(connectionName).Should().BeTrue($"Connection: \"{connectionName}\" does not exist");
+            query.Should().NotBeEmpty("Query cannot be empty.");
+
+            var (connection, timeout) = this.databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
+
+            query = this.variableController.ReplaceVariables(query);
+
+            Log.Logger.Information($"{queryType} query:" + Environment.NewLine + $"{query}");
+
+            switch (queryType)
+            {
+                case (QueryType.SELECT):
+                    Log.Logger.Information($"Choose {queryType} query. Query type is ExecuteQuery");
+                    var (outRecords, count) = connection.ExecuteQuery(query, timeout);
+                    Log.Logger.Information($"Request returned: {Environment.NewLine} {EvidentInstruction.Helpers.Message.CreateMessage((DataTable)outRecords)}");
+                    return (outRecords, count);
+                default:
+                    Log.Logger.Information($"Choose {queryType} query. Query type is ExecuteNonQuery");
+                    return (null, connection.ExecuteNonQuery(query, timeout));
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlServerSteps"/> class.
@@ -65,26 +90,59 @@ namespace EvidentInstruction.Database.Steps
             var table = ReplaceTableContent(dataTable);
             return table.CreateInstance<DbConnectionParams>();
         }
+
+        /// <summary>
+        /// Преобразование Таблицы с параметрами в Список словарей для создания запроса
+        /// </summary>        
         [StepArgumentTransformation]
         [Scope(Tag = "SqlServer")]
-        public DataTable TransformationTableToDatatable(Table table)
+        public IEnumerable<Dictionary<string, object>> TransformationTableToString(Table table)
         {
-            var inRecords = new DataTable();
-            inRecords.Columns.AddRange(table.Header.Select(_ => new DataColumn(_)).ToArray());
-            foreach (var row in table.Rows)
+            var tableParameters = new List<Dictionary<string, object>>();
+
+            IEnumerable<dynamic> insertTable = table.CreateDynamicSet();
+
+            var list = Enumerable.ToList(insertTable);
+
+            if (!list.Any())
             {
-                inRecords.Rows.Add(
-                    row.Values
-                        .Select(_ =>
-                        {
-                            var s = _;
-                            s = this.variableController.ReplaceVariables(s);
-                            return s;
-                        })
-                        .ToArray());
+                Log.Logger.Warning("List with table patameters is empty.");
+                throw new ArgumentNullException("List with table patameters is empty.");
             }
 
-            return inRecords;
+            foreach (var element in list)
+            {
+                DateTime date;
+
+                tableParameters
+                    .Add(((IDictionary<string, object>)element)
+                    .ToDictionary(e => e.Key, e =>
+                    {
+                        if (string.IsNullOrWhiteSpace(e.Value.ToString()))
+                        {
+                            return "NULL";
+                        }
+
+                        if (DateTime.TryParse(e.Value.ToString(), out date))
+                        {
+                            var result = date.ToString("yyyy-M-dd");
+                            return $"'{result}'";
+                        }
+
+                        if (e.Value.ToString().ToUpper() == "TRUE" || e.Value.ToString().ToUpper() == "FALSE")
+                        {
+                            return e.Value;
+                        }
+
+                        if (e.Value.ToString().Any(c => char.IsLetter(c)) & e.Value.ToString().ToUpper() != "NULL")
+                        {
+                            return $"'{e.Value}'";
+                        }
+
+                        return e.Value;
+                    }));
+            }
+            return tableParameters;
         }
 
         /// <summary>
@@ -98,177 +156,64 @@ namespace EvidentInstruction.Database.Steps
         {
             var (isValid, results) = EvidentInstruction.Helpers.Validate.ValidateModel(connectionParams);
             isValid.Should().BeTrue(EvidentInstruction.Helpers.Message.CreateMessage(results));
-            this.databaseController.Connections.ContainsKey(connectionName).Should().BeFalse($"Подключение с названием \"{connectionName}\" уже существует");
 
-            var connection = new SqlServerConnectionWrapper(connectionParams);
-            var dbConnection = connection.GetDb();
-            dbConnection.Should().NotBeNull($"Подключение к базе данных \"{connectionName}\" с параметрами: {Helpers.Message.CreateMessage(connectionParams)} не успешно.");
+            this.databaseController.Connections.ContainsKey(connectionName).Should().BeFalse($"Connection \"{connectionName}\" already exists");
+
+            var connection = new SqlServerClient();
+            connection.Create(connectionParams).Should().BeTrue();
+
+            connection.IsConnectAlive().Should().BeTrue();
 
             this.databaseController.Connections.TryAdd(connectionName, (connection, connectionParams.Timeout));
+            this.databaseController.Connections.Should().NotBeEmpty();
         }
 
         /// <summary>
-        /// Шаг выборки записей из базы данных и сохранения в переменную.
-        /// </summary>
-        /// <param name="connectionName">Название подключения.</param>
-        /// <param name="varName">Идентификатор переменной.</param>
-        /// <param name="query">Запрос.</param>
+        /// Выполнение ExecuteQuery или ExecuteNonQuery БЕЗ сохранения результата
+        /// </summary>        
         [Scope(Tag = "SqlServer")]
-        [StepDefinition(@"я выбираю несколько записей из БД ""(.+)"" и сохраняю их в переменную ""(.+)"":")]
-        public void SelectRowsFromDbSetVariable(string connectionName, string varName, string query)
+        [StepDefinition(@"я выполняю ""(.+)"" запрос в БД ""(.+)"" и не сохраняю результат:")]
+        public void ExecuteQuery(QueryType queryType, string connectionName, string query)
         {
-            this.databaseController.Connections.ContainsKey(connectionName).Should().BeTrue($"Подключение с названием \"{connectionName}\" не существует");
-            query.Should().NotBeEmpty("Запрос не может быть пустым.");
+            var (_, count) = ExecuteAnyRequest(queryType, connectionName, query);
+            Log.Logger.Information($"Request returned {count} row(s)");
+        }
 
-            var (connection, timeout) = this.databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
-            query = this.variableController.ReplaceVariables(query);
+        /// <summary>
+        /// Выполнение ExecuteQuery или ExecuteNonQuery C сохранением результата
+        /// </summary>        
+        [Scope(Tag = "SqlServer")]
+        [StepDefinition(@"я выполняю ""(.+)"" запрос в БД ""(.+)"" и сохраняю результат в переменную ""(.+)"":")]
+        public void ExecuteQuery(QueryType queryType, string connectionName, string varName, string query)
+        {
+            var (outRecords, count) = ExecuteAnyRequest(queryType, connectionName, query);
 
-            var (outRecords, _) = connection.SelectQuery(query:query, timeout:timeout);
-            outRecords.Should().NotBeNull($"При выполнении запроса: " +
-                $"{Environment.NewLine}" + $"{query} " + $"{Environment.NewLine}" +
-                $" возникли ошибки");
-            (outRecords is DataTable).Should().BeTrue("Выходные данные не являются типом DataTable");
             this.variableController.SetVariable(varName, typeof(DataTable), outRecords);
 
-            Log.Logger.Information($"Выходные данные запроса:" + Environment.NewLine + $"{query}" + Environment.NewLine + EvidentInstruction.Helpers.Message.CreateMessage((DataTable)outRecords));
+            Log.Logger.Information($"Request returned {count} row(s)");
         }
 
         /// <summary>
-        /// Шаг выборки записи из базы данных и сохранения в переменную.
-        /// </summary>
-        /// <param name="connectionName">Название подключения.</param>
-        /// <param name="varName">Идентификатор переменной.</param>
-        /// <param name="query">Запрос.</param>
+        /// Шаг выполнения Insert в БД с указанными значениями
+        /// </summary>        
         [Scope(Tag = "SqlServer")]
-        [StepDefinition(@"я выбираю единственную запись из БД ""(.+)"" и сохраняю её в переменную ""(.+)"":")]
-        public void SelectSingleRowFromDbSetVariable(string connectionName, string varName, string query)
+        [StepDefinition(@"я добавляю записи в таблицу ""(.+)"" в БД ""(.+)"":")]
+        public void ExecuteInsertQueryFromTable(string tableName, string connectionName, IEnumerable<Dictionary<string, object>> insertQuery)
         {
-            this.databaseController.Connections.ContainsKey(connectionName).Should().BeTrue($"Подключение с названием \"{connectionName}\" не существует");
-            query.Should().NotBeEmpty("Запрос не может быть пустым.");
 
-            var (connection, timeout) = this.databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
-            query = this.variableController.ReplaceVariables(query);
-
-            var (outRecords, count) = connection.SelectQuery(query: query, timeout: timeout);
-            outRecords.Should().NotBeNull($"При выполнении запроса: " +
-                $"{Environment.NewLine}" + $"{query} " + $"{Environment.NewLine}" +
-                $" возникли ошибки");
-            count.Should().Be(1, "Запрос: " + $"{Environment.NewLine}" + $"{query}" + $"{ Environment.NewLine}" + 
-                $" вернул не одну запись");
-
-            (outRecords is DataTable).Should().BeTrue("Выходные данные не являются типом DataTable");
-            this.variableController.SetVariable(varName, typeof(DataRow), ((DataTable)outRecords).Rows[0]);
-            Log.Logger.Information($"Выходные данные запроса:" + Environment.NewLine + $"{query}" + Environment.NewLine + EvidentInstruction.Helpers.Message.CreateMessage((DataTable)outRecords));
-        }
-
-        /// <summary>
-        /// Шаг выборки единственной ячейки из базы данных и сохранения в переменную.
-        /// </summary>
-        /// <param name="connectionName">Название подключения.</param>
-        /// <param name="varName">Идентификатор переменной.</param>
-        /// <param name="query">Запрос.</param>
-        [Scope(Tag = "SqlServer")]
-        [StepDefinition(@"я сохраняю значение единственной ячейки из выборки из БД ""(.+)"" в переменную ""(.+)"":")]
-        public void SelectScalarFromDbSetVariable(string connectionName, string varName, string query)
-        {
-            this.databaseController.Connections.ContainsKey(connectionName).Should().BeTrue($"Подключение с названием \"{connectionName}\" не существует");
-            query.Should().NotBeEmpty("Запрос не может быть пустым.");
-
-            var (connection, timeout) = this.databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
-            query = this.variableController.ReplaceVariables(query);
-
-            var (outRecords, count) = connection.SelectQuery(query: query, timeout: timeout);
-
-            outRecords.Should().NotBeNull($"При выполнении запроса: " +
-                $"{Environment.NewLine}" + $"{query} " + $"{Environment.NewLine}" +
-                $" возникли ошибки");
-            count.Should().Be(1, "Запрос: " + $"{Environment.NewLine}" + $"{query}" + $"{ Environment.NewLine}" +
-                $" вернул не одну запись");
-            (outRecords is DataTable).Should().BeTrue("Выходные данные не являются типом DataTable");
-
-            this.variableController.SetVariable(
-                varName,
-                ((DataTable)outRecords).Columns[0].DataType,
-                ((DataTable)outRecords).Rows[0][0]);
-            Log.Logger.Information($"Выходные данные запроса:" + Environment.NewLine + $"{query}" + Environment.NewLine + EvidentInstruction.Helpers.Message.CreateMessage((DataTable)outRecords));
-        }
-
-        /// <summary>
-        /// Шаг занесения данных в базу данных и сохранения в переменную.
-        /// </summary>
-        /// <param name="connectionName">Название подключения.</param>
-        /// <param name="tableName">Название таблицы.</param>
-        /// <param name="varName">Идентификатор переменной.</param>
-        /// <param name="data">Данные.</param>
-        [Scope(Tag = "SqlServer")]
-        [When(@"я заношу записи в БД ""(.+)"" в таблицу ""(.+)"" и сохраняю результат в переменную ""(.+)"":")]
-        public void InsertRowsIntoDbSetVariable(string connectionName, string tableName, string varName, DataTable data)
-        {
-            this.databaseController.Connections.ContainsKey(connectionName).Should().BeTrue($"Подключение с названием \"{connectionName}\" не существует");
+            this.databaseController.Connections.ContainsKey(connectionName).Should().BeTrue($"Connection: \"{connectionName}\" does not exist");
             var (connection, timeout) = this.databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
 
-            var (outRecords, count) = connection.InsertRows(tableName, data, timeout);
-            count.Should().Be(data.Rows.Count, "Были добавлены не все записи.");
-            this.variableController.SetVariable(varName, typeof(DataTable), outRecords);
-            Log.Logger.Information($"Выходные данные INSERT запроса " + Environment.NewLine + EvidentInstruction.Helpers.Message.CreateMessage((DataTable)outRecords));
-        }
+            connection.IsConnectAlive().Should().BeTrue();
 
-        /// <summary>
-        /// Шаг занесения данных в базу данных.
-        /// </summary>
-        /// <param name="connectionName">Название подключения.</param>
-        /// <param name="tableName">Название таблицы.</param>
-        /// <param name="data">Данные.</param>
-        [Scope(Tag = "SqlServer")]
-        [When(@"я заношу записи в БД ""(.+)"" в таблицу ""(.+)"" без сохранения занесения в переменную:")]
-        public void InsertRowsIntoDb(string connectionName, string tableName, DataTable data)
-        {
-            this.databaseController.Connections.ContainsKey(connectionName).Should().BeTrue($"Подключение с названием \"{connectionName}\" не существует");
-            var (connection, timeout) = this.databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
+            var query = insertQuery.ToSqlQuery(tableName);
 
-            var (outRecords, count) = connection.InsertRows(tableName, data, timeout);
-            count.Should().Be(data.Rows.Count, "Были добавлены не все записи.");
-            Log.Logger.Information($"Выходные данные INSERT запроса " + Environment.NewLine + EvidentInstruction.Helpers.Message.CreateMessage((DataTable)outRecords));
-        }
+            var count = connection.ExecuteNonQuery(query, timeout);
 
-        /// <summary>
-        /// Шаг обновления данных в базе данных.
-        /// </summary>
-        /// <param name="connectionName">Название подключения.</param>
-        /// <param name="query">Запрос.</param>
-        [Scope(Tag = "SqlServer")]
-        [When(@"я обновляю записи в БД ""(.+)"" без занесения в переменную:")]
-        public void UpdateRowsInDb(string connectionName, string query)
-        {
-            this.databaseController.Connections.ContainsKey(connectionName).Should().BeTrue($"Подключение с названием \"{connectionName}\" не существует");
-            var (connection, timeout) = this.databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
+            count.Should().NotBe(0, "INSERT failed. Check table names or values");
+            Log.Logger.Information($"INSERT completed {Environment.NewLine} {query}. {Environment.NewLine} Changed {count} row(s).");
 
-            query = this.variableController.ReplaceVariables(query);
 
-            var count = connection.UpdateRows(query:query, timeout:timeout);
-            count.Should().NotBe(0, "Запрос: " + $"{Environment.NewLine}" + $"{query}" + $"{ Environment.NewLine}" +
-                $" вернул не одну запись");
-            Log.Logger.Information($"UPDATE запрос:" + Environment.NewLine + $"{query}" + $" вернул {count} запись");
-        }
-
-        /// <summary>
-        /// Шаг выполнения кода в базе данных.
-        /// </summary>
-        /// <param name="connectionName">Название подключения.</param>
-        /// <param name="query">Запрос.</param>
-        [Scope(Tag = "SqlServer")]
-        [When(@"я выполняю NonQuery запрос в БД ""(.+)"":")]
-        public void ExecuteQueryInDb(string connectionName, string query)
-        {
-            this.databaseController.Connections.ContainsKey(connectionName).Should().BeTrue($"Подключение с названием \"{connectionName}\" не существует");
-            var (connection, timeout) = this.databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
-
-            query = this.variableController.ReplaceVariables(query);
-
-            Log.Logger.Information($"NonQuery запрос:" + Environment.NewLine + $"{query}");
-
-            var count = connection.ExecuteNonQuery(query:query, timeout:timeout);
-            Log.Logger.Information($"NonQuery запрос:" + Environment.NewLine + $"{query}" + $" вернул {count} запись");
         }
     }
 }
