@@ -106,8 +106,8 @@ namespace EvidentInstruction.Database.Steps
 
             if (!list.Any())
             {
-                Log.Logger.Warning("List with table patameters is empty.");
-                throw new ArgumentNullException("List with table patameters is empty.");
+                Log.Logger.Warning("List with table patameters is Empty.");
+                throw new ArgumentNullException("List with table patameters is Empty.");
             }
 
             foreach (var element in list)

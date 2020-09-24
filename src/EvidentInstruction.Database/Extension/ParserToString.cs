@@ -19,6 +19,12 @@ namespace EvidentInstruction.Database.Helpers
 
             var strBuilder = new StringBuilder();
 
+            if (string.IsNullOrWhiteSpace(tableName))
+            {
+                Log.Logger.Warning("Table name is Empty.");
+                throw new ArgumentNullException("Table name is Empty.");
+            }
+
             if (tableParameters.Any())
             {
                 tableParameters.ToList().ForEach(row =>

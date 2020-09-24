@@ -4,6 +4,8 @@ using EvidentInstruction.Database.Models.Interfaces;
 using FluentAssertions;
 using Moq;
 using System;
+using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
@@ -53,7 +55,7 @@ namespace EvidentInstruction.Database.Tests
             var client = new SqlServerClient();
             Action action = () => client.Create(parameter).Should().BeFalse();
             action.Should()
-                .Throw<Exception>()
+                .Throw<System.Exception>()
                 .WithMessage("Connection failed: Object reference not set to an instance of an object.");
         }
 
@@ -82,7 +84,7 @@ namespace EvidentInstruction.Database.Tests
         }
 
         [Fact]
-        public void ExecuteQuery_IncorrectQuery_ReturnThrow()
+        public void ExecuteQuery_IncorrectQuery_ReturnNull()
         {
             var query = "select top 1 * test111";
 
@@ -98,8 +100,48 @@ namespace EvidentInstruction.Database.Tests
             count.Should().Be(0);
         }
 
+        [Fact] 
+        public void ExecuteQuery_CorrectQuery_ReturnTable()
+        {
+            var query = "select top 1 * from test111";
+
+            var mockSqlProvider = new Mock<ISqlProvider>();
+
+            var client = new SqlServerClient();
+
+            mockSqlProvider
+                .Setup(u => u.UsingTransaction(It.IsAny<Action<DbTransaction>>(), It.IsAny<Action<Exception>>(), null))
+                .Callback((Action<DbTransaction> action, Action<Exception> ex, Action success) => new DataTable());
+
+            client._provider = mockSqlProvider.Object;
+
+            var (outResult, count) = client.ExecuteQuery(query);
+
+            count.Should().Be(0); //TODO (not 0)
+        }
+
+        [Fact] 
+        public void ExecuteNonQuery_CorrectQuery_ReturnTable()
+        {
+            var query = "INSERT INTO test111 (f1) VALUES (1)"; 
+
+            var mockSqlProvider = new Mock<ISqlProvider>();
+
+            var client = new SqlServerClient();
+
+            mockSqlProvider
+                .Setup(u => u.UsingTransaction(It.IsAny<Action<DbTransaction>>(), It.IsAny<Action<Exception>>(), null))
+                .Callback((Action<DbTransaction> action, Action<Exception> ex, Action success) => new DataTable());
+
+            client._provider = mockSqlProvider.Object;
+
+            var count = client.ExecuteNonQuery(query);
+
+            count.Should().Be(0); //TODO (not 0)
+        }
+
         [Fact]
-        public void ExecuteNonQuery_IncorrectQuery_ReturnThrow()
+        public void ExecuteNonQuery_IncorrectQuery_ReturnNull()
         {
             var query = "INSERT INTO test111 f1 VALUES (10)";
 
@@ -114,5 +156,6 @@ namespace EvidentInstruction.Database.Tests
 
             count.Should().Be(0);
         }
+
     }
 }

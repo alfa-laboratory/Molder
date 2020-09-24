@@ -20,7 +20,7 @@ namespace EvidentInstruction.Database.Helpers
             }
             catch (ArgumentNullException)
             {
-                Log.Logger.Warning("Комманда не передана (null).");
+                Log.Logger.Warning("DbCommand is Empty (null).");
                 return null;
             }
             return message;
