@@ -44,8 +44,8 @@ namespace EvidentInstruction.Database.Tests
         public void ToSqlQuery_TableNameIsEmpty_ReturnThrow()
         {
             var tableName = string.Empty;
-            var table = new Table(new string[] { "id", "User", "Balance", "Date", "Bool" });
-            table.AddRow("1243", "Петор Петров", "100000", "2000-12-12", "false");
+            var table = new Table(new string[] { "id", "User", "Balance", "Date", "Bool", "idClient" });
+            table.AddRow("1243", "Петор Петров", "100000", "2000-12-12", "false", "");
 
             var ListParams = step.TransformationTableToString(table);
 

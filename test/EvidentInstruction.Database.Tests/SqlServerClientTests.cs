@@ -157,5 +157,25 @@ namespace EvidentInstruction.Database.Tests
             count.Should().Be(0);
         }
 
+        [Fact]
+        public void ExecuteScalar_CorrectQuery_ReturnObject()
+        {
+            var query = "select top 1 * from test111";
+
+            var mockSqlProvider = new Mock<ISqlProvider>();
+
+            var client = new SqlServerClient();
+
+            mockSqlProvider
+                .Setup(u => u.UsingTransaction(It.IsAny<Action<DbTransaction>>(), It.IsAny<Action<Exception>>(), null))
+                .Callback((Action<DbTransaction> action, Action<Exception> ex, Action success) => new object());
+
+            client._provider = mockSqlProvider.Object;
+
+            var outResult = client.ExecuteScalar(query);
+
+            outResult.Should().BeNull();
+        }
+
     }
 }

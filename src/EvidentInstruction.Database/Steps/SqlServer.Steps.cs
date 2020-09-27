@@ -57,12 +57,13 @@ namespace EvidentInstruction.Database.Steps
             {
                 case (QueryType.SELECT):
                     Log.Logger.Information($"Choose {queryType} query. Query type is ExecuteQuery");
-                    var (outRecords, count) = connection.ExecuteQuery(query, timeout);
+                    var (outRecords, queryCount) = connection.ExecuteQuery(query, timeout);
                     Log.Logger.Information($"Request returned: {Environment.NewLine} {EvidentInstruction.Helpers.Message.CreateMessage((DataTable)outRecords)}");
-                    return (outRecords, count);
+                    return (outRecords, queryCount);
                 default:
                     Log.Logger.Information($"Choose {queryType} query. Query type is ExecuteNonQuery");
-                    return (null, connection.ExecuteNonQuery(query, timeout));
+                    var nonQueryCount = connection.ExecuteNonQuery(query, timeout);
+                    return (null, nonQueryCount);
             }
         }
 
@@ -176,7 +177,7 @@ namespace EvidentInstruction.Database.Steps
         public void ExecuteQuery(QueryType queryType, string connectionName, string query)
         {
             var (_, count) = ExecuteAnyRequest(queryType, connectionName, query);
-            Log.Logger.Information($"Request returned {count} row(s)");
+            Log.Logger.Information($"Request {query} returned {count} row(s)");
         }
 
         /// <summary>
@@ -190,7 +191,7 @@ namespace EvidentInstruction.Database.Steps
 
             this.variableController.SetVariable(varName, typeof(DataTable), outRecords);
 
-            Log.Logger.Information($"Request returned {count} row(s)");
+            Log.Logger.Information($"Request {query} returned {count} row(s)");
         }
 
         /// <summary>
@@ -210,7 +211,7 @@ namespace EvidentInstruction.Database.Steps
 
             var count = connection.ExecuteNonQuery(query, timeout);
 
-            count.Should().NotBe(0, "INSERT failed. Check table names or values");
+            count.Should().NotBe(0, $"INSERT {query} failed. Check table names or values");
             Log.Logger.Information($"INSERT completed {Environment.NewLine} {query}. {Environment.NewLine} Changed {count} row(s).");
 
 

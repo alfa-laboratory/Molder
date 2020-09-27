@@ -10,8 +10,8 @@ using Xunit;
 using EvidentInstruction.Database.Models.Interfaces;
 using Moq;
 using EvidentInstruction.Database.Infrastructures;
-using System.Data;
 using TechTalk.SpecFlow;
+using System.Collections.Generic;
 
 namespace EvidentInstruction.Database.Tests
 {
@@ -23,7 +23,6 @@ namespace EvidentInstruction.Database.Tests
         private DatabaseController databaseController;
         private VariableController variableController;
         private SqlServerSteps step;
-
 
         public SqlServerStepTests()
         {
@@ -106,8 +105,7 @@ namespace EvidentInstruction.Database.Tests
 
             this.databaseController.Connections.TryAdd(connectName, (connection, 30));
 
-            step.ExecuteQuery(QueryType.SELECT, connectName, query);
-            // TODO check
+            step.ExecuteQuery(QueryType.SELECT, connectName, query);            
         }
 
         [Fact]
@@ -129,6 +127,29 @@ namespace EvidentInstruction.Database.Tests
             step.ExecuteQuery(QueryType.INSERT, connectName, varName, query);
 
             this.variableController.Variables.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void ExecuteInsertQueryFromTable_CorrectParams_ReturnThrow()
+        {
+            var mockSqlProvider = new Mock<IDbClient>();
+
+            var tableName = "newVariable";
+            var connectName = "NewConnect";
+
+            var insertQuery = new List<Dictionary<string, object>>();
+            insertQuery.Add(new Dictionary<string, object>());
+
+            IDbClient connection = new SqlServerClient();
+            mockSqlProvider.Setup(c => c.Create(It.IsAny<DbConnectionParams>())).Returns(true);
+            mockSqlProvider.Setup(c => c.IsConnectAlive()).Returns(true);
+
+            connection = mockSqlProvider.Object;
+
+            this.databaseController.Connections.TryAdd(connectName, (connection, 30));
+            Action action = () => step.ExecuteInsertQueryFromTable(tableName, connectName, insertQuery);
+            action.Should()
+                .Throw<Xunit.Sdk.XunitException>();
         }
     }
 }

@@ -3,7 +3,6 @@ using EvidentInstruction.Helpers;
 using System;
 using System.Data;
 using System.Linq;
-using System.Text;
 
 namespace EvidentInstruction.Database.Helpers
 {
@@ -18,7 +17,7 @@ namespace EvidentInstruction.Database.Helpers
                 $"{command.CommandText}{Environment.NewLine}-- Params: " +
                 $"{string.Join(", ", command.Parameters.Cast<IDbDataParameter>().Select(p => $"{p.ParameterName}='{p.Value?.ToString()}' ({Enum.GetName(typeof(DbType), p.DbType)})"))}";
             }
-            catch (ArgumentNullException)
+            catch (Exception)
             {
                 Log.Logger.Warning("DbCommand is Empty (null).");
                 return null;
@@ -27,13 +26,7 @@ namespace EvidentInstruction.Database.Helpers
         }
         public static string CreateMessage(string connectionParams)
         {
-            var message = new StringBuilder();
-
-            foreach (var element in connectionParams.Split(';'))
-            {
-                message.Append(Environment.NewLine + element);
-            }
-            return message.ToString();
+            return string.Join($"{Environment.NewLine}", connectionParams.Split(';'));
         }
 
         public static string CreateMessage(DbConnectionParams connectionParams)
