@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Config",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Config.Tests", "test\EvidentInstruction.Config.Tests\EvidentInstruction.Config.Tests.csproj", "{6F830FB2-0FD7-458B-91B3-8BB2217FAD80}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EvidentInstruction.Database.Tests", "test\EvidentInstruction.Database.Tests\EvidentInstruction.Database.Tests.csproj", "{DBFCA66D-73D5-4D53-AFD1-99BAD7337D63}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -125,6 +127,18 @@ Global
 		{6F830FB2-0FD7-458B-91B3-8BB2217FAD80}.Release|x64.Build.0 = Release|Any CPU
 		{6F830FB2-0FD7-458B-91B3-8BB2217FAD80}.Release|x86.ActiveCfg = Release|Any CPU
 		{6F830FB2-0FD7-458B-91B3-8BB2217FAD80}.Release|x86.Build.0 = Release|Any CPU
+		{DBFCA66D-73D5-4D53-AFD1-99BAD7337D63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBFCA66D-73D5-4D53-AFD1-99BAD7337D63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBFCA66D-73D5-4D53-AFD1-99BAD7337D63}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DBFCA66D-73D5-4D53-AFD1-99BAD7337D63}.Debug|x64.Build.0 = Debug|Any CPU
+		{DBFCA66D-73D5-4D53-AFD1-99BAD7337D63}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DBFCA66D-73D5-4D53-AFD1-99BAD7337D63}.Debug|x86.Build.0 = Debug|Any CPU
+		{DBFCA66D-73D5-4D53-AFD1-99BAD7337D63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBFCA66D-73D5-4D53-AFD1-99BAD7337D63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBFCA66D-73D5-4D53-AFD1-99BAD7337D63}.Release|x64.ActiveCfg = Release|Any CPU
+		{DBFCA66D-73D5-4D53-AFD1-99BAD7337D63}.Release|x64.Build.0 = Release|Any CPU
+		{DBFCA66D-73D5-4D53-AFD1-99BAD7337D63}.Release|x86.ActiveCfg = Release|Any CPU
+		{DBFCA66D-73D5-4D53-AFD1-99BAD7337D63}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
