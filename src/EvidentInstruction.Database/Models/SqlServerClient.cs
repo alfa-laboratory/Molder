@@ -63,7 +63,7 @@ namespace EvidentInstruction.Database.Models
             catch (System.Exception ex)
             {
                 Log.Logger.Error($"Connection failed: {ex.Message}");
-                throw new InvalidOperationException($"Connection failed: {ex.Message}");
+                throw new ConnectSqlException($"Connection failed: {ex.Message}");
             }
         }
         public bool IsConnectAlive()
