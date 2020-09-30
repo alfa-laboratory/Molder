@@ -6,6 +6,7 @@
         string Path { get; set; }
         string Content { get; set; }
         string Url { get; set; }
+
         bool Create(string filename, string path, string content = null);
         string GetContent(string filename, string path);
         bool Delete(string filename, string path);

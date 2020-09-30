@@ -22,9 +22,7 @@ namespace EvidentInstruction.Models
         {
             try
             {
-                bool isExist = System.IO.File.Exists(fullpath);
-                if (isExist) return true;
-                else return false;
+                return System.IO.File.Exists(fullpath);
             }
             catch (FileNotFoundException e)
             {
