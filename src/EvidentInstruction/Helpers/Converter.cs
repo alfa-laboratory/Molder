@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
@@ -23,12 +24,12 @@ namespace EvidentInstruction.Helpers
             {
                 if (string.IsNullOrEmpty(str))
                 {
-                    Log.Logger.Warning("Input string for creating the list is not specified");
+                    Log.Logger().LogWarning("Input string for creating the list is not specified");
                     return null;
                 }
                 else
                 {
-                    Log.Logger.Warning("Input string for creating the list is not specified");
+                    Log.Logger().LogWarning("Input string for creating the list is not specified");
                     return new List<string>() { str };
                 }
             }
@@ -42,7 +43,7 @@ namespace EvidentInstruction.Helpers
             }
             catch (XmlException ex)
             {
-                Log.Logger.Warning(ex.Message);
+                Log.Logger().LogWarning(ex.Message);
                 return null;
             }
         }
@@ -56,7 +57,7 @@ namespace EvidentInstruction.Helpers
                 return doc;
             }catch(XmlException ex)
             {
-                Log.Logger.Warning(ex.Message);
+                Log.Logger().LogWarning(ex.Message);
                 return null;
             }
         }
@@ -68,7 +69,7 @@ namespace EvidentInstruction.Helpers
                 return JObject.Parse(str);
             }catch(JsonException ex)
             {
-                Log.Logger.Warning(ex.Message);
+                Log.Logger().LogWarning(ex.Message);
                 return null;
             }
         }
@@ -80,7 +81,7 @@ namespace EvidentInstruction.Helpers
                 var element = XElement.Parse(str);
                 if(element.FirstNode.NodeType != XmlNodeType.CDATA)
                 {
-                    Log.Logger.Warning($"The variable value to convert to CDATA is null");
+                    Log.Logger().LogWarning($"The variable value to convert to CDATA is null");
                     return null;
                 }
                 var data = ((XText)element.FirstNode).Value;
@@ -89,7 +90,7 @@ namespace EvidentInstruction.Helpers
             }
             catch (XmlException ex)
             {
-                Log.Logger.Warning($"Variable value to convert to CDATA was not created due to error: {ex.Message}");
+                Log.Logger().LogWarning($"Variable value to convert to CDATA was not created due to error: {ex.Message}");
                 return null;
             }
         }

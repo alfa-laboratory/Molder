@@ -7,6 +7,7 @@ using EvidentInstruction.Config.Exceptions;
 using EvidentInstruction.Exceptions;
 using System;
 using EvidentInstruction.Models.File.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace EvidentInstruction.Config.Helpers
 {
@@ -23,20 +24,20 @@ namespace EvidentInstruction.Config.Helpers
             
                 if (dublicatesTags.Any())
                 {
-                    Log.Logger.Warning($"Json has {dublicatesTags.Count} dublicates:" + System.Environment.NewLine + $"{Message.CreateMessage(dublicatesTags)}");                    
+                    Log.Logger().LogWarning($"Json has {dublicatesTags.Count} dublicates:" + System.Environment.NewLine + $"{Message.CreateMessage(dublicatesTags)}");                    
                     throw new ConfigException($"Json has {dublicatesTags.Count} dublicates:" + System.Environment.NewLine + $"{Message.CreateMessage(dublicatesTags)}");
                 }
                 else
                 {
-                    Log.Logger.Information($"Dublicates in config file not found");
+                    Log.Logger().LogInformation($"Dublicates in config file not found");
                 }
                 if (tags.Any())
                 {
-                    Log.Logger.Information($"Dictionary created. Dictionary has {tags.Count} parameters");
+                    Log.Logger().LogInformation($"Dictionary created. Dictionary has {tags.Count} parameters");
                 }
                 else
                 {
-                    Log.Logger.Warning("Dictionary not created");
+                    Log.Logger().LogWarning("Dictionary not created");
                 }            
 
             return tags;
@@ -52,7 +53,7 @@ namespace EvidentInstruction.Config.Helpers
 
                 if (string.IsNullOrWhiteSpace(content))
                 {
-                    Log.Logger.Warning($"File \"{filename}\" is empty");
+                    Log.Logger().LogWarning($"File \"{filename}\" is empty");
                     return new ConcurrentDictionary<string, object>();
                 }
 
@@ -60,7 +61,7 @@ namespace EvidentInstruction.Config.Helpers
 
                 if (config == null)
                 {
-                    Log.Logger.Warning("Json model is empty for config file");
+                    Log.Logger().LogWarning("Json model is empty for config file");
                     return new ConcurrentDictionary<string, object>();
                 }
 
@@ -68,12 +69,12 @@ namespace EvidentInstruction.Config.Helpers
             }
             catch(FileExistException e)
             {
-                Log.Logger.Warning($"Config file \"{filename}\" not found: {e.Message}"); 
+                Log.Logger().LogWarning($"Config file \"{filename}\" not found: {e.Message}"); 
                 throw new FileExistException($"Config file \"{filename}\" not found in path \"{path}\"");
             }
             catch (NoFileNameException e)
             {
-                Log.Logger.Warning($"Config filename \"{filename}\" is empty: {e.Message}");
+                Log.Logger().LogWarning($"Config filename \"{filename}\" is empty: {e.Message}");
                 throw new NoFileNameException($"Config filename is empty");
             }
         }
@@ -88,7 +89,7 @@ namespace EvidentInstruction.Config.Helpers
             
              if (config.Parameters == null)
              {
-                 Log.Logger.Information($"Keys \"config \" or \"parameters\" not found in Json ");
+                 Log.Logger().LogInformation($"Keys \"config \" or \"parameters\" not found in Json ");
                  return (tags, dublicatesTags);
              } 
 

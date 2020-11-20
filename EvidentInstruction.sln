@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30225.117
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1082
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction", "src\EvidentInstruction\EvidentInstruction.csproj", "{2F008A06-7F5C-4205-ABBF-75CD3E7F75E7}"
 EndProject
@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Config",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Config.Tests", "test\EvidentInstruction.Config.Tests\EvidentInstruction.Config.Tests.csproj", "{6F830FB2-0FD7-458B-91B3-8BB2217FAD80}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EvidentInstruction.Database.Tests", "test\EvidentInstruction.Database.Tests\EvidentInstruction.Database.Tests.csproj", "{DBFCA66D-73D5-4D53-AFD1-99BAD7337D63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Database.Tests", "test\EvidentInstruction.Database.Tests\EvidentInstruction.Database.Tests.csproj", "{DBFCA66D-73D5-4D53-AFD1-99BAD7337D63}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

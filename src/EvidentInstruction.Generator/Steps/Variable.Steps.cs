@@ -6,6 +6,7 @@ using FluentAssertions;
 using EvidentInstruction.Controllers;
 using EvidentInstruction.Helpers;
 using TechTalk.SpecFlow;
+using Microsoft.Extensions.Logging;
 
 namespace EvidentInstruction.Generator.Steps
 {
@@ -151,7 +152,7 @@ namespace EvidentInstruction.Generator.Steps
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная \"{varName}\" уже существует");
             var xmlBody = this.variableController.ReplaceVariables(xml);
 
-            Log.Logger.Information($"xml is \"{xmlBody}\"");
+            Log.Logger().LogInformation($"xml is \"{xmlBody}\"");
 
             var doc = Converter.CreateXmlDoc(xmlBody);
             doc.Should().NotBeNull($"Создать XmlDoc из строки \"{xmlBody}\" не удалось");

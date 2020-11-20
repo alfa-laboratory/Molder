@@ -1,6 +1,7 @@
 ﻿using EvidentInstruction.Database.Exceptions;
 using EvidentInstruction.Database.Models.Interfaces;
 using EvidentInstruction.Helpers;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Data;
 using System.Data.Common;
@@ -22,31 +23,31 @@ namespace EvidentInstruction.Database.Models
                 if (connection is null)
                 {
                     connection = Open(connectionString);
-                    Log.Logger.Information($"Connection with parameters: {Helpers.Message.CreateMessage(connectionString)} is open");
+                    Log.Logger().LogInformation($"Connection with parameters: {Helpers.Message.CreateMessage(connectionString)} is open");
                     return true;
                 }
                 else
                 {
                     if (connection.ConnectionString.Equals(connectionString))
                     {
-                        Log.Logger.Warning($"Connection with parameters: {Helpers.Message.CreateMessage(connectionString)} is already create");
+                        Log.Logger().LogWarning($"Connection with parameters: {Helpers.Message.CreateMessage(connectionString)} is already create");
                         return false;
                     }
                     else
                     {
-                        Log.Logger.Warning($"Connection parameters are different: {Helpers.Message.CreateMessage(connectionString)}");
+                        Log.Logger().LogWarning($"Connection parameters are different: {Helpers.Message.CreateMessage(connectionString)}");
                         return false;
                     }
                 }
             }
             catch (DbException ex)
             {
-                Log.Logger.Error($"Connection with parameters: {Helpers.Message.CreateMessage(connectionString)} failed.{Environment.NewLine} {ex.Message}");
+                Log.Logger().LogError($"Connection with parameters: {Helpers.Message.CreateMessage(connectionString)} failed.{Environment.NewLine} {ex.Message}");
                 throw new ConnectSqlException($"Connection with parameters: {Helpers.Message.CreateMessage(connectionString)} failed.{Environment.NewLine} {ex.Message}");
             }
             catch (InvalidOperationException ex)
             {
-                Log.Logger.Error($"Connection string is empty: {Helpers.Message.CreateMessage(connectionString)} {ex.Message}");
+                Log.Logger().LogError($"Connection string is empty: {Helpers.Message.CreateMessage(connectionString)} {ex.Message}");
                 throw new InvalidOperationException($"Connection string is empty: {Helpers.Message.CreateMessage(connectionString)} {ex.Message}");
             }
         }
@@ -62,7 +63,7 @@ namespace EvidentInstruction.Database.Models
             }
             catch (System.Exception ex)
             {
-                Log.Logger.Error($"Transaction failed: {transaction} {Environment.NewLine} {ex.Message}");
+                Log.Logger().LogError($"Transaction failed: {transaction} {Environment.NewLine} {ex.Message}");
                 transaction.Rollback();
                 onError(ex.GetBaseException());
             }
@@ -108,7 +109,7 @@ namespace EvidentInstruction.Database.Models
                     }
                     catch (System.Exception ex)
                     {
-                        Log.Logger.Error($"Connection not closed {ex.Message}");
+                        Log.Logger().LogError($"Connection not closed {ex.Message}");
                     }
                 }
 
@@ -118,7 +119,7 @@ namespace EvidentInstruction.Database.Models
             }
             catch (System.Exception ex)
             {
-                Log.Logger.Error($"Connection not closed: {ex.Message}");
+                Log.Logger().LogError($"Connection not closed: {ex.Message}");
                 return false;
             }
         }

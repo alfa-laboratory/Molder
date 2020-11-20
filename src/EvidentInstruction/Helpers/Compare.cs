@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
@@ -11,7 +12,7 @@ namespace EvidentInstruction.Helpers
             var errors = new List<string>();
             if (fTable.Rows.Count != sTable.Rows.Count || fTable.Columns.Count != sTable.Columns.Count)
             {
-                Log.Logger.Error($"First Table Size ({fTable.Rows.Count};{fTable.Columns.Count}) " +
+                Log.Logger().LogError($"First Table Size ({fTable.Rows.Count};{fTable.Columns.Count}) " +
                         $"not equal with Second Table Size ({sTable.Rows.Count};{sTable.Columns.Count})");
                 return false;
             }
@@ -28,7 +29,7 @@ namespace EvidentInstruction.Helpers
             }
             if(errors.Any())
             {
-                Log.Logger.Error(Message.CreateMessage(errors));
+                Log.Logger().LogError(Message.CreateMessage(errors));
                 return false;
             }
 
