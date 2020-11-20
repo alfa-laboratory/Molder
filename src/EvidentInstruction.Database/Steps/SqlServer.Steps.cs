@@ -11,6 +11,7 @@ using TechTalk.SpecFlow.Assist;
 using EvidentInstruction.Database.Infrastructures;
 using System.Data;
 using EvidentInstruction.Database.Helpers;
+using Microsoft.Extensions.Logging;
 
 namespace EvidentInstruction.Database.Steps
 {
@@ -51,17 +52,17 @@ namespace EvidentInstruction.Database.Steps
 
             query = this.variableController.ReplaceVariables(query);
 
-            Log.Logger.Information($"{queryType} query:" + Environment.NewLine + $"{query}");
+            Log.Logger().LogInformation($"{queryType} query:" + Environment.NewLine + $"{query}");
 
             switch (queryType)
             {
                 case (QueryType.SELECT):
-                    Log.Logger.Information($"Choose {queryType} query. Query type is ExecuteQuery");
+                    Log.Logger().LogInformation($"Choose {queryType} query. Query type is ExecuteQuery");
                     var (outRecords, queryCount) = connection.ExecuteQuery(query, timeout);
-                    Log.Logger.Information($"Request returned: {Environment.NewLine} {EvidentInstruction.Helpers.Message.CreateMessage((DataTable)outRecords)}");
+                    Log.Logger().LogInformation($"Request returned: {Environment.NewLine} {EvidentInstruction.Helpers.Message.CreateMessage((DataTable)outRecords)}");
                     return (outRecords, queryCount);
                 default:
-                    Log.Logger.Information($"Choose {queryType} query. Query type is ExecuteNonQuery");
+                    Log.Logger().LogInformation($"Choose {queryType} query. Query type is ExecuteNonQuery");
                     var nonQueryCount = connection.ExecuteNonQuery(query, timeout);
                     return (null, nonQueryCount);
             }
@@ -107,7 +108,7 @@ namespace EvidentInstruction.Database.Steps
 
             if (!list.Any())
             {
-                Log.Logger.Warning("List with table patameters is Empty.");
+                Log.Logger().LogWarning("List with table patameters is Empty.");
                 throw new ArgumentNullException("List with table patameters is Empty.");
             }
 
@@ -177,7 +178,7 @@ namespace EvidentInstruction.Database.Steps
         public void ExecuteQuery(QueryType queryType, string connectionName, string query)
         {
             var (_, count) = ExecuteAnyRequest(queryType, connectionName, query);
-            Log.Logger.Information($"Request {query} returned {count} row(s)");
+            Log.Logger().LogInformation($"Request {query} returned {count} row(s)");
         }
 
         /// <summary>
@@ -191,7 +192,7 @@ namespace EvidentInstruction.Database.Steps
 
             this.variableController.SetVariable(varName, typeof(DataTable), outRecords);
 
-            Log.Logger.Information($"Request {query} returned {count} row(s)");
+            Log.Logger().LogInformation($"Request {query} returned {count} row(s)");
         }
 
         /// <summary>
@@ -212,7 +213,7 @@ namespace EvidentInstruction.Database.Steps
             var count = connection.ExecuteNonQuery(query, timeout);
 
             count.Should().NotBe(0, $"INSERT {query} failed. Check table names or values");
-            Log.Logger.Information($"INSERT completed {Environment.NewLine} {query}. {Environment.NewLine} Changed {count} row(s).");
+            Log.Logger().LogInformation($"INSERT completed {Environment.NewLine} {query}. {Environment.NewLine} Changed {count} row(s).");
 
 
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -19,13 +20,13 @@ namespace EvidentInstruction.Helpers
                 }
                 else
                 {
-                    Log.Logger.Warning("The IEnumerable<string> array contains no elements");
+                    Log.Logger().LogWarning("The IEnumerable<string> array contains no elements");
                     return null;
                 }
             }
             catch(ArgumentNullException)
             {
-                Log.Logger.Warning("No array was passed to convert to string (null)");
+                Log.Logger().LogWarning("No array was passed to convert to string (null)");
                 return null;
             }
             
@@ -43,13 +44,13 @@ namespace EvidentInstruction.Helpers
                 }
                 else
                 {
-                    Log.Logger.Warning("The ICollection<ValidationResult> array contains no elements.");
+                    Log.Logger().LogWarning("The ICollection<ValidationResult> array contains no elements.");
                     return null;
                 }
             }
             catch (ArgumentNullException)
             {
-                Log.Logger.Warning("No array was passed to convert to string (null)");
+                Log.Logger().LogWarning("No array was passed to convert to string (null)");
                 return null;
             }
         }
@@ -80,7 +81,7 @@ namespace EvidentInstruction.Helpers
             }
             catch (NullReferenceException)
             {
-                Log.Logger.Warning("No table was passed to convert to string (null)");
+                Log.Logger().LogWarning("No table was passed to convert to string (null)");
                 return null;
             }
         }

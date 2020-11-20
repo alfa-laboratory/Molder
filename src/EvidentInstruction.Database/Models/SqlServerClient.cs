@@ -8,6 +8,7 @@ using EvidentInstruction.Helpers;
 using System.Diagnostics.CodeAnalysis;
 using EvidentInstruction.Models;
 using EvidentInstruction.Models.DateTimeHelpers.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace EvidentInstruction.Database.Models
 {
@@ -47,7 +48,7 @@ namespace EvidentInstruction.Database.Models
                     connectionString.LoadBalanceTimeout = DbSetting.TIMEOUT;
                 }
 
-                Log.Logger.Information($"Connection has parameters: {Database.Helpers.Message.CreateMessage(connectionString.ToString())}");
+                Log.Logger().LogInformation($"Connection has parameters: {Database.Helpers.Message.CreateMessage(connectionString.ToString())}");
 
                 var connect = _provider.Create(connectionString.ToString());
 
@@ -57,12 +58,12 @@ namespace EvidentInstruction.Database.Models
             }
             catch (ConnectSqlException ex)
             {
-                Log.Logger.Error($"Connection failed.{ex.Message}");
+                Log.Logger().LogError($"Connection failed.{ex.Message}");
                 throw new ConnectSqlException($"Connection failed. {ex.Message}");
             }
             catch (System.Exception ex)
             {
-                Log.Logger.Error($"Connection failed: {ex.Message}");
+                Log.Logger().LogError($"Connection failed: {ex.Message}");
                 throw new ConnectSqlException($"Connection failed: {ex.Message}");
             }
         }
@@ -71,9 +72,9 @@ namespace EvidentInstruction.Database.Models
             var result = _provider.IsConnectAlive();
 
             if (result == true)
-                Log.Logger.Information("Connect is alive");
+                Log.Logger().LogInformation("Connect is alive");
             else
-                Log.Logger.Information("Connect isn't alive");
+                Log.Logger().LogInformation("Connect isn't alive");
 
             return result;
         }
@@ -97,12 +98,12 @@ namespace EvidentInstruction.Database.Models
                 },
                 (ex) =>
                 {
-                    Log.Logger.Error($"Failed to execute SQL Query.{Environment.NewLine}Error Message: {ex.Message}{Environment.NewLine}Query:{Environment.NewLine}{Helpers.Message.CreateMessage(command)}");
+                    Log.Logger().LogError($"Failed to execute SQL Query.{Environment.NewLine}Error Message: {ex.Message}{Environment.NewLine}Query:{Environment.NewLine}{Helpers.Message.CreateMessage(command)}");
                     affectedRows = 0;
                 },
                 () =>
                 {
-                    Log.Logger.Information("SQL Non-Query: {0}", Helpers.Message.CreateMessage(command));
+                    Log.Logger().LogInformation("SQL Non-Query: {0}", Helpers.Message.CreateMessage(command));
                 });
 
             return affectedRows;
@@ -128,13 +129,13 @@ namespace EvidentInstruction.Database.Models
                 },
                 (ex) =>
                 {
-                    Log.Logger.Error($"Failed to execute SQL Query.{Environment.NewLine} Error Message: {ex.Message}{Environment.NewLine}Query:{Environment.NewLine}{Helpers.Message.CreateMessage(command)}");
+                    Log.Logger().LogError($"Failed to execute SQL Query.{Environment.NewLine} Error Message: {ex.Message}{Environment.NewLine}Query:{Environment.NewLine}{Helpers.Message.CreateMessage(command)}");
                     reader?.Dispose();
                     tmpResults = null;
                 },
                 () =>
                 {
-                    Log.Logger.Information("SQL Query: {0}", Helpers.Message.CreateMessage(command));
+                    Log.Logger().LogInformation("SQL Query: {0}", Helpers.Message.CreateMessage(command));
                 });
 
             if (tmpResults == null)
@@ -166,12 +167,12 @@ namespace EvidentInstruction.Database.Models
                 },
                 (ex) =>
                 {
-                    Log.Logger.Error(ex.Message);
+                    Log.Logger().LogError(ex.Message);
                     result = null;
                 },
                 () =>
                 {
-                    Log.Logger.Information("SQL Query (Scalar): {0}", Helpers.Message.CreateMessage(command));
+                    Log.Logger().LogInformation("SQL Query (Scalar): {0}", Helpers.Message.CreateMessage(command));
                 });
             return result; //возвращает affectedrow
         }

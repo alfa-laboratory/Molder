@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using EvidentInstruction.Helpers;
-using EvidentInstruction.Models.Directory.Interfaces;
+using Microsoft.Extensions.Logging;
 
-namespace EvidentInstruction.Models
+namespace EvidentInstruction.Models.Directory
 {
     [ExcludeFromCodeCoverage]
-    public class UserDirectory: IDirectory
-    { 
-        public string Get()
+    public class UserDirectory: DefaultDirectory
+    {
+        public override string Get()
         {
-            Log.Logger.Information("Work with UserDirectory");
+            Log.Logger().LogInformation("Work with UserDirectory");
             return Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         }
     }

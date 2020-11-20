@@ -4,6 +4,7 @@ using System.IO;
 using EvidentInstruction.Helpers;
 using EvidentInstruction.Infrastructures;
 using EvidentInstruction.Models.Profider.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace EvidentInstruction.Models
 {
@@ -26,7 +27,7 @@ namespace EvidentInstruction.Models
             }
             catch (FileNotFoundException e)
             {
-                Log.Logger.Warning($"File \"{fullpath}\" not found with error \"{e.Message}\"");
+                Log.Logger().LogWarning($"File \"{fullpath}\" not found with error \"{e.Message}\"");
                 return false;
             }
         }
@@ -39,7 +40,7 @@ namespace EvidentInstruction.Models
                 System.IO.File.AppendAllText(fullPath, content);
                 if (Exist(fullPath))
                 {
-                    Log.Logger.Information($"The file \"{filename}\" in the \"{path}\" directory has been created");
+                    Log.Logger().LogInformation($"The file \"{filename}\" in the \"{path}\" directory has been created");
                     return true;
                 }
                 else return false;
@@ -47,7 +48,7 @@ namespace EvidentInstruction.Models
             }
             catch (FileNotFoundException e)
             {
-                Log.Logger.Warning($"The file \"{filename}\" in the \"{path}\" directory was not created due to \"{e.Message}\"");
+                Log.Logger().LogWarning($"The file \"{filename}\" in the \"{path}\" directory was not created due to \"{e.Message}\"");
                 return false;
             }
         }
@@ -60,14 +61,14 @@ namespace EvidentInstruction.Models
                 System.IO.File.Create(fullpath);
                 if (Exist(fullpath))
                 {
-                    Log.Logger.Information($"An empty file \"{filename}\" in the \"{fullpath}\" directory has been created");
+                    Log.Logger().LogInformation($"An empty file \"{filename}\" in the \"{fullpath}\" directory has been created");
                     return true;
                 }
                 else return false;
             }
             catch (FileNotFoundException e)
             {
-                Log.Logger.Warning($"An empty file \"{filename}\" in the \"{Path.Combine(path, filename)}\" directory was not created due to \"{e.Message}\"");
+                Log.Logger().LogWarning($"An empty file \"{filename}\" in the \"{Path.Combine(path, filename)}\" directory was not created due to \"{e.Message}\"");
                 return false;
             }
         }
@@ -80,14 +81,14 @@ namespace EvidentInstruction.Models
                 System.IO.File.WriteAllText(fullpath, content);
                 if (Exist(fullpath))
                 {
-                    Log.Logger.Warning($"The file \"{filename}\" in the \"{fullpath}\" directory has been overwritten");
+                    Log.Logger().LogWarning($"The file \"{filename}\" in the \"{fullpath}\" directory has been overwritten");
                     return true;
                 }
                 else return false;
             }
             catch (FileNotFoundException e)
             {
-                Log.Logger.Warning($"The file \"{filename}\" in the \"{path}\" directory was not overwritten due to \"{e.Message}\"");
+                Log.Logger().LogWarning($"The file \"{filename}\" in the \"{path}\" directory was not overwritten due to \"{e.Message}\"");
                 return false;
             }
         }
@@ -99,28 +100,28 @@ namespace EvidentInstruction.Models
                 System.IO.File.Delete(fullpath);
                 if (Exist(fullpath))
                 {
-                    Log.Logger.Information($"The file \"{fullpath}\" has not been deleted");
+                    Log.Logger().LogInformation($"The file \"{fullpath}\" has not been deleted");
                     return false;
                 }
                 else
                 {
-                    Log.Logger.Information($"The file \"{fullpath}\" has been deleted");
+                    Log.Logger().LogInformation($"The file \"{fullpath}\" has been deleted");
                     return true;
                 }
             }
             catch (PathTooLongException e)
             {
-                Log.Logger.Warning($"The file \"{fullpath}\" was not deleted due to an error \"{e.Message}\"");
+                Log.Logger().LogWarning($"The file \"{fullpath}\" was not deleted due to an error \"{e.Message}\"");
                 return false;
             }
             catch (IOException e)
             {
-                Log.Logger.Warning($"The file \"{fullpath}\" was not deleted due to an error \"{e.Message}\"");
+                Log.Logger().LogWarning($"The file \"{fullpath}\" was not deleted due to an error \"{e.Message}\"");
                 return false;
             }
             catch (UnauthorizedAccessException e)
             {
-                Log.Logger.Warning($"The file \"{fullpath}\" was not deleted due to an error \"{e.Message}\"");
+                Log.Logger().LogWarning($"The file \"{fullpath}\" was not deleted due to an error \"{e.Message}\"");
                 return false;
             }
         }
@@ -131,23 +132,23 @@ namespace EvidentInstruction.Models
             try
             {
                 var content = System.IO.File.ReadAllText(fullpath);
-                Log.Logger.Information($"File \" {fullpath} \" has been read.");
+                Log.Logger().LogInformation($"File \" {fullpath} \" has been read.");
 
                 return content;
             }
             catch(FileNotFoundException e)
             {
-                Log.Logger.Warning($"File \"{fullpath}\" not found. \" {e.Message}\" ");
+                Log.Logger().LogWarning($"File \"{fullpath}\" not found. \" {e.Message}\" ");
                 return null;
             }
             catch(PathTooLongException e)
             {
-                Log.Logger.Warning($"File \"{fullpath}\" not found. \" {e.Message}\" ");
+                Log.Logger().LogWarning($"File \"{fullpath}\" not found. \" {e.Message}\" ");
                 return null;
             }
             catch(IOException e)
             {
-                Log.Logger.Warning($"File \"{fullpath}\" not found. \" {e.Message}\" ");
+                Log.Logger().LogWarning($"File \"{fullpath}\" not found. \" {e.Message}\" ");
                 return null;
             }
             
