@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using EvidentInstruction.Helpers;
 using EvidentInstruction.Config.Exceptions;
+using Microsoft.Extensions.Logging;
 
 namespace EvidentInstruction.Config.Helpers
 {
@@ -15,8 +16,8 @@ namespace EvidentInstruction.Config.Helpers
                 return JsonConvert.DeserializeObject<T>(json);
             }
             catch(JsonException e)
-            {                
-                Log.Logger.Error($"DeserializeObject is error, because file is empty: \"{e.Message}\"");                
+            {
+                Log.Logger().LogError($"DeserializeObject is error, because file is empty: \"{e.Message}\"");                
                 throw new DeserializeException($"Deserialize string \"{json}\" failed", e);                
             }            
         }

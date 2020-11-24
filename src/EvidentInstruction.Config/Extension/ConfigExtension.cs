@@ -9,7 +9,8 @@ using EvidentInstruction.Config.Exceptions;
 using System;
 using EvidentInstruction.Models.Profider.Interfaces;
 using EvidentInstruction.Models.Directory.Interfaces;
-using EvidentInstruction.Config.Models.Directory;
+using EvidentInstruction.Models.Directory;
+using Microsoft.Extensions.Logging;
 
 namespace EvidentInstruction.Config.Extension
 {   
@@ -48,17 +49,17 @@ namespace EvidentInstruction.Config.Extension
             }
             catch(NoFileNameException e)
             {               
-                Log.Logger.Warning($"Config filename \"{filename}\" is empty: {e.Message}");
+                Log.Logger().LogWarning($"Config filename \"{filename}\" is empty: {e.Message}");
                 throw new NoFileNameException($"Config filename is empty");
             }
             catch (FileExistException e)
             {                
-                Log.Logger.Warning($"Config file \"{filename}\" not found: {e.Message}");
+                Log.Logger().LogWarning($"Config file \"{filename}\" not found: {e.Message}");
                 throw new FileExistException($"Config file \"{filename}\" not found in path \"{path}\"");
             }
             catch (ConfigException e)
             {
-                Log.Logger.Warning($"Json Exception in config file: {e.Message}");
+                Log.Logger().LogWarning($"Json Exception in config file: {e.Message}");
                 throw new DublicateTagsException($"Json Exception in config file: {e.Message}");
             }
         }

@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using EvidentInstruction.Helpers;
 using EvidentInstruction.Models.Profider.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace EvidentInstruction.Models
 {
@@ -21,12 +22,12 @@ namespace EvidentInstruction.Models
                     bool isExist = new TextFile().IsExist(filename, pathToSave);
                     if (isExist)
                     {
-                        Log.Logger.Warning($"The file \"{filename}\" has been downloaded to the \"{endPath}\"");
+                        Log.Logger().LogWarning($"The file \"{filename}\" has been downloaded to the \"{endPath}\"");
                         return true;
                     }
                     else
                     {
-                        Log.Logger.Warning($"File \"{filename}\" not downloaded");
+                        Log.Logger().LogWarning($"File \"{filename}\" not downloaded");
                         throw new FileNotFoundException($"File \"{filename}\" not downloaded");
                     }
                 }
@@ -34,7 +35,7 @@ namespace EvidentInstruction.Models
 
             catch (WebException e)
             {
-                Log.Logger.Error($"File \"{filename}\" not downloaded due to error \"{e.Message}\"");
+                Log.Logger().LogError($"File \"{filename}\" not downloaded due to error \"{e.Message}\"");
                 return false;
             }
         }
