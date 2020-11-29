@@ -1,7 +1,6 @@
 using FluentAssertions;
 using EvidentInstruction.Controllers;
 using EvidentInstruction.Generator.Steps;
-using EvidentInstruction.Models;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;

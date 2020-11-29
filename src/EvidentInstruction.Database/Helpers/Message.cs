@@ -1,5 +1,6 @@
 ﻿using EvidentInstruction.Database.Models;
 using EvidentInstruction.Helpers;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Data;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace EvidentInstruction.Database.Helpers
             }
             catch (Exception)
             {
-                Log.Logger.Warning("DbCommand is Empty (null).");
+                Log.Logger().LogWarning("DbCommand is Empty (null).");
                 return null;
             }
             return message;

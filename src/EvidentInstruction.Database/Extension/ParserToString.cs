@@ -1,5 +1,6 @@
 ﻿using EvidentInstruction.Database.Infrastructures;
 using EvidentInstruction.Helpers;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace EvidentInstruction.Database.Helpers
 
             if (string.IsNullOrWhiteSpace(tableName))
             {
-                Log.Logger.Warning("Table name is Empty.");
+                Log.Logger().LogWarning("Table name is Empty.");
                 throw new ArgumentNullException("Table name is Empty.");
             }
 
@@ -41,7 +42,7 @@ namespace EvidentInstruction.Database.Helpers
             }
             else
             {
-                Log.Logger.Warning("List with table parameters is Empty.");
+                Log.Logger().LogWarning("List with table parameters is Empty.");
                 throw new ArgumentNullException("List with table parameters is Empty.");
             }
             

@@ -12,6 +12,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using EvidentInstruction.Infrastructures;
+using Microsoft.Extensions.Logging;
 
 namespace EvidentInstruction.Controllers
 {
@@ -55,7 +56,7 @@ namespace EvidentInstruction.Controllers
             {
                 if (Variables[correcKey].TypeOfAccess == TypeOfAccess.Global || Variables[correcKey].TypeOfAccess == TypeOfAccess.Default)
                 {
-                    Log.Logger.Information($"Element with key: \"{key}\" contains value {Variables[correcKey].Value} with type '{Variables[correcKey].TypeOfAccess}'");
+                    Log.Logger().LogInformation($"Element with key: \"{key}\" contains value {Variables[correcKey].Value} with type '{Variables[correcKey].TypeOfAccess}'");
                 }
             }
 
@@ -71,7 +72,7 @@ namespace EvidentInstruction.Controllers
 
             if(string.IsNullOrWhiteSpace(varName))
             {
-                Log.Logger.Information($"Key: \"{key}\" is empty");
+                Log.Logger().LogInformation($"Key: \"{key}\" is empty");
                 return;
             }
             
@@ -85,17 +86,17 @@ namespace EvidentInstruction.Controllers
                             {
                                 case TypeOfAccess.Local:
                                     {
-                                        Log.Logger.Information($"Element with key: \"{key}\" and '{Variables[varName].TypeOfAccess}' type has been replaced with type '{accessType}'");
+                                        Log.Logger().LogInformation($"Element with key: \"{key}\" and '{Variables[varName].TypeOfAccess}' type has been replaced with type '{accessType}'");
                                         break;
                                     }
                                 case TypeOfAccess.Default:
                                     {
-                                        Log.Logger.Information($"Element with key: \"{key}\" has already created  with type '{Variables[varName].TypeOfAccess}'");
+                                        Log.Logger().LogInformation($"Element with key: \"{key}\" has already created  with type '{Variables[varName].TypeOfAccess}'");
                                         return;
                                     }
                                 case TypeOfAccess.Global:
                                     {
-                                        Log.Logger.Warning($"Element with key: \"{key}\" has already created with type 'Global'");
+                                        Log.Logger().LogWarning($"Element with key: \"{key}\" has already created with type 'Global'");
                                         throw new ArgumentException($"Element with key: \"{key}\" has already created with type 'Global'");
                                     }
                             }
@@ -107,7 +108,7 @@ namespace EvidentInstruction.Controllers
                             {
                                 case TypeOfAccess.Local:
                                     {
-                                        Log.Logger.Information($"Element with key: \"{key}\" and '{Variables[varName].TypeOfAccess}' type has been replaced with type '{accessType}'");
+                                        Log.Logger().LogInformation($"Element with key: \"{key}\" and '{Variables[varName].TypeOfAccess}' type has been replaced with type '{accessType}'");
                                         break;
                                     }
                             }
@@ -244,13 +245,13 @@ namespace EvidentInstruction.Controllers
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    Log.Logger.Warning($"Check the correctness of the key: \"{key}\"");
+                    Log.Logger().LogWarning($"Check the correctness of the key: \"{key}\"");
                     return null;
                 }
 
             }catch (NullReferenceException)
             {
-                Log.Logger.Warning($"Set NULL value in \"GetVariableValue\"/\"GetVariableValueText\"");
+                Log.Logger().LogWarning($"Set NULL value in \"GetVariableValue\"/\"GetVariableValueText\"");
                 return null;
             }
         }
@@ -273,7 +274,7 @@ namespace EvidentInstruction.Controllers
                     }
                 case XElement element when element.HasElements == true:
                     {
-                        Log.Logger.Warning($"Key \"{key}\" is root for (XElement)");
+                        Log.Logger().LogWarning($"Key \"{key}\" is root for (XElement)");
                         return null;
                     }
 
@@ -284,7 +285,7 @@ namespace EvidentInstruction.Controllers
                     }
                 case XmlElement element when element.HasChildNodes == true:
                     {
-                        Log.Logger.Warning($"Key \"{key}\" is root for (XmlElement)");
+                        Log.Logger().LogWarning($"Key \"{key}\" is root for (XmlElement)");
                         return null;
                     }
 
