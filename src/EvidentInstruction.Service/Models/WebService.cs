@@ -7,42 +7,49 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
+using EvidentInstruction.Service.Infrastructures;
+using System.Linq;
+using System.Net.Http;
 
 namespace EvidentInstruction.Service.Models
 {
     public class WebService : IWebService, IDisposable
     {
-        public ResponceInfo SendMessage(RequestInfo request)
+        public ResponceInfo SendMessage(RequestInfo request, Dictionary<HTTPMethodType, HttpMethod> webMethodsDictionary)
         {
             var (isValid, results) = Validate.ValidateModel(request);
             if (isValid)
             {
-                var headers = ReplaceHeaders(request.Headers, request.Content.ReadAsStringAsync().Result);
+                var headers = ServiceHelpers.ReplaceHeaders(request.Headers, request.Content.ReadAsStringAsync().Result, request); //возвращать кортеж ?            
+
                 try
                 {
+                    
                     Log.Logger.Information("Request: " + Environment.NewLine + 
                         request.Url + Environment.NewLine + 
                         request.Method + Environment.NewLine + 
                         request.Content.ReadAsStringAsync().Result);
-                    
-                    var responce = request.Url
-                        .WithHeaders(headers)
-                        .SendAsync(request.Method, request.Content);
-                    var content = ServiceHelpers.GetObjectFromString(responce.Result.Content.ReadAsStringAsync().Result);
+                    //FlurlProvider
+
+                    FlurlProvider dd = new FlurlProvider(request);
+
+                    var resp = dd.NewSend(request, headers); 
+
+                    var content = ServiceHelpers.GetObjectFromString(resp.Result.Content.ReadAsStringAsync().Result);
 
                     Log.Logger.Information("Responce: " + Environment.NewLine +
-                        responce.Result.StatusCode + Environment.NewLine +
-                        responce.Result.Content.ReadAsStringAsync().Result);
+                        resp.Result.StatusCode + Environment.NewLine +
+                        resp.Result.Content.ReadAsStringAsync().Result);
 
                     return new ResponceInfo
                     {
-                        Headers = responce.Result.Headers,
+                        Headers = resp.Result.Headers,
                         Content = content,
-                        Request = request,
-                        StatusCode = responce.Result.StatusCode
+                        Request = request, 
+                        StatusCode = resp.Result.StatusCode
                     };
                 }
-                catch (FlurlHttpTimeoutException)
+                catch (FlurlHttpTimeoutException) //тут свой эксепшен
                 {
                     Log.Logger.Error("Request timed out.");
                     return new ResponceInfo
@@ -110,39 +117,7 @@ namespace EvidentInstruction.Service.Models
             }
         }
 
-        private Dictionary<string, string> ReplaceHeaders(Dictionary<string, string> headers, string str)
-        {
-            var nHeaders = new Dictionary<string, string>();
-            var contentType = string.Empty;
-            var doc = ServiceHelpers.GetObjectFromString(str);
-
-            switch (doc)
-            {
-                case XmlDocument xmlDoc:
-                case XDocument xDoc:
-                    {
-                        contentType = "text/xml";
-                        break;
-                    }
-                case JObject jObject:
-                    {
-                        contentType = "application/json";
-                        break;
-                    }
-                default:
-                    {
-                        contentType = "text/plain";
-                        break;
-                    }
-            }
-
-            if (!headers.ContainsKey("Content-Type"))
-            {
-                nHeaders = headers;
-                nHeaders.Add("Content-Type", contentType);
-            }
-            return headers;
-        }
+       
 
         public void Dispose()
         {

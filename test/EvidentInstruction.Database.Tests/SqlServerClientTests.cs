@@ -21,7 +21,7 @@ namespace EvidentInstruction.Database.Tests
 
         public SqlServerClientTests()
         {
-            dbConnectionParams = new DbConnectionParams() { Database = "Test", Source = "test", Login = "test", Password = "W9qNIafQbJCZzEafUaYmQw==" };
+            dbConnectionParams = new DbConnectionParams() { Database = "Test", Source = "test1", Login = "test", Password = "W9qNIafQbJCZzEafUaYmQw==" };
         }
 
         [Fact]

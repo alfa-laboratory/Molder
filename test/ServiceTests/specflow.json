@@ -1,0 +1,14 @@
+﻿{
+  "language": {
+    "feature": "en-EN"
+  },
+  "stepAssemblies": [
+    {
+      "assembly": "EvidentInstruction.Service"
+    },
+    {
+      "assembly": "EvidentInstruction.Generator"
+    }
+  ]
+}
+
