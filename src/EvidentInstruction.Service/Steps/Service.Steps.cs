@@ -26,8 +26,7 @@ namespace EvidentInstruction.Service.Steps
     {
         private readonly VariableController variableController;
         private readonly ServiceController serviceController;
-        private readonly Dictionary<HTTPMethodType, HttpMethod> webMethods;
-       // private readonly Dictionary<object, Func<string, Encoding, string, StringContent>> content;
+        private readonly Dictionary<HTTPMethodType, HttpMethod> webMethods;       
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceSteps"/> class.
@@ -43,19 +42,10 @@ namespace EvidentInstruction.Service.Steps
             {
                 { HTTPMethodType.GET, HttpMethod.Get},
                 { HTTPMethodType.PUT, HttpMethod.Put},
-                { HTTPMethodType.POST, HttpMethod.Post}
+                { HTTPMethodType.POST, HttpMethod.Post},
+                { HTTPMethodType.DELETE, HttpMethod.Delete},
+                { HTTPMethodType.HEAD, HttpMethod.Head}                
             };
-
-            /*content = new Dictionary<object, Func<string, Encoding, string, StringContent>>
-            {
-                {new XDocument(), (replaceContent, defEncod, defType) => new StringContent(replaceContent, Encoding.UTF8, DefaultContentType.TEXT)},
-                {new XmlDocument(), (replaceContent, defEncod, defType) => new StringContent(replaceContent, Encoding.UTF8, DefaultContentType.TEXT)},
-                {new JObject(), (replaceContent, defEncod, defType) => new StringContent(replaceContent, Encoding.UTF8, DefaultContentType.TEXT)},
-                { (object)string , (replaceContent, defEncod, defType) => new StringContent(replaceContent, Encoding.UTF8, DefaultContentType.TEXT)}
-
-
-
-            };*/
         }
 
         /// <summary>
@@ -74,42 +64,22 @@ namespace EvidentInstruction.Service.Steps
         /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>
-        [StepArgumentTransformation]
-        public StringContent StringToContent(string content)
-        {
+        //[StepArgumentTransformation]
+        //public StringContent StringToContent(string content)
+        //{
             
-            var str = variableController.GetVariableValue(content);
+        //    var str = variableController.GetVariableValue(content);
 
-            //var type = ServiceHelpers.GetObjectFromString(str.ToString()/*.GetType().ToString()*/); //зачем toString& //убрать!
-            //если есть
-            var replaceContent = this.variableController.ReplaceVariables(str.ToString());
+        //    //var type = ServiceHelpers.GetObjectFromString(str.ToString()/*.GetType().ToString()*/); //зачем toString& //убрать!
+        //    //если есть
+        //    var replaceContent = this.variableController.ReplaceVariables(str.ToString());
 
 
-            var doc = ServiceHelpers.GetObjectFromString(replaceContent);
-            StringContent stringContent = null;
-            switch (doc)
-            {
-                case XDocument xDoc:
-                case XmlDocument xmlDocument:
-                    {
-                        stringContent = new StringContent(replaceContent, Encoding.UTF8, DefaultContentType.XML);
-                        break;
-                    }
-                case JObject jObject:
-                    {
-                        stringContent = new StringContent(replaceContent, Encoding.UTF8, DefaultContentType.JSON);
-                        break;
-                    }
-                default:
-                    {
-                        stringContent = new StringContent(replaceContent, Encoding.UTF8, DefaultContentType.TEXT);
-                        break;
-                    }
-            }
-
-            //logger&
-            return stringContent;
-        }
+        //    var doc = ServiceHelpers.GetObjectFromString(replaceContent);
+        //    StringContent stringContent = ServiceHelpers.GetTypeForStringContent(doc, replaceContent);
+        //    //logger&
+        //    return stringContent;
+        //}
 
         /// <summary>
         /// Вызов Rest сервиса с телом
@@ -119,59 +89,57 @@ namespace EvidentInstruction.Service.Steps
         /// <param name="service">Название сервиса.</param>
         /// <param name="parameters">Параметры вызова.</param>
         [Scope(Tag = "WebService")]
-        [When(@"я вызываю веб-сервис ""([A-z]+)"" по адресу ""(.+)"" с методом ""(.+)"", используя тело ""(.+)"" и заголовки  :")]
-        public void SendToRestServiceWithBody(string name, string url, HTTPMethodType method, StringContent content, Table table/* можно класс, чтобы сразу заполнить мождельку*/) //вместо table класс?
+        [When(@"я вызываю веб-сервис ""([A-z]+)"" по адресу ""(.+)"" с методом ""(.+)"", используя параметры :")]
+        public void SendToRestServiceWithBody(string name, string url, HTTPMethodType method, Table table) 
         {
-           
+            StringContent content = null;
+
+
             this.variableController.Variables.ContainsKey(name).Should().BeFalse($"Данные по сервису с именем \"{name}\" уже существуют");
             this.serviceController.Services.ContainsKey(name).Should().BeFalse($"Данные по сервису с именем \"{name}\" уже существуют");
 
-           
-            var headers = table.CreateSet<Header>().ToDictionary(header => header.Name, header => this.variableController.ReplaceVariables(header.Value));
-            //будет возвращать через transformation с 3 значениями
+            var headers = table.CreateSet<Header>().ToList();
+
+            // Получаем словарь заголовков
+            var header = headers
+               .Where(x => x.Style.ToString().Equals(HeaderType.HEADER.ToString()))
+               .ToDictionary(head => head.Name, head => this.variableController.ReplaceVariables(head.Value));
+
+            if(headers.Contains(headers.Where(x => x.Style.ToString().Equals(HeaderType.BODY.ToString())).First()))
+            {
+                // Получаем словарь тела
+                var body = headers
+                  .Where(x => x.Style.ToString().Equals(HeaderType.BODY.ToString()))
+                  .ToDictionary(head => head.Name, head => this.variableController.ReplaceVariables(head.Value));
+
+                //получаем тип контента
+                var doc = ServiceHelpers.GetObjectFromString(body.Values.First());
+                //получаем StringContent для формирования RequestInfo
+                content = ServiceHelpers.GetStringContent(doc, body.Values.First());
+            }
+
+            //Получаем словарь запроса/ TODO реализовать учет QUERY
+            var query = headers
+              .Where(x => x.Style.ToString().Equals(HeaderType.QUERY.ToString()))
+              .ToDictionary(head => head.Name, head => this.variableController.ReplaceVariables(head.Value));
+
+
             var request = new RequestInfo
             {
                 Content = content,
-                Headers = headers,
+                Headers = header,
                 Method = webMethods[method],
-                Url = url
+                Url = url 
             };
 
-            /*using (var service = new FlurlProvider(request))
+
+            using (var service = new WebService())
             {
-               var responce =  service.SendAsync(request, method);
-                *//*this.serviceController.Services.TryAdd(name, responce);
-                this.variableController.SetVariable(name, responce.Content.GetType(), responce.Content);*//*
-            }*/
-             
-           using (var service = new WebService())
-            {
-                var responceInfo = service.SendMessage(request, webMethods);
-                this.serviceController.Services.TryAdd(name, responceInfo);
-                this.variableController.SetVariable(name, responceInfo.Content.GetType(), responceInfo.Content);
+               var responce =  service.SendMessage(request, webMethods);
+                this.serviceController.Services.TryAdd(name, responce);
+                this.variableController.SetVariable(name, responce.Content.GetType(), responce.Content);
             }
         }
-
-        /// <summary>
-        /// Вызов Rest сервиса.
-        /// </summary>
-        /// <param name="url">Ссылка на сервис.</param>
-        /// <param name="method">Метод сервиса.</param>
-        /// <param name="service">Название сервиса.</param>
-        /// <param name="parameters">Параметры вызова.</param>
-        [Scope(Tag = "WebService")]
-        [When(@"я вызываю веб-сервис ""([A-z]+)"" по адресу ""(.+)"" с методом ""(.+)"", используя только заголовки ""(.+)"" :")]
-        public void SendToRestService(string name, string url, HTTPMethodType method, Table table) 
-        {
-            this.variableController.Variables.ContainsKey(name).Should().BeFalse($"Данные по сервису с именем \"{name}\" уже существуют");
-            this.serviceController.Services.ContainsKey(name).Should().BeFalse($"Данные по сервису с именем \"{name}\" уже существуют");
-
-          
-        }
-
-
-
-
 
         /// <summary>
         /// Шаг проверки статуса выполнения web сервиса.

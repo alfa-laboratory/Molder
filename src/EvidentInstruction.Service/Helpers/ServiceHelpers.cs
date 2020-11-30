@@ -1,8 +1,11 @@
 ﻿using EvidentInstruction.Helpers;
+using EvidentInstruction.Service.Infrastructures;
 using EvidentInstruction.Service.Models;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -44,8 +47,35 @@ namespace EvidentInstruction.Service.Helpers
             }
         }
 
+        public static StringContent GetStringContent(object type, string replaceContent)
+        {
+            StringContent stringContent = null;
 
-        public static Dictionary<string, string> ReplaceHeaders(Dictionary<string, string> headers, string str, RequestInfo request) //не правильно работает. Сюда попадает контент и добавляет новый заголовок
+            switch (type)
+            {
+                case XDocument xDoc:
+                case XmlDocument xmlDocument:
+                    {
+                        stringContent = new StringContent(replaceContent, Encoding.UTF8, DefaultContentType.XML);
+                        break;
+                    }
+                case JObject jObject:
+                    {
+                        stringContent = new StringContent(replaceContent, Encoding.UTF8, DefaultContentType.JSON);
+                        break;
+                    }
+                default:
+                    {
+                        stringContent = new StringContent(replaceContent, Encoding.UTF8, DefaultContentType.TEXT);
+                        break;
+                    }
+            }
+
+            return stringContent;
+        }
+
+
+        public static Dictionary<string, string> ReplaceHeaders(Dictionary<string, string> headers, string str, RequestInfo request)
         {
             var nHeaders = new Dictionary<string, string>();
             var contentType = string.Empty;
@@ -74,11 +104,11 @@ namespace EvidentInstruction.Service.Helpers
 
             var key = headers.Select(x => x.Key).Where(y => y.ToLower().Contains("content-type")).First();
 
-            if (!key.Any()) //учесть, что контент type, может быть написан с маленькой буквы. (Tolower или сравнить без регистра (ignorecase))
+            if (!key.Any())
             {
-                nHeaders = headers; //зачем приравниваем ссылку?
+                nHeaders = headers; 
                 nHeaders.Add("Content-Type", contentType);
-            } //тернарный оператор?
+            } 
             return headers;
         }
     }

@@ -11,8 +11,8 @@ namespace EvidentInstruction.Service.Models
         [TableAliases("Value", "Значение")]
         public string Value { get; set; }
 
-        [TableAliases("Style", "Тип")] //+++
-        public HeaderType Style { get; set; }
+        [TableAliases("Style", "Тип")] 
+        public string Style { get; set; } 
         
     }
 }

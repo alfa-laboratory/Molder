@@ -8,12 +8,12 @@
     <Company>AlfaBank</Company>
     <Version>0.2.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>   
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile></DocumentationFile>
-    <NoWarn>NU1701;1702</NoWarn>
+    <NoWarn>NU1701;1702;1591</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
