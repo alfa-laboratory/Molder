@@ -1,5 +1,4 @@
-﻿using EvidentInstruction.Service.Infrastructures;
-using TechTalk.SpecFlow.Assist.Attributes;
+﻿using TechTalk.SpecFlow.Assist.Attributes;
 
 namespace EvidentInstruction.Service.Models
 {

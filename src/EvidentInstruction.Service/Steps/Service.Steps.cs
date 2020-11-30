@@ -1,11 +1,7 @@
 ﻿using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Xml;
-using System.Xml.Linq;
 using FluentAssertions;
-using Newtonsoft.Json.Linq;
 using EvidentInstruction.Controllers;
 using EvidentInstruction.Service.Controllers;
 using EvidentInstruction.Service.Helpers;
@@ -13,7 +9,6 @@ using EvidentInstruction.Service.Models;
 using EvidentInstruction.Service.Infrastructures;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
-using System;
 using System.Collections.Generic;
 
 namespace EvidentInstruction.Service.Steps
@@ -58,29 +53,7 @@ namespace EvidentInstruction.Service.Steps
         {
             this.serviceController.Services.Clear();
         }
-
-        /// <summary>
-        /// Определяем какой тип у Body
-        /// </summary>
-        /// <param name="content"></param>
-        /// <returns></returns>
-        //[StepArgumentTransformation]
-        //public StringContent StringToContent(string content)
-        //{
-            
-        //    var str = variableController.GetVariableValue(content);
-
-        //    //var type = ServiceHelpers.GetObjectFromString(str.ToString()/*.GetType().ToString()*/); //зачем toString& //убрать!
-        //    //если есть
-        //    var replaceContent = this.variableController.ReplaceVariables(str.ToString());
-
-
-        //    var doc = ServiceHelpers.GetObjectFromString(replaceContent);
-        //    StringContent stringContent = ServiceHelpers.GetTypeForStringContent(doc, replaceContent);
-        //    //logger&
-        //    return stringContent;
-        //}
-
+        
         /// <summary>
         /// Вызов Rest сервиса с телом
         /// </summary>
@@ -105,7 +78,10 @@ namespace EvidentInstruction.Service.Steps
                .Where(x => x.Style.ToString().Equals(HeaderType.HEADER.ToString()))
                .ToDictionary(head => head.Name, head => this.variableController.ReplaceVariables(head.Value));
 
-            if(headers.Contains(headers.Where(x => x.Style.ToString().Equals(HeaderType.BODY.ToString())).First()))
+            if(headers.Contains(headers.Where(x => x.Style
+                                                    .ToString()
+                                                    .Equals(HeaderType.BODY.ToString()))
+                                                    .First()))
             {
                 // Получаем словарь тела
                 var body = headers

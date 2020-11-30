@@ -15,9 +15,7 @@ namespace EvidentInstruction.Service.Helpers
     {
         /// <summary>
         /// Определить к какому типу относится строка
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
+        /// </summary>     
         public static object GetObjectFromString(string str)
         {
             var xDoc = Converter.CreateXDoc(str);
@@ -47,6 +45,9 @@ namespace EvidentInstruction.Service.Helpers
             }
         }
 
+        /// <summary>
+        /// Получить StringContent для RequestInfo 
+        /// </summary>   
         public static StringContent GetStringContent(object type, string replaceContent)
         {
             StringContent stringContent = null;
@@ -75,7 +76,10 @@ namespace EvidentInstruction.Service.Helpers
         }
 
 
-        public static Dictionary<string, string> ReplaceHeaders(Dictionary<string, string> headers, string str, RequestInfo request)
+        /// <summary>
+        /// Задать
+        /// </summary>        
+        public static Dictionary<string, string> ReplaceHeaders(Dictionary<string, string> headers, RequestInfo request)
         {
             var nHeaders = new Dictionary<string, string>();
             var contentType = string.Empty;

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using EvidentInstruction.Service.Infrastructures;
 using System.Net.Http;
+using Microsoft.Extensions.Logging;
 
 namespace EvidentInstruction.Service.Models
 {
@@ -16,26 +17,26 @@ namespace EvidentInstruction.Service.Models
             var (isValid, results) = Validate.ValidateModel(request);
             if (isValid)
             {
-              // var headers = ServiceHelpers.ReplaceHeaders(request.Headers, request.Content.ReadAsStringAsync().Result, request);           
+               var headers = ServiceHelpers.ReplaceHeaders(request.Headers, request);           
 
                 try
-                {
-                    
-                  /*  Log.Logger.Information("Request: " + Environment.NewLine + 
+                {                  
+
+                    Log.Logger().LogInformation("Request: " + Environment.NewLine + 
                         request.Url + Environment.NewLine + 
                         request.Method + Environment.NewLine + 
-                        request.Content.ReadAsStringAsync().Result);*/
-                    //FlurlProvider
+                        request.Content.ReadAsStringAsync().Result);
 
+                    //FlurlProvider
                     FlurlProvider fprovider= new FlurlProvider(request);
 
                     var resp = fprovider.SendRequest(request, request.Headers);
 
                     var content = ServiceHelpers.GetObjectFromString(resp.Result.Content.ReadAsStringAsync().Result);
 
-                    /*Log.Logger.Information("Responce: " + Environment.NewLine +
+                    Log.Logger().LogInformation("Responce: " + Environment.NewLine +
                         resp.Result.StatusCode + Environment.NewLine +
-                        resp.Result.Content.ReadAsStringAsync().Result);*/
+                        resp.Result.Content.ReadAsStringAsync().Result);
 
                      return new ResponceInfo
                      {
@@ -46,9 +47,10 @@ namespace EvidentInstruction.Service.Models
                      };
                     
                 }
-                catch (FlurlHttpTimeoutException) //тут свой эксепшен
+                catch (FlurlHttpTimeoutException)
                 {
-                   // Log.Logger.Error("Request timed out.");
+                    Log.Logger().LogError("Request timed out.");
+
                     return new ResponceInfo
                     {
                         Headers = null,
@@ -63,10 +65,10 @@ namespace EvidentInstruction.Service.Models
                     {
                         if (fex.Call == null)
                         {
-                           // Log.Logger.Error(fex.Message);
+                            Log.Logger().LogError(fex.Message);
 
-                         //  Log.Logger.Information("Responce: " + Environment.NewLine +
-                          //      System.Net.HttpStatusCode.BadRequest);
+                            Log.Logger().LogInformation("Responce: " + Environment.NewLine +
+                                System.Net.HttpStatusCode.BadRequest);
 
                             return new ResponceInfo
                             {
@@ -75,27 +77,29 @@ namespace EvidentInstruction.Service.Models
                                 StatusCode = System.Net.HttpStatusCode.BadRequest,
                                 Request = request
                             };
-                        }else
+                        }
+                        else
                         {
-                            /* Log.Logger.Error(fex.Message);
-                             var content = ServiceHelpers.GetObjectFromString(fex.Call.Response.Content.ReadAsStringAsync().Result);
+                            Log.Logger().LogError(fex.Message);
+                             var content = ServiceHelpers.GetObjectFromString(fex.Call.Response.ResponseMessage.Content.ReadAsStringAsync().Result);
 
-                             Log.Logger.Information("Responce: " + Environment.NewLine +
+                             Log.Logger().LogInformation("Responce: " + Environment.NewLine +
                                  fex.Call.Response.StatusCode + Environment.NewLine +
-                                 fex.Call.Response.Content.ReadAsStringAsync().Result);*/
+                                 fex.Call.Response.ResponseMessage.Content.ReadAsStringAsync().Result);
 
-                            /*return new ResponceInfo
+                            return new ResponceInfo
                             {
-                                Headers = fex.HResult,
+                                Headers = fex.Call.Response.ResponseMessage.Headers,
                                 Content = content,
-                                StatusCode = fex.Call.Response.StatusCode,
+                                StatusCode = fex.Call.Response.ResponseMessage.StatusCode,
                                 Request = request
-                            };*/
+                            };
                         }
                     }
-                   // Log.Logger.Error(ex.Message);
-                  //  Log.Logger.Information("Responce: " + Environment.NewLine +
-                    //            System.Net.HttpStatusCode.BadRequest);
+                    Log.Logger().LogError(ex.Message);
+                    Log.Logger().LogInformation("Responce: " + Environment.NewLine +
+                               System.Net.HttpStatusCode.BadRequest);
+
                     return new ResponceInfo
                     {
                         Headers = null,
@@ -107,8 +111,8 @@ namespace EvidentInstruction.Service.Models
             }
             else
             {                
-                //Log.Logger.Information("Responce: " + Environment.NewLine +
-                //                System.Net.HttpStatusCode.BadRequest);
+                Log.Logger().LogInformation("Responce: " + Environment.NewLine +
+                                System.Net.HttpStatusCode.BadRequest);
                 return null;
             }
         }
