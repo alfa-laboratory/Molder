@@ -10,8 +10,7 @@ bla bla bla
 """
 When я вызываю веб-сервис "Test" по адресу "https://www.consul.io/api-docs/agent/service" с методом "Get", используя тело "Body" и заголовки  :
 	| Name          | Value                                  | Style  |
-	| Content-type  | application/json                       | HEADER |
-	| Authorization | Basic bG9hbm1hbmFnZXJfdXNlcjpsbV91c2Vy | HEADER |
+	| Content-type  | application/json                       | HEADER |	
 	| name           |    {Body}                             |  Body  |
 
 	# можно убрать используя тело ("Body") .. как вар класс параметры, в ктором будут параметры тело, 
