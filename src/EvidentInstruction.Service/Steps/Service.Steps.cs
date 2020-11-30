@@ -132,7 +132,6 @@ namespace EvidentInstruction.Service.Steps
                 Url = url 
             };
 
-
             using (var service = new WebService())
             {
                var responce =  service.SendMessage(request, webMethods);
