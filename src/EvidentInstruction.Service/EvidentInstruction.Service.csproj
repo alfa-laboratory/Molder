@@ -53,8 +53,4 @@
     <ProjectReference Include="..\EvidentInstruction\EvidentInstruction.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Exceptions\" />
-  </ItemGroup>
-
 </Project>

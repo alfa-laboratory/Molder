@@ -8,7 +8,5 @@ namespace EvidentInstruction.Service.Models.Interfaces
     public interface IServiceFlurlProvider
     {
         Task<HttpResponseMessage> SendAsync(RequestInfo request, Dictionary<string, string> headers, HTTPMethodType type);
-
-
     }
 }

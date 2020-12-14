@@ -1,8 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using EvidentInstruction.Helpers;
+using EvidentInstruction.Service.Exceptions;
 using Flurl.Http;
+using Microsoft.Extensions.Logging;
 
 namespace EvidentInstruction.Service.Models
 {  
@@ -17,36 +19,40 @@ namespace EvidentInstruction.Service.Models
             content = request.Content;
         }
         
-        public async Task<HttpResponseMessage> SendRequest(RequestInfo request, Dictionary<string,string> dicc)
+        public async Task<HttpResponseMessage> SendRequest(RequestInfo request)
         {
+            IFlurlResponse responce;
 
             try
             {
-
-               // var key = dicc.Select(x => x.Key).Where(y => y.ToLower().Contains("auth")).First();
-               // var login = dicc[key].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-
-                var responce = await url
-                  //  .WithBasicAuth(login[0], login[1])
-                    .WithHeaders(dicc)
-                    .SendAsync(request.Method, content);
-
+                if(request.Content == null)
+                {
+                    responce = await url
+                                    //.WithCreditians(request)
+                                    .WithHeaders(request.Headers)
+                                    .SendAsync(request.Method);
+                }
+                else
+                {
+                    responce = await url
+                                   // .WithCreditians(request)
+                                    .WithHeaders(request.Headers)
+                                    .SendAsync(request.Method, content);
+                }
+               
                 return responce.ResponseMessage;                
             }
-            catch (FlurlHttpTimeoutException)
+            catch (FlurlHttpTimeoutException ex)
             {
-                //TODO свой Exception
-
-                throw new Exception();
+                Log.Logger().LogWarning($"Request {request.Url} timed out. {ex}");
+                throw new FlurlException(ex.Call, ex);
+                
             }
-
-            catch (Exception)
+            catch (FlurlHttpException ex)
             {
-                //TODO свой Exception
-
-                throw new Exception();
+                Log.Logger().LogWarning($"Request {request.Url} failed. {ex}");
+                throw new FlurlException(ex.Call, ex);
             }
-
         }
         public void Dispose()
         {

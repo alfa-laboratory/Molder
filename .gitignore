@@ -263,3 +263,5 @@ __pycache__/
 
 # Feature cs files
 *.feature.cs
+/test/EvidentInstruction.Service.Tests/SpecFlowFeature1.feature
+/test/EvidentInstruction.Service.Tests/specflow.json

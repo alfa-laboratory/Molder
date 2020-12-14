@@ -19,7 +19,7 @@ namespace EvidentInstruction.Service.Steps
     [Binding]
     public class ServiceSteps
     {
-        private readonly VariableController variableController;
+        private readonly VariableController variableController;      
         private readonly ServiceController serviceController;
         private readonly Dictionary<HTTPMethodType, HttpMethod> webMethods;       
 
@@ -67,50 +67,38 @@ namespace EvidentInstruction.Service.Steps
         {
             StringContent content = null;
 
-
             this.variableController.Variables.ContainsKey(name).Should().BeFalse($"Данные по сервису с именем \"{name}\" уже существуют");
             this.serviceController.Services.ContainsKey(name).Should().BeFalse($"Данные по сервису с именем \"{name}\" уже существуют");
 
             var headers = table.CreateSet<Header>().ToList();
 
-            // Получаем словарь заголовков
-            var header = headers
-               .Where(x => x.Style.ToString().Equals(HeaderType.HEADER.ToString()))
-               .ToDictionary(head => head.Name, head => this.variableController.ReplaceVariables(head.Value));
+            var requestDto = new RequestDto(headers, variableController);
 
-            if(headers.Contains(headers.Where(x => x.Style
-                                                    .ToString()
-                                                    .Equals(HeaderType.BODY.ToString()))
-                                                    .First()))
+            if (requestDto.Body.Any())
             {
-                // Получаем словарь тела
-                var body = headers
-                  .Where(x => x.Style.ToString().Equals(HeaderType.BODY.ToString()))
-                  .ToDictionary(head => head.Name, head => this.variableController.ReplaceVariables(head.Value));
-
                 //получаем тип контента
-                var doc = ServiceHelpers.GetObjectFromString(body.Values.First());
+                var doc = ServiceHelpers.GetObjectFromString(requestDto.Body.Values.First());
                 //получаем StringContent для формирования RequestInfo
-                content = ServiceHelpers.GetStringContent(doc, body.Values.First());
+                content = ServiceHelpers.GetStringContent(doc, requestDto.Body.Values.First());
             }
 
-            //Получаем словарь запроса/ TODO реализовать учет QUERY
-            var query = headers
-              .Where(x => x.Style.ToString().Equals(HeaderType.QUERY.ToString()))
-              .ToDictionary(head => head.Name, head => this.variableController.ReplaceVariables(head.Value));
-
+            //Добавляем к Url query
+            if(requestDto.Query.Any())
+            {
+                url = ServiceHelpers.AddQueryInURL(url, requestDto.Query.Values.First()); 
+            }
 
             var request = new RequestInfo
             {
                 Content = content,
-                Headers = header,
+                Headers = requestDto.Header,
                 Method = webMethods[method],
                 Url = url 
             };
 
-            using (var service = new WebService())
+            using (var service = new WebService(request))
             {
-               var responce =  service.SendMessage(request, webMethods);
+                var responce =  service.SendMessage(request, webMethods);
                 this.serviceController.Services.TryAdd(name, responce);
                 this.variableController.SetVariable(name, responce.Content.GetType(), responce.Content);
             }

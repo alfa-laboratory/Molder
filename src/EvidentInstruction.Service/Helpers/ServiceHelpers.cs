@@ -45,6 +45,11 @@ namespace EvidentInstruction.Service.Helpers
             }
         }
 
+        public static string AddQueryInURL(string url, string query)
+        {
+           return query.StartsWith("?")? url + query: url + "?" + query;
+        }
+
         /// <summary>
         /// Получить StringContent для RequestInfo 
         /// </summary>   
@@ -79,12 +84,12 @@ namespace EvidentInstruction.Service.Helpers
         /// <summary>
         /// Задать
         /// </summary>        
-        public static Dictionary<string, string> ReplaceHeaders(Dictionary<string, string> headers, RequestInfo request)
+        public static Dictionary<string, string> ReplaceHeaders(Dictionary<string, string> headers, RequestInfo request) //TODO если  HEADERS TYPE EMPTY или убрать !!
         {
             var nHeaders = new Dictionary<string, string>();
             var contentType = string.Empty;
             /*var doc = ServiceHelpers.GetObjectFromString(str);*/
-            object doc = request.Content.GetType();
+            object doc = request.Headers.GetType();// тут не контент
 
             switch (doc)
             {
@@ -106,14 +111,14 @@ namespace EvidentInstruction.Service.Helpers
                     }
             }
 
-            var key = headers.Select(x => x.Key).Where(y => y.ToLower().Contains("content-type")).First();
+           // var key = headers.ContainsKey(headers.Select(x => x.Key).Where(y => y.ToLower().Contains("content-type")).First()); //тут будет ошибка, если контент не так написан
 
-            if (!key.Any())
+            if (headers.ContainsKey(""))
             {
                 nHeaders = headers; 
                 nHeaders.Add("Content-Type", contentType);
             } 
-            return headers;
+            return nHeaders;
         }
     }
 }

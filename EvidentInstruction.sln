@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Config.T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Database.Tests", "test\EvidentInstruction.Database.Tests\EvidentInstruction.Database.Tests.csproj", "{DBFCA66D-73D5-4D53-AFD1-99BAD7337D63}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EvidentInstruction.Service.Tests", "test\EvidentInstruction.Service.Tests\EvidentInstruction.Service.Tests.csproj", "{5719FA47-7D03-43C1-8F35-C3AEC1AD2072}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -139,6 +141,18 @@ Global
 		{DBFCA66D-73D5-4D53-AFD1-99BAD7337D63}.Release|x64.Build.0 = Release|Any CPU
 		{DBFCA66D-73D5-4D53-AFD1-99BAD7337D63}.Release|x86.ActiveCfg = Release|Any CPU
 		{DBFCA66D-73D5-4D53-AFD1-99BAD7337D63}.Release|x86.Build.0 = Release|Any CPU
+		{5719FA47-7D03-43C1-8F35-C3AEC1AD2072}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5719FA47-7D03-43C1-8F35-C3AEC1AD2072}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5719FA47-7D03-43C1-8F35-C3AEC1AD2072}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5719FA47-7D03-43C1-8F35-C3AEC1AD2072}.Debug|x64.Build.0 = Debug|Any CPU
+		{5719FA47-7D03-43C1-8F35-C3AEC1AD2072}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5719FA47-7D03-43C1-8F35-C3AEC1AD2072}.Debug|x86.Build.0 = Debug|Any CPU
+		{5719FA47-7D03-43C1-8F35-C3AEC1AD2072}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5719FA47-7D03-43C1-8F35-C3AEC1AD2072}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5719FA47-7D03-43C1-8F35-C3AEC1AD2072}.Release|x64.ActiveCfg = Release|Any CPU
+		{5719FA47-7D03-43C1-8F35-C3AEC1AD2072}.Release|x64.Build.0 = Release|Any CPU
+		{5719FA47-7D03-43C1-8F35-C3AEC1AD2072}.Release|x86.ActiveCfg = Release|Any CPU
+		{5719FA47-7D03-43C1-8F35-C3AEC1AD2072}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

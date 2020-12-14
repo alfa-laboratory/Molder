@@ -7,31 +7,33 @@ using System.Collections.Generic;
 using EvidentInstruction.Service.Infrastructures;
 using System.Net.Http;
 using Microsoft.Extensions.Logging;
+using EvidentInstruction.Service.Exceptions;
 
 namespace EvidentInstruction.Service.Models
 {
     public class WebService : IWebService, IDisposable
     {
+        private FlurlProvider fprovider; 
+
+        public WebService(RequestInfo request)
+        {
+            fprovider = new FlurlProvider(request);
+        }
+
         public ResponceInfo SendMessage(RequestInfo request, Dictionary<HTTPMethodType, HttpMethod> webMethodsDictionary)
         {
             var (isValid, results) = Validate.ValidateModel(request);
             if (isValid)
             {
-               var headers = ServiceHelpers.ReplaceHeaders(request.Headers, request);           
 
                 try
-                {                  
-
+                {     
                     Log.Logger().LogInformation("Request: " + Environment.NewLine + 
                         request.Url + Environment.NewLine + 
                         request.Method + Environment.NewLine + 
                         request.Content.ReadAsStringAsync().Result);
 
-                    //FlurlProvider
-                    FlurlProvider fprovider= new FlurlProvider(request);
-
-                    var resp = fprovider.SendRequest(request, request.Headers);
-
+                    var resp = fprovider.SendRequest(request);
                     var content = ServiceHelpers.GetObjectFromString(resp.Result.Content.ReadAsStringAsync().Result);
 
                     Log.Logger().LogInformation("Responce: " + Environment.NewLine +
@@ -47,25 +49,25 @@ namespace EvidentInstruction.Service.Models
                      };
                     
                 }
-                catch (FlurlHttpTimeoutException)
+                catch (FlurlException ex)
                 {
-                    Log.Logger().LogError("Request timed out.");
+                    if (ex.InnerException is FlurlHttpTimeoutException)
+                    {
+                        Log.Logger().LogError($"Request {request.Url} timed out. {ex}");
 
-                    return new ResponceInfo
-                    {
-                        Headers = null,
-                        Content = null,
-                        StatusCode = System.Net.HttpStatusCode.BadRequest,
-                        Request = request
-                    };
-                }
-                catch (Exception ex)
-                {
-                    if (ex.InnerException is FlurlHttpException fex)
-                    {
-                        if (fex.Call == null)
+                        return new ResponceInfo
                         {
-                            Log.Logger().LogError(fex.Message);
+                            Headers = null,
+                            Content = null,
+                            StatusCode = System.Net.HttpStatusCode.GatewayTimeout,
+                            Request = request
+                        };
+                    }
+                    else
+                    {
+                        if (ex.Call == null)
+                        {
+                            Log.Logger().LogError(ex.Message);
 
                             Log.Logger().LogInformation("Responce: " + Environment.NewLine +
                                 System.Net.HttpStatusCode.BadRequest);
@@ -80,22 +82,27 @@ namespace EvidentInstruction.Service.Models
                         }
                         else
                         {
-                            Log.Logger().LogError(fex.Message);
-                             var content = ServiceHelpers.GetObjectFromString(fex.Call.Response.ResponseMessage.Content.ReadAsStringAsync().Result);
+                            Log.Logger().LogError(ex.Message);
+                            var content = ServiceHelpers.GetObjectFromString(ex.Call.Response.ResponseMessage.Content.ReadAsStringAsync().Result);
 
-                             Log.Logger().LogInformation("Responce: " + Environment.NewLine +
-                                 fex.Call.Response.StatusCode + Environment.NewLine +
-                                 fex.Call.Response.ResponseMessage.Content.ReadAsStringAsync().Result);
+                            Log.Logger().LogInformation("Responce: " + Environment.NewLine +
+                                ex.Call.Response.StatusCode + Environment.NewLine +
+                                ex.Call.Response.ResponseMessage.Content.ReadAsStringAsync().Result);
 
                             return new ResponceInfo
                             {
-                                Headers = fex.Call.Response.ResponseMessage.Headers,
+                                Headers = ex.Call.Response.ResponseMessage.Headers,
                                 Content = content,
-                                StatusCode = fex.Call.Response.ResponseMessage.StatusCode,
+                                StatusCode = ex.Call.Response.ResponseMessage.StatusCode,
                                 Request = request
                             };
                         }
+
                     }
+                }
+                catch (Exception ex)
+                {
+                    
                     Log.Logger().LogError(ex.Message);
                     Log.Logger().LogInformation("Responce: " + Environment.NewLine +
                                System.Net.HttpStatusCode.BadRequest);
@@ -111,8 +118,11 @@ namespace EvidentInstruction.Service.Models
             }
             else
             {                
-                Log.Logger().LogInformation("Responce: " + Environment.NewLine +
-                                System.Net.HttpStatusCode.BadRequest);
+                Log.Logger().LogInformation($"Request is not valid "+ Environment.NewLine + 
+                        request.Url + Environment.NewLine + 
+                        request.Method + Environment.NewLine + 
+                        request.Content.ReadAsStringAsync().Result);
+
                 return null;
             }
         }
