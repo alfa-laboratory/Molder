@@ -19,7 +19,7 @@ namespace EvidentInstruction.Config.Hooks
         [BeforeTestRun(Order = -30000)]
         public void BeforeTestRun()
         {
-            variableController.AddConfig();
+           // variableController.AddConfig();
         }
     }
 }
