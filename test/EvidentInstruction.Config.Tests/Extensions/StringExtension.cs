@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 
-namespace EvidentInstruction.Config.Extension
+namespace EvidentInstruction.Configuration.Tests.Extension
 {
     public static class StringExtensions
     {

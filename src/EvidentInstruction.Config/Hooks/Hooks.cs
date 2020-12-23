@@ -1,25 +1,43 @@
-﻿using EvidentInstruction.Config.Extension;
+﻿using EvidentInstruction.Configuration.Helpers;
+using EvidentInstruction.Configuration.Models;
+using EvidentInstruction.Configuration.Extension;
 using EvidentInstruction.Controllers;
+using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using TechTalk.SpecFlow;
 
-namespace EvidentInstruction.Config.Hooks
+namespace EvidentInstruction.Configuration.Hooks
 {
     [ExcludeFromCodeCoverage]
     [Binding]
     public sealed class Hooks
     {
         private VariableController variableController;
+        private readonly FeatureContext featureContext;
+        private readonly ScenarioContext scenarioContext;
 
-        public Hooks(VariableController controller)
+        [ThreadStatic]
+        IOptions<IEnumerable<ConfigFile>> config;
+
+        public Hooks(VariableController variableController,
+            FeatureContext featureContext, ScenarioContext scenarioContext)
         {
-            variableController = controller;
+            this.variableController = variableController;
+            this.featureContext = featureContext;
+            this.scenarioContext = scenarioContext;
+
+            var configuration = ConfigurationFactory.Create();
+            config = ConfigOptionsFactory.Create(configuration);
         }
 
         [BeforeTestRun(Order = -30000)]
         public void BeforeTestRun()
         {
-           // variableController.AddConfig();
+            var tags = TagHelper.GetAllTags(featureContext, scenarioContext);
+
+            variableController.AddConfig(config, tags);
         }
     }
 }

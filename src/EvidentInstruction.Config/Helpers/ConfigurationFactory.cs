@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using EvidentInstruction.Configuration.Infrastructures;
+using Microsoft.Extensions.Configuration;
 using System.Diagnostics.CodeAnalysis;
 
-namespace EvidentInstruction.Config.Helpers
+namespace EvidentInstruction.Configuration.Helpers
 {
     [ExcludeFromCodeCoverage]
     public static class ConfigurationFactory
@@ -9,7 +10,7 @@ namespace EvidentInstruction.Config.Helpers
         public static IConfiguration Create()
         {
             return new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
+                .AddJsonFile(Constants.DEFAULT_JSON)
                 .AddEnvironmentVariables()
                 .Build();
         }
