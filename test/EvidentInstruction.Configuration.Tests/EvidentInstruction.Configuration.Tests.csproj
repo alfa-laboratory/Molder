@@ -12,7 +12,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.0" />
-    <PackageReference Include="Moq" Version="4.15.1" />
+    <PackageReference Include="Moq" Version="4.15.2" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <PrivateAssets>all</PrivateAssets>
@@ -21,8 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\EvidentInstruction.Config\EvidentInstruction.Config.csproj" />
-    <ProjectReference Include="..\..\src\EvidentInstruction.Generator\EvidentInstruction.Generator.csproj" />
+    <ProjectReference Include="..\..\src\EvidentInstruction.Configuration\EvidentInstruction.Configuration.csproj" />
     <ProjectReference Include="..\..\src\EvidentInstruction\EvidentInstruction.csproj" />
   </ItemGroup>
 
