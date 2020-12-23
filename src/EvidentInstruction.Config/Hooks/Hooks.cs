@@ -12,7 +12,7 @@ namespace EvidentInstruction.Configuration.Hooks
 {
     [ExcludeFromCodeCoverage]
     [Binding]
-    public sealed class Hooks
+    public class Hooks
     {
         private VariableController variableController;
         private readonly FeatureContext featureContext;
@@ -32,8 +32,8 @@ namespace EvidentInstruction.Configuration.Hooks
             config = ConfigOptionsFactory.Create(configuration);
         }
 
-        [BeforeTestRun(Order = -30000)]
-        public void BeforeTestRun()
+        [BeforeScenario(Order = -30000)]
+        public void BeforeScenario()
         {
             var tags = TagHelper.GetAllTags(featureContext, scenarioContext);
 
