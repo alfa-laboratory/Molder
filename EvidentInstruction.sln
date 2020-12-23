@@ -15,9 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Service"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Generator.Tests", "test\EvidentInstruction.Generator.Tests\EvidentInstruction.Generator.Tests.csproj", "{1705FE8B-E0A9-4A5F-94A1-246397E0AFC2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Configuration", "src\EvidentInstruction.Config\EvidentInstruction.Configuration.csproj", "{69324447-06D0-417B-934B-F90FFC4C326A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Configuration", "src\EvidentInstruction.Configuration\EvidentInstruction.Configuration.csproj", "{69324447-06D0-417B-934B-F90FFC4C326A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Configuration.Tests", "test\EvidentInstruction.Config.Tests\EvidentInstruction.Configuration.Tests.csproj", "{6F830FB2-0FD7-458B-91B3-8BB2217FAD80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Configuration.Tests", "test\EvidentInstruction.Configuration.Tests\EvidentInstruction.Configuration.Tests.csproj", "{6F830FB2-0FD7-458B-91B3-8BB2217FAD80}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Database.Tests", "test\EvidentInstruction.Database.Tests\EvidentInstruction.Database.Tests.csproj", "{DBFCA66D-73D5-4D53-AFD1-99BAD7337D63}"
 EndProject

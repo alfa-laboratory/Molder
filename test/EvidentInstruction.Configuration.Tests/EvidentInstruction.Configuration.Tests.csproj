@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\EvidentInstruction.Config\EvidentInstruction.Configuration.csproj" />
+    <ProjectReference Include="..\..\src\EvidentInstruction.Configuration\EvidentInstruction.Configuration.csproj" />
     <ProjectReference Include="..\..\src\EvidentInstruction\EvidentInstruction.csproj" />
   </ItemGroup>
 
