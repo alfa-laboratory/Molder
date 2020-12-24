@@ -49,6 +49,8 @@ namespace EvidentInstruction.Database.Models
                 }
 
                 connectionString.ConnectTimeout = parameters.Timeout != null ? (int)parameters.Timeout : DbSetting.TIMEOUT;
+                connectionString.ConnectRetryCount = parameters.ConnectRetryCount;
+                connectionString.ConnectRetryInterval = parameters.ConnectRetryInterval;
 
                 Log.Logger().LogInformation($"Connection has parameters: {Database.Helpers.Message.CreateMessage(connectionString.ToString())}");
 
