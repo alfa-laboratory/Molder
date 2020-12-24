@@ -28,5 +28,11 @@ namespace EvidentInstruction.Database.Models
             set => _password = value;
         }
         public int? Timeout { get; set; } = 60;
+
+        [Range(0, 255)]
+        public int ConnectRetryCount { get; set; } = 1;
+
+        [Range(1, 60)]
+        public int ConnectRetryInterval { get; set; } = 10;
     }
 }

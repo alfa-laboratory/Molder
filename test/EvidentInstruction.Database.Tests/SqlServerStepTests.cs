@@ -26,7 +26,7 @@ namespace EvidentInstruction.Database.Tests
 
         public SqlServerStepTests()
         {
-            dbConnectionParams = new DbConnectionParams() { Database = "Test", Source = "test", Login = "test", Password = "W9qNIafQbJCZzEafUaYmQw==", Timeout = 1 };
+            dbConnectionParams = new DbConnectionParams() { Database = "Test", Source = "test", Login = "test", Password = "W9qNIafQbJCZzEafUaYmQw==", Timeout = 1, ConnectRetryCount = 0, ConnectRetryInterval = 1 };
             databaseController = new DatabaseController();
             variableController = new VariableController();
             step = new SqlServerSteps(databaseController, variableController);
