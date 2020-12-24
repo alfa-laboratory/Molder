@@ -78,7 +78,7 @@ namespace EvidentInstruction.Database.Tests
 
             action.Should()
                 .Throw<ConnectSqlException>()
-                 .WithMessage($"*Connection failed. Connection with parameters: {Database.Helpers.Message.CreateMessage(dbConnectionParams)}*");
+                .Which.Message.Contains($"Connection failed. Connection with parameters: {Database.Helpers.Message.CreateMessage(dbConnectionParams)}");
             action.Should()
                 .Throw<ConnectSqlException>()
                  .WithMessage("*A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections.*");
