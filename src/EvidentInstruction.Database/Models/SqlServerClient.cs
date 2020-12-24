@@ -45,8 +45,10 @@ namespace EvidentInstruction.Database.Models
 
                 if (connectionString.LoadBalanceTimeout <= 0)
                 {
-                    connectionString.LoadBalanceTimeout = DbSetting.TIMEOUT;
+                    connectionString.LoadBalanceTimeout = parameters.Timeout != null ? (int)parameters.Timeout : DbSetting.TIMEOUT;
                 }
+
+                connectionString.ConnectTimeout = parameters.Timeout != null ? (int)parameters.Timeout : DbSetting.TIMEOUT;
 
                 Log.Logger().LogInformation($"Connection has parameters: {Database.Helpers.Message.CreateMessage(connectionString.ToString())}");
 

@@ -52,7 +52,7 @@ namespace EvidentInstruction.Database.Models
             }
         }
 
-        public void UsingTransaction(Action<DbTransaction> onExecute, Action<System.Exception> onError, Action onSuccess = null)
+        public void UsingTransaction(Action<DbTransaction> onExecute, Action<Exception> onError, Action onSuccess = null)
         {
             var transaction = connection.BeginTransaction(IsolationLevel.ReadUncommitted);
 
@@ -61,7 +61,7 @@ namespace EvidentInstruction.Database.Models
                 onExecute(transaction);
                 transaction.Commit();
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Log.Logger().LogError($"Transaction failed: {transaction} {Environment.NewLine} {ex.Message}");
                 transaction.Rollback();
