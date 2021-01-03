@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
@@ -11,8 +12,8 @@ namespace EvidentInstruction.Helpers
             var errors = new List<string>();
             if (fTable.Rows.Count != sTable.Rows.Count || fTable.Columns.Count != sTable.Columns.Count)
             {
-                Log.Logger.Error($"Размеры первой таблицы ({fTable.Rows.Count};{fTable.Columns.Count}) " +
-                        $"не совпадают с размерами второй таблицы ({sTable.Rows.Count};{sTable.Columns.Count})");
+                Log.Logger().LogError($"First Table Size ({fTable.Rows.Count};{fTable.Columns.Count}) " +
+                        $"not equal with Second Table Size ({sTable.Rows.Count};{sTable.Columns.Count})");
                 return false;
             }
 
@@ -22,13 +23,13 @@ namespace EvidentInstruction.Helpers
                 {
                     if (!Equals(fTable.Rows[i][c], sTable.Rows[i][c]))
                     {
-                        errors.Add($"Элементы таблиц в позиции ({i};{c}) не совпадают => \"{fTable.Rows[i][c]}\" не равен \"{sTable.Rows[i][c]}\"");
+                        errors.Add($"Table items at position ({i};{c}) are not equal => \"{fTable.Rows[i][c]}\" not equal \"{sTable.Rows[i][c]}\"");
                     }
                 }
             }
             if(errors.Any())
             {
-                Log.Logger.Error(Message.CreateMessage(errors));
+                Log.Logger().LogError(Message.CreateMessage(errors));
                 return false;
             }
 

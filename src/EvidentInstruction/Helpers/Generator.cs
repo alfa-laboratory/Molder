@@ -1,5 +1,7 @@
 ﻿using EvidentInstruction.Exceptions;
-using EvidentInstruction.Models.DateTimeHelpers;
+using EvidentInstruction.Models;
+using EvidentInstruction.Models.DateTimeHelpers.Interfaces;
+using Microsoft.Extensions.Logging;
 using System;
 
 namespace EvidentInstruction.Helpers
@@ -82,7 +84,7 @@ namespace EvidentInstruction.Helpers
             }
             catch (ArgumentOutOfRangeException)
             {
-                Log.Logger.Warning($"Дата {day}.{month}.{year} не корректна.");
+                Log.Logger().LogWarning($"Дата {day}.{month}.{year} не корректна.");
                 return null;
             }
         }
@@ -96,7 +98,7 @@ namespace EvidentInstruction.Helpers
             }
             catch (ArgumentOutOfRangeException)
             {
-                Log.Logger.Warning($"Время {hours}:{minutes}:{seconds}.{milliseconds} не корректно.");
+                Log.Logger().LogWarning($"Время {hours}:{minutes}:{seconds}.{milliseconds} не корректно.");
                 return null;
             }
         }
@@ -109,7 +111,7 @@ namespace EvidentInstruction.Helpers
             }
             catch (ArgumentOutOfRangeException)
             {
-                Log.Logger.Warning($"Время {hours}:{minutes}:{seconds}.{milliseconds} не корректно.");
+                Log.Logger().LogWarning($"Время {hours}:{minutes}:{seconds}.{milliseconds} не корректно.");
                 return null;
             }
         }
@@ -140,7 +142,7 @@ namespace EvidentInstruction.Helpers
                     .AddMonths((trigger) * month)
                     .AddYears((trigger) * year);
             }
-            Log.Logger.Warning($"Используйте только положительные числа при указании отличной даты от заданной.");
+            Log.Logger().LogWarning($"Используйте только положительные числа при указании отличной даты от заданной.");
             return null;
         }
 
@@ -164,7 +166,7 @@ namespace EvidentInstruction.Helpers
             var str = string.Empty;
             if (len <= 0)
             {
-                Log.Logger.Error("Размер генерируемой строки отрицательный или равен нулю");
+                Log.Logger().LogError("Размер генерируемой строки отрицательный или равен нулю");
                 throw new GeneratorException("Размер генерируемой строки отрицательный или равен нулю");
             }
 

@@ -10,9 +10,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using System.Xml.Linq;
 using Xunit;
+using EvidentInstruction.Models;
+using EvidentInstruction.Infrastructures;
 
 namespace EvidentInstruction.Tests
 {
+
     [ExcludeFromCodeCoverage]
     public class VariableControllerTests
     {
@@ -43,16 +46,16 @@ namespace EvidentInstruction.Tests
             var varName = variableContext.GetVariableName(key);
             varName.Should().Be(name);
         }
-
+       
         [Theory]
         [InlineData("pointTest.test", "pointTest")]
         [InlineData("bracessTest[test]", "bracessTest")]
         public void GetVariableName_NameWithBracessAndPoint_ReturnName(string key, string name)
         {
-            variableContext.SetVariable(key, typeof(string), "1");
-            var varName = variableContext.GetVariableName(key);
-            varName.Should().Be(name);
-        }
+            variableContext.SetVariable(key, typeof(string), "1"); 
+            var varName = variableContext.GetVariableName(key);                     
+            varName.Should().Be(name);            
+        }  
 
         [Theory]
         [InlineData(null)]
@@ -72,6 +75,75 @@ namespace EvidentInstruction.Tests
             var variable = variableContext.GetVariable(key);
             variable.Type.Should().Be(type);
             variable.Value.Should().Be(value);
+        }
+
+        [Theory]
+        [InlineData("zero", typeof(int), 0)]       
+        public void GetVariable_TypeofAccessGlobal_ReturnVariable(string key, Type type, int value)
+        {
+            variableContext.SetVariable(key, type, value, TypeOfAccess.Global);
+            var variable = variableContext.GetVariable(key);
+            variable.Type.Should().Be(type);
+            variable.Value.Should().Be(value);
+        }
+
+        [Theory]
+        [InlineData("zero", typeof(int), 0)]
+        public void GetVariable_TypeofAccessLocal_ReturnVariable(string key, Type type, int value)
+        {
+            variableContext.SetVariable(key, type, value, TypeOfAccess.Local);
+            var variable = variableContext.GetVariable(key);
+            variable.Type.Should().Be(type);
+            variable.Value.Should().Be(value);
+        }
+
+        [Theory]
+        [InlineData("zero", typeof(int), 0)]
+        public void GetVariable_TypeofAccessDefault_ReturnVariable(string key, Type type, int value)
+        {
+            variableContext.SetVariable(key, type, value, TypeOfAccess.Default);
+            var variable = variableContext.GetVariable(key);
+            variable.Type.Should().Be(type);
+            variable.Value.Should().Be(value);
+        }
+
+        [Theory]
+        [InlineData(null, typeof(string), "", TypeOfAccess.Local)]
+        [InlineData("", typeof(string), "", TypeOfAccess.Local)]
+        public void SetVariable_KeyIsNull_ReturnVariables(string key, Type type, string value, TypeOfAccess typeOfAccess)
+        {
+            variableContext.SetVariable(key, type, value, typeOfAccess);
+            variableContext.Variables.Count.Should().Be(3);
+        }
+
+        [Theory]
+        [InlineData("zero", typeof(string), "0", TypeOfAccess.Default)]
+        public void SetVariable_GlobalAndDefault_ReturnVariables(string key, Type type, string value, TypeOfAccess typeOfAccess)
+        {
+            variableContext.SetVariable(key, type, key, TypeOfAccess.Global);
+            variableContext.SetVariable(key, type, value, typeOfAccess);
+            variableContext.Variables[key].TypeOfAccess.Should().Be(TypeOfAccess.Global);
+            variableContext.Variables[key].Value.Should().Be(key);
+        }
+
+        [Theory]
+        [InlineData("zero", typeof(string), "0", TypeOfAccess.Local)]
+        public void SetVariable_LocalAndDefault_ReturnVariables(string key, Type type, string value, TypeOfAccess typeOfAccess)
+        {
+            variableContext.SetVariable(key, type, key, TypeOfAccess.Default);
+            variableContext.SetVariable(key, type, value, typeOfAccess);
+            variableContext.Variables[key].TypeOfAccess.Should().Be(typeOfAccess);
+            variableContext.Variables[key].Value.Should().Be(value);
+        }
+
+        [Theory]
+        [InlineData("zero", typeof(string), "0", TypeOfAccess.Local)]
+        public void SetVariable_GlobalAndLocal_ReturnVariables(string key, Type type, string value, TypeOfAccess typeOfAccess)
+        {
+            variableContext.SetVariable(key, type, key, TypeOfAccess.Global);
+            variableContext.SetVariable(key, type, value, typeOfAccess);
+            variableContext.Variables[key].TypeOfAccess.Should().Be(TypeOfAccess.Local);
+            variableContext.Variables[key].Value.Should().Be(value);
         }
 
         [Theory]
@@ -218,6 +290,18 @@ namespace EvidentInstruction.Tests
             ((JValue)variable).Value.Should().Be(searchValue);
         }
 
+        [Theory]
+        [InlineData("second", typeof(string), "newsecond", TypeOfAccess.Global)]
+        public void GetDoubleVariable_TypeOfAccessGlobal_ReturnException(string key, Type type, string value, TypeOfAccess typeOfAccess)
+        {
+            variableContext.SetVariable(key, type, value, typeOfAccess);
+
+            Action act = () => variableContext.SetVariable(key, type, value, typeOfAccess);
+            act
+              .Should().Throw<ArgumentException>()
+              .WithMessage($"Element with key: \"{key}\" has already created with type 'Global'");
+        }        
+
         [Fact]
         public void GetVariableValue_SearchDataTable_ReturnValue()
         {
@@ -257,7 +341,7 @@ namespace EvidentInstruction.Tests
 
             var variable = variableContext.GetVariableValue("DataTable[0]");
             (variable is DataRow).Should().BeTrue();
-        }
+        }       
 
         [Fact]
         public void GetVariableValue_VariableValueNullByName_ReturnNull()
@@ -442,6 +526,36 @@ namespace EvidentInstruction.Tests
             var variable = variableContext.GetVariableValueText("null");
 
             variable.Should().BeNull();
+        }
+
+        [Fact]
+        public void GetVariableValue_ListValue_ReturnList()
+        {
+            var list = new List<int> { 1, 2, 3 };
+            var variable = new Variable
+            {
+                Type = list.GetType(),
+                Value = list
+            };
+            variableContext.Variables.TryAdd("list", variable);
+
+            var value = variableContext.GetVariableValue("list");
+            value.Should().Be(list);
+        }
+
+        [Fact]
+        public void GetVariableValue_ListValue_ReturnListValue()
+        {
+            int[] nums = { 1, 2, 3 };
+            var variable = new Variable
+            {
+                Type = nums.GetType(),
+                Value = nums
+            };
+            variableContext.Variables.TryAdd("nums", variable);
+
+            var value = variableContext.GetVariableValue("nums[0]");
+            value.Should().Be(1);
         }
     }
 }

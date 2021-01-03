@@ -258,7 +258,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.StoreAsVariableXmlFromText("test", "test");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Expected doc not to be <null>.*");
+                .WithMessage($"*Создать XmlDoc из строки \"test\" не удалось.");
         }
 
         [Fact]

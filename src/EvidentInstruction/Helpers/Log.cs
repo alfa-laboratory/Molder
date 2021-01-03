@@ -1,12 +1,43 @@
-﻿using Serilog;
+﻿using Microsoft.Extensions.Logging;
+using System.Diagnostics.CodeAnalysis;
+using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
 
 namespace EvidentInstruction.Helpers
 {
-    public static class Log
+    /// <summary>
+    /// Статичный класс для логирования.
+    /// </summary>
+    [ExcludeFromCodeCoverage]
+    public class Log
     {
-        public static ILogger Logger = new LoggerConfiguration()
-             .MinimumLevel.Verbose() 
-             .WriteTo.ColoredConsole()
-             .CreateLogger();
+        private static ILoggerFactory _Factory = null;
+
+        private static void ConfigureLogger(ILoggerFactory factory)
+        {
+            var logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .Enrich.FromLogContext()
+                .WriteTo.Console(theme: AnsiConsoleTheme.Code)
+            .CreateLogger();
+
+            factory.AddSerilog(logger);
+        }
+
+        public static ILoggerFactory LoggerFactory
+        {
+            get
+            {
+                if (_Factory == null)
+                {
+                    _Factory = new LoggerFactory();
+                    ConfigureLogger(_Factory);
+                }
+                return _Factory;
+            }
+            set { _Factory = value; }
+        }
+
+        public static Microsoft.Extensions.Logging.ILogger Logger() => LoggerFactory.CreateLogger("Default");
     }
 }

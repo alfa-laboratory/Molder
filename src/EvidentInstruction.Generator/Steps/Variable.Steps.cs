@@ -6,6 +6,7 @@ using FluentAssertions;
 using EvidentInstruction.Controllers;
 using EvidentInstruction.Helpers;
 using TechTalk.SpecFlow;
+using Microsoft.Extensions.Logging;
 
 namespace EvidentInstruction.Generator.Steps
 {
@@ -151,10 +152,10 @@ namespace EvidentInstruction.Generator.Steps
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная \"{varName}\" уже существует");
             var xmlBody = this.variableController.ReplaceVariables(xml);
 
-            Log.Logger.Information($"xml is \"{xmlBody}\"");
+            Log.Logger().LogInformation($"xml is \"{xmlBody}\"");
 
             var doc = Converter.CreateXmlDoc(xmlBody);
-            doc.Should().NotBeNull();
+            doc.Should().NotBeNull($"Создать XmlDoc из строки \"{xmlBody}\" не удалось");
 
             this.variableController.SetVariable(varName, doc.GetType(), doc);
         }
@@ -187,7 +188,7 @@ namespace EvidentInstruction.Generator.Steps
             this.variableController.Variables.ContainsKey(this.variableController.GetVariableName(cdataVar)).Should().BeTrue($"Переменной \"{cdataVar}\" не существует");
             this.variableController.Variables.ContainsKey(varName).Should().BeFalse($"Переменная \"{varName}\" уже существует");
 
-            var value = (XElement)this.variableController.GetVariableValue(varName);
+            var value = (string)this.variableController.GetVariableValue(varName);
             var cdata = Converter.CreateCData(value);
             cdata.Should().NotBeNull($"Значение переменной \"{Environment.NewLine + cdata + Environment.NewLine}\" не является CDATA");
 
