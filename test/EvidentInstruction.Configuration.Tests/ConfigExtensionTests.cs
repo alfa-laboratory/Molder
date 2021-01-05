@@ -144,11 +144,6 @@ namespace EvidentInstruction.Configuration.Tests
             res.Variables.Should().BeEquivalentTo(variableDictionary);
         }
 
-
-
-
-
-
         public static IEnumerable<object[]> ErrorConfigFileData()
         {
             yield return new object[]

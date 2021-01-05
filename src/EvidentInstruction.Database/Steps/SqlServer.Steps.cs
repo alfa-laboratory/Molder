@@ -202,7 +202,6 @@ namespace EvidentInstruction.Database.Steps
         [StepDefinition(@"я добавляю записи в таблицу ""(.+)"" в БД ""(.+)"":")]
         public void ExecuteInsertQueryFromTable(string tableName, string connectionName, IEnumerable<Dictionary<string, object>> insertQuery)
         {
-
             this.databaseController.Connections.ContainsKey(connectionName).Should().BeTrue($"Connection: \"{connectionName}\" does not exist");
             var (connection, timeout) = this.databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
 
@@ -214,8 +213,6 @@ namespace EvidentInstruction.Database.Steps
 
             count.Should().NotBe(0, $"INSERT {query} failed. Check table names or values");
             Log.Logger().LogInformation($"INSERT completed {Environment.NewLine} {query}. {Environment.NewLine} Changed {count} row(s).");
-
-
         }
     }
 }
