@@ -276,10 +276,10 @@ namespace EvidentInstruction.Generator.Steps
             this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
 
             var dt = fakerGenerator.GetDate(fDay, fMonth, fYear);
-            dt.Should().NotBeNull($"Проверьте корректность создания даты day:{fDay},month:{fMonth},year:{fYear}.");
+            dt.Should().NotBeNull($"проверьте корректность создания даты day:{fDay},month:{fMonth},year:{fYear}");
 
             var pdt = fakerGenerator.GetDate(day, month, year, false, dt);
-            pdt.Should().NotBeNull($"Проверьте корректность создания даты day:{day},month:{month},year:{year}.");
+            pdt.Should().NotBeNull($"проверьте корректность создания даты day:{day},month:{month},year:{year}");
 
             this.variableController.SetVariable(varName, pdt.GetType(), pdt);
         }
@@ -298,10 +298,10 @@ namespace EvidentInstruction.Generator.Steps
             this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
 
             var dt = fakerGenerator.GetDate(fDay, fMonth, fYear);
-            dt.Should().NotBeNull($"Проверьте корректность создания даты day:{fDay},month:{fMonth},year:{fYear}.");
+            dt.Should().NotBeNull($"проверьте корректность создания даты day:{fDay},month:{fMonth},year:{fYear}");
 
             var pdt = fakerGenerator.GetDate(day, month, year, false, dt);
-            pdt.Should().NotBeNull($"Проверьте корректность создания даты day:{day},month:{month},year:{year}.");
+            pdt.Should().NotBeNull($"проверьте корректность создания даты day:{day},month:{month},year:{year}");
             var pastDateTime = pdt?.ToString(format);
 
             this.variableController.SetVariable(varName, pastDateTime.GetType(), pastDateTime);
