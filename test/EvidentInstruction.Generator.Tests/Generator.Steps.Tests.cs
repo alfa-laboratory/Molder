@@ -59,7 +59,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -75,7 +75,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*проверьте корректность создания даты day:0,month:0,year:0*");
+              .Which.Message.Contains("проверьте корректность создания даты day:0,month:0,year:0");
         }
 
         [Fact]
@@ -108,7 +108,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -123,7 +123,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*проверьте корректность создания даты day:0,month:0,year:0*");
+              .Which.Message.Contains("проверьте корректность создания даты day:0,month:0,year:0");
         }
 #endregion
         # region StoreAsVariableTimeLong
@@ -157,7 +157,7 @@ namespace EvidentInstruction.Generator.Tests
                     // Assert
                     act
                       .Should().Throw<Exception>()
-                      .WithMessage("*переменная \"test\" уже существует*");
+                      .Which.Message.Contains("переменная \"test\" уже существует");
                 }
 
                 [Fact]
@@ -173,7 +173,7 @@ namespace EvidentInstruction.Generator.Tests
                     // Assert
                     act
                       .Should().Throw<Exception>()
-                      .WithMessage("*проверьте корректность создания времени hours:-1,minutes:0,seconds:0,milliseconds:0*");
+                      .Which.Message.Contains("проверьте корректность создания времени hours:-1,minutes:0,seconds:0,milliseconds:0");
                 }
 
                 [Fact]
@@ -206,7 +206,7 @@ namespace EvidentInstruction.Generator.Tests
                     // Assert
                     act
                       .Should().Throw<Exception>()
-                      .WithMessage("*переменная \"test\" уже существует*");
+                      .Which.Message.Contains("переменная \"test\" уже существует");
                 }
 
                 [Fact]
@@ -221,7 +221,7 @@ namespace EvidentInstruction.Generator.Tests
                     // Assert
                     act
                       .Should().Throw<Exception>()
-                      .WithMessage("*проверьте корректность создания времени hours:-1,minutes:0,seconds:0,milliseconds:0*");
+                      .Which.Message.Contains("проверьте корректность создания времени hours:-1,minutes:0,seconds:0,milliseconds:0");
                 }
         #endregion
         #region StoreAsVariableDateTime
@@ -255,7 +255,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -271,7 +271,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*проверьте корректность создания даты и времени day:1,month:1,year:0,hours:-1,minutes:0,seconds:0*");
+              .Which.Message.Contains("проверьте корректность создания даты и времени day:1,month:1,year:0,hours:-1,minutes:0,seconds:0");
         }
 
         [Fact]
@@ -304,7 +304,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -319,7 +319,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*проверьте корректность создания даты и времени day:1,month:1,year:0,hours:-1,minutes:0,seconds:0*");
+              .Which.Message.Contains("проверьте корректность создания даты и времени day:1,month:1,year:0,hours:-1,minutes:0,seconds:0");
         }
 #endregion
         #region StoreAsVariableCurrentDate
@@ -358,7 +358,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -396,7 +396,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
         #endregion
         #region StoreAsVariableRandomDateTime
@@ -429,7 +429,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -462,7 +462,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
         #endregion
         #region StoreAsVariablePastDateTimeWithDifference
@@ -503,7 +503,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -524,7 +524,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*проверьте корректность создания даты day:0,month:0,year:2001*");
+              .Which.Message.Contains("проверьте корректность создания даты day:0,month:0,year:2001");
         }
 
         [Fact]
@@ -564,7 +564,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -585,7 +585,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*проверьте корректность создания даты day:0,month:0,year:2001*");
+              .Which.Message.Contains("проверьте корректность создания даты day:0,month:0,year:2001");
         }
 
         [Fact]
@@ -618,7 +618,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -633,7 +633,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*проверьте корректность создания даты day:0,month:0,year:2001*");
+              .Which.Message.Contains("проверьте корректность создания даты day:0,month:0,year:2001");
         }
 
         [Fact]
@@ -667,7 +667,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -682,7 +682,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*проверьте корректность создания даты day:0,month:0,year:2001*");
+              .Which.Message.Contains("проверьте корректность создания даты day:0,month:0,year:2001");
         }
         #endregion
         #region StoreAsVariableFutureDateTimeWithDifference
@@ -723,7 +723,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -744,7 +744,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*проверьте корректность создания даты day:0,month:0,year:10001*");
+              .Which.Message.Contains("проверьте корректность создания даты day:0,month:0,year:10001");
         }
 
         [Fact]
@@ -784,7 +784,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -805,7 +805,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*проверьте корректность создания даты day:0,month:0,year:10001*");
+              .Which.Message.Contains("проверьте корректность создания даты day:0,month:0,year:10001");
         }
 
         [Fact]
@@ -838,7 +838,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -853,7 +853,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*проверьте корректность создания даты day:0,month:0,year:10001*");
+              .Which.Message.Contains("проверьте корректность создания даты day:0,month:0,year:10001");
         }
 
         [Fact]
@@ -887,7 +887,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -902,7 +902,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*проверьте корректность создания даты day:0,month:0,year:10001*");
+              .Which.Message.Contains("проверьте корректность создания даты day:0,month:0,year:10001");
         }
         #endregion
         #region StoreAsVariableRandomString/Char/Number with prefix/postfix
@@ -935,7 +935,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -951,7 +951,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*postfix and/or prefix are longer than the string itself*");
+              .Which.Message.Contains("postfix and/or prefix are longer than the string itself");
         }
 
         [Fact]
@@ -983,7 +983,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -999,7 +999,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*postfix and/or prefix are longer than the string itself*");
+              .Which.Message.Contains("postfix and/or prefix are longer than the string itself");
         }
 
         [Fact]
@@ -1031,7 +1031,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -1047,7 +1047,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*postfix and/or prefix are longer than the string itself*");
+              .Which.Message.Contains("postfix and/or prefix are longer than the string itself");
         }
 
         [Fact]
@@ -1079,7 +1079,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -1095,7 +1095,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*postfix and/or prefix are longer than the string itself*");
+              .Which.Message.Contains("postfix and/or prefix are longer than the string itself");
         }
 
         [Fact]
@@ -1127,7 +1127,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -1143,7 +1143,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*postfix and/or prefix are longer than the string itself*");
+              .Which.Message.Contains("postfix and/or prefix are longer than the string itself");
         }
 
         [Fact]
@@ -1175,7 +1175,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -1191,7 +1191,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*postfix and/or prefix are longer than the string itself*");
+              .Which.Message.Contains("postfix and/or prefix are longer than the string itself");
         }
         #endregion
         #region StoreAsVariableRandomString/Char/Number
@@ -1224,7 +1224,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -1240,7 +1240,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*the length must be positive, but found 0.*");
+              .Which.Message.Contains("the length must be positive, but found 0.");
         }
 
         [Fact]
@@ -1272,7 +1272,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -1288,7 +1288,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*the length must be positive, but found 0.*");
+              .Which.Message.Contains("the length must be positive, but found 0.");
         }
 
         [Fact]
@@ -1320,7 +1320,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -1336,7 +1336,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*the length must be positive, but found 0.*");
+              .Which.Message.Contains("the length must be positive, but found 0.");
         }
         #endregion
         #region StoreAsVariableRandomPhone
@@ -1370,7 +1370,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
         #endregion
         #region StoreAsVariableUuid
@@ -1404,7 +1404,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
         #endregion
         #region StoreAsVariableMonth
@@ -1438,7 +1438,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
         #endregion
         #region StoreAsVariableWeekday
@@ -1472,7 +1472,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
         #endregion
         #region StoreAsVariableEmail
@@ -1507,7 +1507,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
         #endregion
         #region StoreAsVariableIp
@@ -1541,7 +1541,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
         #endregion
         #region StoreAsVariableUrl
@@ -1575,7 +1575,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" уже существует*");
+              .Which.Message.Contains("переменная \"test\" уже существует");
         }
         #endregion
         #region StoreVariableValueToArrayVariable
@@ -1609,7 +1609,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" не существует*");
+              .Which.Message.Contains("переменная \"test\" не существует");
         }
 
         [Fact]
@@ -1629,7 +1629,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"nTest\" уже существует*");
+              .Which.Message.Contains("переменная \"nTest\" уже существует");
         }
         #endregion
     }

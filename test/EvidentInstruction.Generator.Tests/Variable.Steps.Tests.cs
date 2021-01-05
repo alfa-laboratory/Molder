@@ -39,7 +39,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.DeleteVariable("test");
             act.Should().Throw<Exception>()
-                .WithMessage($"*переменная \"test\" не существует.");
+                .Which.Message.Contains($"переменная \"test\" не существует.");
         }
 
         [Fact]
@@ -63,7 +63,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.EmtpyVariable("test");
             act.Should().Throw<Exception>()
-                .WithMessage($"*переменная \"test\" не существует*");
+                .Which.Message.Contains($"переменная \"test\" не существует");
         }
 
         [Fact]
@@ -115,7 +115,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.ChangeVariable("test", 0);
             act.Should().Throw<Exception>()
-                .WithMessage("*переменная \"test\" не существует*");
+                .Which.Message.Contains("переменная \"test\" не существует");
         }
 
         [Fact]
@@ -139,7 +139,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.StoreAsVariableString(null, "test");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Переменная \"test\" уже существует*");
+                .Which.Message.Contains($"Переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -164,7 +164,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.StoreAsVariableEncriptedString(null, "test");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Переменная \"test\" уже существует*");
+                .Which.Message.Contains($"Переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -188,7 +188,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.StoreAsVariableText("test", null);
             act.Should().Throw<Exception>()
-                .WithMessage($"*Переменная \"test\" уже существует*");
+                .Which.Message.Contains($"Переменная \"test\" уже существует");
         }
 
         [Theory]
@@ -213,7 +213,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.StoreAsVariableNumber("test", null);
             act.Should().Throw<Exception>()
-                .WithMessage($"*Переменная \"test\" уже существует*");
+                .Which.Message.Contains($"Переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -223,7 +223,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.StoreAsVariableNumber("test", "test");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Input string was not in a correct format*");
+                .Which.Message.Contains($"Input string was not in a correct format");
         }
 
         [Theory]
@@ -248,7 +248,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.StoreAsVariableXmlFromText("test", null);
             act.Should().Throw<Exception>()
-                .WithMessage($"*Переменная \"test\" уже существует*");
+                .Which.Message.Contains($"Переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -258,7 +258,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.StoreAsVariableXmlFromText("test", "test");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Создать XmlDoc из строки \"test\" не удалось.");
+                .Which.Message.Contains($"Создать XmlDoc из строки \"test\" не удалось.");
         }
 
         [Fact]
@@ -285,7 +285,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.StoreVariableValueToVariable("test", "test");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Переменная \"test\" уже существует*");
+                .Which.Message.Contains($"Переменная \"test\" уже существует");
         }
 
         [Fact]
@@ -295,7 +295,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.StoreVariableValueToVariable("test", null);
             act.Should().Throw<Exception>()
-                .WithMessage($"*переменная \"test\" не существует*");
+                .Which.Message.Contains($"переменная \"test\" не существует");
         }
 
         [Fact]
@@ -318,7 +318,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableIsNotNull("test");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение переменной \"test\" является NULL*");
+                .Which.Message.Contains($"Значение переменной \"test\" является NULL");
         }
 
         [Fact]
@@ -341,7 +341,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableIsNull("test");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение переменной \"test\" не является NULL*");
+                .Which.Message.Contains($"Значение переменной \"test\" не является NULL");
         }
 
         [Fact]
@@ -364,7 +364,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableIsNotEmpty("test");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значения в переменной \"test\" нет*");
+                .Which.Message.Contains($"Значения в переменной \"test\" нет");
         }
 
         [Fact]
@@ -377,7 +377,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableIsNotEmpty("test");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение переменной \"test\" пустая строка*");
+                .Which.Message.Contains($"Значение переменной \"test\" пустая строка");
         }
 
         [Fact]
@@ -400,7 +400,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableIsEmpty("test");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значения в переменной \"test\" нет*");
+                .Which.Message.Contains($"Значения в переменной \"test\" нет");
         }
 
         [Fact]
@@ -413,7 +413,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableIsEmpty("test");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение переменной \"test\" не пустая строка*");
+                .Which.Message.Contains($"Значение переменной \"test\" не пустая строка");
         }
 
         [Fact]
@@ -435,7 +435,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableEquals("test", null);
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение \"expected\" не задано.*");
+                .Which.Message.Contains($"Значение \"expected\" не задано.");
         }
 
         [Fact]
@@ -447,7 +447,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableEquals("test", 0);
             act.Should().Throw<Exception>()
-                .WithMessage($"*Тип значения переменной \"test\" не совпадает с типом \"0\"*");
+                .Which.Message.Contains($"Тип значения переменной \"test\" не совпадает с типом \"0\"");
         }
 
         [Fact]
@@ -459,7 +459,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableEquals("test", "mp");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение переменной \"test\":\"test\" не равно \"mp\"*");
+                .Which.Message.Contains($"Значение переменной \"test\":\"test\" не равно \"mp\"");
         }
 
         [Fact]
@@ -481,7 +481,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableNotEquals("test", null);
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение \"expected\" не задано.*");
+                .Which.Message.Contains($"Значение \"expected\" не задано.");
         }
 
         [Fact]
@@ -493,7 +493,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableNotEquals("test", 0);
             act.Should().Throw<Exception>()
-                .WithMessage($"*Тип значения переменной \"test\" не совпадает с типом \"0\"*");
+                .Which.Message.Contains($"Тип значения переменной \"test\" не совпадает с типом \"0\"");
         }
 
         [Fact]
@@ -505,7 +505,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableNotEquals("test", "test");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение переменной \"test\":\"test\" равно \"test\"*");
+                .Which.Message.Contains($"Значение переменной \"test\":\"test\" равно \"test\"");
         }
 
         [Fact]
@@ -527,7 +527,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableContains("test", null);
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение \"expected\" не задано.*");
+                .Which.Message.Contains($"Значение \"expected\" не задано.");
         }
 
         [Fact]
@@ -539,7 +539,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableContains("test", "test");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение переменной \"test\" NULL.*");
+                .Which.Message.Contains($"Значение переменной \"test\" NULL.");
         }
 
         [Fact]
@@ -551,7 +551,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableContains("test", "mp");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение переменной \"test\":\"test\" не содержит \"mp\"*");
+                .Which.Message.Contains($"Значение переменной \"test\":\"test\" не содержит \"mp\"");
         }
 
         [Fact]
@@ -573,7 +573,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableNotContains("test", null);
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение \"expected\" не задано.*");
+                .Which.Message.Contains($"Значение \"expected\" не задано.");
         }
 
         [Fact]
@@ -585,7 +585,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableNotContains("test", "test");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение переменной \"test\" NULL.*");
+                .Which.Message.Contains($"Значение переменной \"test\" NULL.");
         }
 
         [Fact]
@@ -597,7 +597,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableNotContains("test", "test");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение переменной \"test\":\"test\" содержит \"test\"*");
+                .Which.Message.Contains($"Значение переменной \"test\":\"test\" содержит \"test\"");
         }
 
         [Fact]
@@ -619,7 +619,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableStartsWith("test", null);
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение \"expected\" не задано.*");
+                .Which.Message.Contains($"Значение \"expected\" не задано.");
         }
 
         [Fact]
@@ -631,7 +631,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableStartsWith("test", "test");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение переменной \"test\" NULL.*");
+                .Which.Message.Contains($"Значение переменной \"test\" NULL.");
         }
 
         [Fact]
@@ -643,7 +643,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableStartsWith("test", "mp");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение переменной \"test\":\"test\" не начинается с \"mp\"*");
+                .Which.Message.Contains($"Значение переменной \"test\":\"test\" не начинается с \"mp\"");
         }
 
         [Fact]
@@ -665,7 +665,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableEndsWith("test", null);
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение \"expected\" не задано.*");
+                .Which.Message.Contains($"Значение \"expected\" не задано.");
         }
 
         [Fact]
@@ -677,7 +677,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableEndsWith("test", "123");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение переменной \"test\" NULL.*");
+                .Which.Message.Contains($"Значение переменной \"test\" NULL.");
         }
 
         [Fact]
@@ -689,7 +689,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableEndsWith("test", "123");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение переменной \"test\":\"test\" не заканчивается с \"123\"*");
+                .Which.Message.Contains($"Значение переменной \"test\":\"test\" не заканчивается с \"123\"");
         }
 
         [Fact]
@@ -716,7 +716,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariablesAreEqual("test1", "test2");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значения в переменной \"test1\" нет*");
+                .Which.Message.Contains($"Значения в переменной \"test1\" нет");
         }
 
         [Fact]
@@ -731,7 +731,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariablesAreEqual("test1", "test2");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значения в переменной \"test2\" нет*");
+                .Which.Message.Contains($"Значения в переменной \"test2\" нет");
         }
 
         [Fact]
@@ -745,7 +745,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariablesAreEqual("test1", "test2");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение переменной \"test1\":\"1\" не равно значению переменной \"test2\":\"2\"*");
+                .Which.Message.Contains($"Значение переменной \"test1\":\"1\" не равно значению переменной \"test2\":\"2\"");
         }
 
         [Fact]
@@ -772,7 +772,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariablesAreEqual("test1", "test2");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значения в переменной \"test1\" нет*");
+                .Which.Message.Contains($"Значения в переменной \"test1\" нет");
         }
 
         [Fact]
@@ -787,7 +787,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariablesAreEqual("test1", "test2");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значения в переменной \"test2\" нет*");
+                .Which.Message.Contains($"Значения в переменной \"test2\" нет");
         }
 
         [Fact]
@@ -801,7 +801,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariablesAreNotEqual("test1", "test2");
             act.Should().Throw<Exception>()
-                .WithMessage($"*значение переменной \"test1\":\"1\" равно значению переменной \"test2\":\"1\"*");
+                .Which.Message.Contains($"значение переменной \"test1\":\"1\" равно значению переменной \"test2\":\"1\"");
         }
 
         [Fact]
@@ -828,7 +828,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableAreContains("test1", "test2");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значения в переменной \"test1\" нет*");
+                .Which.Message.Contains($"Значения в переменной \"test1\" нет");
         }
 
         [Fact]
@@ -843,7 +843,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableAreContains("test1", "test2");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значения в переменной \"test2\" нет*");
+                .Which.Message.Contains($"Значения в переменной \"test2\" нет");
         }
 
         [Fact]
@@ -857,7 +857,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableAreContains("test1", "test2");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение переменной \"test1\":\"1\" не содержит значение переменной \"test2\":\"2\"*");
+                .Which.Message.Contains($"Значение переменной \"test1\":\"1\" не содержит значение переменной \"test2\":\"2\"");
         }
 
         [Fact]
@@ -884,7 +884,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableAreNotContains("test1", "test2");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значения в переменной \"test1\" нет*");
+                .Which.Message.Contains($"Значения в переменной \"test1\" нет");
         }
 
         [Fact]
@@ -899,7 +899,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableAreNotContains("test1", "test2");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значения в переменной \"test2\" нет*");
+                .Which.Message.Contains($"Значения в переменной \"test2\" нет");
         }
 
         [Fact]
@@ -913,7 +913,7 @@ namespace EvidentInstruction.Generator.Tests
 
             Action act = () => steps.CheckVariableAreNotContains("test1", "test2");
             act.Should().Throw<Exception>()
-                .WithMessage($"*Значение переменной \"test1\":\"1\" содержит значение переменной \"test2\":\"1\"*");
+                .Which.Message.Contains($"Значение переменной \"test1\":\"1\" содержит значение переменной \"test2\":\"1\"");
         }
 
         [Theory]
@@ -945,7 +945,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test\" не существует*");
+              .Which.Message.Contains("переменная \"test\" не существует");
         }
 
         [Fact]
@@ -964,7 +964,7 @@ namespace EvidentInstruction.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("*переменная \"test2\" уже существует*");
+              .Which.Message.Contains("переменная \"test2\" уже существует");
         }
     }
 }
