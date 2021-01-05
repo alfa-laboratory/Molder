@@ -199,7 +199,7 @@ namespace EvidentInstruction.Generator.Tests
             steps.StoreAsVariableNumber("test", number);
 
             var variableCheck = variableController.GetVariable("test");
-            variableCheck.Type.Should().Be(typeof(decimal));
+            variableCheck.Type.Should().Be(validNumber.GetType());
             variableCheck.Value.Should().Be(validNumber);
         }
 
