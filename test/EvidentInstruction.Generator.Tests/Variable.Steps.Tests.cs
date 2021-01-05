@@ -191,18 +191,6 @@ namespace EvidentInstruction.Generator.Tests
                 .Which.Message.Contains($"Переменная \"test\" уже существует");
         }
 
-        [Theory]
-        [InlineData("0", 0), InlineData("0,1", 0.1), InlineData("0.1", 0.1)]
-        public void StoreAsVariableNumber_IntValue_ReturnNewVariable(string number, object validNumber)
-        {
-            VariableSteps steps = new VariableSteps(variableController);
-            steps.StoreAsVariableNumber("test", number);
-
-            var variableCheck = variableController.GetVariable("test");
-            variableCheck.Type.Should().Be(validNumber.GetType());
-            variableCheck.Value.Should().Be(validNumber);
-        }
-
         [Fact]
         public void StoreAsVariableNumber_CorrectVariable_ReturnException()
         {
