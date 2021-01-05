@@ -1,8 +1,10 @@
-﻿using System.IO;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Text;
 
 namespace EvidentInstruction.Configuration.Tests.Extension
 {
+    [ExcludeFromCodeCoverage]
     public static class StringExtensions
     {
         public static Stream ToStream(this string s)
