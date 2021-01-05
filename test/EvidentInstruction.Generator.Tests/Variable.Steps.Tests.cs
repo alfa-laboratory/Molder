@@ -916,20 +916,8 @@ namespace EvidentInstruction.Generator.Tests
                 .WithMessage($"*Значение переменной \"test1\":\"1\" содержит значение переменной \"test2\":\"1\"*");
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
         [Theory]
-        [InlineData("a {test} c", 1, "a 1 c"), InlineData("a {test} c", 0.1, "a 0,1 c"), InlineData("a {test} c", "d", "a d c")]
+        [InlineData("a {test} c", 1, "a 1 c"), InlineData("a {test} c", "d", "a d c")]
         public void StoreAsVariableStringFormat_VariableValueIsValid_ReturnTrue(string text, object value, string res)
         {
             // Act 
@@ -978,20 +966,5 @@ namespace EvidentInstruction.Generator.Tests
               .Should().Throw<Exception>()
               .WithMessage("*переменная \"test2\" уже существует*");
         }
-
-        //[Fact]
-        //public void CheckVariableAreNotContains_InCorrectValue1_ReturnException()
-        //{
-        //    var variable = new Variable() { Type = typeof(string), Value = null };
-        //    variableController.Variables.TryAdd("test1", variable);
-        //    variable = new Variable() { Type = typeof(string), Value = "test" };
-        //    variableController.Variables.TryAdd("test2", variable);
-        //
-        //    VariableSteps steps = new VariableSteps(variableController);
-        //
-        //    Action act = () => steps.CheckVariableAreNotContains("test1", "test2");
-        //    act.Should().Throw<Exception>()
-        //        .WithMessage($"*Значения в переменной \"test1\" нет*");
-        //}
     }
 }
