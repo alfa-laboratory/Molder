@@ -12,7 +12,7 @@ namespace EvidentInstruction.Configuration.Hooks
 {
     [ExcludeFromCodeCoverage]
     [Binding]
-    public class Hooks
+    internal class Hooks : Steps
     {
         private VariableController variableController;
         private readonly FeatureContext featureContext;
