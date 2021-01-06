@@ -1,10 +1,12 @@
 ﻿using EvidentInstruction.Controllers;
 using FluentAssertions;
+using System.Diagnostics.CodeAnalysis;
 using TechTalk.SpecFlow;
 using Xunit.Abstractions;
 
 namespace EvidentInstruction.Configuration.Example.Steps
 {
+    [ExcludeFromCodeCoverage]
     [Binding]
     public class Steps
     {
