@@ -26,7 +26,7 @@ namespace EvidentInstruction.Database.Tests
 
         public SqlServerStepTests()
         {
-            dbConnectionParams = new DbConnectionParams() { Database = "Test", Source = "test", Login = "test", Password = "W9qNIafQbJCZzEafUaYmQw==" };
+            dbConnectionParams = new DbConnectionParams() { Database = "Test", Source = "test", Login = "test", Password = "W9qNIafQbJCZzEafUaYmQw==", Timeout = 1, ConnectRetryCount = 0, ConnectRetryInterval = 1 };
             databaseController = new DatabaseController();
             variableController = new VariableController();
             step = new SqlServerSteps(databaseController, variableController);
@@ -75,10 +75,13 @@ namespace EvidentInstruction.Database.Tests
         public void ConnectToDB_SqlServer_IncorrectDbParams_ReturnThrow()
         {
             Action action = () => step.ConnectToDB_SqlServer(dbConnectionString, dbConnectionParams);
+
             action.Should()
                 .Throw<ConnectSqlException>()
-                .WithMessage($"Connection failed. Connection with parameters: {Database.Helpers.Message.CreateMessage(dbConnectionParams)}" +
-                " A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: Named Pipes Provider, error: 40 - Could not open a connection to SQL Server)");
+                .Which.Message.Contains($"Connection failed. Connection with parameters: {Database.Helpers.Message.CreateMessage(dbConnectionParams)}");
+            action.Should()
+                .Throw<ConnectSqlException>()
+                 .WithMessage("*A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections.*");
         }
 
         [Fact]

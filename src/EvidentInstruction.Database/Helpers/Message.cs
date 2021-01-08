@@ -37,6 +37,7 @@ namespace EvidentInstruction.Database.Helpers
                 $"Initial Catalog={connectionParams.Database}{Environment.NewLine}" +
                 $"User ID={connectionParams.Login}{Environment.NewLine}" +
                 $"Password={connectionParams.Password}{Environment.NewLine}" +
+                $"Connect Timeout={connectionParams.Timeout}{Environment.NewLine}" +
                 $"Load Balance Timeout={connectionParams.Timeout} failed.{Environment.NewLine}";
             return message;
         }

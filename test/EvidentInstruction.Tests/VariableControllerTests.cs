@@ -466,7 +466,7 @@ namespace EvidentInstruction.Tests
         [Theory]
         [InlineData("JObject", typeof(JObject), Json, "JObject.//address.street", "Baker street")]
         [InlineData("JObject", typeof(JObject), Json, "JObject.//address.house", "5")]
-        [InlineData("JObject", typeof(JObject), Json, "JObject.//address", "{\r\n  \"address\": {\r\n    \"name\": \"Joe Tester\",\r\n    \"street\": \"Baker street\",\r\n    \"house\": \"5\"\r\n  }\r\n}")]
+        [InlineData("JObject", typeof(JObject), Json, "JObject.//address", "{\r\n  \"name\": \"Joe Tester\",\r\n  \"street\": \"Baker street\",\r\n  \"house\": \"5\"\r\n}")]
         public void GetVariableValueText_CorrectVariableJObject_ReturnValue(string key, Type type, string value, string searchKey, string searchValue)
         {
             var doc = JObject.Parse(value);
@@ -480,7 +480,7 @@ namespace EvidentInstruction.Tests
         [Theory]
         [InlineData("JToken", typeof(JToken), Json, "JToken.//address.street", "Baker street")]
         [InlineData("JToken", typeof(JToken), Json, "JToken.//address.house", "5")]
-        [InlineData("JToken", typeof(JToken), Json, "JToken.//address", "{\r\n  \"address\": {\r\n    \"name\": \"Joe Tester\",\r\n    \"street\": \"Baker street\",\r\n    \"house\": \"5\"\r\n  }\r\n}")]
+        [InlineData("JToken", typeof(JToken), Json, "JToken.//address", "{\r\n  \"name\": \"Joe Tester\",\r\n  \"street\": \"Baker street\",\r\n  \"house\": \"5\"\r\n}")]
         public void GetVariableValueText_CorrectVariableJToken_ReturnValue(string key, Type type, string value, string searchKey, string searchValue)
         {
             var doc = JToken.Parse(value);
@@ -556,6 +556,13 @@ namespace EvidentInstruction.Tests
 
             var value = variableContext.GetVariableValue("nums[0]");
             value.Should().Be(1);
+        }
+
+        [Theory]
+        [InlineData("")]
+        public void GetVariableValueText_JsonSubObject_ReturnValue(string json)
+        {
+            
         }
     }
 }
