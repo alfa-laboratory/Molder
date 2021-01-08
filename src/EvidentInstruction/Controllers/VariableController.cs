@@ -291,7 +291,7 @@ namespace EvidentInstruction.Controllers
 
                 case JToken token when token.HasValues == true:
                     {
-                        ret = token.Root.ToString();
+                        ret = token.ToString();
                         break;
                     }
 
