@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using EvidentInstruction.Service.Infrastructures;
 using System.Net.Http;
 using Microsoft.Extensions.Logging;
-using EvidentInstruction.Service.Exceptions;
 
 namespace EvidentInstruction.Service.Models
 {
@@ -49,25 +48,25 @@ namespace EvidentInstruction.Service.Models
                      };
                     
                 }
-                catch (FlurlException ex)
+                catch (FlurlHttpTimeoutException)
                 {
-                    if (ex.InnerException is FlurlHttpTimeoutException)
-                    {
-                        Log.Logger().LogError($"Request {request.Url} timed out. {ex}");
+                    Log.Logger().LogError($"Request {request.Url} timed out.");
 
-                        return new ResponceInfo
-                        {
-                            Headers = null,
-                            Content = null,
-                            StatusCode = System.Net.HttpStatusCode.GatewayTimeout,
-                            Request = request
-                        };
-                    }
-                    else
+                    return new ResponceInfo
                     {
-                        if (ex.Call == null)
+                        Headers = null,
+                        Content = null,
+                        StatusCode = System.Net.HttpStatusCode.GatewayTimeout,
+                        Request = request
+                    };
+                }
+                catch (Exception ex)
+                {
+                    if (ex.InnerException is FlurlHttpException fex)
+                    {
+                        if (fex.Call == null)
                         {
-                            Log.Logger().LogError(ex.Message);
+                            Log.Logger().LogError(fex.Message);
 
                             Log.Logger().LogInformation("Responce: " + Environment.NewLine +
                                 System.Net.HttpStatusCode.BadRequest);
@@ -82,27 +81,22 @@ namespace EvidentInstruction.Service.Models
                         }
                         else
                         {
-                            Log.Logger().LogError(ex.Message);
-                            var content = ServiceHelpers.GetObjectFromString(ex.Call.Response.ResponseMessage.Content.ReadAsStringAsync().Result);
+                            Log.Logger().LogError(fex.Message);
+                             var content = ServiceHelpers.GetObjectFromString(fex.Call.Response.ResponseMessage.Content.ReadAsStringAsync().Result);
 
-                            Log.Logger().LogInformation("Responce: " + Environment.NewLine +
-                                ex.Call.Response.StatusCode + Environment.NewLine +
-                                ex.Call.Response.ResponseMessage.Content.ReadAsStringAsync().Result);
+                             Log.Logger().LogInformation("Responce: " + Environment.NewLine +
+                                 fex.Call.Response.StatusCode + Environment.NewLine +
+                                 fex.Call.Response.ResponseMessage.Content.ReadAsStringAsync().Result);
 
                             return new ResponceInfo
                             {
-                                Headers = ex.Call.Response.ResponseMessage.Headers,
+                                Headers = fex.Call.Response.ResponseMessage.Headers,
                                 Content = content,
-                                StatusCode = ex.Call.Response.ResponseMessage.StatusCode,
+                                StatusCode = fex.Call.Response.ResponseMessage.StatusCode,
                                 Request = request
                             };
                         }
-
                     }
-                }
-                catch (Exception ex)
-                {
-                    
                     Log.Logger().LogError(ex.Message);
                     Log.Logger().LogInformation("Responce: " + Environment.NewLine +
                                System.Net.HttpStatusCode.BadRequest);

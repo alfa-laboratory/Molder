@@ -27,15 +27,13 @@ namespace EvidentInstruction.Service.Models
             {
                 if(request.Content == null)
                 {
-                    responce = await url
-                                    //.WithCreditians(request)
+                    responce = await url                                    
                                     .WithHeaders(request.Headers)
                                     .SendAsync(request.Method);
                 }
                 else
                 {
-                    responce = await url
-                                   // .WithCreditians(request)
+                    responce = await url                                   
                                     .WithHeaders(request.Headers)
                                     .SendAsync(request.Method, content);
                 }

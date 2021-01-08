@@ -12,9 +12,6 @@ namespace EvidentInstruction.Service.Extension
 #if false
         public static IFlurlRequest Auth(this IFlurlRequest req, RequestInfo request, string login, string password) 
         {
-
-           //((HttpClientHandler)req.Client.HttpMessageHandler).Credentials = = new NetworkCredential(login, password);
-
             ((HttpClientHandler)request.Url.WithClient(req.Client)).Credentials = new NetworkCredential(login, password);
 
             return req;
