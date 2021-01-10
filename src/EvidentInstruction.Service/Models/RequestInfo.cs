@@ -13,9 +13,9 @@ namespace EvidentInstruction.Service.Models
         public Dictionary<string, string> Headers { get; set; }
 
         [Required(ErrorMessage = "HttpMethod is required")]
-        public HttpMethod Method { get; set; }
+        public HttpMethod Method { get; set; } 
 
         [Required(ErrorMessage = "Content is required")]
-        public HttpContent Content { get; set; }
+        public HttpContent Content { get; set; } 
     }
 }

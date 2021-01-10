@@ -1,15 +1,21 @@
-﻿using EvidentInstruction.Controllers;
-using EvidentInstruction.Helpers;
-using EvidentInstruction.Service.Models;
-using System.Collections.Generic;
+﻿using EvidentInstruction.Helpers;
+using EvidentInstruction.Service.Infrastructures;
+using Newtonsoft.Json.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace EvidentInstruction.Service.Helpers
 {
     public static class ServiceHelpers
     {
+        /// <summary>
+        /// Определить к какому типу относится строка
+        /// </summary>     
         public static object GetObjectFromString(string str)
-        {
-            var xDoc = Converter.CreateXDoc(str);
+        {   
+            var xDoc = Converter.CreateXDoc(str);            
             if (xDoc == null)
             {
                 var xmlDoc = Converter.CreateXmlDoc(str);
@@ -33,6 +39,37 @@ namespace EvidentInstruction.Service.Helpers
             else
             {
                 return xDoc;
+            }
+        }
+
+        /// <summary>
+        /// Добавить query к url
+        /// </summary>        
+        public static string AddQueryInURL(string url, string query)
+        {
+           return query.StartsWith("?")? url + query: url + "?" + query;
+        }
+
+        /// <summary>
+        /// Получить StringContent для RequestInfo 
+        /// </summary>   
+        public static StringContent GetStringContent(object type, string replaceContent)
+        {    
+            switch (type)
+            {
+                case XDocument xDoc:
+                case XmlDocument xmlDocument:
+                    {
+                        return new StringContent(replaceContent, Encoding.UTF8, DefaultContentType.XML);                        
+                    }
+                case JObject jObject:
+                    {
+                        return new StringContent(replaceContent, Encoding.UTF8, DefaultContentType.JSON);                        
+                    }
+                default:
+                    {
+                        return new StringContent(replaceContent, Encoding.UTF8, DefaultContentType.TEXT);                        
+                    }
             }
         }
     }
