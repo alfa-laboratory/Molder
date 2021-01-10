@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
+# Visual Studio Version 15
 VisualStudioVersion = 15.0.28307.1082
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction", "src\EvidentInstruction\EvidentInstruction.csproj", "{2F008A06-7F5C-4205-ABBF-75CD3E7F75E7}"
@@ -21,7 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Configur
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Database.Tests", "test\EvidentInstruction.Database.Tests\EvidentInstruction.Database.Tests.csproj", "{DBFCA66D-73D5-4D53-AFD1-99BAD7337D63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EvidentInstruction.Configuration.Example", "examples\EvidentInstruction.Configuration.Example\EvidentInstruction.Configuration.Example.csproj", "{1DD1197C-0AB5-46FA-B2AC-F8118D9766CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EvidentInstruction.Configuration.Example", "examples\EvidentInstruction.Configuration.Example\EvidentInstruction.Configuration.Example.csproj", "{1DD1197C-0AB5-46FA-B2AC-F8118D9766CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EvidentInstruction.Service.Tests", "test\EvidentInstruction.Service.Tests\EvidentInstruction.Service.Tests.csproj", "{56A2E62B-E49A-41EE-B35B-612ED6EF25CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -153,6 +155,18 @@ Global
 		{1DD1197C-0AB5-46FA-B2AC-F8118D9766CF}.Release|x64.Build.0 = Release|Any CPU
 		{1DD1197C-0AB5-46FA-B2AC-F8118D9766CF}.Release|x86.ActiveCfg = Release|Any CPU
 		{1DD1197C-0AB5-46FA-B2AC-F8118D9766CF}.Release|x86.Build.0 = Release|Any CPU
+		{56A2E62B-E49A-41EE-B35B-612ED6EF25CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56A2E62B-E49A-41EE-B35B-612ED6EF25CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56A2E62B-E49A-41EE-B35B-612ED6EF25CE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{56A2E62B-E49A-41EE-B35B-612ED6EF25CE}.Debug|x64.Build.0 = Debug|Any CPU
+		{56A2E62B-E49A-41EE-B35B-612ED6EF25CE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{56A2E62B-E49A-41EE-B35B-612ED6EF25CE}.Debug|x86.Build.0 = Debug|Any CPU
+		{56A2E62B-E49A-41EE-B35B-612ED6EF25CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56A2E62B-E49A-41EE-B35B-612ED6EF25CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56A2E62B-E49A-41EE-B35B-612ED6EF25CE}.Release|x64.ActiveCfg = Release|Any CPU
+		{56A2E62B-E49A-41EE-B35B-612ED6EF25CE}.Release|x64.Build.0 = Release|Any CPU
+		{56A2E62B-E49A-41EE-B35B-612ED6EF25CE}.Release|x86.ActiveCfg = Release|Any CPU
+		{56A2E62B-E49A-41EE-B35B-612ED6EF25CE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -10,6 +10,9 @@ using EvidentInstruction.Service.Infrastructures;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
 using System.Collections.Generic;
+using System;
+using EvidentInstruction.Helpers;
+using Microsoft.Extensions.Logging;
 
 namespace EvidentInstruction.Service.Steps
 {
@@ -53,23 +56,10 @@ namespace EvidentInstruction.Service.Steps
         {
             this.serviceController.Services.Clear();
         }
-        
-        /// <summary>
-        /// Вызов Rest сервиса с телом
-        /// </summary>
-        /// <param name="url">Ссылка на сервис.</param>
-        /// <param name="method">Метод сервиса.</param>
-        /// <param name="service">Название сервиса.</param>
-        /// <param name="parameters">Параметры вызова.</param>
-        [Scope(Tag = "WebService")]
-        [When(@"я вызываю веб-сервис ""([A-z]+)"" по адресу ""(.+)"" с методом ""(.+)"", используя параметры :")]
-        public void SendToRestServiceWithBody(string name, string url, HTTPMethodType method, Table table) 
+
+        [StepArgumentTransformation]
+        public RequestDto TableToRequestDTO(Table table)
         {
-            StringContent content = null;
-
-            this.variableController.Variables.ContainsKey(name).Should().BeFalse($"Данные по сервису с именем \"{name}\" уже существуют");
-            this.serviceController.Services.ContainsKey(name).Should().BeFalse($"Данные по сервису с именем \"{name}\" уже существуют");
-
             var headers = table.CreateSet<Header>().ToList();
 
             var requestDto = new RequestDto(headers, variableController);
@@ -79,18 +69,42 @@ namespace EvidentInstruction.Service.Steps
                 //получаем тип контента
                 var doc = ServiceHelpers.GetObjectFromString(requestDto.Body.Values.First());
                 //получаем StringContent для формирования RequestInfo
-                content = ServiceHelpers.GetStringContent(doc, requestDto.Body.Values.First());
+                requestDto.Content = ServiceHelpers.GetStringContent(doc, requestDto.Body.Values.First());
             }
 
-            //Добавляем к Url query
-            if(requestDto.Query.Any())
+            return requestDto;
+        }
+
+        /// <summary>
+        /// Вызов Rest сервиса с телом
+        /// </summary>
+        /// <param name="url">Ссылка на сервис.</param>
+        /// <param name="method">Метод сервиса.</param>
+        /// <param name="service">Название сервиса.</param>
+        /// <param name="parameters">Параметры вызова.</param>
+        [Scope(Tag = "WebService")]
+        [When(@"я вызываю веб-сервис ""([A-z]+)"" по адресу ""(.+)"" с методом ""(.+)"", используя параметры :")]
+        public void SendToRestServiceWithBody(string name, string url, HTTPMethodType method, RequestDto requestDto) 
+        {
+
+            this.variableController.Variables.ContainsKey(name).Should().BeFalse($"Данные по сервису с именем \"{name}\" уже существуют");
+            this.serviceController.Services.ContainsKey(name).Should().BeFalse($"Данные по сервису с именем \"{name}\" уже существуют");
+
+            //Добавляем query к Url 
+            if (requestDto.Query.Any())
             {
-                url = ServiceHelpers.AddQueryInURL(url, requestDto.Query.Values.First()); 
+                url = ServiceHelpers.AddQueryInURL(url, requestDto.Query.Values.First());
             }
+
+            if(!Uri.TryCreate(url, UriKind.Absolute, out Uri outUrl))
+            {
+                Log.Logger().LogWarning($"Url {url} is not valid.");
+                throw new ArgumentException($"Url {url} is not valid.");
+            }            
 
             var request = new RequestInfo
             {
-                Content = content,
+                Content = requestDto.Content,
                 Headers = requestDto.Header,
                 Method = webMethods[method],
                 Url = url 
@@ -98,9 +112,14 @@ namespace EvidentInstruction.Service.Steps
 
             using (var service = new WebService(request))
             {
-                var responce =  service.SendMessage(request, webMethods);
-                this.serviceController.Services.TryAdd(name, responce);
-                this.variableController.SetVariable(name, responce.Content.GetType(), responce.Content);
+                var responce =  service.SendMessage(request);
+
+                if (responce != null)
+                {
+                    this.serviceController.Services.TryAdd(name, responce);
+                    this.variableController.SetVariable(name, responce.Content.GetType(), responce.Content);
+                }
+                
             }
         }
 

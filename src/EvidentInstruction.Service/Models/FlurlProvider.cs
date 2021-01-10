@@ -1,14 +1,17 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Threading.Tasks;
 using EvidentInstruction.Helpers;
 using EvidentInstruction.Service.Exceptions;
+using EvidentInstruction.Service.Models.Interfaces;
 using Flurl.Http;
 using Microsoft.Extensions.Logging;
 
 namespace EvidentInstruction.Service.Models
-{  
-    public class FlurlProvider :  IDisposable
+{
+    [ExcludeFromCodeCoverage]
+    public class FlurlProvider : IFlurlProvider,  IDisposable
     {
         private readonly string url;
         private readonly HttpContent content;
@@ -25,7 +28,7 @@ namespace EvidentInstruction.Service.Models
 
             try
             {
-                if(request.Content == null)
+                if(request.Content.Headers.ContentLength == 0)
                 {
                     responce = await url                                    
                                     .WithHeaders(request.Headers)
@@ -56,6 +59,5 @@ namespace EvidentInstruction.Service.Models
         {
             GC.SuppressFinalize(this);
         }
-    }     
-   
+    } 
 }

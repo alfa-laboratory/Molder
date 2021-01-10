@@ -1,19 +1,20 @@
 ﻿using EvidentInstruction.Service.Models;
 using Flurl.Http;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 
 namespace EvidentInstruction.Service.Extension
 {
+    [ExcludeFromCodeCoverage]
     public static class FlurlExtension
     {
-#if false
+#if TODO_ADD_Credentials
         public static IFlurlRequest Auth(this IFlurlRequest req, RequestInfo request, string login, string password) 
         {
             ((HttpClientHandler)request.Url.WithClient(req.Client)).Credentials = new NetworkCredential(login, password);
-
             return req;
         }
 

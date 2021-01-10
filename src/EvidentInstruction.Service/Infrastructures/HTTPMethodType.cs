@@ -9,5 +9,4 @@ namespace EvidentInstruction.Service.Infrastructures
         DELETE,
         HEAD   
     }
-
 }

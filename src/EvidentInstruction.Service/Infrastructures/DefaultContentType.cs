@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace EvidentInstruction.Service.Infrastructures
 {
+    [ExcludeFromCodeCoverage]
     public static class DefaultContentType
     {
         public static string JSON = "application/json";

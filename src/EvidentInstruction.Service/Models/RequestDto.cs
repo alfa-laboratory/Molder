@@ -2,6 +2,7 @@
 using EvidentInstruction.Service.Infrastructures;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 
 namespace EvidentInstruction.Service.Models
 {
@@ -26,5 +27,7 @@ namespace EvidentInstruction.Service.Models
             return headers.Where(x => x.Style.ToString().ToUpper().Equals(header))
                           .ToDictionary(head => head.Name, head => this.variableController.ReplaceVariables(head.Value));
         }
+
+        public StringContent Content = new StringContent(string.Empty);
     }
 }
