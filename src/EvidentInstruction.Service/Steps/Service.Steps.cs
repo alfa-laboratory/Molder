@@ -1,17 +1,18 @@
 ﻿using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Xml;
-using System.Xml.Linq;
 using FluentAssertions;
-using Newtonsoft.Json.Linq;
 using EvidentInstruction.Controllers;
 using EvidentInstruction.Service.Controllers;
 using EvidentInstruction.Service.Helpers;
 using EvidentInstruction.Service.Models;
+using EvidentInstruction.Service.Infrastructures;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
+using System.Collections.Generic;
+using System;
+using EvidentInstruction.Helpers;
+using Microsoft.Extensions.Logging;
 
 namespace EvidentInstruction.Service.Steps
 {
@@ -21,8 +22,9 @@ namespace EvidentInstruction.Service.Steps
     [Binding]
     public class ServiceSteps
     {
-        private readonly VariableController variableController;
+        private readonly VariableController variableController;      
         private readonly ServiceController serviceController;
+        private readonly Dictionary<HTTPMethodType, HttpMethod> webMethods;       
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceSteps"/> class.
@@ -34,6 +36,14 @@ namespace EvidentInstruction.Service.Steps
         {
             this.variableController = variableController;
             this.serviceController = serviceController;
+            webMethods = new Dictionary<HTTPMethodType, HttpMethod>()
+            {
+                { HTTPMethodType.GET, HttpMethod.Get},
+                { HTTPMethodType.PUT, HttpMethod.Put},
+                { HTTPMethodType.POST, HttpMethod.Post},
+                { HTTPMethodType.DELETE, HttpMethod.Delete},
+                { HTTPMethodType.HEAD, HttpMethod.Head}                
+            };
         }
 
         /// <summary>
@@ -48,64 +58,68 @@ namespace EvidentInstruction.Service.Steps
         }
 
         [StepArgumentTransformation]
-        public StringContent StringToContent(string content)
+        public RequestDto TableToRequestDTO(Table table)
         {
-            //если есть
-            var replaceContent = this.variableController.ReplaceVariables(content);
+            var headers = table.CreateSet<Header>().ToList();
 
-            var doc = ServiceHelpers.GetObjectFromString(replaceContent);
-            StringContent stringContent = null;
-            switch (doc)
+            var requestDto = new RequestDto(headers, variableController);
+
+            if (requestDto.Body.Any())
             {
-                case XDocument xDoc:
-                case XmlDocument xmlDocument:
-                    {
-                        stringContent = new StringContent(replaceContent, Encoding.UTF8, "text/xml");
-                        break;
-                    }
-                case JObject jObject:
-                    {
-                        stringContent = new StringContent(replaceContent, Encoding.UTF8, "application/json");
-                        break;
-                    }
-                default:
-                    {
-                        stringContent = new StringContent(replaceContent, Encoding.UTF8, "text/plain");
-                        break;
-                    }
+                //получаем тип контента
+                var doc = ServiceHelpers.GetObjectFromString(requestDto.Body.Values.First());
+                //получаем StringContent для формирования RequestInfo
+                requestDto.Content = ServiceHelpers.GetStringContent(doc, requestDto.Body.Values.First());
             }
-            return stringContent;
+
+            return requestDto;
         }
 
         /// <summary>
-        /// Вызов Rest сервиса.
+        /// Вызов Rest сервиса с телом
         /// </summary>
         /// <param name="url">Ссылка на сервис.</param>
         /// <param name="method">Метод сервиса.</param>
         /// <param name="service">Название сервиса.</param>
         /// <param name="parameters">Параметры вызова.</param>
         [Scope(Tag = "WebService")]
-        [When(@"я вызываю веб-сервис \""([A-z]+)\"" по адресу \""(.+)\"" с методом \""(POST|GET|PUT|DELETE)\"", используя заголовки и тело")]
-        public void SendToRestService(string name, string url, HttpMethod method, StringContent content, Table table)
+        [When(@"я вызываю веб-сервис ""([A-z]+)"" по адресу ""(.+)"" с методом ""(.+)"", используя параметры :")]
+        public void SendToRestServiceWithBody(string name, string url, HTTPMethodType method, RequestDto requestDto) 
         {
+
             this.variableController.Variables.ContainsKey(name).Should().BeFalse($"Данные по сервису с именем \"{name}\" уже существуют");
             this.serviceController.Services.ContainsKey(name).Should().BeFalse($"Данные по сервису с именем \"{name}\" уже существуют");
 
-            var headers = table.CreateSet<Header>().ToDictionary(header => header.Name, header => this.variableController.ReplaceVariables(header.Value));
+            //Добавляем query к Url 
+            if (requestDto.Query.Any())
+            {
+                url = ServiceHelpers.AddQueryInURL(url, requestDto.Query.Values.First());
+            }
+
+            if(!Uri.TryCreate(url, UriKind.Absolute, out Uri outUrl))
+            {
+                Log.Logger().LogWarning($"Url {url} is not valid.");
+                throw new ArgumentException($"Url {url} is not valid.");
+            }            
 
             var request = new RequestInfo
             {
-                Content = content,
-                Headers = headers,
-                Method = method,
-                Url = url
+                Content = requestDto.Content,
+                Headers = requestDto.Header,
+                Method = webMethods[method],
+                Url = url 
             };
 
-            using (var service = new WebService())
+            using (var service = new WebService(request))
             {
-                var responceInfo = service.SendMessage(request);
-                this.serviceController.Services.TryAdd(name, responceInfo);
-                this.variableController.SetVariable(name, responceInfo.Content.GetType(), responceInfo.Content);
+                var responce =  service.SendMessage(request);
+
+                if (responce != null)
+                {
+                    this.serviceController.Services.TryAdd(name, responce);
+                    this.variableController.SetVariable(name, responce.Content.GetType(), responce.Content);
+                }
+                
             }
         }
 

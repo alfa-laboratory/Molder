@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using TechTalk.SpecFlow.Assist.Attributes;
+﻿using TechTalk.SpecFlow.Assist.Attributes;
 
 namespace EvidentInstruction.Service.Models
 {
@@ -12,5 +9,9 @@ namespace EvidentInstruction.Service.Models
 
         [TableAliases("Value", "Значение")]
         public string Value { get; set; }
+
+        [TableAliases("Style", "Тип")] 
+        public string Style { get; set; } 
+        
     }
 }
