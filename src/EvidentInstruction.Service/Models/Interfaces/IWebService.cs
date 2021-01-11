@@ -1,7 +1,8 @@
-﻿namespace EvidentInstruction.Service.Models.Interfaces
+﻿
+namespace EvidentInstruction.Service.Models.Interfaces
 {
-    interface IWebService
+    public interface IWebService
     {
-        ResponceInfo SendMessage(RequestInfo request);
+        ResponceInfo SendMessage(RequestInfo request/*, Dictionary<HTTPMethodType, HttpMethod> webMethods*/);
     }
 }

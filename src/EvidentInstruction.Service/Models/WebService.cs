@@ -1,149 +1,154 @@
 ﻿using Flurl.Http;
-using Newtonsoft.Json.Linq;
 using EvidentInstruction.Helpers;
 using EvidentInstruction.Service.Helpers;
 using EvidentInstruction.Service.Models.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Xml;
-using System.Xml.Linq;
 using Microsoft.Extensions.Logging;
+using System.Net.Http;
 
 namespace EvidentInstruction.Service.Models
 {
     public class WebService : IWebService, IDisposable
     {
-        public ResponceInfo SendMessage(RequestInfo request)
+        public IFlurlProvider fprovider; 
+
+        public WebService(RequestInfo request)
         {
-            return null;
-            //var (isValid, results) = Validate.ValidateModel(request);
-            //if (isValid)
-            //{
-            //    var headers = ReplaceHeaders(request.Headers, request.Content.ReadAsStringAsync().Result);
-            //    try
-            //    {
-            //        Log.Logger().LogInformation("Request: " + Environment.NewLine + 
-            //            request.Url + Environment.NewLine + 
-            //            request.Method + Environment.NewLine + 
-            //            request.Content.ReadAsStringAsync().Result);
-            //        
-            //        var responce = request.Url
-            //            .WithHeaders(headers)
-            //            .SendAsync(request.Method, request.Content);
-            //        var content = ServiceHelpers.GetObjectFromString(responce.Result.Content.ReadAsStringAsync().Result);
-            //
-            //        Log.Logger().LogInformation(message: "Responce: " + Environment.NewLine +
-            //            responce.Result.StatusCode + Environment.NewLine +
-            //            responce.Result.Content.ReadAsStringAsync().Result);
-            //
-            //        return new ResponceInfo
-            //        {
-            //            Headers = responce.Result.Headers,
-            //            Content = content,
-            //            Request = request,
-            //            StatusCode = responce.Result.StatusCode
-            //        };
-            //    }
-            //    catch (FlurlHttpTimeoutException)
-            //    {
-            //        Log.Logger().LogError("Request timed out.");
-            //        return new ResponceInfo
-            //        {
-            //            Headers = null,
-            //            Content = null,
-            //            StatusCode = System.Net.HttpStatusCode.BadRequest,
-            //            Request = request
-            //        };
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        if (ex.InnerException is FlurlHttpException fex)
-            //        {
-            //            if (fex.Call.HttpStatus == null)
-            //            {
-            //                Log.Logger().LogError(fex.Message);
-            //
-            //                Log.Logger().LogInformation("Responce: " + Environment.NewLine +
-            //                    System.Net.HttpStatusCode.BadRequest);
-            //
-            //                return new ResponceInfo
-            //                {
-            //                    Headers = null,
-            //                    Content = null,
-            //                    StatusCode = System.Net.HttpStatusCode.BadRequest,
-            //                    Request = request
-            //                };
-            //            }else
-            //            {
-            //                Log.Logger().LogError(fex.Message);
-            //                var content = ServiceHelpers.GetObjectFromString(fex.Call.Response.Content.ReadAsStringAsync().Result);
-            //
-            //                Log.Logger().LogInformation("Responce: " + Environment.NewLine +
-            //                    fex.Call.Response.StatusCode + Environment.NewLine +
-            //                    fex.Call.Response.Content.ReadAsStringAsync().Result);
-            //
-            //                return new ResponceInfo
-            //                {
-            //                    Headers = fex.Call.Response.Headers,
-            //                    Content = content,
-            //                    StatusCode = fex.Call.Response.StatusCode,
-            //                    Request = request
-            //                };
-            //            }
-            //        }
-            //        Log.Logger().LogError(ex.Message);
-            //        Log.Logger().LogInformation("Responce: " + Environment.NewLine +
-            //                    System.Net.HttpStatusCode.BadRequest);
-            //        return new ResponceInfo
-            //        {
-            //            Headers = null,
-            //            Content = null,
-            //            StatusCode = System.Net.HttpStatusCode.BadRequest,
-            //            Request = request
-            //        };
-            //    }
-            //}
-            //else
-            //{
-            //    
-            //    Log.Logger().LogInformation("Responce: " + Environment.NewLine +
-            //                    System.Net.HttpStatusCode.BadRequest);
-            //    return null;
-            //}
+            fprovider = new FlurlProvider(request);
         }
 
-        private Dictionary<string, string> ReplaceHeaders(Dictionary<string, string> headers, string str)
+        public ResponceInfo SendMessage(RequestInfo request)
         {
-            var nHeaders = new Dictionary<string, string>();
-            var contentType = string.Empty;
-            var doc = ServiceHelpers.GetObjectFromString(str);
-
-            switch (doc)
+            var (isValid, results) = Validate.ValidateModel(request);
+            if (isValid)
             {
-                case XmlDocument xmlDoc:
-                case XDocument xDoc:
-                    {
-                        contentType = "text/xml";
-                        break;
-                    }
-                case JObject jObject:
-                    {
-                        contentType = "application/json";
-                        break;
-                    }
-                default:
-                    {
-                        contentType = "text/plain";
-                        break;
-                    }
-            }
+                try
+                {     
+                    Log.Logger().LogInformation("Request: " + Environment.NewLine + 
+                                                request.Url + Environment.NewLine + 
+                                                request.Method + Environment.NewLine + 
+                                                request.Content.ReadAsStringAsync().Result);
 
-            if (!headers.ContainsKey("Content-Type"))
-            {
-                nHeaders = headers;
-                nHeaders.Add("Content-Type", contentType);
+                    var resp = fprovider.SendRequest(request);
+                    var content = ServiceHelpers.GetObjectFromString(resp.Result.Content.ReadAsStringAsync().Result);
+
+                    Log.Logger().LogInformation("Responce: " + Environment.NewLine +
+                                                resp.Result.StatusCode + Environment.NewLine +
+                                                resp.Result.Content.ReadAsStringAsync().Result);
+
+                     return new ResponceInfo
+                     {
+                         Headers = resp.Result.Headers,
+                         Content = content,
+                         Request = request, 
+                         StatusCode = resp.Result.StatusCode
+                     };
+                    
+                }
+                catch (FlurlHttpTimeoutException)
+                {
+                    Log.Logger().LogError("Request:" + request.Url + Environment.NewLine +
+                                          request.Method + Environment.NewLine +
+                                          request.Content.Headers.ToString() + Environment.NewLine + 
+                                          "timed out."); 
+
+                    return new ResponceInfo
+                    {
+                        Headers = null,
+                        Content = new StringContent(string.Empty),
+                        StatusCode = System.Net.HttpStatusCode.GatewayTimeout,
+                        Request = request
+                    };
+                }
+                catch (Exception ex)
+                {
+                    if (ex.InnerException is FlurlHttpException fex)
+                    {
+                        if (fex.Call == null)
+                        {
+                            Log.Logger().LogError("Request:" + request.Url + Environment.NewLine +
+                                                  request.Method + Environment.NewLine +
+                                                  request.Content.Headers.ToString() + Environment.NewLine + 
+                                                  "failed:" + fex.Message);
+
+                            Log.Logger().LogInformation("Responce status code: " + Environment.NewLine +
+                                System.Net.HttpStatusCode.BadRequest);
+
+                            return new ResponceInfo
+                            {
+                                Headers = null,
+                                Content = new StringContent(string.Empty),
+                                StatusCode = System.Net.HttpStatusCode.BadRequest,
+                                Request = request
+                            };
+                        }
+                        else
+                        {
+                            string fexResult = string.Empty;
+
+                            if(fex.Call.Response != null)
+                            {
+                                fexResult = fex.Call.Response.ResponseMessage.Content.ReadAsStringAsync().Result;
+
+                                Log.Logger().LogInformation("Responce: " + Environment.NewLine +
+                                    fex.Call.Response.StatusCode + Environment.NewLine +
+                                     fexResult);
+                            }
+                            else
+                            {
+                                Log.Logger().LogInformation("Responce is empty. Check request parameters.");
+
+                                Log.Logger().LogError("Request:" + request.Url + Environment.NewLine +
+                                                  request.Method + Environment.NewLine +
+                                                  request.Content.Headers.ToString() + Environment.NewLine +
+                                                  "failed:" + fex.Message);
+
+                                return null;
+                            }
+
+                            Log.Logger().LogError("Request:" + request.Url + Environment.NewLine +
+                                                  request.Method + Environment.NewLine +
+                                                  request.Content.Headers.ToString() + Environment.NewLine +
+                                                  "failed:" + fex.Message);
+                           
+
+                              var content = ServiceHelpers.GetObjectFromString(fexResult);  
+
+                              return new ResponceInfo
+                              {
+                                    Headers = fex.Call.Response.ResponseMessage.Headers,
+                                    Content = content,
+                                    StatusCode = fex.Call.Response.ResponseMessage.StatusCode,
+                                    Request = request
+                              };
+                        }
+                    }
+                    Log.Logger().LogError("Request:" + request.Url + Environment.NewLine +
+                                          request.Method + Environment.NewLine +
+                                          request.Content.Headers.ToString() + Environment.NewLine +
+                                          "failed:" + ex.Message);
+
+                    Log.Logger().LogInformation("Responce: " + Environment.NewLine +
+                               System.Net.HttpStatusCode.BadRequest);
+
+                    return new ResponceInfo
+                    {
+                        Headers = null,
+                        Content = new StringContent(string.Empty),
+                        StatusCode = System.Net.HttpStatusCode.BadRequest,
+                        Request = request
+                    };
+                }
             }
-            return headers;
+            else
+            {                
+                Log.Logger().LogInformation($"Request is not valid "+ Environment.NewLine + 
+                        request.Url + Environment.NewLine + 
+                        request.Method + Environment.NewLine + 
+                        request.Content.ReadAsStringAsync().Result);
+
+                return null;
+            }
         }
 
         public void Dispose()
