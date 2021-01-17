@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "EvidentInstruction.Configuration.Example": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Staging"
+      }
+    }
+  }
+}
