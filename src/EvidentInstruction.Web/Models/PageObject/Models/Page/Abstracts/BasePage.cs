@@ -4,7 +4,6 @@ using System.Linq;
 using EvidentInstruction.Helpers;
 using EvidentInstruction.Web.Models.PageObject.Models.Blocks;
 using EvidentInstruction.Web.Models.PageObject.Models.Elements.Interfaces;
-using EvidentInstruction.Web.Models.PageObject.Models.Interfaces;
 using EvidentInstruction.Web.Models.PageObject.Models.Page.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -58,8 +57,8 @@ namespace EvidentInstruction.Web.Models.PageObject.Models.Page.Abstracts
 
         public abstract IPage GetDefaultFrame();
 
-        public abstract IFrame GetParentFrame();
+        public abstract Frame GetParentFrame();
 
-        public abstract IFrame GetFrame(string name);
+        public abstract Frame GetFrame(string name);
     }
 }

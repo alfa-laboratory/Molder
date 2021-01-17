@@ -1,6 +1,5 @@
 ﻿using EvidentInstruction.Web.Models.PageObject.Models.Blocks;
 using EvidentInstruction.Web.Models.PageObject.Models.Elements.Interfaces;
-using EvidentInstruction.Web.Models.PageObject.Models.Interfaces;
 using System.Collections.Generic;
 
 namespace EvidentInstruction.Web.Models.PageObject.Models.Page.Interfaces
@@ -15,8 +14,8 @@ namespace EvidentInstruction.Web.Models.PageObject.Models.Page.Interfaces
         IEnumerable<IElement> GetPrimaryElements();
 
         IPage GetDefaultFrame();
-        IFrame GetParentFrame();
-        IFrame GetFrame(string name);
+        Frame GetParentFrame();
+        Frame GetFrame(string name);
 
         bool GoToPage();
         void PageTop();

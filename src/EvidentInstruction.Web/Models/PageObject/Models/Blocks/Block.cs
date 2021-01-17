@@ -6,7 +6,6 @@ using EvidentInstruction.Web.Helpers;
 using EvidentInstruction.Web.Models.PageObject.Attributes;
 using EvidentInstruction.Web.Models.PageObject.Models.Elements;
 using EvidentInstruction.Web.Models.PageObject.Models.Elements.Interfaces;
-using EvidentInstruction.Web.Models.PageObject.Models.Interfaces;
 
 namespace EvidentInstruction.Web.Models.PageObject.Models.Blocks
 {
@@ -67,15 +66,14 @@ namespace EvidentInstruction.Web.Models.PageObject.Models.Blocks
             throw new ArgumentOutOfRangeException($"List with all element for page {Name} is empty");
         }
 
-        public IFrame GetFrame(string name)
+        public Frame GetFrame(string name)
         {
             if (_frames.Any())
             {
                 var frame = _frames[name] ?? throw new ArgumentOutOfRangeException(nameof(name));
                 frame.SetProvider(this._driverProvider);
                 frame?.Load();
-                _driverProvider = frame.Get();
-                return frame as IFrame;
+                return frame;
             }
             throw new ArgumentOutOfRangeException($"List with frames for frame {Name} is empty");
         }

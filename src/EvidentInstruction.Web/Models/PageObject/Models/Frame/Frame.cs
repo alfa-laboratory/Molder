@@ -3,7 +3,6 @@ using EvidentInstruction.Web.Models.PageObject.Attributes;
 using EvidentInstruction.Web.Models.PageObject.Models.Blocks;
 using EvidentInstruction.Web.Models.PageObject.Models.Elements;
 using EvidentInstruction.Web.Models.PageObject.Models.Elements.Interfaces;
-using EvidentInstruction.Web.Models.PageObject.Models.Interfaces;
 using EvidentInstruction.Web.Models.PageObject.Models.Mediator;
 using EvidentInstruction.Web.Models.PageObject.Models.Mediator.Interfaces;
 using EvidentInstruction.Web.Models.Providers.Interfaces;
@@ -24,9 +23,6 @@ namespace EvidentInstruction.Web.Models.PageObject.Models
 
         [ThreadStatic]
         private IMediator _frameMediator = null;
-
-        [ThreadStatic]
-        public IDriverProvider Driver;
 
         protected string _frameName;
         protected int? _number;
@@ -63,25 +59,29 @@ namespace EvidentInstruction.Web.Models.PageObject.Models
 
         public override void SetProvider(IDriverProvider provider)
         {
-            this.Driver = provider;
-            _frameMediator = new FrameMediator((Driver.Settings as BrowserSetting).ElementTimeout);
+            _provider = null;
+            _frameMediator = new FrameMediator((provider.Settings as BrowserSetting).ElementTimeout);
+            _driverProvider = GetFrame(provider);
         }
 
-        public IDriverProvider Get()
+        public ConcurrentDictionary<string, Block> GetBlocks()
         {
-            if(_frameName != null) return _frameMediator.Execute(() => Driver.GetFrame(_frameName)) as IDriverProvider;
-            if(_number != null) return _frameMediator.Execute(() => Driver.GetFrame((int)_number)) as IDriverProvider;
-            return _frameMediator.Execute(() => Driver.GetFrame(By.XPath(_locator))) as IDriverProvider;
+            return _blocks;
+        }
+
+        public ConcurrentDictionary<string, Frame> GetFrames()
+        {
+            return _frames;
         }
 
         public IDriverProvider Parent()
         {
-            return _frameMediator.Execute(() => Driver.GetParentFrame()) as IDriverProvider;
+            return _frameMediator.Execute(() => _driverProvider.GetParentFrame()) as IDriverProvider;
         }
 
         public IDriverProvider Default()
         {
-            return _frameMediator.Execute(() => Driver.GetDefaultFrame()) as IDriverProvider;
+            return _frameMediator.Execute(() => _driverProvider.GetDefaultFrame()) as IDriverProvider;
         }
 
         public Block GetBlock(string name)
@@ -95,14 +95,16 @@ namespace EvidentInstruction.Web.Models.PageObject.Models
             return null;
         }
 
-        public ConcurrentDictionary<string, Block> GetBlocks()
+        public Frame GetFrame(string name)
         {
-            return _blocks;
-        }
-
-        public ConcurrentDictionary<string, Frame> GetFrames()
-        {
-            return _frames;
+            if (_frames.Any())
+            {
+                var frame = _frames[name] ?? throw new ArgumentOutOfRangeException(nameof(name));
+                frame.SetProvider(_driverProvider);
+                frame?.Load();
+                return frame;
+            }
+            throw new ArgumentOutOfRangeException($"List with frames for frame {Name} is empty");
         }
 
         public IElement GetElement(string name)
@@ -110,23 +112,33 @@ namespace EvidentInstruction.Web.Models.PageObject.Models
             if (_elements.Any())
             {
                 var element = _elements[name] ?? throw new ArgumentOutOfRangeException(nameof(name));
-                ((Element)element).SetProvider(Driver);
+                ((Element)element).SetProvider(_driverProvider);
                 return element;
             }
-            throw new ArgumentOutOfRangeException($"List with all element for page {name} is empty");
+            throw new ArgumentOutOfRangeException($"List with all element for page {Name} is empty");
         }
 
-        public IFrame GetFrame(string name)
+
+        private IDriverProvider GetFrame(IDriverProvider provider)
         {
-            if (_frames.Any())
+            IDriverProvider _driver = null;
+            if (_frameName != null)
             {
-                var frame = _frames[name] ?? throw new ArgumentOutOfRangeException(nameof(name));
-                frame.SetProvider(this.Driver);
-                frame?.Load();
-                _driverProvider = frame.Get();
-                return frame as IFrame;
+                _driver = _frameMediator.Execute(() => provider.GetFrame(_frameName)) as IDriverProvider;
+                _driver.Settings = provider.Settings;
+                return _driver;
             }
-            throw new ArgumentOutOfRangeException($"List with frames for frame {Name} is empty");
+
+            if (_number != null)
+            {
+                _driver = _frameMediator.Execute(() => provider.GetFrame((int)_number)) as IDriverProvider;
+                _driver.Settings = provider.Settings;
+                return _driver;
+            }
+
+            _driver = _frameMediator.Execute(() => provider.GetFrame(By.XPath(_locator))) as IDriverProvider;
+            _driver.Settings = provider.Settings;
+            return _driver;
         }
     }
 }

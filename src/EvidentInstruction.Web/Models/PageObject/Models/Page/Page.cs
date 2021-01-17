@@ -9,7 +9,6 @@ using EvidentInstruction.Web.Models.PageObject.Attributes;
 using EvidentInstruction.Web.Models.PageObject.Models.Blocks;
 using EvidentInstruction.Web.Models.PageObject.Models.Elements;
 using EvidentInstruction.Web.Models.PageObject.Models.Elements.Interfaces;
-using EvidentInstruction.Web.Models.PageObject.Models.Interfaces;
 using EvidentInstruction.Web.Models.PageObject.Models.Page.Abstracts;
 using EvidentInstruction.Web.Models.PageObject.Models.Page.Interfaces;
 using EvidentInstruction.Web.Models.Providers.Interfaces;
@@ -92,25 +91,21 @@ namespace EvidentInstruction.Web.Models.PageObject.Models.Page
 
         public override IPage GetDefaultFrame()
         {
-            var frame = new Frame()
-            {
-                Driver = _driverProvider
-            };
+            var frame = new Frame();
+            frame.SetProvider(_driverProvider);
             _driverProvider = frame.Default();
             return this;
         }
 
-        public override IFrame GetParentFrame()
+        public override Frame GetParentFrame()
         {
-            var frame = new Frame()
-            {
-                Driver = _driverProvider
-            };
+            var frame = new Frame();
+            frame.SetProvider(_driverProvider);
             _driverProvider = frame.Parent();
-            return frame as IFrame;
+            return frame;
         }
 
-        public override IFrame GetFrame(string name)
+        public override Frame GetFrame(string name)
         {
             var frames = name.Split(new string[] { BlockStringPattern.BLOCKS }, StringSplitOptions.None).ToList();
 
@@ -192,20 +187,19 @@ namespace EvidentInstruction.Web.Models.PageObject.Models.Page
         #endregion
 
         #region Обработка sub фреймов (временно до создания Non binary tree
-        private IFrame GetFrame(string name, bool allElement = true)
+        private Frame GetFrame(string name, bool allElement = true)
         {
             if (_frames.Any())
             {
                 var frame = _frames[name] ?? throw new ArgumentOutOfRangeException(nameof(name));
                 frame?.Load(allElement);
                 frame.SetProvider(_driverProvider);
-                _driverProvider = frame.Get();
-                return frame as IFrame;
+                return frame;
             }
             throw new ArgumentOutOfRangeException(nameof(name));
         }
 
-        private IFrame GetFrame(List<string> _names, ConcurrentDictionary<string, Frame> _frames)
+        private Frame GetFrame(List<string> _names, ConcurrentDictionary<string, Frame> _frames)
         {
             var names = _names;
             var frames = _frames;
@@ -227,9 +221,8 @@ namespace EvidentInstruction.Web.Models.PageObject.Models.Page
                         else
                         {
                             frame.Load();
-                            frame.Driver = _driverProvider;
-                            _driverProvider = frame.Get();
-                            return frame as IFrame;
+                            frame.SetProvider(_driverProvider);
+                            return frame;
                         }
                     }
                     throw new ArgumentOutOfRangeException(nameof(name));
