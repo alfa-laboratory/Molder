@@ -1,0 +1,13 @@
+﻿{
+  "language": {
+    "feature": "en-us"
+  },
+  "stepAssemblies": [
+    {
+      "assembly": "EvidentInstruction.Web"
+    },
+    {
+      "assembly": "EvidentInstruction.Configuration"
+    }
+  ]
+}

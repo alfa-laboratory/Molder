@@ -1,8 +1,12 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using EvidentInstruction.Helpers;
 using EvidentInstruction.Web.Models.PageObject.Models.Blocks;
 using EvidentInstruction.Web.Models.PageObject.Models.Elements.Interfaces;
+using EvidentInstruction.Web.Models.PageObject.Models.Interfaces;
 using EvidentInstruction.Web.Models.PageObject.Models.Page.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace EvidentInstruction.Web.Models.PageObject.Models.Page.Abstracts
 {
@@ -12,6 +16,9 @@ namespace EvidentInstruction.Web.Models.PageObject.Models.Page.Abstracts
         protected IEnumerable<IElement> _primaryElemets = new List<IElement>();
         protected ConcurrentDictionary<string, Block> _blocks = new ConcurrentDictionary<string, Block>();
         protected ConcurrentDictionary<string, Frame> _frames = new ConcurrentDictionary<string, Frame>();
+
+        public abstract string Url { get; set; }
+        public abstract string Name { get; set; }
 
         public abstract Block GetBlock(string name);
 
@@ -25,10 +32,34 @@ namespace EvidentInstruction.Web.Models.PageObject.Models.Page.Abstracts
 
         public abstract void PageDown();
 
-        public bool IsLoad()
+        public bool IsLoadElements()
         {
-            /// TODO
-            return true;
+            var elements = new List<string>();
+
+            _primaryElemets.ToList().ForEach(element =>
+            {
+                if (!element.Loaded)
+                {
+                    elements.Add(element.Name);
+                }
+            });
+
+            if (elements.Any())
+            {
+                var aggregate = string.Join(", ", elements);
+                Log.Logger().LogError($"элемент/ы \"{aggregate}\" не инициализированы на странице \"{Name}\"");
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
+
+        public abstract IPage GetDefaultFrame();
+
+        public abstract IFrame GetParentFrame();
+
+        public abstract IFrame GetFrame(string name);
     }
 }

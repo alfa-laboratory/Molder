@@ -1,27 +1,37 @@
 ﻿using EvidentInstruction.Controllers;
 using EvidentInstruction.Web.Extensions;
 using EvidentInstruction.Web.Models.Settings;
-using System.Diagnostics.CodeAnalysis;
 using TechTalk.SpecFlow;
 
 namespace EvidentInstruction.Web.Steps
 {
-    [ExcludeFromCodeCoverage]
     [Binding]
-    public sealed class Hooks
+    public class Hooks : TechTalk.SpecFlow.Steps
     {
-        private VariableController variableController;
+        private VariableController _variableController;
+        private ScenarioContext _scenario;
 
-        public Hooks(VariableController controller)
+        public Hooks(VariableController controller, ScenarioContext scenario)
         {
-            variableController = controller;
+            _variableController = controller;
+            _scenario = scenario;
         }
 
         [BeforeScenario(Order = -25000)]
         public void BeforeScenario()
         {
-            variableController.AddSettings();
+            _variableController.AddSettings();
             PageCollection.GetPages();
+        }
+
+        [AfterScenario()]
+        public void AfterScenario()
+        {
+            if (_scenario.TestError != null)
+            {
+                /// TODO
+                /// Add create screenshot: FeatureDirectory/ScenarioDirectory/time_ScenarioName_StepName.png 
+            }
         }
     }
 }

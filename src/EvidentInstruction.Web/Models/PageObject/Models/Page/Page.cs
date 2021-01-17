@@ -9,7 +9,9 @@ using EvidentInstruction.Web.Models.PageObject.Attributes;
 using EvidentInstruction.Web.Models.PageObject.Models.Blocks;
 using EvidentInstruction.Web.Models.PageObject.Models.Elements;
 using EvidentInstruction.Web.Models.PageObject.Models.Elements.Interfaces;
+using EvidentInstruction.Web.Models.PageObject.Models.Interfaces;
 using EvidentInstruction.Web.Models.PageObject.Models.Page.Abstracts;
+using EvidentInstruction.Web.Models.PageObject.Models.Page.Interfaces;
 using EvidentInstruction.Web.Models.Providers.Interfaces;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
@@ -21,10 +23,8 @@ namespace EvidentInstruction.Web.Models.PageObject.Models.Page
         [ThreadStatic]
         private IDriverProvider _driverProvider;
 
-        [ThreadStatic]
-        public string Name = string.Empty;
-        [ThreadStatic]
-        public string Url = string.Empty;
+        public override string Name { get; set; }
+        public override string Url { get; set; }
 
         public Page()
         {
@@ -50,7 +50,7 @@ namespace EvidentInstruction.Web.Models.PageObject.Models.Page
             (_allElements, _primaryElemets) = InitializeHelper.Elements(elements);
 
             // TODO
-            Console.ReadKey();
+            Console.WriteLine();
         }
 
         public void SetProvider(IDriverProvider provider)
@@ -62,7 +62,7 @@ namespace EvidentInstruction.Web.Models.PageObject.Models.Page
         {
             var blocks = name.Split(new string[] { BlockStringPattern.BLOCKS }, StringSplitOptions.None).ToList();
 
-            if (blocks.Any())
+            if (blocks.Count > 1)
             {
                 return GetBlock(blocks, _blocks);
             }
@@ -74,10 +74,11 @@ namespace EvidentInstruction.Web.Models.PageObject.Models.Page
 
         public override IElement GetElement(string name)
         {
-            if(_allElements.Any())
+            if (_allElements.Any())
             {
                 var element =  _allElements[name] ?? throw new ArgumentOutOfRangeException(nameof(name));
                 ((Element)element).SetProvider(_driverProvider);
+                return element;
             }
             throw new ArgumentOutOfRangeException($"List with all element for page {Name} is empty");
         }
@@ -86,6 +87,44 @@ namespace EvidentInstruction.Web.Models.PageObject.Models.Page
         {
             return _primaryElemets;
         }
+
+        #region Работа с фреймами
+
+        public override IPage GetDefaultFrame()
+        {
+            var frame = new Frame()
+            {
+                Driver = _driverProvider
+            };
+            _driverProvider = frame.Default();
+            return this;
+        }
+
+        public override IFrame GetParentFrame()
+        {
+            var frame = new Frame()
+            {
+                Driver = _driverProvider
+            };
+            _driverProvider = frame.Parent();
+            return frame as IFrame;
+        }
+
+        public override IFrame GetFrame(string name)
+        {
+            var frames = name.Split(new string[] { BlockStringPattern.BLOCKS }, StringSplitOptions.None).ToList();
+
+            if (frames.Count > 1)
+            {
+                return GetFrame(frames, _frames);
+            }
+            else
+            {
+                return GetFrame(name);
+            }
+        }
+
+        #endregion
 
         public override bool GoToPage()
         {
@@ -106,6 +145,7 @@ namespace EvidentInstruction.Web.Models.PageObject.Models.Page
             action.KeyUp(Keys.Control).Perform();
         }
 
+        #region Обработка sub блоков (временно до создания Non binary tree
         private Block GetBlock(string name, bool allElement = true)
         {
             if(_blocks.Any())
@@ -127,7 +167,7 @@ namespace EvidentInstruction.Web.Models.PageObject.Models.Page
             {
                 if(blocks.Any())
                 {
-                    var block = _blocks[name];
+                    var block = blocks[name];
                     if(block != null)
                     {
                         names.Remove(name);
@@ -140,7 +180,8 @@ namespace EvidentInstruction.Web.Models.PageObject.Models.Page
                         else
                         {
                             block.Load();
-                            return GetBlock(name, true);
+                            block.SetProvider(_driverProvider);
+                            return block;
                         }
                     }
                     throw new ArgumentOutOfRangeException(nameof(name));
@@ -148,5 +189,54 @@ namespace EvidentInstruction.Web.Models.PageObject.Models.Page
             }
             throw new ArgumentOutOfRangeException("List with blocks is empty");
         }
+        #endregion
+
+        #region Обработка sub фреймов (временно до создания Non binary tree
+        private IFrame GetFrame(string name, bool allElement = true)
+        {
+            if (_frames.Any())
+            {
+                var frame = _frames[name] ?? throw new ArgumentOutOfRangeException(nameof(name));
+                frame?.Load(allElement);
+                frame.SetProvider(_driverProvider);
+                _driverProvider = frame.Get();
+                return frame as IFrame;
+            }
+            throw new ArgumentOutOfRangeException(nameof(name));
+        }
+
+        private IFrame GetFrame(List<string> _names, ConcurrentDictionary<string, Frame> _frames)
+        {
+            var names = _names;
+            var frames = _frames;
+
+            foreach (var name in names)
+            {
+                if (frames.Any())
+                {
+                    var frame = frames[name];
+                    if (frame != null)
+                    {
+                        names.Remove(name);
+                        if (names.Count > 1)
+                        {
+                            frame.Load(false);
+                            frames = frame.GetFrames();
+                            return GetFrame(names, frames);
+                        }
+                        else
+                        {
+                            frame.Load();
+                            frame.Driver = _driverProvider;
+                            _driverProvider = frame.Get();
+                            return frame as IFrame;
+                        }
+                    }
+                    throw new ArgumentOutOfRangeException(nameof(name));
+                }
+            }
+            throw new ArgumentOutOfRangeException("List with frames is empty");
+        }
+        #endregion
     }
 }

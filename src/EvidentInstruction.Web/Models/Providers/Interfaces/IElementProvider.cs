@@ -10,6 +10,7 @@ namespace EvidentInstruction.Web.Models.Providers.Interfaces
         bool Selected { get; }
         bool Enabled { get; }
         bool Editabled { get; }
+        bool Loaded { get; }
         Point Location { get; }
         string Text { get; }
         string Tag { get; }

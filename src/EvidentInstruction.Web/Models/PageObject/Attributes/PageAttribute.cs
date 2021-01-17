@@ -3,8 +3,9 @@
 namespace EvidentInstruction.Web.Models.PageObject.Attributes
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class PageAttribute : FrameAttribute
+    public class PageAttribute : Attribute
     {
-        public string Url { get; set; }
+        public string Name { get; set; }
+        public string Url { get; set; } = null;
     }
 }

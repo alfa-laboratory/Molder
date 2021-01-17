@@ -1,5 +1,6 @@
-﻿using EvidentInstruction.Web.Models.PageObject.Models.Page.Interfaces;
-using System;
+﻿using EvidentInstruction.Web.Models.PageObject.Models.Alert.Interfaces;
+using EvidentInstruction.Web.Models.PageObject.Models.Page.Interfaces;
+using OpenQA.Selenium.Remote;
 
 namespace EvidentInstruction.Web.Models.Factory.Browser.Interfaces
 {
@@ -7,6 +8,8 @@ namespace EvidentInstruction.Web.Models.Factory.Browser.Interfaces
     {
         string Url { get; }
         string Title { get; }
+        SessionId SessionId { get; }
+        int Tabs { get; }
 
         bool Close();
         bool Quit();
@@ -17,7 +20,11 @@ namespace EvidentInstruction.Web.Models.Factory.Browser.Interfaces
         bool GoToPage(string url);
         bool Refresh();
 
-        void SetCurrentPage(string name);
+        void SetCurrentPage(string name, bool loading = true);
+        void UpdateCurrentPage(string name);
         IPage GetCurrentPage();
+
+        void SwitchTo(int number);
+        IAlert Alert();
     }
 }

@@ -2,8 +2,8 @@
 
 namespace EvidentInstruction.Web.Models.PageObject.Models.Elements
 {
-    public class CheckBox : ClickElement
+    public class CheckBox : BaseClick
     {
-        public CheckBox(string name, string locator, string block = null) : base(name, locator, block) {  }
+        public CheckBox(string name, string locator, bool optional) : base(name, locator, optional) {  }
     }
 }

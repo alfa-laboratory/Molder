@@ -1,13 +1,18 @@
-﻿using EvidentInstruction.Web.Extensions;
+﻿using EvidentInstruction.Helpers;
+using EvidentInstruction.Web.Extensions;
 using EvidentInstruction.Web.Models.Providers.Interfaces;
 using EvidentInstruction.Web.Models.Settings;
 using EvidentInstruction.Web.Models.Settings.Interfaces;
+using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.Extensions;
 using Selenium.WebDriver.WaitExtensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using WDSE;
+using WDSE.ScreenshotMaker;
 
 namespace EvidentInstruction.Web.Models.Providers
 {
@@ -24,6 +29,8 @@ namespace EvidentInstruction.Web.Models.Providers
         public string Url => _driver.Url;
 
         public string CurrentWindowHandle => _driver.CurrentWindowHandle;
+
+        public int Tabs => _driver.WindowHandles.Count; 
 
         public ReadOnlyCollection<string> WindowHandles => _driver.WindowHandles;
 
@@ -71,24 +78,6 @@ namespace EvidentInstruction.Web.Models.Providers
             };
         }
 
-        public IAlertProvider GetAlert()
-        {
-            var alert = _driver.SwitchTo().Alert();
-            return new AlertProvider()
-            {
-                Alert = alert
-            };
-        }
-
-        public IDriverProvider GetDefaultFrame()
-        {
-            var driver = _driver.SwitchTo().DefaultContent();
-            return new DriverProvider()
-            {
-                _driver = driver
-            };
-        }
-
         public IElementProvider GetElement(By by)
         {
             var element = _driver.Wait((int)(Settings as BrowserSetting).ElementTimeout).ForElement(by).ToExist();
@@ -110,6 +99,38 @@ namespace EvidentInstruction.Web.Models.Providers
                 });
             }
             return listElement.AsReadOnly();
+        }
+
+        public void SwitchTo(int number)
+        {
+            _driver.SwitchTo().Window(_driver.WindowHandles[number]);
+        }
+
+        public IAlertProvider GetAlert()
+        {
+            var alert = _driver.SwitchTo().Alert();
+            return new AlertProvider()
+            {
+                Alert = alert
+            };
+        }
+
+        public IDriverProvider GetDefaultFrame()
+        {
+            var driver = _driver.SwitchTo().DefaultContent();
+            return new DriverProvider()
+            {
+                _driver = driver
+            };
+        }
+
+        public IDriverProvider GetParentFrame()
+        {
+            var driver = _driver.SwitchTo().ParentFrame();
+            return new DriverProvider()
+            {
+                _driver = driver
+            };
         }
 
         public IDriverProvider GetFrame(int id)
@@ -145,10 +166,12 @@ namespace EvidentInstruction.Web.Models.Providers
             try
             {
                 _driver.GoToUrl(Settings, url);
+                _driver.Wait((int)(Settings as BrowserSetting).ElementTimeout).ForPage().ReadyStateComplete();
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.Logger().LogError($"Page by url \"{url}\" is not correct. Exception is \"{ex.Message}\"");
                 return false;
             }
 
@@ -164,6 +187,7 @@ namespace EvidentInstruction.Web.Models.Providers
             try
             {
                 _driver.Quit();
+                _driver = null;
                 return true;
             }
             catch (Exception)
@@ -185,9 +209,11 @@ namespace EvidentInstruction.Web.Models.Providers
             }
         }
 
-        public Screenshot Screenshot()
+        public byte[] Screenshot()
         {
-            throw new NotImplementedException();
+            var scmkr = new ScreenshotMaker();
+            scmkr.RemoveScrollBarsWhileShooting();
+            return _driver.TakeScreenshot(scmkr);
         }
 
         public bool WindowSize(int width, int height)

@@ -2,8 +2,6 @@
 {
     public class Div : Element
     {
-        public Div(string name, string locator, string block = null) : base(name, locator, block)
-        {
-        }
+        public Div(string name, string locator, bool optional) : base(name, locator, optional) { }
     }
 }

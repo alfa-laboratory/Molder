@@ -19,7 +19,7 @@ namespace EvidentInstruction.Web.Helpers
             foreach (var elementField in fields)
             {
                 var attribute = elementField.GetCustomAttribute<FrameAttribute>();
-                var element = (Frame)Activator.CreateInstance(elementField.FieldType, new { attribute.Name, attribute.Locator });
+                var element = (Frame)Activator.CreateInstance(elementField.FieldType, attribute.Name, attribute.FrameName, attribute.Number, attribute.Locator ,attribute.Optional );
 
                 dictionary.TryAdd(attribute.Name, element);
             }
@@ -34,7 +34,7 @@ namespace EvidentInstruction.Web.Helpers
             foreach (var elementField in fields)
             {
                 var attribute = elementField.GetCustomAttribute<BlockAttribute>();
-                var element = (Block)Activator.CreateInstance(elementField.FieldType, new { attribute.Name, attribute.Locator });
+                var element = (Block)Activator.CreateInstance(elementField.FieldType, attribute.Name, attribute.Locator, attribute.Optional );
 
                 dictionary.TryAdd(attribute.Name, element);
             }
@@ -50,9 +50,10 @@ namespace EvidentInstruction.Web.Helpers
             foreach (var elementField in fields)
             {
                 var attribute = elementField.GetCustomAttribute<ElementAttribute>();
-                var element = (Element)Activator.CreateInstance(elementField.FieldType, new { attribute.Name, attribute.Locator });
+                if (attribute is FrameAttribute) break;
+                var element = (Element)Activator.CreateInstance(elementField.FieldType, attribute.Name, attribute.Locator, attribute.Optional );
 
-                if (attribute.Optional)
+                if (!attribute.Optional)
                 {
                     primaryElements.Add(element);
                 }

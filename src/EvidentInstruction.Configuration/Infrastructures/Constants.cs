@@ -7,6 +7,6 @@ namespace EvidentInstruction.Configuration.Infrastructures
     {
         public const string CONFIG_BLOCK = "EvidentInstruction";
         public const string DEFAULT_JSON = "appsettings";
-        public const string LAUNCH_PROFILE = "LAUNCH_PROFILE";
+        public const string LAUNCH_PROFILE = "ASPNETCORE_ENVIRONMENT";
     }
 }

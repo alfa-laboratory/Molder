@@ -1,30 +1,40 @@
-﻿using EvidentInstruction.Web.Models.Providers;
+﻿using EvidentInstruction.Web.Extensions;
 using EvidentInstruction.Web.Models.Settings;
 using EvidentInstruction.Web.Models.Settings.Interfaces;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Remote;
+using System;
 
 namespace EvidentInstruction.Web.Models.Factory.Browser
 {
     public class Chrome : Browser
     {
+        public override SessionId SessionId { get; protected set; }
+
         public Chrome(ISetting setting = null)
         {
-            if (setting == null)
+            Settings = setting as BrowserSetting;
+            var options = GetOptions(Settings);
+
+            if (((BrowserSetting)Settings)?.Remote == true)
             {
-                Settings = new BrowserSetting();
-                Settings.Create();
-            }
-            else
-            {
-                Settings = setting as BrowserSetting;
+                var isRemoteRunning = setting.IsRemoteRunning();
+                if (isRemoteRunning)
+                {
+                    _provider.CreateDriver(() => new RemoteWebDriver(new Uri(((BrowserSetting)Settings).RemoteUrl), options.ToCapabilities()), Settings);
+                    SessionId = (_provider.GetDriver() as RemoteWebDriver).SessionId;
+                    return;
+                }
             }
 
-            var options = GetOptions(Settings);
             if (((BrowserSetting)Settings).BrowserPath != null)
             {
                 _provider.CreateDriver(() => new ChromeDriver(((BrowserSetting)Settings).BrowserPath, options), Settings);
+                SessionId = (_provider.GetDriver() as ChromeDriver).SessionId;
+                return;
             }
             _provider.CreateDriver(() => new ChromeDriver(options), Settings);
+            SessionId = (_provider.GetDriver() as ChromeDriver).SessionId;
         }
 
         protected ChromeOptions GetOptions(ISetting setting)

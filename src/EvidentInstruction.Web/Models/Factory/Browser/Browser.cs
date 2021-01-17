@@ -1,13 +1,15 @@
-﻿using EvidentInstruction.Web.Models.Factory.Browser.Interfaces;
+﻿using EvidentInstruction.Controllers;
+using EvidentInstruction.Web.Exceptions;
+using EvidentInstruction.Web.Models.Factory.Browser.Interfaces;
+using EvidentInstruction.Web.Models.PageObject.Models.Alert;
 using EvidentInstruction.Web.Models.PageObject.Models.Page;
 using EvidentInstruction.Web.Models.PageObject.Models.Page.Interfaces;
 using EvidentInstruction.Web.Models.Providers;
 using EvidentInstruction.Web.Models.Providers.Interfaces;
 using EvidentInstruction.Web.Models.Settings;
 using EvidentInstruction.Web.Models.Settings.Interfaces;
-using OpenQA.Selenium;
+using OpenQA.Selenium.Remote;
 using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace EvidentInstruction.Web.Models.Factory.Browser
@@ -32,12 +34,16 @@ namespace EvidentInstruction.Web.Models.Factory.Browser
         [ThreadStatic]
         private Page _currentPage = null;
 
+        [ThreadStatic]
         public IDriverProvider _provider = new DriverProvider();
 
         public string Url { get => _provider.Url; }
         public string Title { get => _provider.Title; }
+        public int Tabs { get => _provider.Tabs; }
 
-        public void SetCurrentPage(string name)
+        public abstract SessionId SessionId { get; protected set; }
+
+        public void SetCurrentPage(string name, bool loading = true)
         {
             var pages = PageCollection.GetPages();
             if (pages.Any())
@@ -46,7 +52,12 @@ namespace EvidentInstruction.Web.Models.Factory.Browser
                 {
                     _currentPage = (Page)Activator.CreateInstance(pages[name]);
                     _currentPage.SetProvider(_provider);
-                    _currentPage.GoToPage();
+
+                    if (loading)
+                    {
+                        var gtp = _currentPage.GoToPage();
+                        if(!gtp) throw new PageException($"Переход на страницу \"{name}\" по адресу \"{_currentPage.Url}\" выполнить не удалось.");
+                    }
                 }
                 else
                 {
@@ -57,6 +68,11 @@ namespace EvidentInstruction.Web.Models.Factory.Browser
             {
                 throw new NullReferenceException($"Не найдены страницы. Убедитесь в наличии атрибута [Page] у классов страниц и подключений их к проекту с тестами.");
             }
+        }
+
+        public void UpdateCurrentPage(string name)
+        {
+            this.SetCurrentPage(name, false);
         }
 
         public IPage GetCurrentPage()
@@ -76,21 +92,6 @@ namespace EvidentInstruction.Web.Models.Factory.Browser
         public bool Quit()
         {
             return _provider.Quit();
-        }
-
-        public IElementProvider GetElement(By by)
-        {
-            return _provider.GetElement(by);
-        }
-
-        public ReadOnlyCollection<IElementProvider> GetElements(By by)
-        {
-            return _provider.GetElements(by);
-        }
-
-        public IElementProvider GetActiveElement()
-        {
-            return _provider.GetActiveElement();
         }
 
         public bool WindowSize(int width, int height)
@@ -123,35 +124,17 @@ namespace EvidentInstruction.Web.Models.Factory.Browser
             return _provider.Refresh();
         }
 
-        public IAlertProvider GetAlert()
+        public PageObject.Models.Alert.Interfaces.IAlert Alert()
         {
-            return _provider.GetAlert();
+            return new Alert(_provider);
         }
 
-        #region Работа с фреймами
-
-        public IDriverProvider GetDefaultFrame()
+        public void SwitchTo(int number)
         {
-            return _provider.GetDefaultFrame();
+            _provider.SwitchTo(number);
         }
 
-        public IDriverProvider GetFrame(int id)
-        {
-            return _provider.GetFrame(id);
-        }
-
-        public IDriverProvider GetFrame(string name)
-        {
-            return _provider.GetFrame(name);
-        }
-        public IDriverProvider GetFrame(By by)
-        {
-            return _provider.GetFrame(by);
-        }
-        
-        #endregion
-
-        public Screenshot Screenshot()
+        public byte[] Screenshot()
         {
             return _provider.Screenshot();
         }

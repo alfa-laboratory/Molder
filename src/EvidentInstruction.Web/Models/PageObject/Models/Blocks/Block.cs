@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using EvidentInstruction.Web.Helpers;
 using EvidentInstruction.Web.Models.PageObject.Attributes;
 using EvidentInstruction.Web.Models.PageObject.Models.Elements;
 using EvidentInstruction.Web.Models.PageObject.Models.Elements.Interfaces;
+using EvidentInstruction.Web.Models.PageObject.Models.Interfaces;
 
 namespace EvidentInstruction.Web.Models.PageObject.Models.Blocks
 {
@@ -16,7 +16,7 @@ namespace EvidentInstruction.Web.Models.PageObject.Models.Blocks
         ConcurrentDictionary<string, Block> _blocks = new ConcurrentDictionary<string, Block>();
         ConcurrentDictionary<string, Frame> _frames = new ConcurrentDictionary<string, Frame>();
 
-        public Block(string name, string locator, string block = null) : base(name, locator, block) {  }
+        public Block(string name, string locator, bool optional) : base(name, locator, optional) {  }
 
         public void Load(bool allElement = true)
         {
@@ -62,8 +62,22 @@ namespace EvidentInstruction.Web.Models.PageObject.Models.Blocks
             {
                 var element = _elements[name] ?? throw new ArgumentOutOfRangeException(nameof(name));
                 ((Element)element).SetProvider(_driverProvider);
+                return element;
             }
             throw new ArgumentOutOfRangeException($"List with all element for page {Name} is empty");
+        }
+
+        public IFrame GetFrame(string name)
+        {
+            if (_frames.Any())
+            {
+                var frame = _frames[name] ?? throw new ArgumentOutOfRangeException(nameof(name));
+                frame.SetProvider(this._driverProvider);
+                frame?.Load();
+                _driverProvider = frame.Get();
+                return frame as IFrame;
+            }
+            throw new ArgumentOutOfRangeException($"List with frames for frame {Name} is empty");
         }
     }
 }

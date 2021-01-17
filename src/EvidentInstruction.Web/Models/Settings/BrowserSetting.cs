@@ -2,6 +2,7 @@
 using EvidentInstruction.Web.Helpers;
 using EvidentInstruction.Web.Infrastructures;
 using EvidentInstruction.Web.Models.Settings.Interfaces;
+using System;
 
 namespace EvidentInstruction.Web.Models.Settings
 {
@@ -46,7 +47,7 @@ namespace EvidentInstruction.Web.Models.Settings
 
                 if (field.Name == Setting.BROWSER.GetValue())
                 {
-                    BrowserType = (BrowserType?)_variableController.GetVariableValue(Setting.BROWSER.GetValue()) != null ? (BrowserType)_variableController.GetVariableValue(Setting.BROWSER.GetValue()) : DefaultSetting.BROWSER;
+                    BrowserType = _variableController.GetVariableValue(Setting.BROWSER.GetValue()) != null ? (BrowserType)Enum.Parse(typeof(BrowserType), _variableController.GetVariableValueText(Setting.BROWSER.GetValue())) : DefaultSetting.BROWSER;
                 }
 
                 if (field.Name == Setting.BROWSER_PATH.GetValue())

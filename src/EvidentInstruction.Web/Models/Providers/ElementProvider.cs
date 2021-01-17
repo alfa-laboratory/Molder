@@ -1,7 +1,7 @@
 ﻿using EvidentInstruction.Helpers;
+using EvidentInstruction.Web.Extensions;
 using EvidentInstruction.Web.Infrastructures;
 using EvidentInstruction.Web.Models.Providers.Interfaces;
-using EvidentInstruction.Web.Models.WaitTypeSelections;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
 using Selenium.WebDriver.WaitExtensions;
@@ -26,11 +26,13 @@ namespace EvidentInstruction.Web.Models.Providers
         [ThreadStatic]
         public IWebElement Element = null;
 
-        public bool Displayed => ((ElementWaitType)Element.Wait((int)_timeout).ForElement()).ToBeVisible();
+        public bool Displayed => Element.ToBeVisible((int)_timeout);
 
-        public bool Selected => ((ElementWaitType)Element.Wait((int)_timeout).ForElement()).ToBeSelected();
+        public bool Selected => Element.ToBeSelected((int)_timeout);
 
-        public bool Enabled => ((ElementWaitType)Element.Wait((int)_timeout).ForElement()).ToBeEnabled();
+        public bool Enabled => Element.ToBeEnabled((int)_timeout);
+
+        public bool Loaded => Element is null ? false : true;
 
         public bool Editabled => IsEditabled();
 

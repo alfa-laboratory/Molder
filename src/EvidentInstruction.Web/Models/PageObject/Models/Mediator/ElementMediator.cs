@@ -1,18 +1,12 @@
 ﻿using EvidentInstruction.Web.Infrastructures;
-using EvidentInstruction.Web.Models.PageObject.Models.Mediator.Interfaces;
 using OpenQA.Selenium;
 using Polly;
-using Polly.Retry;
 using System;
 
 namespace EvidentInstruction.Web.Models.PageObject.Models.Mediator
 {
-    public class ElementMediator : IMediator
+    public class ElementMediator : Mediator
     {
-        private RetryPolicy retryPolicy = null;
-
-        private RetryPolicy waitAndRetryPolicy = null;
-
         public ElementMediator(int? timeout)
         {
             retryPolicy = Policy
@@ -31,21 +25,6 @@ namespace EvidentInstruction.Web.Models.PageObject.Models.Mediator
                     retryAttempt => Math.Pow(2, retryAttempt) <= DefaultSetting.BROWSER_TIMEOUT
                     ? TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
                     : TimeSpan.FromSeconds(timeout ?? DefaultSetting.ELEMENT_TIMEOUT));
-        }
-
-        public void Execute(Action action)
-        {
-            retryPolicy.Execute(action);
-        }
-
-        public object Execute<TResult>(Func<TResult> action)
-        {
-            return retryPolicy.Execute(action);
-        }
-
-        public object Wait<TResult>(Func<TResult> action)
-        {
-            return waitAndRetryPolicy.Execute(action);
         }
     }
 }

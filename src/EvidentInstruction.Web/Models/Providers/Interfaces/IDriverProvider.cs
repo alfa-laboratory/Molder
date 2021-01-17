@@ -11,6 +11,7 @@ namespace EvidentInstruction.Web.Models.Providers.Interfaces
         string PageSource { get; }
         string Title { get; }
         string Url { get;  }
+        int Tabs { get; }
         string CurrentWindowHandle { get; }
         ReadOnlyCollection<string> WindowHandles { get; }
 
@@ -29,13 +30,16 @@ namespace EvidentInstruction.Web.Models.Providers.Interfaces
         bool GoToUrl(string url);
         bool Refresh();
 
+        void SwitchTo(int number);
+
         IAlertProvider GetAlert();
 
         IDriverProvider GetDefaultFrame();
+        IDriverProvider GetParentFrame();
         IDriverProvider GetFrame(int id);
         IDriverProvider GetFrame(string name);
         IDriverProvider GetFrame(By by);
 
-        Screenshot Screenshot();
+        byte[] Screenshot();
     }
 }

@@ -4,6 +4,7 @@
     {
         string Name { get; }
         string Text { get; }
+        string Tag { get; }
         object Value { get; }
 
         bool Loaded { get; }

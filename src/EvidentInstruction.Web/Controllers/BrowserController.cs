@@ -1,7 +1,10 @@
-﻿using EvidentInstruction.Web.Models.Factory.Browser;
+﻿using EvidentInstruction.Controllers;
+using EvidentInstruction.Helpers;
+using EvidentInstruction.Web.Models.Factory.Browser;
 using EvidentInstruction.Web.Models.Factory.Browser.Interfaces;
 using EvidentInstruction.Web.Models.Settings;
 using EvidentInstruction.Web.Models.Settings.Interfaces;
+using Microsoft.Extensions.Logging;
 using System;
 
 namespace EvidentInstruction.Web.Controllers
@@ -10,6 +13,8 @@ namespace EvidentInstruction.Web.Controllers
     {
         [ThreadStatic]
         private static IBrowser _browser;
+        [ThreadStatic]
+        private static VariableController _variables;
 
         private BrowserController() { }
 
@@ -17,26 +22,46 @@ namespace EvidentInstruction.Web.Controllers
         {
             if (_browser == null)
             {
-                _browser = new Chrome();
-                return _browser;
+                var settings = new BrowserSetting(_variables);
+                settings.Create();
+
+                return Create(settings);
             }
             return _browser;
         }
 
-        public IBrowser Create(ISetting setting)
+        public static IBrowser Create(ISetting setting)
         {
+            var browserSetting = setting as BrowserSetting;
             if (_browser == null)
             {
-                switch (((BrowserSetting)setting).BrowserType)
+                switch (browserSetting.BrowserType)
                 {
                     case Infrastructures.BrowserType.CHROME:
                         {
-                            _browser = new Chrome(setting);
+                            _browser = new Chrome(browserSetting);
+                            Log.Logger().LogInformation($"Сессия браузера - {_browser.SessionId.ToString()}");
                             return _browser;
                         }
+                    default:
+                        throw new InvalidOperationException("unknown browser type");
                 }
             }
             return _browser;
+        }
+
+        public static void Quit()
+        {
+            if (_browser != null)
+            {
+                _browser.Quit();
+                _browser = null;
+            }
+        }
+
+        public static void SetVariables(VariableController variables)
+        {
+            _variables = variables;
         }
     }
 }
