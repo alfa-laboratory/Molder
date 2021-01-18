@@ -8,8 +8,9 @@
     <Copyright>2021 AlfaBank</Copyright>
     <PackageProjectUrl>https://github.com/alfa-laboratory/Molder</PackageProjectUrl>
     <RepositoryUrl>https://github.com/alfa-laboratory/Molder</RepositoryUrl>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IsPackable>true</IsPackable>
+    <Description>Library for adding a block to the appsettings.json configuration file for adding variables to scenarios</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -20,11 +21,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
+    <PackageReference Include="Molder" Version="1.0.0" />
     <PackageReference Include="SpecFlow" Version="3.5.14" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Molder\Molder.csproj" />
   </ItemGroup>
 
 </Project>

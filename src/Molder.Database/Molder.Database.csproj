@@ -7,7 +7,7 @@
     <Authors>Egor Shokhin</Authors>
     <Company>AlfaBank</Company>
     <Version>1.0.0</Version>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
@@ -18,7 +18,7 @@
 
   <PropertyGroup>
     <IsPackable>true</IsPackable>
-    <Description></Description>
+    <Description>Library for connecting and executing queries to the database</Description>
     <PackageTags>specflow bdd aft steps database alfabank</PackageTags>
     <Copyright>2021 AlfaBank</Copyright>
     <PackageProjectUrl>https://github.com/alfa-laboratory/Molder</PackageProjectUrl>
@@ -35,6 +35,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="Molder" Version="1.0.0" />
     <PackageReference Include="SpecFlow" Version="3.5.14" />
     <PackageReference Include="SpecFlow.Assist.Dynamic" Version="1.4.2" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
@@ -46,10 +47,6 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Molder\Molder.csproj" />
   </ItemGroup>
 
 </Project>
