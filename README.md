@@ -1,7 +1,7 @@
 
 [license]: https://github.com/alfa-laboratory/Molder/blob/master/LICENSE "MIT License 2021"
 
-# Molder [![build](https://ci.appveyor.com/api/projects/status/j33s710ss3f0nf4u?svg=true)](https://ci.appveyor.com/project/egorsh0/Molder) [![GitHub license](https://img.shields.io/github/license/alfa-laboratory/Molder?style=flat-square)](https://github.com/alfa-laboratory/Molder/blob/master/LICENSE)[![GitHub stars](https://img.shields.io/github/stars/alfa-laboratory/Molder)](https://github.com/alfa-laboratory/Molder/stargazers)
+# Molder [![build](https://ci.appveyor.com/api/projects/status/j33s710ss3f0nf4u?svg=true)](https://ci.appveyor.com/project/egorsh0/Molder)[![GitHub license](https://img.shields.io/github/license/alfa-laboratory/Molder?style=flat-square)](https://github.com/alfa-laboratory/Molder/blob/master/LICENSE)[![GitHub stars](https://img.shields.io/github/stars/alfa-laboratory/Molder)](https://github.com/alfa-laboratory/Molder/stargazers)
 
 Набор библиотек с шагами для **BDD** тестирования баз данных, веб-сервисов и WebUI
 
