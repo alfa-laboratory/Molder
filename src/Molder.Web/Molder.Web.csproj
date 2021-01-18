@@ -9,6 +9,7 @@
     <PackageProjectUrl>https://github.com/alfa-laboratory/Molder</PackageProjectUrl>
     <RepositoryUrl>https://github.com/alfa-laboratory/Molder</RepositoryUrl>
     <PackageTags>specflow bdd steps web alfabank</PackageTags>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
