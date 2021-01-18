@@ -7,38 +7,38 @@ exit /b 1
 echo Restoring dependencies was successful.
 )
 
-@set project=..\src\EvidentInstruction\
+@set project=..\src\Molder\
 
 @call dotnet build -c Release %project%
 
 @if ERRORLEVEL 1 (
-echo Error! Build EvidentInstruction failed.
+echo Error! Build Molder failed.
 exit /b 1
 )
 
-@set project=..\src\EvidentInstruction.Generator\
+@set project=..\src\Molder.Generator\
 
 @call dotnet build -c Release %project%
 
 @if ERRORLEVEL 1 (
-echo Error! Build EvidentInstruction.Generator failed.
+echo Error! Build Molder.Generator failed.
 exit /b 1
 )
 
-@set project=..\src\EvidentInstruction.Database\
+@set project=..\src\Molder.Database\
 
 @call dotnet build -c Release %project%
 
 @if ERRORLEVEL 1 (
-echo Error! Build EvidentInstruction.Database failed.
+echo Error! Build Molder.Database failed.
 exit /b 1
 )
 
-@set project=..\src\EvidentInstruction.Service\
+@set project=..\src\Molder.Service\
 
 @call dotnet build -c Release %project%
 
 @if ERRORLEVEL 1 (
-echo Error! Build EvidentInstruction.Service failed.
+echo Error! Build Molder.Service failed.
 exit /b 1
 )
