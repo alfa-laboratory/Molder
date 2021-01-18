@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Molder.Configuration\Molder.Configuration.csproj" />
-    <ProjectReference Include="..\..\src\Molder\Molder.csproj" />
   </ItemGroup>
 
   <ItemGroup>

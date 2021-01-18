@@ -9,20 +9,18 @@
     <PackageProjectUrl>https://github.com/alfa-laboratory/Molder</PackageProjectUrl>
     <RepositoryUrl>https://github.com/alfa-laboratory/Molder</RepositoryUrl>
     <PackageTags>specflow bdd steps web alfabank</PackageTags>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Library for working with WebUI using steps</Description>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="Molder" Version="1.0.0" />
     <PackageReference Include="Noksa.WebDriver.ScreenshotsExtensions" Version="0.1.5.3" />
     <PackageReference Include="Polly" Version="7.2.1" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
     <PackageReference Include="Selenium.WebDriver.WaitExtensions" Version="2.0.0" />
     <PackageReference Include="SpecFlow" Version="3.5.14" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Molder\Molder.csproj" />
   </ItemGroup>
 
 </Project>
