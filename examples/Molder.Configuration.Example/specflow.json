@@ -1,0 +1,10 @@
+﻿{
+  "language": {
+    "feature": "en-us"
+  },
+  "stepAssemblies": [
+    {
+      "assembly": "Molder.Configuration"
+    }
+  ]
+}
