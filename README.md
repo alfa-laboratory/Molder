@@ -1,25 +1,61 @@
-## AlfaBank.AFT.Core.Library
 
-Набор библиотек с шагами для **BDD** тестирования баз данных, веб-сервисов и WebUI
+[license]: https://github.com/alfa-laboratory/Molder/blob/master/LICENSE "MIT License 2021"
 
-### Cостав библиотек
+# Molder [![build](https://ci.appveyor.com/api/projects/status/j33s710ss3f0nf4u?svg=true)](https://ci.appveyor.com/project/egorsh0/Molder)[![GitHub license](https://img.shields.io/github/license/alfa-laboratory/Molder?style=flat-square)](https://github.com/alfa-laboratory/Molder/blob/master/LICENSE)[![GitHub stars](https://img.shields.io/github/stars/alfa-laboratory/Molder)](https://github.com/alfa-laboratory/Molder/stargazers)
 
-* AlfaBank.AFT.Core	cодержит логику для:
-  - генераций уникальных текстовых/числовых значений;
-  - генерации уникальных значений даты/времени;
-  - генерации уникальных номеров телефонов;
-  - подключения к БД и выполнения запросов;
-  - выполнение запросов к веб-сервисам;
-  - работе с WebUI.
-* AlfaBank.AFT.Core.Library.Common содержит **готовые** шаги для:
-  - генераций уникальных значений (тестовые, числовые, дата-время)
-  - основные проверки.
-* AlfaBank.AFT.Core.Library.Database содержит **готовые** шаги для:
-  - подключения к базе данных (SQL Server);
-  - выполнения Select, Insert, Update, Delete запросов;
-  - выполнения Stored Procedure.
-* AlfaBAnk.AFT.Core.Library.Service содержит **готовые** шаги для:
-  - выполнения запросов REST;
-  - выполнения запросов SOAP;
-  - сохранения результатов вызова в виде объекта, текста, json или xml;
-  - проверки статуса выполнения запроса.
+РќР°Р±РѕСЂ Р±РёР±Р»РёРѕС‚РµРє СЃ С€Р°РіР°РјРё РґР»СЏ **BDD** С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ Р±Р°Р· РґР°РЅРЅС‹С…, РІРµР±-СЃРµСЂРІРёСЃРѕРІ Рё WebUI
+
+## РљР°Рє Р·Р°РїСѓСЃС‚РёС‚СЊ?
+
+Р’ РїСЂРѕРµРєС‚ РЅРµРѕР±С…РѕРґРёРјРѕ РґРѕР±Р°РІРёС‚СЊ С„Р°Р№Р» **specflow.json** РІ РєРѕС‚РѕСЂРѕРј РѕРїРёСЃС‹РІР°РµС‚СЃСЏ РёСЃРїРѕР»СЊР·СѓРµРјС‹Р№ СЏР·С‹Рє РєР»СЋС‡РµРІС‹С… СЃР»РѕРІ Рё С‚Рµ *assembly*, РІ РєРѕС‚РѕСЂС‹С… РЅР°С…РѕРґСЏС‚СЃСЏ С€Р°РіРё
+
+``` json
+{
+  "language": {
+    "feature": "en-EN"
+  },
+  "stepAssemblies": [
+    {
+      "assembly": "Molder.Generator"
+    }
+  ]
+}
+```
+Рё РґРѕР±Р°РІРёС‚СЊ РµРјСѓ СЃРІРѕР№СЃС‚РІРѕ **Copy if newer**
+
+## РљРѕРЅС„РёРіСѓСЂР°С†РёРѕРЅРЅС‹Р№ С„Р°Р№Р»
+
+Р’ РєР°С‡РµСЃС‚РІРµ РєРѕРЅС„РёРіСѓСЂР°С†РёРѕРЅРЅРѕРіРѕ С„Р°Р№Р»Р° РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ **appsetting.json**, РІ РєРѕС‚РѕСЂС‹Р№ РґРѕР±Р°РІР»СЏСЋС‚СЃСЏ РїРµСЂРµРјРµРЅРЅС‹Рµ РІ С„РѕСЂРјР°С‚Рµ РєР»СЋС‡-Р·РЅР°С‡РµРЅРёРµ СЃ РїСЂРёРІСЏР·РєРѕР№ Рє С‚РµРіР°Рј. РўРµРіРё, РІ СЃРІРѕСЋ РѕС‡РµСЂРµРґСЊ, РјРѕРіСѓС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ РІ СЃС†РµРЅР°СЂРёСЏС… РґР»СЏ С‚РѕРіРѕ, С‡С‚РѕР±С‹ РїРѕРґРєР»СЋС‡РёС‚СЊ РєРѕРЅРєСЂРµС‚РЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ Рє РєРѕРґСѓ
+РљР»СЋС‡РµРІРѕРµ СЃР»РѕРІРѕ **Molder** РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ, С‚Р°Рє РєР°Рє РѕРЅРѕ СЏРІР»СЏРµС‚СЃСЏ РѕСЃРЅРѕРІРЅС‹Рј, РїРѕ РєРѕС‚РѕСЂРѕРјСѓ РёС‰СѓС‚СЃСЏ РїРµСЂРµРјРµРЅРЅС‹Рµ РІ РєРѕРЅС„РёРіСѓСЂР°С†РёРѕРЅРЅРѕРј С„Р°Р№Р»Рµ
+
+``` json
+{
+  "Molder": {
+    "WebService": {
+      "Key1": 1,
+      "Key2": 2
+    },
+    "DataBase": {
+      "Key12": "Value1",
+      "Key21": "Value2"
+    }
+  }
+}
+```
+Рё РґРѕР±Р°РІРёС‚СЊ РµРјСѓ СЃРІРѕР№СЃС‚РІРѕ **Copy if newer**
+
+## Dependencies 
+1. Net Core 2.2 or Net Standart
+1. SpecFlow 3.X
+2. SpecFlow.Tools.MsBuild.Generation 3.X
+3. **TestFramework** (xUnit, nUnit and etc) (xUnit 2.4.1)
+4. SpecFlow.**TestFramework** 3.X
+5. Molder.**Type**
+
+## Contacts
+
+[Telegram](https://t.me/AlfaBankAFTCore)
+
+## License
+
+The **Molder** is released of the [MIT License 2021][license].
