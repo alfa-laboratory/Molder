@@ -1,0 +1,13 @@
+﻿{
+  "language": {
+    "feature": "en-us"
+  },
+  "stepAssemblies": [
+    {
+      "assembly": "Molder.Web"
+    },
+    {
+      "assembly": "Molder.Configuration"
+    }
+  ]
+}
