@@ -3,10 +3,6 @@
 # Molder [![build](https://ci.appveyor.com/api/projects/status/j33s710ss3f0nf4u?svg=true)](https://ci.appveyor.com/project/egorsh0/Molder) [![license](https://img.shields.io/github/license/alfa-laboratory/Molder)](https://github.com/alfa-laboratory/Molder/blob/master/LICENSE)
 Набор библиотек с шагами для **BDD** тестирования баз данных, веб-сервисов и WebUI
 
-## Documentation
-
-All the documentation is available [on our site][wiki].
-
 ## Как запустить?
 
 В проект необходимо добавить файл **specflow.json** в котором описывается используемый язык ключевых слов и те *assembly*, в которых находятся шаги
