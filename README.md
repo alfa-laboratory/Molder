@@ -1,3 +1,6 @@
+
+[license]: https://github.com/alfa-laboratory/Molder/blob/master/LICENSE "MIT License 2021"
+
 # Molder [![build](https://ci.appveyor.com/api/projects/status/j33s710ss3f0nf4u?svg=true)](https://ci.appveyor.com/project/egorsh0/Molder) 
 
 Набор библиотек с шагами для **BDD** тестирования баз данных, веб-сервисов и WebUI
