@@ -61,4 +61,4 @@ All the documentation is available [on our site][wiki].
 
 ## License
 
-The **Molder** is released of the [MIT License 2020][license].
+The **Molder** is released of the [MIT License 2021][license].
