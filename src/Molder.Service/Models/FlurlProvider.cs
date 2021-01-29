@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Molder.Helpers;
 using Molder.Service.Exceptions;
-using Molder.Service.Models.Interfaces;
 using Flurl.Http;
 using Microsoft.Extensions.Logging;
 

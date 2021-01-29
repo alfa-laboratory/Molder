@@ -1,11 +1,10 @@
 ﻿using Molder.Web.Extensions;
 using Molder.Web.Models.Settings;
-using Molder.Web.Models.Settings.Interfaces;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Remote;
 using System;
 
-namespace Molder.Web.Models.Factory.Browser
+namespace Molder.Web.Models.Browser
 {
     public class Chrome : Browser
     {

@@ -1,6 +1,4 @@
-﻿using Molder.Models.Assembly.Interfaces;
-
-namespace Molder.Models.Assembly
+﻿namespace Molder.Models.Assembly
 {
     public class Assembly : IAssembly
     {

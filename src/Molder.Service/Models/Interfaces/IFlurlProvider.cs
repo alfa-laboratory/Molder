@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Molder.Service.Models.Interfaces
+namespace Molder.Service.Models
 {
     public interface IFlurlProvider
     {

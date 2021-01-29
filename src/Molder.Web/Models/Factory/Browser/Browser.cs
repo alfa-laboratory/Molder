@@ -1,23 +1,22 @@
-﻿using Molder.Controllers;
-using Molder.Web.Exceptions;
-using Molder.Web.Models.Factory.Browser.Interfaces;
-using Molder.Web.Models.PageObject.Models.Alert;
-using Molder.Web.Models.PageObject.Models.Page;
-using Molder.Web.Models.PageObject.Models.Page.Interfaces;
+﻿using Molder.Web.Exceptions;
+using Molder.Web.Extensions;
+using Molder.Web.Models.PageObjects.Alerts;
+using Molder.Web.Models.PageObjects.Pages;
 using Molder.Web.Models.Providers;
-using Molder.Web.Models.Providers.Interfaces;
 using Molder.Web.Models.Settings;
-using Molder.Web.Models.Settings.Interfaces;
 using OpenQA.Selenium.Remote;
 using System;
 using System.Linq;
 
-namespace Molder.Web.Models.Factory.Browser
+namespace Molder.Web.Models.Browser
 {
     public abstract class Browser : IBrowser
     {
         [ThreadStatic]
         private ISetting _settings;
+
+        [ThreadStatic]
+        public Node _currentPage = null;
 
         public ISetting Settings
         {
@@ -32,9 +31,6 @@ namespace Molder.Web.Models.Factory.Browser
         }
 
         [ThreadStatic]
-        private Page _currentPage = null;
-
-        [ThreadStatic]
         public IDriverProvider _provider = new DriverProvider();
 
         public string Url { get => _provider.Url; }
@@ -45,28 +41,15 @@ namespace Molder.Web.Models.Factory.Browser
 
         public void SetCurrentPage(string name, bool loading = true)
         {
-            var pages = PageCollection.GetPages();
-            if (pages.Any())
-            {
-                if (pages.ContainsKey(name))
-                {
-                    _currentPage = (Page)Activator.CreateInstance(pages[name]);
-                    _currentPage.SetProvider(_provider);
+            var page = TreePages.Get().SearchPageBy(name);
+            _currentPage = page;
+            (_currentPage.Object as Page).SetProvider(_provider);
+            (_currentPage.Object as Page).Root = page;
 
-                    if (loading)
-                    {
-                        var gtp = _currentPage.GoToPage();
-                        if(!gtp) throw new PageException($"Переход на страницу \"{name}\" по адресу \"{_currentPage.Url}\" выполнить не удалось.");
-                    }
-                }
-                else
-                {
-                    throw new NullReferenceException($"Не найдена страница с названием \"{name}\". Убедитесь в наличии атрибута [Page] у классов страниц.");
-                }
-            }
-            else
+            if (loading)
             {
-                throw new NullReferenceException($"Не найдены страницы. Убедитесь в наличии атрибута [Page] у классов страниц и подключений их к проекту с тестами.");
+                var gtp = (_currentPage.Object as Page).GoToPage();
+                if(!gtp) throw new PageException($"Переход на страницу \"{name}\" по адресу \"{(_currentPage.Object as Page).Url}\" выполнить не удалось.");
             }
         }
 
@@ -81,7 +64,7 @@ namespace Molder.Web.Models.Factory.Browser
             {
                 throw new NullReferenceException("Текущая страница не задана");
             }
-            return _currentPage;
+            return _currentPage.Object as IPage;
         }
 
         public bool Close()
@@ -124,7 +107,7 @@ namespace Molder.Web.Models.Factory.Browser
             return _provider.Refresh();
         }
 
-        public PageObject.Models.Alert.Interfaces.IAlert Alert()
+        public IAlert Alert()
         {
             return new Alert(_provider);
         }

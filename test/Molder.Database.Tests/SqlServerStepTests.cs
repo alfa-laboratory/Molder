@@ -7,7 +7,6 @@ using FluentAssertions;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
-using Molder.Database.Models.Interfaces;
 using Moq;
 using Molder.Database.Infrastructures;
 using TechTalk.SpecFlow;

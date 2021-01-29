@@ -1,7 +1,6 @@
 ﻿using Flurl.Http;
 using Molder.Helpers;
 using Molder.Service.Helpers;
-using Molder.Service.Models.Interfaces;
 using System;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;

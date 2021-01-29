@@ -1,4 +1,4 @@
-﻿using Molder.Database.Models.Interfaces;
+﻿using Molder.Database.Models;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 

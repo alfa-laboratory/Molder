@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using System;
 
-namespace Molder.Generator.Models.Providers.Interfaces
+namespace Molder.Generator.Models.Providers
 {
     public interface IBogusProvider
     {

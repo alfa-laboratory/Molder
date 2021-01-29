@@ -1,8 +1,8 @@
-﻿using Molder.Web.Models.PageObject.Models.Alert.Interfaces;
-using Molder.Web.Models.PageObject.Models.Page.Interfaces;
+﻿using Molder.Web.Models.PageObjects.Alerts;
+using Molder.Web.Models.PageObjects.Pages;
 using OpenQA.Selenium.Remote;
 
-namespace Molder.Web.Models.Factory.Browser.Interfaces
+namespace Molder.Web.Models.Browser
 {
     public interface IBrowser
     {

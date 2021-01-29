@@ -1,7 +1,6 @@
 ﻿using Molder.Controllers;
 using Molder.Web.Helpers;
 using Molder.Web.Infrastructures;
-using Molder.Web.Models.Settings.Interfaces;
 using System;
 
 namespace Molder.Web.Models.Settings

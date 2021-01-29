@@ -1,12 +1,11 @@
 ﻿using Molder.Controllers;
 using Molder.Web.Controllers;
-using Molder.Web.Models.PageObject.Models.Abstracts.Elements;
-using Molder.Web.Models.PageObject.Models.Elements;
 using Molder.Web.Models.Settings;
 using FluentAssertions;
 using System;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
+using Molder.Web.Models.PageObjects.Elements;
 
 namespace Molder.Web.Steps
 {

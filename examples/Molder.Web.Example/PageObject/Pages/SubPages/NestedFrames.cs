@@ -1,11 +1,10 @@
-﻿using Molder.Web.Models.PageObject.Attributes;
-using Molder.Web.Models.PageObject.Models;
-using Molder.Web.Models.PageObject.Models.Page;
+﻿using Molder.Web.Models.PageObjects.Attributes;
+using Molder.Web.Models.PageObjects.Pages;
 using PageObject.Elements.Frames;
 
 namespace PageObject.Pages.SubPages
 {
-    [Page(Name = "Nested Frames", Url = "http://192.168.99.100:7080/nested_frames")]
+    [Page(Name = "Nested Frames", Url = "http://192.168.99.100:9080/nested_frames")]
     public class NestedFrames : Page
     {
         [Frame(Name = "Left", FrameName = "frame-left")]

@@ -1,6 +1,6 @@
-﻿using Molder.Web.Models.PageObject.Attributes;
-using Molder.Web.Models.PageObject.Models;
-using Molder.Web.Models.PageObject.Models.Elements;
+﻿using Molder.Web.Models.PageObjects.Attributes;
+using Molder.Web.Models.PageObjects.Elements;
+using Molder.Web.Models.PageObjects.Frames;
 
 namespace PageObject.Elements.Frames
 {

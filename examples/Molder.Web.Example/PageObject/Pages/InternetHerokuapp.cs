@@ -1,10 +1,10 @@
-﻿using Molder.Web.Models.PageObject.Attributes;
-using Molder.Web.Models.PageObject.Models.Elements;
-using Molder.Web.Models.PageObject.Models.Page;
+﻿using Molder.Web.Models.PageObjects.Attributes;
+using Molder.Web.Models.PageObjects.Elements;
+using Molder.Web.Models.PageObjects.Pages;
 
 namespace PageObject.Pages
 {
-    [Page(Name = "InternetHerokuapp", Url = "http://192.168.99.100:7080/")]
+    [Page(Name = "InternetHerokuapp", Url = "http://192.168.99.100:9080/")]
     public class InternetHerokuapp : Page
     {
         [Element(Name = "Add/Remove Elements", Locator = "//*[@id=\"content\"]/ul/li[2]/a")]

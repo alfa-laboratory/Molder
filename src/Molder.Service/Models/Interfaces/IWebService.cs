@@ -1,5 +1,5 @@
 ﻿
-namespace Molder.Service.Models.Interfaces
+namespace Molder.Service.Models
 {
     public interface IWebService
     {

@@ -6,12 +6,12 @@ using System.Diagnostics.CodeAnalysis;
 using Xunit;
 using TechTalk.SpecFlow;
 using Molder.Models;
-using Molder.Models.DateTimeHelpers.Interfaces;
 using Moq;
 using Molder.Generator.Models.Generators;
 using Molder.Generator.Infrastructures;
 using System.Collections.Generic;
 using System.Net;
+using Molder.Models.DateTimeHelpers;
 
 namespace Molder.Generator.Tests
 {

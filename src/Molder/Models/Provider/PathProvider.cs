@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using Molder.Helpers;
-using Molder.Models.Profider.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace Molder.Models
+namespace Molder.Models.Profider
 {
     [ExcludeFromCodeCoverage]
     public class PathProvider: IPathProvider

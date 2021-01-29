@@ -1,11 +1,9 @@
 ﻿using Molder.Controllers;
 using Molder.Helpers;
-using Molder.Web.Models.Factory.Browser;
-using Molder.Web.Models.Factory.Browser.Interfaces;
 using Molder.Web.Models.Settings;
-using Molder.Web.Models.Settings.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
+using Molder.Web.Models.Browser;
 
 namespace Molder.Web.Controllers
 {

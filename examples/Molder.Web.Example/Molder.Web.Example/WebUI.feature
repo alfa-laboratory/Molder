@@ -78,7 +78,7 @@ Scenario: Dynamic Content
 	Given выполнено нажатие на элемент "Dynamic Content" на веб-странице
 		And я обновляю текущую страницу на "Dynamic Content"
 		
-	Then на веб-странице в блоке "Content\\row 1" текст элемента "Text" заполнен
+	Then на веб-странице в блоке "Content..row 1" текст элемента "Text" заполнен
 
 		And я закрываю веб-страницу
 		And я закрываю браузер

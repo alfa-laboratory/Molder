@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using System;
 
-namespace Molder.Generator.Models.Generators.Interfaces
+namespace Molder.Generator.Models.Generators
 {
     public interface IFakerGenerator
     {

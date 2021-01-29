@@ -1,7 +1,6 @@
 ﻿using Molder.Helpers;
 using Molder.Web.Extensions;
 using Molder.Web.Infrastructures;
-using Molder.Web.Models.Providers.Interfaces;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
 using Selenium.WebDriver.WaitExtensions;

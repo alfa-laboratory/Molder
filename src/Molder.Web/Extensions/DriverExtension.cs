@@ -1,5 +1,4 @@
 ﻿using Molder.Web.Models.Settings;
-using Molder.Web.Models.Settings.Interfaces;
 using FluentAssertions;
 using OpenQA.Selenium;
 using Selenium.WebDriver.WaitExtensions;

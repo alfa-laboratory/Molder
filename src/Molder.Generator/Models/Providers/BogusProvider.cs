@@ -1,6 +1,5 @@
 ﻿using Bogus;
 using Molder.Generator.Infrastructures;
-using Molder.Generator.Models.Providers.Interfaces;
 using System;
 using System.Diagnostics.CodeAnalysis;
 

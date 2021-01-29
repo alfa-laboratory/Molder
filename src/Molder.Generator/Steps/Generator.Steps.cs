@@ -6,7 +6,6 @@ using Molder.Helpers;
 using Molder.Infrastructure;
 using TechTalk.SpecFlow;
 using Molder.Generator.Extensions;
-using Molder.Generator.Models.Generators.Interfaces;
 using Molder.Generator.Models.Generators;
 using System.Diagnostics.CodeAnalysis;
 

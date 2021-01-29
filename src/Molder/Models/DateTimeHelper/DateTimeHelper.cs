@@ -1,8 +1,7 @@
-﻿using Molder.Models.DateTimeHelpers.Interfaces;
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Molder.Models
+namespace Molder.Models.DateTimeHelpers
 {
     [ExcludeFromCodeCoverage]
     public class DateTimeHelper : IDateTimeHelper

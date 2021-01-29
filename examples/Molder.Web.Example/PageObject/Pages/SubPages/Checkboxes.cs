@@ -1,10 +1,10 @@
-﻿using Molder.Web.Models.PageObject.Attributes;
-using Molder.Web.Models.PageObject.Models.Elements;
-using Molder.Web.Models.PageObject.Models.Page;
+﻿using Molder.Web.Models.PageObjects.Attributes;
+using Molder.Web.Models.PageObjects.Elements;
+using Molder.Web.Models.PageObjects.Pages;
 
 namespace PageObject.Pages.SubPages
 {
-    [Page(Name = "Checkboxes", Url = "http://192.168.99.100:7080/checkboxes")]
+    [Page(Name = "Checkboxes", Url = "http://192.168.99.100:9080/checkboxes")]
     public class Checkboxes : Page
     {
         [Element(Name = "checkbox 1", Locator = "//*[@id=\"checkboxes\"]/input[1]")]
