@@ -2,12 +2,10 @@
 using Molder.Exceptions;
 using Molder.Helpers;
 using Molder.Models.Directory;
-using Molder.Models.Directory.Interfaces;
-using Molder.Models.File.Interfaces;
-using Molder.Models.Profider.Interfaces;
+using Molder.Models.Profider;
 using Microsoft.Extensions.Logging;
 
-namespace Molder.Models
+namespace Molder.Models.File
 {
     public class TextFile : IFile, IDisposable
     {

@@ -1,4 +1,4 @@
-﻿namespace Molder.Models.File.Interfaces
+﻿namespace Molder.Models.File
 {
     public interface IFile
     {

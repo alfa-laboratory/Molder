@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Molder.Models.DateTimeHelpers.Interfaces
+namespace Molder.Models.DateTimeHelpers
 {
     public interface IDateTimeHelper
     {

@@ -1,4 +1,4 @@
-﻿namespace Molder.Models.Profider.Interfaces
+﻿namespace Molder.Models.Profider
 {
     public interface IFileProvider
     {

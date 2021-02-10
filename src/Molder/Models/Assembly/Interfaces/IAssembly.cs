@@ -1,4 +1,4 @@
-﻿namespace Molder.Models.Assembly.Interfaces
+﻿namespace Molder.Models.Assembly
 {
     public interface IAssembly
     {
