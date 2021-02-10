@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using Molder.Exceptions;
-using Molder.Models;
-using Molder.Models.Directory.Interfaces;
-using Molder.Models.Profider.Interfaces;
+using Molder.Models.Directory;
+using Molder.Models.File;
+using Molder.Models.Profider;
 using FluentAssertions;
 using Moq;
 using Xunit;
