@@ -1,12 +1,12 @@
 ﻿using Molder.Controllers;
 using Molder.Web.Controllers;
-using Molder.Web.Models.PageObject.Models.Abstracts.Elements;
-using Molder.Web.Models.PageObject.Models.Elements;
 using Molder.Web.Models.Settings;
 using FluentAssertions;
 using System;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
+using Molder.Web.Models.PageObjects.Elements;
+using Molder.Web.Models.Proxy;
 
 namespace Molder.Web.Steps
 {
@@ -25,6 +25,18 @@ namespace Molder.Web.Steps
         public BrowserSetting CreateBrowserSettings(Table tableSettings)
         {
             return tableSettings.CreateInstance<BrowserSetting>();
+        }
+
+        [StepArgumentTransformation]
+        public Authentication Authentication(Table table)
+        {
+            return table.CreateInstance<Authentication>();
+        }
+
+        [Given(@"я инициализирую аутентификацию для прокси сервера:")]
+        public void Proxy(Authentication authentification)
+        {
+            BrowserController.CreateProxy(authentification);
         }
 
         [Given(@"я инициализирую браузер")]

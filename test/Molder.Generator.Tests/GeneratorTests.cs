@@ -1,8 +1,6 @@
 ﻿using Molder.Generator.Infrastructures;
 using Molder.Generator.Models.Generators;
-using Molder.Generator.Models.Generators.Interfaces;
-using Molder.Generator.Models.Providers.Interfaces;
-using Molder.Models.DateTimeHelpers.Interfaces;
+using Molder.Generator.Models.Providers;
 using FluentAssertions;
 using Moq;
 using System;
@@ -10,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using Xunit;
+using Molder.Models.DateTimeHelpers;
 
 namespace Molder.Generator.Tests
 {

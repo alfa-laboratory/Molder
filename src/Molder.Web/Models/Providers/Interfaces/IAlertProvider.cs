@@ -1,4 +1,4 @@
-﻿namespace Molder.Web.Models.Providers.Interfaces
+﻿namespace Molder.Web.Models.Providers
 {
     public interface IAlertProvider
     {

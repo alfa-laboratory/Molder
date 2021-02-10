@@ -1,14 +1,12 @@
 ﻿using Molder.Database.Exceptions;
 using Molder.Database.Infrastructures;
-using Molder.Database.Models.Interfaces;
 using System;
 using System.Data;
 using System.Data.SqlClient;
 using Molder.Helpers;
 using System.Diagnostics.CodeAnalysis;
-using Molder.Models;
-using Molder.Models.DateTimeHelpers.Interfaces;
 using Microsoft.Extensions.Logging;
+using Molder.Models.DateTimeHelpers;
 
 namespace Molder.Database.Models
 {

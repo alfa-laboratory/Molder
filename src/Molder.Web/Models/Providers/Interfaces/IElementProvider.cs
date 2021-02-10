@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Drawing;
 
-namespace Molder.Web.Models.Providers.Interfaces
+namespace Molder.Web.Models.Providers
 {
     public interface IElementProvider
     {

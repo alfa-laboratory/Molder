@@ -1,8 +1,6 @@
 ﻿using Molder.Helpers;
 using Molder.Web.Extensions;
-using Molder.Web.Models.Providers.Interfaces;
 using Molder.Web.Models.Settings;
-using Molder.Web.Models.Settings.Interfaces;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.Extensions;

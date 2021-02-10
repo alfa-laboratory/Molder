@@ -1,15 +1,12 @@
 ﻿using Bogus;
 using Molder.Generator.Extensions;
 using Molder.Generator.Infrastructures;
-using Molder.Generator.Models.Generators.Interfaces;
 using Molder.Generator.Models.Providers;
-using Molder.Generator.Models.Providers.Interfaces;
 using Molder.Helpers;
-using Molder.Models;
-using Molder.Models.DateTimeHelpers.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using Molder.Models.DateTimeHelpers;
 
 namespace Molder.Generator.Models.Generators
 {

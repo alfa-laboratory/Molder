@@ -1,7 +1,7 @@
 ﻿using Molder.Controllers;
 using Molder.Web.Helpers;
 using Molder.Web.Infrastructures;
-using Molder.Web.Models.Settings.Interfaces;
+using Molder.Web.Models.Proxy;
 using System;
 
 namespace Molder.Web.Models.Settings
@@ -18,6 +18,7 @@ namespace Molder.Web.Models.Settings
         public string RemoteVersion { get; set; } = null;
         public int? Timeout { get; set; } = null;
         public int? ElementTimeout { get; set; } = null;
+        public Authentication Authentication { get; set; } = null;
 
         public BrowserSetting()
         {

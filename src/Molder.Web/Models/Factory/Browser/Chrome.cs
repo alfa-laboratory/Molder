@@ -1,11 +1,10 @@
 ﻿using Molder.Web.Extensions;
 using Molder.Web.Models.Settings;
-using Molder.Web.Models.Settings.Interfaces;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Remote;
 using System;
 
-namespace Molder.Web.Models.Factory.Browser
+namespace Molder.Web.Models.Browser
 {
     public class Chrome : Browser
     {
@@ -13,6 +12,7 @@ namespace Molder.Web.Models.Factory.Browser
 
         public Chrome(ISetting setting = null)
         {
+            _proxyServer = new Proxy.Proxy();
             Settings = setting as BrowserSetting;
             var options = GetOptions(Settings);
 
@@ -27,13 +27,16 @@ namespace Molder.Web.Models.Factory.Browser
                 }
             }
 
+            var service = ChromeDriverService.CreateDefaultService();
+            service.HideCommandPromptWindow = true;
+
             if (((BrowserSetting)Settings).BrowserPath != null)
             {
                 _provider.CreateDriver(() => new ChromeDriver(((BrowserSetting)Settings).BrowserPath, options), Settings);
                 SessionId = (_provider.GetDriver() as ChromeDriver).SessionId;
                 return;
             }
-            _provider.CreateDriver(() => new ChromeDriver(options), Settings);
+            _provider.CreateDriver(() => new ChromeDriver(service, options), Settings);
             SessionId = (_provider.GetDriver() as ChromeDriver).SessionId;
         }
 
@@ -55,6 +58,16 @@ namespace Molder.Web.Models.Factory.Browser
                 options.AddArguments("--headless");
             }
             options.AddArguments("disable-gpu");
+
+            if(browserSetting.Authentication != null)
+            {
+                var proxy = new OpenQA.Selenium.Proxy();
+
+                int localPort = _proxyServer.AddEndpoint(browserSetting.Authentication);
+                proxy.HttpProxy = $"127.0.0.1:{localPort}";
+                options.Proxy = proxy;
+                options.AddArgument($"--proxy-server=127.0.0.1:{localPort}");
+            }
 
             return options;
         }

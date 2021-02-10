@@ -8,6 +8,20 @@ Scenario: OpenWebUI
 		And я закрываю веб-страницу
 		And я закрываю браузер
 @ignore
+Scenario: OpenWebUI with auth
+	Given я инициализирую аутентификацию для прокси сервера:
+		| Proxy          | Port | Username | Password |
+		| 192.168.99.100 | 9080 | admin    | admin    |
+	Given я инициализирую браузер
+		And я развернул веб-страницу на весь экран
+		And я перехожу на страницу "InternetHerokuapp"
+	Given выполнено нажатие на элемент "Basic Auth" на веб-странице
+		And я обновляю текущую страницу на "Basic Auth"
+	Then на веб-странице текст элемента "Text" содержит значение "Congratulations! You must have the proper credentials."
+		And я закрываю веб-страницу
+		And я закрываю браузер
+
+@ignore
 Scenario: Add/Remove Elements With Block
 	Given я инициализирую браузер
 		And я развернул веб-страницу на весь экран
@@ -78,7 +92,7 @@ Scenario: Dynamic Content
 	Given выполнено нажатие на элемент "Dynamic Content" на веб-странице
 		And я обновляю текущую страницу на "Dynamic Content"
 		
-	Then на веб-странице в блоке "Content\\row 1" текст элемента "Text" заполнен
+	Then на веб-странице в блоке "Content..row 1" текст элемента "Text" заполнен
 
 		And я закрываю веб-страницу
 		And я закрываю браузер

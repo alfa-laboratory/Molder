@@ -1,6 +1,6 @@
 ﻿using Molder.Controllers;
 using Molder.Web.Extensions;
-using Molder.Web.Models.Settings;
+using Molder.Web.Models;
 using TechTalk.SpecFlow;
 
 namespace Molder.Web.Steps
@@ -21,7 +21,6 @@ namespace Molder.Web.Steps
         public void BeforeScenario()
         {
             _variableController.AddSettings();
-            PageCollection.GetPages();
         }
 
         [AfterScenario()]

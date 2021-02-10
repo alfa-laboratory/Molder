@@ -1,13 +1,10 @@
 ﻿using Molder.Controllers;
 using Molder.Service.Controllers;
 using Molder.Service.Models;
-using Molder.Service.Models.Interfaces;
 using Molder.Service.Steps;
 using FluentAssertions;
-using Moq;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Net;
 using System.Net.Http;
 using TechTalk.SpecFlow;
 using Xunit;

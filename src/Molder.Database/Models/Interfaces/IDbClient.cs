@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Molder.Database.Models.Interfaces
+namespace Molder.Database.Models
 {
     public interface IDbClient : IDisposable
     {

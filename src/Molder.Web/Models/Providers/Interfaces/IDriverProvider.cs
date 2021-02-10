@@ -1,9 +1,9 @@
-﻿using Molder.Web.Models.Settings.Interfaces;
+﻿using Molder.Web.Models.Settings;
 using OpenQA.Selenium;
 using System;
 using System.Collections.ObjectModel;
 
-namespace Molder.Web.Models.Providers.Interfaces
+namespace Molder.Web.Models.Providers
 {
     public interface IDriverProvider
     {

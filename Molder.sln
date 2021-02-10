@@ -33,6 +33,18 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Molder.Service.Tests", "tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Molder.Web.Example", "examples\Molder.Web.Example\Molder.Web.Example\Molder.Web.Example.csproj", "{5453A3B6-9137-4FB1-A448-E91C2E9D29FB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{57B59398-1656-404B-8D7E-4EB9B77B57B6}"
+	ProjectSection(SolutionItems) = preProject
+		docs\index.md = docs\index.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Molder.Generator", "Molder.Generator", "{E1283C3C-8816-4C9E-A5B8-7251D86AD227}"
+	ProjectSection(SolutionItems) = preProject
+		docs\Molder.Generator\generator.md = docs\Molder.Generator\generator.md
+		docs\Molder.Generator\index.md = docs\Molder.Generator\index.md
+		docs\Molder.Generator\variable.md = docs\Molder.Generator\variable.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -219,6 +231,7 @@ Global
 		{1DD1197C-0AB5-46FA-B2AC-F8118D9766CF} = {49F6D9B5-B0C8-4B22-A5F9-303A5A361197}
 		{DECFED74-5F53-4372-8787-077C70D2C97E} = {49F6D9B5-B0C8-4B22-A5F9-303A5A361197}
 		{5453A3B6-9137-4FB1-A448-E91C2E9D29FB} = {49F6D9B5-B0C8-4B22-A5F9-303A5A361197}
+		{E1283C3C-8816-4C9E-A5B8-7251D86AD227} = {57B59398-1656-404B-8D7E-4EB9B77B57B6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3934AD7A-B604-4B8D-A2C4-6C0111BC0EB6}

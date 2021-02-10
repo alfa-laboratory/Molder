@@ -1,6 +1,5 @@
 ﻿using Molder.Database.Helpers;
 using Molder.Database.Models;
-using Molder.Database.Models.Interfaces;
 using FluentAssertions;
 using Moq;
 using System.Data.SqlClient;
