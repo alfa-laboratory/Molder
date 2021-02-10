@@ -38,7 +38,7 @@ namespace Molder.Generator.Steps
         }
 
         [ExcludeFromCodeCoverage]
-        [BeforeFeature(Order = -20000)]
+        [BeforeScenario(Order = -20000)]
         public void BeforeFeature()
         {
             _locale = this.featureContext.Locale();
