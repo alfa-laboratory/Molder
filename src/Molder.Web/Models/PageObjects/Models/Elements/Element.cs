@@ -99,9 +99,9 @@ namespace Molder.Web.Models.PageObjects.Elements
 
         #region Get webDriver Element
 
-        protected void GetElement()
+        protected void GetElement(string locator = null)
         {
-            _provider = _mediator.Execute(() => _driverProvider.GetElement(By.XPath(Locator))) as IElementProvider;
+            _provider = _mediator.Execute(() => _driverProvider.GetElement(By.XPath(locator ?? Locator))) as IElementProvider;
         }
 
         #endregion

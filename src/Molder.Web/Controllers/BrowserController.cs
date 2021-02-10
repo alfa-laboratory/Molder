@@ -4,6 +4,7 @@ using Molder.Web.Models.Settings;
 using Microsoft.Extensions.Logging;
 using System;
 using Molder.Web.Models.Browser;
+using Molder.Web.Models.Proxy;
 
 namespace Molder.Web.Controllers
 {
@@ -13,6 +14,8 @@ namespace Molder.Web.Controllers
         private static IBrowser _browser;
         [ThreadStatic]
         private static VariableController _variables;
+        [ThreadStatic]
+        private static Authentication _authentication;
 
         private BrowserController() { }
 
@@ -31,6 +34,7 @@ namespace Molder.Web.Controllers
         public static IBrowser Create(ISetting setting)
         {
             var browserSetting = setting as BrowserSetting;
+            browserSetting.Authentication = _authentication;
             if (_browser == null)
             {
                 switch (browserSetting.BrowserType)
@@ -60,6 +64,11 @@ namespace Molder.Web.Controllers
         public static void SetVariables(VariableController variables)
         {
             _variables = variables;
+        }
+
+        public static void CreateProxy(Authentication authentification)
+        {
+            _authentication = authentification;
         }
     }
 }

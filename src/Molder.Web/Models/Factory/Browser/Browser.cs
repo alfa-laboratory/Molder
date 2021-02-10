@@ -6,7 +6,6 @@ using Molder.Web.Models.Providers;
 using Molder.Web.Models.Settings;
 using OpenQA.Selenium.Remote;
 using System;
-using System.Linq;
 
 namespace Molder.Web.Models.Browser
 {
@@ -14,6 +13,9 @@ namespace Molder.Web.Models.Browser
     {
         [ThreadStatic]
         private ISetting _settings;
+
+        [ThreadStatic]
+        protected Proxy.Proxy _proxyServer;
 
         [ThreadStatic]
         public Node _currentPage = null;

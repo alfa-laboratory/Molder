@@ -10,6 +10,9 @@ namespace PageObject.Pages
         [Element(Name = "Add/Remove Elements", Locator = "//*[@id=\"content\"]/ul/li[2]/a")]
         A addRemoveElements;
 
+        [Element(Name = "Basic Auth", Locator = "//*[@id=\"content\"]/ul/li[3]/a")]
+        A basicAuth;
+
         [Element(Name = "Checkboxes", Locator = "//*[@id=\"content\"]/ul/li[6]/a")]
         A checkboxes;
 
