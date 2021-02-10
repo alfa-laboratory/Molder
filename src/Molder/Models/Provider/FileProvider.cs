@@ -3,10 +3,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Molder.Helpers;
 using Molder.Infrastructures;
-using Molder.Models.Profider.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace Molder.Models
+namespace Molder.Models.Profider
 {
     [ExcludeFromCodeCoverage]
     public class FileProvider: IFileProvider
