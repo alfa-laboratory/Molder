@@ -1,12 +1,10 @@
-﻿using Molder.Web.Models.PageObjects.Attributes;
-using Molder.Web.Models.PageObjects.Blocks;
+﻿using Molder.Web.Models.PageObjects.Blocks;
 using Molder.Web.Models.PageObjects.Elements;
 using Molder.Web.Models.Mediator;
 using Molder.Web.Models.Providers;
 using Molder.Web.Models.Settings;
 using OpenQA.Selenium;
 using System;
-using System.Linq;
 using Molder.Web.Extensions;
 using Molder.Web.Infrastructures;
 
@@ -63,14 +61,13 @@ namespace Molder.Web.Models.PageObjects.Frames
             return frame.Object as Frame;
         }
 
-        public IElement GetElement(string name)
+        public new IElement GetElement(string name)
         {
             var element = Root.SearchElementBy(name);
             (element.Object as Element).SetProvider(_driverProvider);
             (element.Object as Element).Root = element;
             return element.Object as IElement;
         }
-
 
         private IDriverProvider GetFrame(IDriverProvider provider)
         {

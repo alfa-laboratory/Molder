@@ -26,5 +26,7 @@ namespace Molder.Web.Models.Browser
 
         void SwitchTo(int number);
         IAlert Alert();
+
+        void Dispose();
     }
 }

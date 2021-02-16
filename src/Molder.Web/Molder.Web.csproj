@@ -1,9 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <Authors>Egor Shokhin</Authors>
-    <Version>1.0.0</Version>
+    <Version>1.0.2</Version>
     <Company>AlfaBank</Company>
     <Copyright>2021 AlfaBank</Copyright>
     <PackageProjectUrl>https://github.com/alfa-laboratory/Molder</PackageProjectUrl>
@@ -11,11 +11,12 @@
     <PackageTags>specflow bdd steps web alfabank</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Library for working with WebUI</Description>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
-    <PackageReference Include="Molder" Version="1.0.2" />
+    <PackageReference Include="Molder" Version="1.0.3" />
     <PackageReference Include="Noksa.WebDriver.ScreenshotsExtensions" Version="0.1.5.3" />
     <PackageReference Include="Polly" Version="7.2.1" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />

@@ -56,6 +56,7 @@ namespace Molder.Web.Controllers
         {
             if (_browser != null)
             {
+                _browser.Dispose();
                 _browser.Quit();
                 _browser = null;
             }

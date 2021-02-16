@@ -164,15 +164,13 @@ namespace Molder.Web.Models.Providers
             try
             {
                 _driver.GoToUrl(Settings, url);
-                _driver.Wait((int)(Settings as BrowserSetting).ElementTimeout).ForPage().ReadyStateComplete();
                 return true;
             }
-            catch (Exception ex)
+            catch (WebDriverException ex)
             {
                 Log.Logger().LogError($"Page by url \"{url}\" is not correct. Exception is \"{ex.Message}\"");
                 return false;
             }
-
         }
 
         public void Maximize()

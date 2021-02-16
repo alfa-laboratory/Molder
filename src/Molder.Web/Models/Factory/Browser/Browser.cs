@@ -9,7 +9,7 @@ using System;
 
 namespace Molder.Web.Models.Browser
 {
-    public abstract class Browser : IBrowser
+    public abstract class Browser : IBrowser, IDisposable
     {
         [ThreadStatic]
         private ISetting _settings;
@@ -122,6 +122,12 @@ namespace Molder.Web.Models.Browser
         public byte[] Screenshot()
         {
             return _provider.Screenshot();
+        }
+
+        public void Dispose()
+        {
+            _proxyServer.Dispose();
+            _proxyServer = null;
         }
     }
 }

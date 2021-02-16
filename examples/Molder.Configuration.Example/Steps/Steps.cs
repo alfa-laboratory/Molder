@@ -2,7 +2,7 @@
 using FluentAssertions;
 using System.Diagnostics.CodeAnalysis;
 using TechTalk.SpecFlow;
-using Xunit.Abstractions;
+using System;
 
 namespace Molder.Configuration.Example.Steps
 {
@@ -11,12 +11,10 @@ namespace Molder.Configuration.Example.Steps
     public class Steps
     {
         private VariableController variables;
-        private ITestOutputHelper output;
 
-        public Steps(VariableController variables, ITestOutputHelper output)
+        public Steps(VariableController variables)
         {
             this.variables = variables;
-            this.output = output;
         }
 
         [StepDefinition(@"write variable ""(.+)""")]
@@ -24,7 +22,7 @@ namespace Molder.Configuration.Example.Steps
         {
             this.variables.Variables.Should().ContainKey(varName, $"переменная \"{varName}\" не существует");
             var value = variables.GetVariableValueText(varName);
-            output.WriteLine($"Variable value is {value}");
+            Console.WriteLine($"Variable value is {value}");
         }
     }
 }

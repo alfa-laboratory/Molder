@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -24,8 +24,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Molder.Configuration\Molder.Configuration.csproj" />
-    <ProjectReference Include="..\..\..\src\Molder.Web\Molder.Web.csproj" />
-    <ProjectReference Include="..\PageObject\PageObject.csproj" />
+    <ProjectReference Include="..\..\..\src\Molder.Web\Molder.Web.csproj">
+      <Private></Private>
+    </ProjectReference>
+    <ProjectReference Include="..\PageObject\PageObject.csproj">
+      <Private>true</Private>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
