@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using TechTalk.SpecFlow;
+using Molder.Models.Directory;
 
 namespace Molder.Configuration.Hooks
 {
@@ -18,6 +19,8 @@ namespace Molder.Configuration.Hooks
         private readonly FeatureContext featureContext;
         private readonly ScenarioContext scenarioContext;
 
+        private IDirectory BinDirectory = new BinDirectory();
+
         [ThreadStatic]
         IOptions<IEnumerable<ConfigFile>> config;
 
@@ -28,7 +31,8 @@ namespace Molder.Configuration.Hooks
             this.featureContext = featureContext;
             this.scenarioContext = scenarioContext;
 
-            var configuration = ConfigurationFactory.Create();
+            BinDirectory.Create();
+            var configuration = ConfigurationFactory.Create(BinDirectory);
             config = ConfigOptionsFactory.Create(configuration);
         }
 

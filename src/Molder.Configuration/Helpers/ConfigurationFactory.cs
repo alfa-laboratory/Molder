@@ -6,19 +6,21 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using Molder.Models.Directory;
 
 namespace Molder.Configuration.Helpers
 {
     [ExcludeFromCodeCoverage]
     public static class ConfigurationFactory
     {
-        public static IConfiguration Create()
+        public static IConfiguration Create(IDirectory directory)
         {
             try
             {
+                var ASPNETCORE_ENVIRONMENT = Environment.GetEnvironmentVariable(Constants.LAUNCH_PROFILE);
                 var configuration = new ConfigurationBuilder()
-                    .AddJsonFile($"{Constants.DEFAULT_JSON}.json")
-                    .AddJsonFile($"{Constants.DEFAULT_JSON}.{Environment.GetEnvironmentVariable(Constants.LAUNCH_PROFILE)}.json", optional: true)
+                    .AddJsonFile(Path.Combine(directory.Get(), $"{Constants.DEFAULT_JSON}.json"), optional: true, reloadOnChange: true)
+                    .AddJsonFile(Path.Combine(directory.Get(), $"{Constants.DEFAULT_JSON}{(ASPNETCORE_ENVIRONMENT != null ? $".{ASPNETCORE_ENVIRONMENT}" : string.Empty )}.json"), optional: true, reloadOnChange: true)
                     .AddEnvironmentVariables()
                     .Build();
 

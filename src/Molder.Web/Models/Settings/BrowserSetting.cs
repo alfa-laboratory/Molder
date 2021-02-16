@@ -38,12 +38,12 @@ namespace Molder.Web.Models.Settings
             {
                 if(field.Name == Setting.REMOTE_RUN.GetValue())
                 {
-                    Remote = (bool?)_variableController.GetVariableValue(Setting.REMOTE_RUN.GetValue()) != null ? (bool?)_variableController.GetVariableValue(Setting.REMOTE_RUN.GetValue()) : DefaultSetting.REMOTE_RUN;
+                    Remote = (bool?)_variableController.GetVariableValue(Setting.REMOTE_RUN.GetValue()) ?? DefaultSetting.REMOTE_RUN;
                 }
 
                 if (field.Name == Setting.HEADLESS.GetValue())
                 {
-                    Headless = (bool?)_variableController.GetVariableValue(Setting.HEADLESS.GetValue()) != null ? (bool?)_variableController.GetVariableValue(Setting.HEADLESS.GetValue()) : DefaultSetting.HEADLESS;
+                    Headless = (bool?)_variableController.GetVariableValue(Setting.HEADLESS.GetValue()) ?? DefaultSetting.HEADLESS;
                 }
 
                 if (field.Name == Setting.BROWSER.GetValue())
@@ -53,27 +53,27 @@ namespace Molder.Web.Models.Settings
 
                 if (field.Name == Setting.BROWSER_PATH.GetValue())
                 {
-                    BrowserPath = (string)_variableController.GetVariableValue(Setting.BROWSER_PATH.GetValue()) != null ? (string)_variableController.GetVariableValue(Setting.BROWSER_PATH.GetValue()) : DefaultSetting.BROWSER_PATH;
+                    BrowserPath = (string)_variableController.GetVariableValue(Setting.BROWSER_PATH.GetValue()) ?? DefaultSetting.BROWSER_PATH;
                 }
 
                 if (field.Name == Setting.REMOTE_URL.GetValue())
                 {
-                    RemoteUrl = (string)_variableController.GetVariableValue(Setting.REMOTE_URL.GetValue()) != null ? (string)_variableController.GetVariableValue(Setting.REMOTE_URL.GetValue()) : DefaultSetting.REMOTE_URL;
+                    RemoteUrl = (string)_variableController.GetVariableValue(Setting.REMOTE_URL.GetValue()) ?? DefaultSetting.REMOTE_URL;
                 }
 
                 if (field.Name == Setting.BROWSER_VERSION.GetValue())
                 {
-                    RemoteVersion = (string)_variableController.GetVariableValue(Setting.BROWSER_VERSION.GetValue()) != null ? (string)_variableController.GetVariableValue(Setting.BROWSER_VERSION.GetValue()) : DefaultSetting.BROWSER_VERSION;
+                    RemoteVersion = (string)_variableController.GetVariableValue(Setting.BROWSER_VERSION.GetValue()) ?? DefaultSetting.BROWSER_VERSION;
                 }
 
                 if (field.Name == Setting.BROWSER_TIMEOUT.GetValue())
                 {
-                    Timeout = (int?)_variableController.GetVariableValue(Setting.BROWSER_TIMEOUT.GetValue()) != null ? (int)_variableController.GetVariableValue(Setting.BROWSER_TIMEOUT.GetValue()) : DefaultSetting.BROWSER_TIMEOUT;
+                    Timeout = ((int?)(int.TryParse(_variableController.GetVariableValue(Setting.BROWSER_TIMEOUT.GetValue()).ToString(), out var f) ? f : default)) ?? DefaultSetting.BROWSER_TIMEOUT;
                 }
 
                 if (field.Name == Setting.ELEMENT_TIMEOUT.GetValue())
                 {
-                    ElementTimeout = (int?)_variableController.GetVariableValue(Setting.ELEMENT_TIMEOUT.GetValue()) != null ? (int)_variableController.GetVariableValue(Setting.ELEMENT_TIMEOUT.GetValue()) : DefaultSetting.ELEMENT_TIMEOUT;
+                    ElementTimeout = ((int?)(int.TryParse(_variableController.GetVariableValue(Setting.ELEMENT_TIMEOUT.GetValue()).ToString(), out var f) ? f : default)) ?? DefaultSetting.ELEMENT_TIMEOUT;
                 }
             }
         }

@@ -17,7 +17,7 @@ namespace Molder.Web.Models
 {
     public class PageObject
     {
-        public IDirectory BaseDirectory { get; set; } = new BaseDirectory();
+        public IDirectory BaseDirectory { get; set; } = new BinDirectory();
         public IAssembly CustomAssembly { get; set; } = new Molder.Models.Assembly.Assembly();
 
         public IEnumerable<Node> Pages { get; private set; } = null;

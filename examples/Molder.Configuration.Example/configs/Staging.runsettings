@@ -1,0 +1,7 @@
+<RunSettings>
+  <SpecRun>
+    <Profile>Staging.srprofile</Profile>
+    <GenerateSpecRunTrait>false</GenerateSpecRunTrait>
+    <GenerateFeatureTrait>false</GenerateFeatureTrait>
+  </SpecRun>
+</RunSettings>
