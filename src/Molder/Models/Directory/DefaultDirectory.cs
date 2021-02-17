@@ -7,7 +7,7 @@ namespace Molder.Models.Directory
 {
     public abstract class DefaultDirectory : IDirectory
     {
-        private AsyncLocal<DirectoryInfo> _directory = null;
+        private AsyncLocal<DirectoryInfo> _directory = new AsyncLocal<DirectoryInfo>();
 
         public void Create()
         {
