@@ -4,16 +4,15 @@ using Molder.Web.Models.Mediator;
 using Molder.Web.Models.Providers;
 using Molder.Web.Models.Settings;
 using OpenQA.Selenium;
-using System;
 using Molder.Web.Extensions;
 using Molder.Web.Infrastructures;
+using System.Threading;
 
 namespace Molder.Web.Models.PageObjects.Frames
 {
     public class Frame : Element
     {
-        [ThreadStatic]
-        private IMediator _frameMediator = null;
+        protected AsyncLocal<IMediator> _frameMediator = new AsyncLocal<IMediator> { Value = null };
 
         protected string _frameName;
         protected int? _number;
@@ -29,18 +28,18 @@ namespace Molder.Web.Models.PageObjects.Frames
         public override void SetProvider(IDriverProvider provider)
         {
             _provider = null;
-            _frameMediator = new FrameMediator((provider.Settings as BrowserSetting).ElementTimeout);
+            _frameMediator.Value = new FrameMediator((provider.Settings as BrowserSetting).ElementTimeout);
             _driverProvider = GetFrame(provider);
         }
 
         public IDriverProvider Parent()
         {
-            return _frameMediator.Execute(() => _driverProvider.GetParentFrame()) as IDriverProvider;
+            return _frameMediator.Value.Execute(() => _driverProvider.GetParentFrame()) as IDriverProvider;
         }
 
         public IDriverProvider Default()
         {
-            return _frameMediator.Execute(() => _driverProvider.GetDefaultFrame()) as IDriverProvider;
+            return _frameMediator.Value.Execute(() => _driverProvider.GetDefaultFrame()) as IDriverProvider;
         }
 
         public Block GetBlock(string name)
@@ -74,19 +73,19 @@ namespace Molder.Web.Models.PageObjects.Frames
             IDriverProvider _driver = null;
             if (_frameName != null)
             {
-                _driver = _frameMediator.Execute(() => provider.GetFrame(_frameName)) as IDriverProvider;
+                _driver = _frameMediator.Value.Execute(() => provider.GetFrame(_frameName)) as IDriverProvider;
                 _driver.Settings = provider.Settings;
                 return _driver;
             }
 
             if (_number != null)
             {
-                _driver = _frameMediator.Execute(() => provider.GetFrame((int)_number)) as IDriverProvider;
+                _driver = _frameMediator.Value.Execute(() => provider.GetFrame((int)_number)) as IDriverProvider;
                 _driver.Settings = provider.Settings;
                 return _driver;
             }
 
-            _driver = _frameMediator.Execute(() => provider.GetFrame(By.XPath(Locator))) as IDriverProvider;
+            _driver = _frameMediator.Value.Execute(() => provider.GetFrame(By.XPath(Locator))) as IDriverProvider;
             _driver.Settings = provider.Settings;
             return _driver;
         }

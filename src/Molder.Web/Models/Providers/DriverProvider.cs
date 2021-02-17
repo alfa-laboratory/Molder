@@ -11,50 +11,52 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using WDSE;
 using WDSE.ScreenshotMaker;
+using System.Threading;
 
 namespace Molder.Web.Models.Providers
 {
     [ExcludeFromCodeCoverage]
     public class DriverProvider : IDriverProvider
     {
-        [ThreadStatic]
-        private IWebDriver _driver = null;
+        private AsyncLocal<IWebDriver> _driver = new AsyncLocal<IWebDriver> { Value = null };
+        public IWebDriver Driver
+        {
+            get => _driver.Value;
+            set
+            {
+                _driver.Value = value;
+            }
+        }
 
-        public string PageSource => _driver.PageSource;
-
-        public string Title => _driver.Title;
-
-        public string Url => _driver.Url;
-
-        public string CurrentWindowHandle => _driver.CurrentWindowHandle;
-
-        public int Tabs => _driver.WindowHandles.Count; 
-
-        public ReadOnlyCollection<string> WindowHandles => _driver.WindowHandles;
-
+        public string PageSource => _driver.Value.PageSource;
+        public string Title => _driver.Value.Title;
+        public string Url => _driver.Value.Url;
+        public string CurrentWindowHandle => _driver.Value.CurrentWindowHandle;
+        public int Tabs => _driver.Value.WindowHandles.Count; 
+        public ReadOnlyCollection<string> WindowHandles => _driver.Value.WindowHandles;
         public ISetting Settings { get; set; }
 
         public void CreateDriver(Func<IWebDriver> action, ISetting settings)
         {
-            _driver = action();
+            _driver.Value = action();
             this.Settings = settings;
 
         }
         public IWebDriver GetDriver()
         {
-            return _driver;
+            return _driver.Value;
         }
 
         public void Back()
         {
-            _driver.Navigate().Back();
+            _driver.Value.Navigate().Back();
         }
 
         public bool Close()
         {
             try
             {
-                _driver.Close();
+                _driver.Value.Close();
                 return true;
             }catch(Exception)
             {
@@ -64,12 +66,12 @@ namespace Molder.Web.Models.Providers
 
         public void Forward()
         {
-            _driver.Navigate().Forward();
+            _driver.Value.Navigate().Forward();
         }
 
         public IElementProvider GetActiveElement()
         {
-            var element = _driver.SwitchTo().ActiveElement();
+            var element = _driver.Value.SwitchTo().ActiveElement();
             return new ElementProvider((Settings as BrowserSetting).ElementTimeout)
             {
                 Element = element
@@ -78,7 +80,7 @@ namespace Molder.Web.Models.Providers
 
         public IElementProvider GetElement(By by)
         {
-            var element = _driver.Wait((int)(Settings as BrowserSetting).ElementTimeout).ForElement(by).ToExist();
+            var element = _driver.Value.Wait((int)(Settings as BrowserSetting).ElementTimeout).ForElement(by).ToExist();
             return new ElementProvider((Settings as BrowserSetting).ElementTimeout)
             {
                 Element = element
@@ -87,7 +89,7 @@ namespace Molder.Web.Models.Providers
 
         public ReadOnlyCollection<IElementProvider> GetElements(By by)
         {
-            var elements = _driver.FindElements(by);
+            var elements = _driver.Value.FindElements(by);
             var listElement = new List<IElementProvider>();
             foreach (var element in elements)
             {
@@ -101,12 +103,12 @@ namespace Molder.Web.Models.Providers
 
         public void SwitchTo(int number)
         {
-            _driver.SwitchTo().Window(_driver.WindowHandles[number]);
+            _driver.Value.SwitchTo().Window(_driver.Value.WindowHandles[number]);
         }
 
         public IAlertProvider GetAlert()
         {
-            var alert = _driver.SwitchTo().Alert();
+            var alert = _driver.Value.SwitchTo().Alert();
             return new AlertProvider()
             {
                 Alert = alert
@@ -115,47 +117,47 @@ namespace Molder.Web.Models.Providers
 
         public IDriverProvider GetDefaultFrame()
         {
-            var driver = _driver.SwitchTo().DefaultContent();
+            var driver = _driver.Value.SwitchTo().DefaultContent();
             return new DriverProvider()
             {
-                _driver = driver
+                Driver = driver
             };
         }
 
         public IDriverProvider GetParentFrame()
         {
-            var driver = _driver.SwitchTo().ParentFrame();
+            var driver = _driver.Value.SwitchTo().ParentFrame();
             return new DriverProvider()
             {
-                _driver = driver
+                Driver = driver
             };
         }
 
         public IDriverProvider GetFrame(int id)
         {
-            var driver = _driver.SwitchTo().Frame(id);
+            var driver = _driver.Value.SwitchTo().Frame(id);
             return new DriverProvider()
             {
-                _driver = driver
+                Driver = driver
             };
         }
 
         public IDriverProvider GetFrame(string name)
         {
-            var driver = _driver.SwitchTo().Frame(name);
+            var driver = _driver.Value.SwitchTo().Frame(name);
             return new DriverProvider()
             {
-                _driver = driver
+                Driver = driver
             };
         }
 
         public IDriverProvider GetFrame(By by)
         {
-            var element = _driver.FindElement(by);
-            var driver = _driver.SwitchTo().Frame(element);
+            var element = _driver.Value.FindElement(by);
+            var driver = _driver.Value.SwitchTo().Frame(element);
             return new DriverProvider()
             {
-                _driver = driver
+                Driver = driver
             };
         }
 
@@ -163,7 +165,7 @@ namespace Molder.Web.Models.Providers
         {
             try
             {
-                _driver.GoToUrl(Settings, url);
+                _driver.Value.GoToUrl(Settings, url);
                 return true;
             }
             catch (WebDriverException ex)
@@ -175,15 +177,15 @@ namespace Molder.Web.Models.Providers
 
         public void Maximize()
         {
-            _driver.Manage().Window.Maximize();
+            _driver.Value.Manage().Window.Maximize();
         }
 
         public bool Quit()
         {
             try
             {
-                _driver.Quit();
-                _driver = null;
+                _driver.Value.Quit();
+                _driver.Value = null;
                 return true;
             }
             catch (Exception)
@@ -196,7 +198,7 @@ namespace Molder.Web.Models.Providers
         {
             try
             {
-                _driver.Navigate().Refresh();
+                _driver.Value.Navigate().Refresh();
                 return true;
             }
             catch (Exception)
@@ -209,14 +211,14 @@ namespace Molder.Web.Models.Providers
         {
             var scmkr = new ScreenshotMaker();
             scmkr.RemoveScrollBarsWhileShooting();
-            return _driver.TakeScreenshot(scmkr);
+            return _driver.Value.TakeScreenshot(scmkr);
         }
 
         public bool WindowSize(int width, int height)
         {
             try
             {
-                _driver.Manage().Window.Size = new System.Drawing.Size(width, height);
+                _driver.Value.Manage().Window.Size = new System.Drawing.Size(width, height);
                 return true;
             }
             catch (Exception)

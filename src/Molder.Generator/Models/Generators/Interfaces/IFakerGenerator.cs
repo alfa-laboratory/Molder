@@ -6,7 +6,6 @@ namespace Molder.Generator.Models.Generators
     public interface IFakerGenerator
     {
         string Locale { get; set; }
-
         Faker Get();
 
         string Guid();

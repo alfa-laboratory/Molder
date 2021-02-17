@@ -12,7 +12,7 @@ namespace Molder.Web.Models.PageObjects.Elements
         {
             if (Enabled && Displayed)
             {
-                return (string)_mediator.Execute(() => _provider.GetAttribute("href"));
+                return (string)_mediator.Value.Execute(() => _provider.GetAttribute("href"));
             }
             else
             {

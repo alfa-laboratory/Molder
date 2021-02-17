@@ -6,28 +6,28 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 
 namespace Molder.Database.Models
 {
     [ExcludeFromCodeCoverage]
     public class SqlProvider : ISqlProvider
     {
-        [ThreadStatic]
-        private DbConnection connection = null;
+        private AsyncLocal<DbConnection> connection = new AsyncLocal<DbConnection>() { Value = null };
 
         public bool Create(string connectionString)
         {
             try
             {
-                if (connection is null)
+                if (connection.Value is null)
                 {
-                    connection = Open(connectionString);
+                    connection.Value = Open(connectionString);
                     Log.Logger().LogInformation($"Connection with parameters: {Helpers.Message.CreateMessage(connectionString)} is open");
                     return true;
                 }
                 else
                 {
-                    if (connection.ConnectionString.Equals(connectionString))
+                    if (connection.Value.ConnectionString.Equals(connectionString))
                     {
                         Log.Logger().LogWarning($"Connection with parameters: {Helpers.Message.CreateMessage(connectionString)} is already create");
                         return false;
@@ -53,7 +53,7 @@ namespace Molder.Database.Models
 
         public void UsingTransaction(Action<DbTransaction> onExecute, Action<Exception> onError, Action onSuccess = null)
         {
-            var transaction = connection.BeginTransaction(IsolationLevel.ReadUncommitted);
+            var transaction = connection.Value.BeginTransaction(IsolationLevel.ReadUncommitted);
 
             try
             {
@@ -74,7 +74,7 @@ namespace Molder.Database.Models
 
         public DbCommand SetupCommand(string query, int? timeout = null)
         {
-            var command = connection.CreateCommand();
+            var command = connection.Value.CreateCommand();
             command.CommandTimeout = Math.Min(300, Math.Max(0, timeout ?? 0));
             command.CommandType = CommandType.Text;
             command.CommandText = query;
@@ -88,7 +88,7 @@ namespace Molder.Database.Models
             {
                 return false;
             }
-            return connection.State.HasFlag(ConnectionState.Open);
+            return connection.Value.State.HasFlag(ConnectionState.Open);
         }
 
         public bool Disconnect()
@@ -100,23 +100,23 @@ namespace Molder.Database.Models
                     return true;
                 }
 
-                if (connection.State != ConnectionState.Closed && connection.State != ConnectionState.Broken)
+                if (connection.Value.State != ConnectionState.Closed && connection.Value.State != ConnectionState.Broken)
                 {
                     try
                     {
-                        connection.Close();
+                        connection.Value.Close();
                     }
-                    catch (System.Exception ex)
+                    catch (Exception ex)
                     {
                         Log.Logger().LogError($"Connection not closed {ex.Message}");
                     }
                 }
 
-                connection.Dispose();
-                connection = null;
+                connection.Value.Dispose();
+                connection.Value = null;
                 return true;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Log.Logger().LogError($"Connection not closed: {ex.Message}");
                 return false;

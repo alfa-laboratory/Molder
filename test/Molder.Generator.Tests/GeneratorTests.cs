@@ -182,7 +182,7 @@ namespace Molder.Generator.Tests
             var fakeDate = new DateTime(2000, 1, 1, 1, 1, 1);
             mockDateTimeHelper.Setup(o => o.GetDateTimeNow())
                 .Returns(fakeDate);
-            ((FakerGenerator)generator).DateTimeHelper = mockDateTimeHelper.Object;
+            ((FakerGenerator)generator).DateTimeHelper.Value = mockDateTimeHelper.Object;
             var dt = generator.Current();
             dt.Should().Be(fakeDate);
         }
@@ -234,7 +234,7 @@ namespace Molder.Generator.Tests
             var bogus = new Mock<IBogusProvider>();
             bogus.Setup(o => o.Month())
                 .Returns(month);
-            ((FakerGenerator)generator).bogus = bogus.Object;
+            ((FakerGenerator)generator).bogus.Value = bogus.Object;
             generator.Month().Should().Be(month);
         }
 
@@ -259,7 +259,7 @@ namespace Molder.Generator.Tests
             var bogus = new Mock<IBogusProvider>();
             bogus.Setup(o => o.Weekday())
                 .Returns(weekday);
-            ((FakerGenerator)generator).bogus = bogus.Object;
+            ((FakerGenerator)generator).bogus.Value = bogus.Object;
             generator.Weekday().Should().Be(weekday);
         }
 
@@ -308,7 +308,7 @@ namespace Molder.Generator.Tests
             var bogus = new Mock<IBogusProvider>();
             bogus.Setup(o => o.FirstName())
                 .Returns(name);
-            ((FakerGenerator)generator).bogus = bogus.Object;
+            ((FakerGenerator)generator).bogus.Value = bogus.Object;
             generator.FirstName().Should().Be(name);
         }
 
@@ -320,7 +320,7 @@ namespace Molder.Generator.Tests
             var bogus = new Mock<IBogusProvider>();
             bogus.Setup(o => o.LastName())
                 .Returns(lastname);
-            ((FakerGenerator)generator).bogus = bogus.Object;
+            ((FakerGenerator)generator).bogus.Value = bogus.Object;
             generator.LastName().Should().Be(lastname);
         }
 
@@ -333,7 +333,7 @@ namespace Molder.Generator.Tests
             var bogus = new Mock<IBogusProvider>();
             bogus.Setup(o => o.FullName())
                 .Returns(fullname);
-            ((FakerGenerator)generator).bogus = bogus.Object;
+            ((FakerGenerator)generator).bogus.Value = bogus.Object;
             generator.FullName().Should().Be(fullname);
         }
 
@@ -488,7 +488,7 @@ namespace Molder.Generator.Tests
             mockDateTimeHelper.Setup(o => o.GetDateTimeNow())
                 .Returns(fakeDate);
 
-            ((FakerGenerator)generator).DateTimeHelper = mockDateTimeHelper.Object;
+            ((FakerGenerator)generator).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             var dt = generator.GetDate(day, 0, 0, true).Value;
 
@@ -507,7 +507,7 @@ namespace Molder.Generator.Tests
             mockDateTimeHelper.Setup(o => o.GetDateTimeNow())
                 .Returns(fakeDate);
 
-            ((FakerGenerator)generator).DateTimeHelper = mockDateTimeHelper.Object;
+            ((FakerGenerator)generator).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             var dt = generator.GetDate(0, month, 0, true).Value;
 
@@ -525,7 +525,7 @@ namespace Molder.Generator.Tests
             mockDateTimeHelper.Setup(o => o.GetDateTimeNow())
                 .Returns(fakeDate);
 
-            ((FakerGenerator)generator).DateTimeHelper = mockDateTimeHelper.Object;
+            ((FakerGenerator)generator).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             var dt = generator.GetDate(0, 0, year, true).Value;
 
@@ -551,7 +551,7 @@ namespace Molder.Generator.Tests
             mockDateTimeHelper.Setup(o => o.GetDateTimeNow())
                 .Returns(fakeDate);
 
-            ((FakerGenerator)generator).DateTimeHelper = mockDateTimeHelper.Object;
+            ((FakerGenerator)generator).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             var dt = generator.GetDate(day, 0, 0, false).Value;
 
@@ -569,7 +569,7 @@ namespace Molder.Generator.Tests
             mockDateTimeHelper.Setup(o => o.GetDateTimeNow())
                 .Returns(fakeDate);
 
-            ((FakerGenerator)generator).DateTimeHelper = mockDateTimeHelper.Object;
+            ((FakerGenerator)generator).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             var dt = generator.GetDate(0, month, 0, false).Value;
 
@@ -587,7 +587,7 @@ namespace Molder.Generator.Tests
             mockDateTimeHelper.Setup(o => o.GetDateTimeNow())
                 .Returns(fakeDate);
 
-            ((FakerGenerator)generator).DateTimeHelper = mockDateTimeHelper.Object;
+            ((FakerGenerator)generator).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             var dt = generator.GetDate(0, 0, year, false).Value;
 
@@ -648,7 +648,7 @@ namespace Molder.Generator.Tests
             mockDateTimeHelper.Setup(o => o.GetDateTimeNow())
                 .Returns(fakeDate);
 
-            ((FakerGenerator)generator).DateTimeHelper = mockDateTimeHelper.Object;
+            ((FakerGenerator)generator).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             var soon = generator.Soon();
             soon.Should().BeAfter(fakeDate);
@@ -665,7 +665,7 @@ namespace Molder.Generator.Tests
             mockDateTimeHelper.Setup(o => o.GetDateTimeNow())
                 .Returns(fakeDate);
 
-            ((FakerGenerator)generator).DateTimeHelper = mockDateTimeHelper.Object;
+            ((FakerGenerator)generator).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             var soon = generator.Soon(day);
             soon.Should().BeAfter(fakeDate).And.BeBefore(expectedBefore);
@@ -694,7 +694,7 @@ namespace Molder.Generator.Tests
             mockDateTimeHelper.Setup(o => o.GetDateTimeNow())
                 .Returns(fakeDate);
 
-            ((FakerGenerator)generator).DateTimeHelper = mockDateTimeHelper.Object;
+            ((FakerGenerator)generator).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             var soon = generator.Past();
             soon.Should().BeBefore(fakeDate);
@@ -712,7 +712,7 @@ namespace Molder.Generator.Tests
             mockDateTimeHelper.Setup(o => o.GetDateTimeNow())
                 .Returns(fakeDate);
 
-            ((FakerGenerator)generator).DateTimeHelper = mockDateTimeHelper.Object;
+            ((FakerGenerator)generator).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             var soon = generator.Past();
             soon.Should().BeAfter(expectedAfter).And.BeBefore(fakeDate);
@@ -741,7 +741,7 @@ namespace Molder.Generator.Tests
             mockDateTimeHelper.Setup(o => o.GetDateTimeNow())
                 .Returns(fakeDate);
 
-            ((FakerGenerator)generator).DateTimeHelper = mockDateTimeHelper.Object;
+            ((FakerGenerator)generator).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             var soon = generator.Future();
             soon.Should().BeAfter(fakeDate);
@@ -759,7 +759,7 @@ namespace Molder.Generator.Tests
             mockDateTimeHelper.Setup(o => o.GetDateTimeNow())
                 .Returns(fakeDate);
 
-            ((FakerGenerator)generator).DateTimeHelper = mockDateTimeHelper.Object;
+            ((FakerGenerator)generator).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             var soon = generator.Future();
             soon.Should().BeBefore(expectedBefore).And.BeAfter(fakeDate);

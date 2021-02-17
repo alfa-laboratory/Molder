@@ -21,9 +21,9 @@ namespace Molder.Database.Tests
 
             mockSqlProvider.Setup(c => c.SetupCommand(It.IsAny<string>(), null)).Returns(connect.CreateCommand);
 
-            client._provider = mockSqlProvider.Object;
+            client._provider.Value = mockSqlProvider.Object;
 
-            var command = client._provider.SetupCommand(query, null);
+            var command = client._provider.Value.SetupCommand(query, null);
 
             var result = Message.CreateMessage(command);
             result.Should().NotBeNullOrEmpty();
@@ -48,9 +48,9 @@ namespace Molder.Database.Tests
             var client = new SqlServerClient();
             mockSqlProvider.Setup(c => c.SetupCommand(It.IsAny<string>(), null)).Returns(connect.CreateCommand);
 
-            client._provider = mockSqlProvider.Object;
+            client._provider.Value = mockSqlProvider.Object;
 
-            var command = client._provider.SetupCommand(query, null);
+            var command = client._provider.Value.SetupCommand(query, null);
             command = null;
 
 

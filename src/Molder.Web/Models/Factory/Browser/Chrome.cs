@@ -12,7 +12,7 @@ namespace Molder.Web.Models.Browser
 
         public Chrome(ISetting setting = null)
         {
-            _proxyServer = new Proxy.Proxy();
+            _proxyServer.Value = new Proxy.Proxy();
             Settings = setting as BrowserSetting;
             var options = GetOptions(Settings);
 
@@ -21,8 +21,8 @@ namespace Molder.Web.Models.Browser
                 var isRemoteRunning = setting.IsRemoteRunning();
                 if (isRemoteRunning)
                 {
-                    _provider.CreateDriver(() => new RemoteWebDriver(new Uri(((BrowserSetting)Settings).RemoteUrl), options.ToCapabilities()), Settings);
-                    SessionId = (_provider.GetDriver() as RemoteWebDriver).SessionId;
+                    _provider.Value.CreateDriver(() => new RemoteWebDriver(new Uri(((BrowserSetting)Settings).RemoteUrl), options.ToCapabilities()), Settings);
+                    SessionId = (_provider.Value.GetDriver() as RemoteWebDriver).SessionId;
                     return;
                 }
             }
@@ -32,12 +32,12 @@ namespace Molder.Web.Models.Browser
 
             if (((BrowserSetting)Settings).BrowserPath != null)
             {
-                _provider.CreateDriver(() => new ChromeDriver(((BrowserSetting)Settings).BrowserPath, options), Settings);
-                SessionId = (_provider.GetDriver() as ChromeDriver).SessionId;
+                _provider.Value.CreateDriver(() => new ChromeDriver(((BrowserSetting)Settings).BrowserPath, options), Settings);
+                SessionId = (_provider.Value.GetDriver() as ChromeDriver).SessionId;
                 return;
             }
-            _provider.CreateDriver(() => new ChromeDriver(service, options), Settings);
-            SessionId = (_provider.GetDriver() as ChromeDriver).SessionId;
+            _provider.Value.CreateDriver(() => new ChromeDriver(service, options), Settings);
+            SessionId = (_provider.Value.GetDriver() as ChromeDriver).SessionId;
         }
 
         protected ChromeOptions GetOptions(ISetting setting)
@@ -53,22 +53,21 @@ namespace Molder.Web.Models.Browser
                 options.AddAdditionalCapability("platform", "ANY", true);
             }
             options.AddArguments("--no-sandbox");
+            options.AddArgument("--disable-dev-shm-usage");
             if (browserSetting.Headless == true)
             {
                 options.AddArguments("--headless");
             }
-            options.AddArguments("disable-gpu");
+            options.AddArguments("--disable-gpu");
 
-            if(browserSetting.Authentication != null)
+            if (browserSetting.Authentication != null)
             {
                 var proxy = new OpenQA.Selenium.Proxy();
-
-                int localPort = _proxyServer.AddEndpoint(browserSetting.Authentication);
+                int localPort = _proxyServer.Value.AddEndpoint(browserSetting.Authentication);
                 proxy.HttpProxy = $"127.0.0.1:{localPort}";
                 options.Proxy = proxy;
                 options.AddArgument($"--proxy-server=127.0.0.1:{localPort}");
             }
-
             return options;
         }
     }
