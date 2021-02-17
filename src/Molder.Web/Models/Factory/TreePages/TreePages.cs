@@ -1,23 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Threading;
 
 namespace Molder.Web.Models
 {
     public class TreePages
     {
-        [ThreadStatic]
-        private static IEnumerable<Node> _pages;
+        private static AsyncLocal<IEnumerable<Node>> _pages = new AsyncLocal<IEnumerable<Node>> { Value = null };
 
         private TreePages() { }
 
         public static IEnumerable<Node> Get()
         {
-            if (_pages == null)
+            if (_pages.Value == null)
             {
                 var pageObject = new PageObject();
-                _pages = pageObject.Pages;
+                _pages.Value = pageObject.Pages;
             }
-            return _pages;
+            return _pages.Value;
         }
     }
 }

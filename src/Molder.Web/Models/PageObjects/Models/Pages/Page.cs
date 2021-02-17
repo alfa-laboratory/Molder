@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Molder.Web.Extensions;
@@ -16,7 +15,6 @@ namespace Molder.Web.Models.PageObjects.Pages
 {
     public class Page : BasePage
     {
-        [ThreadStatic]
         private IDriverProvider _driverProvider;
 
         public override string Name { get; set; }
@@ -27,9 +25,6 @@ namespace Molder.Web.Models.PageObjects.Pages
         {
             Name = this.GetType().GetCustomAttribute<PageAttribute>()?.Name;
             Url = this.GetType().GetCustomAttribute<PageAttribute>()?.Url;
-
-            // TODO
-            Console.WriteLine();
         }
 
         public void SetProvider(IDriverProvider provider)

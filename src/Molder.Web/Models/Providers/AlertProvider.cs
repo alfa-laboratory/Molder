@@ -1,35 +1,43 @@
 ﻿using OpenQA.Selenium;
-using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 
 namespace Molder.Web.Models.Providers
 {
     [ExcludeFromCodeCoverage]
     public class AlertProvider : IAlertProvider
     {
-        [ThreadStatic]
-        public IAlert Alert = null;
+        private AsyncLocal<IAlert> _alert = new AsyncLocal<IAlert> { Value = null };
 
-        public string Text => Alert.Text;
+        public IAlert Alert
+        {
+            get => _alert.Value;
+            set
+            {
+                _alert.Value = value;
+            }
+        }
+
+        public string Text => _alert.Value.Text;
 
         public void SendAccept()
         {
-            Alert.Accept();
+            _alert.Value.Accept();
         }
 
         public void SendDismiss()
         {
-            Alert.Dismiss();
+            _alert.Value.Dismiss();
         }
 
         public void SendKeys(string keys)
         {
-            Alert.SendKeys(keys);
+            _alert.Value.SendKeys(keys);
         }
 
         public void SetAuth(string login, string password)
         {
-            Alert.SetAuthenticationCredentials(login, password);
+            _alert.Value.SetAuthenticationCredentials(login, password);
         }
     }
 }

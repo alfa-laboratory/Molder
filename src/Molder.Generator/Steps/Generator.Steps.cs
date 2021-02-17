@@ -8,6 +8,7 @@ using TechTalk.SpecFlow;
 using Molder.Generator.Extensions;
 using Molder.Generator.Models.Generators;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 
 namespace Molder.Generator.Steps
 {
@@ -17,9 +18,7 @@ namespace Molder.Generator.Steps
     [Binding]
     public class GeneratorSteps 
     {
-        [ThreadStatic]
-        private string _locale = string.Empty; 
-        [ThreadStatic]
+        private string _locale = string.Empty;
         public IFakerGenerator fakerGenerator = null;
 
         private readonly VariableController variableController;

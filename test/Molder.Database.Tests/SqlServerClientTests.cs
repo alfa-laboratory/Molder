@@ -31,7 +31,7 @@ namespace Molder.Database.Tests
             var client = new SqlServerClient();
             mockSqlProvider.Setup(c => c.Create(It.IsAny<string>())).Returns(true);
 
-            client._provider = mockSqlProvider.Object;
+            client._provider.Value = mockSqlProvider.Object;
             client.Create(dbConnectionParams).Should().BeTrue();
         }
 
@@ -69,7 +69,7 @@ namespace Molder.Database.Tests
             var client = new SqlServerClient();
             mockSqlProvider.Setup(c => c.IsConnectAlive()).Returns(true);
 
-            client._provider = mockSqlProvider.Object;
+            client._provider.Value = mockSqlProvider.Object;
             client.IsConnectAlive().Should().BeTrue();
         }
 
@@ -81,7 +81,7 @@ namespace Molder.Database.Tests
             var client = new SqlServerClient();
             mockSqlProvider.Setup(c => c.IsConnectAlive()).Returns(false);
 
-            client._provider = mockSqlProvider.Object;
+            client._provider.Value = mockSqlProvider.Object;
             client.IsConnectAlive().Should().BeFalse();
         }
 
@@ -96,7 +96,7 @@ namespace Molder.Database.Tests
             var client = new SqlServerClient();
             mockSqlProvider.Setup(c => c.SetupCommand(It.IsAny<string>(), null)).Returns(connect.CreateCommand);
 
-            client._provider = mockSqlProvider.Object;
+            client._provider.Value = mockSqlProvider.Object;
             var (outResult, count) = client.ExecuteQuery(query);
 
             count.Should().Be(0);
@@ -115,7 +115,7 @@ namespace Molder.Database.Tests
                 .Setup(u => u.UsingTransaction(It.IsAny<Action<DbTransaction>>(), It.IsAny<Action<Exception>>(), null))
                 .Callback((Action<DbTransaction> action, Action<Exception> ex, Action success) => new DataTable());
 
-            client._provider = mockSqlProvider.Object;
+            client._provider.Value = mockSqlProvider.Object;
 
             var (outResult, count) = client.ExecuteQuery(query);
 
@@ -135,7 +135,7 @@ namespace Molder.Database.Tests
                 .Setup(u => u.UsingTransaction(It.IsAny<Action<DbTransaction>>(), It.IsAny<Action<Exception>>(), null))
                 .Callback((Action<DbTransaction> action, Action<Exception> ex, Action success) => new DataTable());
 
-            client._provider = mockSqlProvider.Object;
+            client._provider.Value = mockSqlProvider.Object;
 
             var count = client.ExecuteNonQuery(query);
 
@@ -153,7 +153,7 @@ namespace Molder.Database.Tests
             var client = new SqlServerClient();
             mockSqlProvider.Setup(c => c.SetupCommand(It.IsAny<string>(), null)).Returns(connect.CreateCommand);
 
-            client._provider = mockSqlProvider.Object;
+            client._provider.Value = mockSqlProvider.Object;
             var count = client.ExecuteNonQuery(query);
 
             count.Should().Be(0);
@@ -172,7 +172,7 @@ namespace Molder.Database.Tests
                 .Setup(u => u.UsingTransaction(It.IsAny<Action<DbTransaction>>(), It.IsAny<Action<Exception>>(), null))
                 .Callback((Action<DbTransaction> action, Action<Exception> ex, Action success) => new object());
 
-            client._provider = mockSqlProvider.Object;
+            client._provider.Value = mockSqlProvider.Object;
 
             var outResult = client.ExecuteScalar(query);
 

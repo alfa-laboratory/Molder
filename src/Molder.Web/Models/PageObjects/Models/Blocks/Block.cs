@@ -18,7 +18,7 @@ namespace Molder.Web.Models.PageObjects.Blocks
             return block.Object as Block;
         }
 
-        public IElement GetElement(string name)
+        public new IElement GetElement(string name)
         {
             var element = Root.SearchElementBy(name);
             (element.Object as Element).SetProvider(_driverProvider);

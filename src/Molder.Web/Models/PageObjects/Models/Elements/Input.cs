@@ -10,7 +10,7 @@ namespace Molder.Web.Models.PageObjects.Elements
         {
             if (Enabled && Displayed)
             {
-                _mediator.Execute(() => _provider.SendKeys(text));
+                _mediator.Value.Execute(() => _provider.SendKeys(text));
             }
             else
             {
@@ -22,7 +22,7 @@ namespace Molder.Web.Models.PageObjects.Elements
         {
             if (Enabled && Displayed)
             {
-                _mediator.Execute(() => _provider.Clear());
+                _mediator.Value.Execute(() => _provider.Clear());
             }
             else
             {

@@ -7,30 +7,28 @@ using Molder.Helpers;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Molder.Models.DateTimeHelpers;
+using System.Threading;
 
 namespace Molder.Database.Models
 {
     public class SqlServerClient : IDbClient, IDisposable
     {
-        [ThreadStatic]
-        public ISqlProvider _provider = new SqlProvider();
-
-        [ThreadStatic]
-        public IDateTimeHelper dateTimeHelper = new DateTimeHelper();
+        public AsyncLocal<ISqlProvider> _provider = new AsyncLocal<ISqlProvider>() { Value = new SqlProvider() };
+        public AsyncLocal<IDateTimeHelper> dateTimeHelper = new AsyncLocal<IDateTimeHelper>() { Value = new DateTimeHelper() };
         public DateTime lastConnect;
 
         public SqlServerClient()
         {
-            lastConnect = dateTimeHelper.GetDateTimeNow();
+            lastConnect = dateTimeHelper.Value.GetDateTimeNow();
         }
 
         public bool Create(DbConnectionParams parameters)
         {
             try
             {
-                if ((dateTimeHelper.GetDateTimeNow() - lastConnect).TotalSeconds < DbSetting.PERIOD)
+                if ((dateTimeHelper.Value.GetDateTimeNow() - lastConnect).TotalSeconds < DbSetting.PERIOD)
                 {
-                    System.Threading.Thread.Sleep((int)Math.Ceiling(DbSetting.PERIOD - (dateTimeHelper.GetDateTimeNow() - lastConnect).TotalSeconds) * 1000);
+                    Thread.Sleep((int)Math.Ceiling(DbSetting.PERIOD - (dateTimeHelper.Value.GetDateTimeNow() - lastConnect).TotalSeconds) * 1000);
                 }
 
                 var connectionString = new SqlConnectionStringBuilder()
@@ -52,9 +50,9 @@ namespace Molder.Database.Models
 
                 Log.Logger().LogInformation($"Connection has parameters: {Database.Helpers.Message.CreateMessage(connectionString.ToString())}");
 
-                var connect = _provider.Create(connectionString.ToString());
+                var connect = _provider.Value.Create(connectionString.ToString());
 
-                lastConnect = dateTimeHelper.GetDateTimeNow();
+                lastConnect = dateTimeHelper.Value.GetDateTimeNow();
 
                 return connect;
             }
@@ -71,7 +69,7 @@ namespace Molder.Database.Models
         }
         public bool IsConnectAlive()
         {
-            var result = _provider.IsConnectAlive();
+            var result = _provider.Value.IsConnectAlive();
 
             if (result == true)
                 Log.Logger().LogInformation("Connect is alive");
@@ -84,15 +82,15 @@ namespace Molder.Database.Models
         [ExcludeFromCodeCoverage]
         public void Dispose()
         {
-            _provider.Disconnect();
+            _provider.Value.Disconnect();
         }
 
         public int ExecuteNonQuery(string query, int? timeout = null)
         {
-            var command = _provider.SetupCommand(query, timeout);
+            var command = _provider.Value.SetupCommand(query, timeout);
 
             var affectedRows = 0;
-            _provider.UsingTransaction(
+            _provider.Value.UsingTransaction(
                 (transaction) =>
                 {
                     command.Transaction = transaction;
@@ -115,12 +113,12 @@ namespace Molder.Database.Models
         {
             var results = new DataTable();
 
-            var command = _provider.SetupCommand(query, timeout);
+            var command = _provider.Value.SetupCommand(query, timeout);
 
             IDataReader reader = null;
             var tmpResults = results;
 
-            _provider.UsingTransaction(
+            _provider.Value.UsingTransaction(
                 (transaction) =>
                 {
                     command.Transaction = transaction;
@@ -158,10 +156,10 @@ namespace Molder.Database.Models
 
         public object ExecuteScalar(string query, int? timeout = null)  //todo
         {
-            var command = _provider.SetupCommand(query, timeout);
+            var command = _provider.Value.SetupCommand(query, timeout);
 
             object result = null;
-            _provider.UsingTransaction(
+            _provider.Value.UsingTransaction(
                 (transaction) =>
                 {
                     command.Transaction = transaction;

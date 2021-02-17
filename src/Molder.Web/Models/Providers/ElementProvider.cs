@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Threading;
 
 namespace Molder.Web.Models.Providers
 {
@@ -22,44 +23,52 @@ namespace Molder.Web.Models.Providers
             _timeout = timeout ?? DefaultSetting.ELEMENT_TIMEOUT;
         }
 
-        [ThreadStatic]
-        public IWebElement Element = null;
+        private AsyncLocal<IWebElement> _element = new AsyncLocal<IWebElement> { Value = null };
 
-        public bool Displayed => Element.ToBeVisible((int)_timeout);
+        public IWebElement Element
+        {
+            get => _element.Value;
+            set
+            {
+                _element.Value = value;
+            }
+        }
 
-        public bool Selected => Element.ToBeSelected((int)_timeout);
+        public bool Displayed => _element.Value.ToBeVisible((int)_timeout);
 
-        public bool Enabled => Element.ToBeEnabled((int)_timeout);
+        public bool Selected => _element.Value.ToBeSelected((int)_timeout);
 
-        public bool Loaded => Element is null ? false : true;
+        public bool Enabled => _element.Value.ToBeEnabled((int)_timeout);
+
+        public bool Loaded => _element.Value is null ? false : true;
 
         public bool Editabled => IsEditabled();
 
-        public Point Location => Element.Location;
+        public Point Location => _element.Value.Location;
 
-        public string Text => Element.Text;
+        public string Text => _element.Value.Text;
 
-        public string Tag => Element.TagName;
+        public string Tag => _element.Value.TagName;
 
         public void Clear()
         {
-            Element.Clear();
+            _element.Value.Clear();
         }
 
         public void Click()
         {
-            Element.Click();
+            _element.Value.Click();
         }
 
         public bool TextEqual(string text)
         {
             try
             {
-                return Element.Wait((int)_timeout).ForText().ToEqual(text);
+                return _element.Value.Wait((int)_timeout).ForText().ToEqual(text);
             }
             catch (WebDriverTimeoutException ex)
             {
-                Log.Logger().LogWarning($"\"{Element.Text}\" is not equal \"{text}\". Exception is {ex.Message}");
+                Log.Logger().LogWarning($"\"{_element.Value.Text}\" is not equal \"{text}\". Exception is {ex.Message}");
                 return false;
             }
         }
@@ -68,11 +77,11 @@ namespace Molder.Web.Models.Providers
         {
             try
             {
-                return Element.Wait((int)_timeout).ForText().ToContain(text);
+                return _element.Value.Wait((int)_timeout).ForText().ToContain(text);
             }
             catch (WebDriverTimeoutException ex)
             {
-                Log.Logger().LogWarning($"\"{Element.Text}\" is not contain \"{text}\". Exception is {ex.Message}");
+                Log.Logger().LogWarning($"\"{_element.Value.Text}\" is not contain \"{text}\". Exception is {ex.Message}");
                 return false;
             }
         }
@@ -81,18 +90,18 @@ namespace Molder.Web.Models.Providers
         {
             try
             {
-                return Element.Wait((int)_timeout).ForText().ToMatch(text);
+                return _element.Value.Wait((int)_timeout).ForText().ToMatch(text);
             }
             catch (WebDriverTimeoutException ex)
             {
-                Log.Logger().LogWarning($"\"{Element.Text}\" is not match \"{text}\". Exception is {ex.Message}");
+                Log.Logger().LogWarning($"\"{_element.Value.Text}\" is not match \"{text}\". Exception is {ex.Message}");
                 return false;
             }
         }
 
         public IElementProvider FindElement(By by)
         {
-            var element = Element.FindElement(by);
+            var element = _element.Value.FindElement(by);
             return new ElementProvider(_timeout)
             {
                 Element = element
@@ -101,7 +110,7 @@ namespace Molder.Web.Models.Providers
 
         public ReadOnlyCollection<IElementProvider> FindElements(By by)
         {
-            var elements = Element.FindElements(by);
+            var elements = _element.Value.FindElements(by);
             var listElement = new List<IElementProvider>();
             foreach (var element in elements)
             {
@@ -115,17 +124,17 @@ namespace Molder.Web.Models.Providers
 
         public string GetAttribute(string name)
         {
-            return Element.GetAttribute(name);
+            return _element.Value.GetAttribute(name);
         }
 
         public string GetCss(string name)
         {
-            return Element.GetCssValue(name);
+            return _element.Value.GetCssValue(name);
         }
 
         public void SendKeys(string keys)
         {
-            Element.SendKeys(keys);
+            _element.Value.SendKeys(keys);
         }
 
         private bool IsEditabled()

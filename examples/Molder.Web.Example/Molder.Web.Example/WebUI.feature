@@ -20,7 +20,6 @@ Scenario: OpenWebUI with auth
 	Then на веб-странице текст элемента "Text" содержит значение "Congratulations! You must have the proper credentials."
 		And я закрываю веб-страницу
 		And я закрываю браузер
-
 @ignore
 Scenario: Add/Remove Elements With Block
 	Given я инициализирую браузер

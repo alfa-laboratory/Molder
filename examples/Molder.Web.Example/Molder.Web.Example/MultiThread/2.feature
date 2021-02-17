@@ -8,7 +8,7 @@ Scenario: Add/Remove Elements With Block
 
 	Given выполнено нажатие на элемент "Add/Remove Elements" на веб-странице
 		And я обновляю текущую страницу на "Add/Remove Elements With Block"
-		And в блоке "Add/Remove Elements" выполнено нажатие на элемент "Add Element" на веб-странице
-		And в блоке "Add/Remove Elements" выполнено нажатие на элемент "Delete" на веб-странице
+		And выполнено нажатие в блоке "Add/Remove Elements" на элемент "Add Element" на веб-странице
+		And выполнено нажатие в блоке "Add/Remove Elements" на элемент "Delete" на веб-странице
 		And я закрываю веб-страницу
 		And я закрываю браузер
