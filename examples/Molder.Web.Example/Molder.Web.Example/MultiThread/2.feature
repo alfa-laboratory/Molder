@@ -1,6 +1,6 @@
 ﻿@WebUI
 Feature: Task #2
-
+@ignore
 Scenario: Add/Remove Elements With Block
 	Given я инициализирую браузер
 		And я развернул веб-страницу на весь экран

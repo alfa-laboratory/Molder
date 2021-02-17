@@ -1,6 +1,6 @@
 ﻿@WebUI
 Feature: WebUI
-
+@ignore
 Scenario: OpenWebUI
 	Given я инициализирую браузер
 		And я развернул веб-страницу на весь экран
@@ -20,7 +20,7 @@ Scenario: OpenWebUI with auth
 	Then на веб-странице текст элемента "Text" содержит значение "Congratulations! You must have the proper credentials."
 		And я закрываю веб-страницу
 		And я закрываю браузер
-
+@ignore
 Scenario: Add/Remove Elements With Block
 	Given я инициализирую браузер
 		And я развернул веб-страницу на весь экран
@@ -32,7 +32,7 @@ Scenario: Add/Remove Elements With Block
 		And выполнено нажатие в блоке "Add/Remove Elements" на элемент "Delete" на веб-странице
 		And я закрываю веб-страницу
 		And я закрываю браузер
-
+@ignore
 Scenario: Add/Remove Elements
 	Given я инициализирую браузер
 		And я развернул веб-страницу на весь экран
@@ -44,7 +44,7 @@ Scenario: Add/Remove Elements
 		And выполнено нажатие на элемент "Delete" на веб-странице
 		And я закрываю веб-страницу
 		And я закрываю браузер
-
+@ignore
 Scenario: Checkboxes
 	Given я инициализирую браузер
 		And я развернул веб-страницу на весь экран
@@ -63,7 +63,7 @@ Scenario: Checkboxes
 
 		And я закрываю веб-страницу
 		And я закрываю браузер
-
+@ignore
 Scenario: Dropdown
 	Given я инициализирую браузер
 		And я развернул веб-страницу на весь экран
@@ -82,7 +82,7 @@ Scenario: Dropdown
 
 		And я закрываю веб-страницу
 		And я закрываю браузер
-
+@ignore
 Scenario: Dynamic Content
 	Given я инициализирую браузер
 		And я развернул веб-страницу на весь экран
@@ -95,7 +95,7 @@ Scenario: Dynamic Content
 
 		And я закрываю веб-страницу
 		And я закрываю браузер
-
+@ignore
 Scenario: Frames
 	Given я инициализирую браузер
 		And я развернул веб-страницу на весь экран
