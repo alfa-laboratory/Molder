@@ -1,30 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace Molder.Models.Directory
 {
     public abstract class DefaultDirectory : IDirectory
     {
-        [ThreadStatic]
-        private DirectoryInfo _directory = null;
+        private AsyncLocal<DirectoryInfo> _directory = null;
 
         public void Create()
         {
-            _directory = new DirectoryInfo(Get());
+            _directory.Value = new DirectoryInfo(Get());
         }
 
         public bool Exists()
         {
-            return _directory.Exists;
+            return _directory.Value.Exists;
         }
 
         public abstract string Get();
 
         public IEnumerable<FileInfo> GetFiles(string searchPattern)
         {
-            return _directory.GetFiles(searchPattern).ToList();
+            return _directory.Value.GetFiles(searchPattern).ToList();
         }
     }
 }
