@@ -18,6 +18,8 @@ namespace Molder.Configuration.Helpers
             try
             {
                 var ASPNETCORE_ENVIRONMENT = Environment.GetEnvironmentVariable(Constants.LAUNCH_PROFILE);
+                Log.Logger().LogInformation($"Variable \"ASPNETCORE_ENVIRONMENT\" is \"{(ASPNETCORE_ENVIRONMENT ?? "not set")}\"");
+
                 var configuration = new ConfigurationBuilder()
                     .AddJsonFile(Path.Combine(directory.Get(), $"{Constants.DEFAULT_JSON}.json"), optional: true, reloadOnChange: true)
                     .AddJsonFile(Path.Combine(directory.Get(), $"{Constants.DEFAULT_JSON}{(ASPNETCORE_ENVIRONMENT != null ? $".{ASPNETCORE_ENVIRONMENT}" : string.Empty )}.json"), optional: true, reloadOnChange: true)
