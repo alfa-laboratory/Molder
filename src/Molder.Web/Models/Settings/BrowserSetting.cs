@@ -1,4 +1,5 @@
 ﻿using Molder.Controllers;
+using Molder.Helpers;
 using Molder.Web.Helpers;
 using Molder.Web.Infrastructures;
 using Molder.Web.Models.Proxy;
@@ -38,12 +39,12 @@ namespace Molder.Web.Models.Settings
             {
                 if(field.Name == Setting.REMOTE_RUN.GetValue())
                 {
-                    Remote = (bool?)_variableController.GetVariableValue(Setting.REMOTE_RUN.GetValue()) ?? DefaultSetting.REMOTE_RUN;
+                    Remote = _variableController.GetVariableValue(Setting.REMOTE_RUN.GetValue()).ToString().GetValueOrNull<bool>() ?? DefaultSetting.REMOTE_RUN;
                 }
 
                 if (field.Name == Setting.HEADLESS.GetValue())
                 {
-                    Headless = (bool?)_variableController.GetVariableValue(Setting.HEADLESS.GetValue()) ?? DefaultSetting.HEADLESS;
+                    Headless = _variableController.GetVariableValue(Setting.HEADLESS.GetValue()).ToString().GetValueOrNull<bool>() ?? DefaultSetting.HEADLESS;
                 }
 
                 if (field.Name == Setting.BROWSER.GetValue())
