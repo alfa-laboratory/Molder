@@ -4,6 +4,7 @@ namespace Molder.Web.Infrastructures
 {
     public static class DefaultSetting
     {
+        public static readonly string PROJECT = null;
         public static readonly bool REMOTE_RUN = false;
         public static readonly bool HEADLESS = false;
         public static readonly BrowserType BROWSER = BrowserType.CHROME;
@@ -16,6 +17,9 @@ namespace Molder.Web.Infrastructures
 
     public enum Setting
     {
+        [EnumValue("PROJECT")]
+        PROJECT,
+
         [EnumValue("REMOTE_RUN")]
         REMOTE_RUN,
 

@@ -1,6 +1,5 @@
 ﻿using Molder.Controllers;
 using Molder.Web.Extensions;
-using Molder.Web.Models;
 using TechTalk.SpecFlow;
 
 namespace Molder.Web.Steps

@@ -60,14 +60,8 @@ namespace Molder.Web.Controllers
             }
         }
 
-        public static void SetVariables(VariableController variables)
-        {
-            _variables.Value = variables;
-        }
+        public static void SetVariables(VariableController variables) => _variables.Value = variables;
 
-        public static void CreateProxy(Authentication authentification)
-        {
-            _authentication.Value = authentification;
-        }
+        public static void CreateProxy(Authentication authentification) => _authentication.Value = authentification;
     }
 }
