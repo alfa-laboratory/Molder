@@ -7,47 +7,38 @@ exit /b 1
 echo Restoring dependencies was successful.
 )
 
-@set project=..\src\AlfaBank.AFT.Core\
+@set project=..\src\Molder\
 
 @call dotnet build -c Release %project%
 
 @if ERRORLEVEL 1 (
-echo Error! Build AlfaBank.AFT.Core failed.
+echo Error! Build Molder failed.
 exit /b 1
 )
 
-@set project=..\src\AlfaBank.AFT.Core.Library.Common\
+@set project=..\src\Molder.Generator\
 
 @call dotnet build -c Release %project%
 
 @if ERRORLEVEL 1 (
-echo Error! Build AlfaBank.AFT.Core.Library.Common failed.
+echo Error! Build Molder.Generator failed.
 exit /b 1
 )
 
-@set project=..\src\AlfaBank.AFT.Core.Library.Database\
+@set project=..\src\Molder.Database\
 
 @call dotnet build -c Release %project%
 
 @if ERRORLEVEL 1 (
-echo Error! Build AlfaBank.AFT.Core.Library.Database failed.
+echo Error! Build Molder.Database failed.
 exit /b 1
 )
 
-@set project=..\src\AlfaBank.AFT.Core.Library.Service\
+@set project=..\src\Molder.Service\
 
 @call dotnet build -c Release %project%
 
 @if ERRORLEVEL 1 (
-echo Error! Build AlfaBank.AFT.Core.Library.Service failed.
-exit /b 1
-)
-
-@set project=..\src\AlfaBank.AFT.Core.Library.Web\
-
-@call dotnet build -c Release %project%
-
-@if ERRORLEVEL 1 (
-echo Error! Build AlfaBank.AFT.Core.Library.Web failed.
+echo Error! Build Molder.Service failed.
 exit /b 1
 )

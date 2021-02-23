@@ -1,46 +1,30 @@
-[license]: https://github.com/alfa-laboratory/AlfaBank.AFT.Core.Library/blob/master/LICENSE "MIT License 2019"
-[wiki]: https://github.com/alfa-laboratory/AlfaBank.AFT.Core.Library/wiki "Wiki"
+[license]: https://github.com/alfa-laboratory/Molder/blob/master/LICENSE "MIT License 2021"
 
-# AlfaBank.AFT.Core.Library [![build](https://ci.appveyor.com/api/projects/status/j33s710ss3f0nf4u?svg=true)](https://ci.appveyor.com/project/egorsh0/alfabank-aft-core-library) [![license](https://img.shields.io/github/license/alfa-laboratory/AlfaBank.AFT.Core.Library)](https://github.com/alfa-laboratory/AlfaBank.AFT.Core.Library/blob/master/LICENSE)
-Набор библиотек с шагами для **BDD** тестирования баз данных, веб-сервисов и WebUI
+# Molder 
+[![build](https://ci.appveyor.com/api/projects/status/j33s710ss3f0nf4u?svg=true)](https://ci.appveyor.com/project/egorsh0/Molder)
+[![GitHub license](https://img.shields.io/github/license/alfa-laboratory/Molder?style=flat-square)](https://github.com/alfa-laboratory/Molder/blob/master/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/alfa-laboratory/Molder)](https://github.com/alfa-laboratory/Molder/stargazers)
+<br/><br/>[Join us!](https://t.me/AlfaBankAFTCore)<br/>
 
-## Library
- ##### *AlfaBank.AFT.Core* ![AlfaBank.AFT.Core](https://img.shields.io/nuget/dt/AlfaBank.AFT.Core)
- ##### *AlfaBank.AFT.Core.Library.Common* ![AlfaBank.AFT.Core.Library.Common](https://img.shields.io/nuget/dt/AlfaBank.AFT.Core.Library.Common) 
- ##### *AlfaBank.AFT.Core.Library.Database* ![AlfaBank.AFT.Core.Library.Database](https://img.shields.io/nuget/dt/AlfaBank.AFT.Core.Library.Database)
- ##### *AlfaBank.AFT.Core.Library.Service* ![AlfaBank.AFT.Core.Library.Service](https://img.shields.io/nuget/dt/AlfaBank.AFT.Core.Library.Service)
- ##### *AlfaBank.AFT.Core.Library.Web* ![AlfaBank.AFT.Core.Library.Web](https://img.shields.io/nuget/dt/AlfaBank.AFT.Core.Library.Web)
+Набор библиотек с шагами для **BDD** тестирования баз данных, сервисов и WebUI 
 
-### Состав библиотек
+------
+Documentation
+=======================
+<br/> Обшие рекомендации, интересные фишки находятся [here](/docs/index.md) 
 
-* AlfaBank.AFT.Core	содержит логику для:
-  - генераций уникальных текстовых/числовых значений;
-  - генерации уникальных значений даты/времени;
-  - генерации уникальных номеров телефонов;
-  - подключения к БД и выполнени¤ запросов;
-  - выполнение запросов к веб-сервисам;
-  - работе с WebUI.
-* AlfaBank.AFT.Core.Library.Common содержит **готовые** шаги для:
-  - генераций уникальных значений (тестовые, числовые, дата-время)
-  - основные проверки.
-* AlfaBank.AFT.Core.Library.Database содержит **готовые** шаги для:
-  - подключения к базе данных (SQL Server);
-  - выполнения Select, Insert, Update, Delete запросов;
-  - выполнения Stored Procedure.
-* AlfaBAnk.AFT.Core.Library.Service содержит **готовые** шаги для:
-  - выполнения запросов REST;
-  - выполнения запросов SOAP;
-  - сохранения результатов вызова в виде объекта, текста, json или xml;
-  - проверки статуса выполнения запроса.
+<br/> **1.** *Molder* является основной библиотекой, содержащей контроллер для инициализации работы с переменными, логирования и дополнительные провайдеры, которые могут использоваться в дочерних библиотеках. За подробностями - [here](/docs/Molder/index.md) 
+<br/> **2.** *Molder.Generation* содержит функциональность для генерации тестовых данных, которые могут пригодиться в тестировании. За основу была взята библиотека [*Bogus*](https://github.com/bchavez/Bogus) и дополнительно, чтобы не потерять обширный её функционал, была оставлена возможность использовать *Faker*. За подробностями - [here](/docs/Molder.Generator/index.md) 
+<br/> **3.** Многие тестовые сценарии содержат работу с базой данных. Чтобы использовать данную возможность в сценариях, можно подключить библиотеку *Molder.Database*. Вы можете совершать любой сложности запросы в рамках одной транзакции к SQLServer с помощью нескольких простых шагов. За подробностями - [here](/docs/Molder.Database/index.md)
+<br/> **4.** Когда вам необходимо обратиться к сервису в рамках сценария, вы можете подключить библиотеку *Molder.Service* и с помощью нескольких шагов дополнить ваши сценарии новыми данными. За подробностями - [here](/docs/Molder.Service/index.md) 
+<br/> **5.** Большинство интеграционных тестов связаны с веб страницами. Чтобы проверить ваш сайт на корректность с помощью шагов, можно воспользоваться библиотекой *Molder.Web*. С ее помощью можно создать PageObject, который будет олицетворять те страницы, которые учавствуют в тестировании и с помощью шагов проверить их корректность. За подробностями - [here](/docs/Molder.Web/index.md) 
+<br/> **6.** Когда требуется запустить тесты на различных стендах, то необходимо иметь файлы конфигурации, с параметрами, отличающие один стенд от другого (или просто часто используемые данные). Для этого можно подключить библиотеку *Molder.Configuration* и добавить в свой проект *appsettings.json* в качестве конфигуратора. За подробностями - [here](/docs/Molder.Configuration/index.md)  
 
-## Documentation
+------
+How to start?
+=======================
 
-All the documentation is available [on our site][wiki].
-
-## Как запустить?
-
-В проект необходимо добавить файл **specflow.json**, в котором описывается используемый язык ключевых слов и те *assembly*, в которых находятся шаги
-
+The **specflow.json** file must be added to the project, which describes the keyword language used and the *assembly* where the steps are located 
 ``` json
 {
   "language": {
@@ -48,34 +32,15 @@ All the documentation is available [on our site][wiki].
   },
   "stepAssemblies": [
     {
-      "assembly": "AlfaBank.AFT.Core.Library.Common"
+      "assembly": "Molder.Generator"
     }
   ]
 }
 ```
+and add the **Copy if newer** property to it 
 
-Дополнительно, необходимо проверить, что в *.csproj файле прописана связь с файлом:
 
-``` csproj
-  <ItemGroup>
-    <None Update="specflow.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-```
-
-## Dependencies 
-1. Net Core 2.2 or Net Standart
-1. SpecFlow 3.0.225
-2. SpecFlow.Tools.MsBuild.Generation 3.0.225
-3. **TestFramework** (xUnit, nUnit and etc) (xUnit 2.4.1)
-4. SpecFlow.**TestFramework** 3.0.225
-5. AlfaBank.AFT.Core.Library.**Type**
-
-## Contacts
-
-[Telegram](https://t.me/AlfaBankAFTCore)
-
-## License
-
-The AlfaBank.AFT.Core.Library is released of the [MIT License 2020][license].
+------
+License
+=======================
+The **Molder** is released of the [MIT License 2021][license].

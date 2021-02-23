@@ -1,0 +1,14 @@
+﻿{
+  "language": {
+    "feature": "en-us"
+  },
+  "livingDocGenerator": {
+    "enabled": true,
+    "filePath": "{CurrentDirectory}\\TestExecution.json"
+  },
+  "stepAssemblies": [
+    {
+      "assembly": "Molder.Configuration"
+    }
+  ]
+}
