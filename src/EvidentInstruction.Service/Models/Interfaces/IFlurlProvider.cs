@@ -5,7 +5,7 @@ namespace EvidentInstruction.Service.Models.Interfaces
 {
     public interface IFlurlProvider
     {
-        Task<HttpResponseMessage> SendRequest(RequestInfo request);
+        Task<HttpResponseMessage> SendRequestAsync(RequestInfo request);
     }
 }
 

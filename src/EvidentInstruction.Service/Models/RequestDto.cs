@@ -28,6 +28,6 @@ namespace EvidentInstruction.Service.Models
                           .ToDictionary(head => head.Name, head => this.variableController.ReplaceVariables(head.Value));
         }
 
-        public StringContent Content = new StringContent(string.Empty);
+        public StringContent Content = null;
     }
 }

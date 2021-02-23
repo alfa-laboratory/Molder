@@ -12,47 +12,30 @@ namespace EvidentInstruction.Service.Models
 {
     [ExcludeFromCodeCoverage]
     public class FlurlProvider : IFlurlProvider,  IDisposable
-    {
-        private readonly string url;
-        private readonly HttpContent content;
-
-        public FlurlProvider(RequestInfo request)
-        {
-            url = request.Url;
-            content = request.Content;
-        }
-        
-        public async Task<HttpResponseMessage> SendRequest(RequestInfo request)
-        {
-            IFlurlResponse responce;
-
+    {     
+        public async Task<HttpResponseMessage> SendRequestAsync(RequestInfo request)
+        { 
             try
             {
-                if(request.Content.Headers.ContentLength == 0)
-                {
-                    responce = await url                                    
-                                    .WithHeaders(request.Headers)
-                                    .SendAsync(request.Method);
-                }
-                else
-                {
-                    responce = await url                                   
-                                    .WithHeaders(request.Headers)
-                                    .SendAsync(request.Method, content);
-                }
+                var responce = request.Content is null ? 
+                           await request.Url
+                               .WithHeaders(request.Headers)                              
+                               .SendAsync(request.Method) : 
+                           await request.Url
+                               .WithHeaders(request.Headers)
+                               .SendAsync(request.Method, (request.Content as HttpContent));
                
                 return responce.ResponseMessage;                
             }
             catch (FlurlHttpTimeoutException ex)
             {
-                Log.Logger().LogWarning($"Request {request.Url} timed out. {ex}");
-                throw new FlurlException(ex.Call, ex);
-                
+                Log.Logger().LogWarning($"Request {request.Url} timed out. {ex}");                
+                throw new FlurlException($"Request {request.Url} timed out. {ex}", ex);
             }
             catch (FlurlHttpException ex)
             {
-                Log.Logger().LogWarning($"Request {request.Url} failed. {ex}");
-                throw new FlurlException(ex.Call, ex);
+                Log.Logger().LogWarning($"Request {request.Url} failed. {ex}");  
+                throw new FlurlException($"Request {request.Url} failed. {ex}", ex);
             }
         }
         public void Dispose()

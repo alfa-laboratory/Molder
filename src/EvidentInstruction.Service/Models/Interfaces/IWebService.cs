@@ -1,8 +1,10 @@
 ﻿
+using System.Threading.Tasks;
+
 namespace EvidentInstruction.Service.Models.Interfaces
 {
     public interface IWebService
     {
-        ResponceInfo SendMessage(RequestInfo request/*, Dictionary<HTTPMethodType, HttpMethod> webMethods*/);
+        Task<ResponceInfo> SendMessage();
     }
 }
