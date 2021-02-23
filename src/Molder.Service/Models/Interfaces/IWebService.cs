@@ -1,7 +1,6 @@
-﻿
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
-namespace EvidentInstruction.Service.Models.Interfaces
+namespace Molder.Service.Models.Interfaces
 {
     public interface IWebService
     {

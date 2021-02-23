@@ -1,7 +1,7 @@
-﻿using EvidentInstruction.Service.Models;
+﻿using Molder.Service.Models;
 using System;
 
-namespace EvidentInstruction.Service.Helpers
+namespace Molder.Service.Helpers
 {
     public static class Messages
     {

@@ -1,12 +1,12 @@
-﻿using EvidentInstruction.Helpers;
-using EvidentInstruction.Service.Helpers;
-using EvidentInstruction.Service.Models.Interfaces;
+﻿using Molder.Helpers;
+using Molder.Service.Helpers;
+using Molder.Service.Models.Interfaces;
 using System;
 using Microsoft.Extensions.Logging;
-using EvidentInstruction.Service.Exceptions;
+using Molder.Service.Exceptions;
 using System.Threading.Tasks;
 
-namespace EvidentInstruction.Service.Models
+namespace Molder.Service.Models
 {
     public class WebService : IWebService, IDisposable
     {

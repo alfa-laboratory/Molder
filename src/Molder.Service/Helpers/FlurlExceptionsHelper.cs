@@ -1,11 +1,11 @@
-﻿using EvidentInstruction.Helpers;
-using EvidentInstruction.Service.Exceptions;
-using EvidentInstruction.Service.Models;
+﻿using Molder.Helpers;
+using Molder.Service.Exceptions;
+using Molder.Service.Models;
 using Flurl.Http;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace EvidentInstruction.Service.Helpers
+namespace Molder.Service.Helpers
 {
     public static class FlurlExceptionsHelper
     {
