@@ -51,6 +51,11 @@ namespace Molder.Web.Models.Browser
                 options.AddAdditionalCapability("version", browserSetting.RemoteVersion, true);
                 options.AddAdditionalCapability("enableVNC", true, true);
                 options.AddAdditionalCapability("platform", "ANY", true);
+
+                if(browserSetting.Project != null)
+                {
+                    options.AddAdditionalCapability("name", browserSetting.Project, true);
+                }
             }
             options.AddArguments("--no-sandbox");
             options.AddArgument("--disable-dev-shm-usage");
@@ -58,6 +63,7 @@ namespace Molder.Web.Models.Browser
             {
                 options.AddArguments("--headless");
             }
+
             options.AddArguments("--disable-gpu");
 
             if (browserSetting.Authentication != null)

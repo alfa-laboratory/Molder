@@ -11,6 +11,7 @@ namespace Molder.Web.Models.Settings
     {
         private VariableController _variableController;
 
+        public string Project { get; set; } = null;
         public bool? Remote { get; set; } = null;
         public bool? Headless { get; set; } = null;
         public BrowserType? BrowserType { get; set; } = null;
@@ -37,7 +38,12 @@ namespace Molder.Web.Models.Settings
 
             foreach(var field in fields)
             {
-                if(field.Name == Setting.REMOTE_RUN.GetValue())
+                if (field.Name == Setting.PROJECT.GetValue())
+                {
+                    Project = (string)_variableController.GetVariableValue(Setting.PROJECT.GetValue()) ?? DefaultSetting.PROJECT;
+                }
+
+                if (field.Name == Setting.REMOTE_RUN.GetValue())
                 {
                     Remote = _variableController.GetVariableValue(Setting.REMOTE_RUN.GetValue()).ToString().GetValueOrNull<bool>() ?? DefaultSetting.REMOTE_RUN;
                 }
