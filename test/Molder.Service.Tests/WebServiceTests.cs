@@ -1,4 +1,5 @@
-﻿using Molder.Service.Models;
+﻿using EvidentInstruction.Service.Models;
+using EvidentInstruction.Service.Models.Interfaces;
 using FluentAssertions;
 using Moq;
 using System;
@@ -9,7 +10,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Molder.Service.Tests
+namespace EvidentInstruction.Service.Tests
 {
     [ExcludeFromCodeCoverage]
     public class WebServiceTests
@@ -30,12 +31,12 @@ namespace Molder.Service.Tests
             var webService = new WebService(requestInfo);
 
             mockFlurlProvider
-                .Setup(u => u.SendRequest(It.IsAny<RequestInfo>())).Throws<Exception>();
+                .Setup(u => u.SendRequestAsync(It.IsAny<RequestInfo>())).Throws<Exception>();
 
             webService.fprovider = mockFlurlProvider.Object;
-            var result = webService.SendMessage(requestInfo);
-
-            result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            var result = webService.SendMessage();
+                        
+            result.Result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
         [Fact]
@@ -47,14 +48,15 @@ namespace Molder.Service.Tests
             var webService = new WebService(requestInfo);
 
             mockFlurlProvider
-                .Setup(u => u.SendRequest(It.IsAny<RequestInfo>())).Returns(responseTask);
+                .Setup(u => u.SendRequestAsync(It.IsAny<RequestInfo>())).Returns(responseTask);
 
             webService.fprovider = mockFlurlProvider.Object;
-            var result = webService.SendMessage(requestInfo);
+            var result = webService.SendMessage();
 
-            result.StatusCode.Should().Be(HttpStatusCode.OK);
-            result.Content.ToString().Should().Be("test");
+            result.Result.StatusCode.Should().Be(HttpStatusCode.OK);
+            result.Result.Content.ToString().Should().Be("test");
         }
+
 #if False
         [Fact]
         public void SendMessage_IncorrectRequest_ReturnError()

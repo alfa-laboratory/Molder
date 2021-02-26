@@ -1,11 +1,14 @@
-﻿using Flurl.Http;
-using System;
+﻿using System;
 
 namespace Molder.Service.Exceptions
 {
     [Serializable]
-    public class FlurlException: FlurlHttpTimeoutException
+    public class FlurlException : Exception
     {
-        public FlurlException(FlurlCall flurlCall, Exception ex) : base(flurlCall, ex) { }
+        public string ExceptionName { get; }       
+        public FlurlException(string message, Exception ex) : base(message) 
+        {           
+            ExceptionName = ex.GetType().Name;           
+        }
     }
 }

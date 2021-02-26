@@ -5,7 +5,7 @@ namespace Molder.Service.Models
 {
     public interface IFlurlProvider
     {
-        Task<HttpResponseMessage> SendRequest(RequestInfo request);
+        Task<HttpResponseMessage> SendRequestAsync(RequestInfo request);
     }
 }
 

@@ -112,12 +112,12 @@ namespace Molder.Service.Steps
 
             using (var service = new WebService(request))
             {
-                var responce =  service.SendMessage(request);
+                var responce =  service.SendMessage();
 
                 if (responce != null)
                 {
-                    this.serviceController.Services.TryAdd(name, responce);
-                    this.variableController.SetVariable(name, responce.Content.GetType(), responce.Content);
+                    this.serviceController.Services.TryAdd(name, responce.Result);
+                    this.variableController.SetVariable(name, responce.Result.Content?.GetType(), responce.Result.Content);
                 }
                 
             }

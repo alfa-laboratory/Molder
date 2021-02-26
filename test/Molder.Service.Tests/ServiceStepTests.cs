@@ -1,7 +1,8 @@
-﻿using Molder.Controllers;
-using Molder.Service.Controllers;
-using Molder.Service.Models;
-using Molder.Service.Steps;
+﻿using EvidentInstruction.Controllers;
+using EvidentInstruction.Service.Controllers;
+using EvidentInstruction.Service.Infrastructures;
+using EvidentInstruction.Service.Models;
+using EvidentInstruction.Service.Steps;
 using FluentAssertions;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -9,7 +10,7 @@ using System.Net.Http;
 using TechTalk.SpecFlow;
 using Xunit;
 
-namespace Molder.Service.Tests
+namespace EvidentInstruction.Service.Tests
 {
 
     [ExcludeFromCodeCoverage]
@@ -68,7 +69,7 @@ namespace Molder.Service.Tests
             result.Header.Should().BeEmpty();
             result.Body.Should().BeEmpty();
             result.Query.Should().BeEmpty();
-            result.Content.Headers.Should().NotBeEmpty();
+            result.Content.Should().BeNull();
         }
 
         [Theory]        
