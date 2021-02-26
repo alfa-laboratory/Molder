@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>   
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
     <Authors>Egor Shokhin</Authors>
     <Company>AlfaBank</Company>
     <Copyright>2021 AlfaBank</Copyright>
@@ -23,7 +23,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
     <PackageReference Include="Molder" Version="1.0.6" />
-    <PackageReference Include="SpecFlow" Version="3.7.13" />
+    <PackageReference Include="SpecFlow" Version="3.3.30" />
   </ItemGroup>
 
 </Project>
