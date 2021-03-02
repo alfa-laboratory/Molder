@@ -12,6 +12,5 @@ namespace Molder.Service.Models
 
         [TableAliases("Style", "Тип")] 
         public string Style { get; set; } 
-        
     }
 }

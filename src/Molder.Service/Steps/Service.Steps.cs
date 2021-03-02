@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System;
 using Molder.Helpers;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 
 namespace Molder.Service.Steps
 {
@@ -42,7 +43,8 @@ namespace Molder.Service.Steps
                 { HTTPMethodType.PUT, HttpMethod.Put},
                 { HTTPMethodType.POST, HttpMethod.Post},
                 { HTTPMethodType.DELETE, HttpMethod.Delete},
-                { HTTPMethodType.HEAD, HttpMethod.Head}                
+                { HTTPMethodType.HEAD, HttpMethod.Head},
+                { HTTPMethodType.PATCH, HttpMethod.Patch},
             };
         }
 
@@ -50,8 +52,6 @@ namespace Molder.Service.Steps
         /// Очистка подключений к сервисам в конце сценария.
         /// </summary>
         [AfterScenario]
-        [Scope(Tag = "WebService")]
-        [Scope(Tag = "WebServiceAuth")]
         public void AfterScenario()
         {
             this.serviceController.Services.Clear();
@@ -61,18 +61,27 @@ namespace Molder.Service.Steps
         public RequestDto TableToRequestDTO(Table table)
         {
             var headers = table.CreateSet<Header>().ToList();
-
             var requestDto = new RequestDto(headers, variableController);
-
             if (requestDto.Body.Any())
             {
-                //получаем тип контента
                 var doc = ServiceHelpers.GetObjectFromString(requestDto.Body.Values.First());
-                //получаем StringContent для формирования RequestInfo
                 requestDto.Content = ServiceHelpers.GetStringContent(doc, requestDto.Body.Values.First());
             }
-
             return requestDto;
+        }
+
+        [StepArgumentTransformation]
+        public JToken StringToJToken(string str)
+        {
+            str = this.variableController.ReplaceVariables(str);
+            return str.ToJson();
+        }
+
+        [StepDefinition(@"я создаю json документ ""(.+)"":")]
+        public void CreateJson(string varName, JToken token)
+        {
+            this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
+            this.variableController.SetVariable(varName, token.GetType(), token);
         }
 
         /// <summary>
@@ -82,18 +91,15 @@ namespace Molder.Service.Steps
         /// <param name="method">Метод сервиса.</param>
         /// <param name="service">Название сервиса.</param>
         /// <param name="parameters">Параметры вызова.</param>
-        [Scope(Tag = "WebService")]
-        [When(@"я вызываю веб-сервис ""([A-z]+)"" по адресу ""(.+)"" с методом ""(.+)"", используя параметры :")]
+        [When(@"я вызываю веб-сервис ""([A-z]+)"" по адресу ""(.+)"" с методом ""(.+)"", используя параметры:")]
         public void SendToRestServiceWithBody(string name, string url, HTTPMethodType method, RequestDto requestDto) 
         {
+            this.variableController.Variables.Should().NotContainKey($"Данные по сервису с именем \"{name}\" уже существуют");
+            this.serviceController.Services.Should().NotContainKey($"Данные по сервису с именем \"{name}\" уже существуют");
 
-            this.variableController.Variables.ContainsKey(name).Should().BeFalse($"Данные по сервису с именем \"{name}\" уже существуют");
-            this.serviceController.Services.ContainsKey(name).Should().BeFalse($"Данные по сервису с именем \"{name}\" уже существуют");
-
-            //Добавляем query к Url 
             if (requestDto.Query.Any())
             {
-                url = ServiceHelpers.AddQueryInURL(url, requestDto.Query.Values.First());
+                url = url.AddQueryInURL(requestDto.Query.Values.First());
             }
 
             if(!Uri.TryCreate(url, UriKind.Absolute, out Uri outUrl))
@@ -110,16 +116,18 @@ namespace Molder.Service.Steps
                 Url = url 
             };
 
-            using (var service = new WebService(request))
+            using (var service = new WebService())
             {
-                var responce =  service.SendMessage(request);
+                var responce =  service.SendMessage(request).Result;
 
                 if (responce != null)
                 {
                     this.serviceController.Services.TryAdd(name, responce);
-                    this.variableController.SetVariable(name, responce.Content.GetType(), responce.Content);
                 }
-                
+                else
+                {
+                    Log.Logger().LogInformation($"Сервис с названием \"{name}\" не добавлен");
+                }
             }
         }
 
@@ -128,16 +136,74 @@ namespace Molder.Service.Steps
         /// </summary>
         /// <param name="service">Название сервиса.</param>
         /// <param name="status">Статус.</param>
-        [Scope(Tag = "WebService")]
-        [Scope(Tag = "WebServiceAuth")]
         [Then(@"веб-сервис \""(.+)\"" выполнился со статусом \""(.+)\""")]
         public void Then_ReceivedService_Status(string name, HttpStatusCode status)
         {
-            this.serviceController.Services.SingleOrDefault(_ => _.Key == name).Value.Should()
-                .NotBeNull($"Сервис с названием \"{name}\" не существует");
+            this.serviceController.Services.Should().ContainKey(name, $"Сервис с названием \"{name}\" не существует");
 
             this.serviceController.Services.TryGetValue(name, out var service);
             status.Should().Be(service.StatusCode, $"Статус сервиса \"{name}\":\"{service.StatusCode}\" не равен \"{status}\"");
+        }
+
+        /// <summary>
+        /// Шаг сохранения результата вызова web сервиса как строка в переменную.
+        /// </summary>
+        /// <param name="service">Название сервиса.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [Then(@"я сохраняю результат вызова веб-сервиса \""(.+)\"" как текст в переменную \""(.+)\""")]
+        public void StoreReceivedResultInVariable_String(string name, string varName)
+        {
+            this.serviceController.Services.Should().ContainKey(name, $"Сервис с названием \"{name}\" не существует");
+            this.variableController.Variables.Should().NotContainKey(name, $"Сервис с названием \"{name}\" существует");
+
+            this.serviceController.Services.TryGetValue(name, out var service);
+            service.Content.Should()
+                .NotBeNull($"Результат вызова сервиса с названием \"{name}\" не существует");
+
+            Log.Logger().LogInformation($"Результат сервиса \"{name}\" (сериализован): {Environment.NewLine}{service.Content}");
+            this.variableController.SetVariable(varName, service.Content.GetType(), service.Content);
+        }
+
+        /// <summary>
+        /// Шаг сохранения результата вызова web сервиса как json в переменную.
+        /// </summary>
+        /// <param name="service">Название сервиса.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [Then(@"я сохраняю результат вызова веб-сервиса \""(.+)\"" как json в переменную \""(.+)\""")]
+        public void StoreReceivedResultInVariable_Json(string name, string varName)
+        {
+            this.serviceController.Services.Should().ContainKey(name, $"Сервис с названием \"{name}\" не существует");
+            this.variableController.Variables.Should().NotContainKey(name, $"Сервис с названием \"{name}\" существует");
+
+            this.serviceController.Services.TryGetValue(name, out var service);
+            service.Content.Should()
+                .NotBeNull($"Результат вызова сервиса с названием \"{name}\" не существует");
+
+            var json = service.Content.ToJson();
+
+            Log.Logger().LogInformation($"Результат сервиса \"{name}\" (сериализован): {Environment.NewLine}{json}");
+            this.variableController.SetVariable(varName, json.GetType(), service.Content);
+        }
+
+        /// <summary>
+        /// Шаг сохранения результата вызова web сервиса как xml в переменную.
+        /// </summary>
+        /// <param name="service">Название сервиса.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [Then(@"я сохраняю результат вызова веб-сервиса \""(.+)\"" как xml в переменную \""(.+)\""")]
+        public void StoreReceivedResultInVariable_Xml(string name, string varName)
+        {
+            this.serviceController.Services.Should().ContainKey(name, $"Сервис с названием \"{name}\" не существует");
+            this.variableController.Variables.Should().NotContainKey(name, $"Сервис с названием \"{name}\" существует");
+
+            this.serviceController.Services.TryGetValue(name, out var service);
+            service.Content.Should()
+                .NotBeNull($"Результат вызова сервиса с названием \"{name}\" не существует");
+
+            var xml = service.Content.ToXml();
+
+            Log.Logger().LogInformation($"Результат сервиса \"{name}\" (сериализован): {Environment.NewLine}{xml}");
+            this.variableController.SetVariable(varName, xml.GetType(), xml);
         }
     }
 }

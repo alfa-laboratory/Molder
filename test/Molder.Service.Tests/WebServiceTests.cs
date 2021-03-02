@@ -1,5 +1,6 @@
-﻿using Molder.Service.Models;
-using FluentAssertions;
+﻿using FluentAssertions;
+using Molder.Service.Models;
+using Molder.Service.Models.Provider;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Molder.Service.Tests
+namespace EvidentInstruction.Service.Tests
 {
     [ExcludeFromCodeCoverage]
     public class WebServiceTests
@@ -27,15 +28,15 @@ namespace Molder.Service.Tests
         {    
             var mockFlurlProvider = new Mock<IFlurlProvider>();
 
-            var webService = new WebService(requestInfo);
+            var webService = new WebService();
 
             mockFlurlProvider
-                .Setup(u => u.SendRequest(It.IsAny<RequestInfo>())).Throws<Exception>();
+                .Setup(u => u.SendRequestAsync(It.IsAny<RequestInfo>())).Throws<Exception>();
 
-            webService.fprovider = mockFlurlProvider.Object;
+            webService.Provider = mockFlurlProvider.Object;
             var result = webService.SendMessage(requestInfo);
-
-            result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+                        
+            result.Result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
         [Fact]
@@ -44,17 +45,18 @@ namespace Molder.Service.Tests
             var mockFlurlProvider = new Mock<IFlurlProvider>();
             var response =  new HttpResponseMessage() {  StatusCode = HttpStatusCode.OK, Content = new StringContent("test")};
             var responseTask = Task.FromResult(response);
-            var webService = new WebService(requestInfo);
+            var webService = new WebService();
 
             mockFlurlProvider
-                .Setup(u => u.SendRequest(It.IsAny<RequestInfo>())).Returns(responseTask);
+                .Setup(u => u.SendRequestAsync(It.IsAny<RequestInfo>())).Returns(responseTask);
 
-            webService.fprovider = mockFlurlProvider.Object;
+            webService.Provider = mockFlurlProvider.Object;
             var result = webService.SendMessage(requestInfo);
 
-            result.StatusCode.Should().Be(HttpStatusCode.OK);
-            result.Content.ToString().Should().Be("test");
+            result.Result.StatusCode.Should().Be(HttpStatusCode.OK);
+            result.Result.Content.ToString().Should().Be("test");
         }
+
 #if False
         [Fact]
         public void SendMessage_IncorrectRequest_ReturnError()

@@ -1,5 +1,6 @@
 ﻿using Molder.Service.Models;
 using Flurl.Http;
+using Flurl.Http.Configuration;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -25,6 +26,25 @@ namespace Molder.Service.Extension
 
             return new FlurlRequest(url).Auth(request, login[0], login[1]);
         }
+
+    }
+
+    public class UseDefaultCredentialsClientFactory : DefaultHttpClientFactory
+    {
+        public override HttpMessageHandler CreateMessageHandler()
+        {
+            return new HttpClientHandler { UseDefaultCredentials = true };
+        }
+    }
+
+    public static class FlurlConfiguration
+    {
+        public static void ConfigureDomainForDefaultCredentials(string url)
+        {
+            FlurlHttp.ConfigureClient(url, cli =>
+                cli.Settings.HttpClientFactory = new UseDefaultCredentialsClientFactory());
+        }
+    }
 #endif
     }
 }

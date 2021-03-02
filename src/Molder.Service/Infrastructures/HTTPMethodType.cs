@@ -1,5 +1,4 @@
-﻿
-namespace Molder.Service.Infrastructures
+﻿namespace Molder.Service.Infrastructures
 {
     public enum HTTPMethodType
     {
@@ -7,6 +6,7 @@ namespace Molder.Service.Infrastructures
         GET,
         PUT,
         DELETE,
-        HEAD   
+        HEAD,
+        PATCH
     }
 }
