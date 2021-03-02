@@ -1,5 +1,6 @@
 ﻿using Molder.Service.Models;
 using System;
+using System.Net.Http;
 
 namespace Molder.Service.Helpers
 {
@@ -9,7 +10,7 @@ namespace Molder.Service.Helpers
         {
             return request.Content == null ?
                     $"Request: {request.Url} {Environment.NewLine} with method {request.Method}" :
-                    $"Request: {request.Url} {Environment.NewLine} with method {request.Method} {Environment.NewLine} and content: {request.Content.ReadAsStringAsync().Result}";              
+                    $"Request: {request.Url} {Environment.NewLine} with method {request.Method} {Environment.NewLine} and content: {(request.Content as StringContent).ReadAsStringAsync().GetAwaiter().GetResult()}";              
        
         }
 

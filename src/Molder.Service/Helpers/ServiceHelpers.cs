@@ -64,7 +64,7 @@ namespace Molder.Service.Helpers
         /// <summary>
         /// Получить StringContent для RequestInfo 
         /// </summary>   
-        public static StringContent GetStringContent(object type, string replaceContent)
+        public static HttpContent GetStringContent(object type, string replaceContent)
         {    
             switch (type)
             {

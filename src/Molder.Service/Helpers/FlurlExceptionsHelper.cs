@@ -15,8 +15,6 @@ namespace Molder.Service.Helpers
             {
                 if (((FlurlException)ex).ExceptionName == (typeof(FlurlHttpTimeoutException)).Name)
                 {
-                    Log.Logger().LogError($"{Message.CreateMessage(request)} timed out. {ex}");
-
                     return new ResponceInfo
                     {
                         Headers = null,
@@ -28,8 +26,7 @@ namespace Molder.Service.Helpers
 
                 if (((FlurlException)ex).ExceptionName == (typeof(FlurlHttpException)).Name)
                 {
-                    var exception = (ex as FlurlHttpException)?.Call.Response;
-                    Log.Logger().LogError($"{Message.CreateMessage(request)} is failed.");
+                    var exception = (((FlurlException)ex).Exception as FlurlHttpException)?.Call.Response;
                     var content = exception?.ResponseMessage.Content.ReadAsStringAsync().Result;
 
                     var statusCode = exception == null ?
@@ -49,7 +46,6 @@ namespace Molder.Service.Helpers
                 }
             }
 
-            Log.Logger().LogError($"{Message.CreateMessage(request)} is failed. {ex}");
             return new ResponceInfo
             {
                 Headers = null,

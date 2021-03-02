@@ -22,7 +22,7 @@ namespace Molder.Service.Models.Provider
                                .SendAsync(request.Method) : 
                            await request.Url
                                .WithHeaders(request.Headers)
-                               .SendAsync(request.Method, (request.Content as HttpContent));
+                               .SendAsync(request.Method, request.Content as HttpContent);
                
                 return responce.ResponseMessage;                
             }

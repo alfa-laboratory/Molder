@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System;
 using Molder.Helpers;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 
 namespace Molder.Service.Steps
 {
@@ -42,7 +43,8 @@ namespace Molder.Service.Steps
                 { HTTPMethodType.PUT, HttpMethod.Put},
                 { HTTPMethodType.POST, HttpMethod.Post},
                 { HTTPMethodType.DELETE, HttpMethod.Delete},
-                { HTTPMethodType.HEAD, HttpMethod.Head}                
+                { HTTPMethodType.HEAD, HttpMethod.Head},
+                { HTTPMethodType.PATCH, HttpMethod.Patch},
             };
         }
 
@@ -68,6 +70,20 @@ namespace Molder.Service.Steps
             return requestDto;
         }
 
+        [StepArgumentTransformation]
+        public JToken StringToJToken(string str)
+        {
+            str = this.variableController.ReplaceVariables(str);
+            return str.ToJson();
+        }
+
+        [StepDefinition(@"я создаю json документ ""(.+)"":")]
+        public void CreateJson(string varName, JToken token)
+        {
+            this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
+            this.variableController.SetVariable(varName, token.GetType(), token);
+        }
+
         /// <summary>
         /// Вызов Rest сервиса с телом
         /// </summary>
@@ -75,11 +91,11 @@ namespace Molder.Service.Steps
         /// <param name="method">Метод сервиса.</param>
         /// <param name="service">Название сервиса.</param>
         /// <param name="parameters">Параметры вызова.</param>
-        [When(@"я вызываю веб-сервис ""([A-z]+)"" по адресу ""(.+)"" с методом ""(.+)"", используя параметры :")]
+        [When(@"я вызываю веб-сервис ""([A-z]+)"" по адресу ""(.+)"" с методом ""(.+)"", используя параметры:")]
         public void SendToRestServiceWithBody(string name, string url, HTTPMethodType method, RequestDto requestDto) 
         {
-            this.variableController.Variables.ContainsKey(name).Should().BeFalse($"Данные по сервису с именем \"{name}\" уже существуют");
-            this.serviceController.Services.ContainsKey(name).Should().BeFalse($"Данные по сервису с именем \"{name}\" уже существуют");
+            this.variableController.Variables.Should().NotContainKey($"Данные по сервису с именем \"{name}\" уже существуют");
+            this.serviceController.Services.Should().NotContainKey($"Данные по сервису с именем \"{name}\" уже существуют");
 
             if (requestDto.Query.Any())
             {
@@ -102,12 +118,13 @@ namespace Molder.Service.Steps
 
             using (var service = new WebService())
             {
-                var responce =  service.SendMessage(request);
+                var responce =  service.SendMessage(request).Result;
 
                 if (responce != null)
                 {
-                    this.serviceController.Services.TryAdd(name, responce.Result);
-                }else
+                    this.serviceController.Services.TryAdd(name, responce);
+                }
+                else
                 {
                     Log.Logger().LogInformation($"Сервис с названием \"{name}\" не добавлен");
                 }
@@ -165,7 +182,7 @@ namespace Molder.Service.Steps
             var json = service.Content.ToJson();
 
             Log.Logger().LogInformation($"Результат сервиса \"{name}\" (сериализован): {Environment.NewLine}{json}");
-            this.variableController.SetVariable(varName, json.GetType(), json);
+            this.variableController.SetVariable(varName, json.GetType(), service.Content);
         }
 
         /// <summary>

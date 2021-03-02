@@ -6,6 +6,7 @@
         GET,
         PUT,
         DELETE,
-        HEAD   
+        HEAD,
+        PATCH
     }
 }
