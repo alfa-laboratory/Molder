@@ -1,6 +1,6 @@
-﻿using EvidentInstruction.Service.Models;
-using EvidentInstruction.Service.Models.Interfaces;
-using FluentAssertions;
+﻿using FluentAssertions;
+using Molder.Service.Models;
+using Molder.Service.Models.Provider;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -28,13 +28,13 @@ namespace EvidentInstruction.Service.Tests
         {    
             var mockFlurlProvider = new Mock<IFlurlProvider>();
 
-            var webService = new WebService(requestInfo);
+            var webService = new WebService();
 
             mockFlurlProvider
                 .Setup(u => u.SendRequestAsync(It.IsAny<RequestInfo>())).Throws<Exception>();
 
-            webService.fprovider = mockFlurlProvider.Object;
-            var result = webService.SendMessage();
+            webService.Provider = mockFlurlProvider.Object;
+            var result = webService.SendMessage(requestInfo);
                         
             result.Result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
@@ -45,13 +45,13 @@ namespace EvidentInstruction.Service.Tests
             var mockFlurlProvider = new Mock<IFlurlProvider>();
             var response =  new HttpResponseMessage() {  StatusCode = HttpStatusCode.OK, Content = new StringContent("test")};
             var responseTask = Task.FromResult(response);
-            var webService = new WebService(requestInfo);
+            var webService = new WebService();
 
             mockFlurlProvider
                 .Setup(u => u.SendRequestAsync(It.IsAny<RequestInfo>())).Returns(responseTask);
 
-            webService.fprovider = mockFlurlProvider.Object;
-            var result = webService.SendMessage();
+            webService.Provider = mockFlurlProvider.Object;
+            var result = webService.SendMessage(requestInfo);
 
             result.Result.StatusCode.Should().Be(HttpStatusCode.OK);
             result.Result.Content.ToString().Should().Be("test");

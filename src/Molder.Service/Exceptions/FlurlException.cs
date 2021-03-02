@@ -6,7 +6,7 @@ namespace Molder.Service.Exceptions
     public class FlurlException : Exception
     {
         public string ExceptionName { get; }       
-        public FlurlException(string message, Exception ex) : base(message) 
+        public FlurlException(Exception ex) : base(ex.Message) 
         {           
             ExceptionName = ex.GetType().Name;           
         }

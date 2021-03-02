@@ -7,10 +7,10 @@ using Molder.Service.Exceptions;
 using Flurl.Http;
 using Microsoft.Extensions.Logging;
 
-namespace Molder.Service.Models
+namespace Molder.Service.Models.Provider
 {
     [ExcludeFromCodeCoverage]
-    public class FlurlProvider : IFlurlProvider,  IDisposable
+    public class FlurlProvider : IFlurlProvider, IDisposable
     {     
         public async Task<HttpResponseMessage> SendRequestAsync(RequestInfo request)
         { 
@@ -28,13 +28,11 @@ namespace Molder.Service.Models
             }
             catch (FlurlHttpTimeoutException ex)
             {
-                Log.Logger().LogWarning($"Request {request.Url} timed out. {ex}");                
-                throw new FlurlException($"Request {request.Url} timed out. {ex}", ex);
+                throw new FlurlException(ex);
             }
             catch (FlurlHttpException ex)
             {
-                Log.Logger().LogWarning($"Request {request.Url} failed. {ex}");  
-                throw new FlurlException($"Request {request.Url} failed. {ex}", ex);
+                throw new FlurlException(ex);
             }
         }
         public void Dispose()

@@ -10,6 +10,17 @@ namespace Molder.Service.Helpers
 {
     public static class ServiceHelpers
     {
+        public static JToken ToJson(this object obj)
+        {
+            return JToken.Parse(obj.ToString());
+        }
+
+        public static XDocument ToXml(this object obj)
+        {
+            var xmlDoc = XDocument.Parse(obj.ToString());
+            return xmlDoc;
+        }
+
         /// <summary>
         /// Определить к какому типу относится строка
         /// </summary>     
@@ -45,7 +56,7 @@ namespace Molder.Service.Helpers
         /// <summary>
         /// Добавить query к url
         /// </summary>        
-        public static string AddQueryInURL(string url, string query)
+        public static string AddQueryInURL(this string url, string query)
         {
            return query.StartsWith("?")? url + query: url + "?" + query;
         }

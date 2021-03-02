@@ -1,5 +1,4 @@
-﻿
-namespace Molder.Service.Infrastructures
+﻿namespace Molder.Service.Infrastructures
 {
     public enum HTTPMethodType
     {

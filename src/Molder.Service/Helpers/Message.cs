@@ -3,9 +3,9 @@ using System;
 
 namespace Molder.Service.Helpers
 {
-    public static class Messages
+    public static class Message
     {
-        public static string CreateMessage(RequestInfo request)
+        public static string CreateMessage(this RequestInfo request)
         {
             return request.Content == null ?
                     $"Request: {request.Url} {Environment.NewLine} with method {request.Method}" :
@@ -13,12 +13,11 @@ namespace Molder.Service.Helpers
        
         }
 
-        public static string CreateMessage(ResponceInfo responce)
+        public static string CreateMessage(this ResponceInfo responce)
         {            
             return responce.Content == null ?
                      $"Responce: {responce.StatusCode}" :
                      $"Responce: {responce.StatusCode} {Environment.NewLine} {responce.Content}";
-        
         }
     }
 }

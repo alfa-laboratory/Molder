@@ -5,58 +5,62 @@ using System;
 using Microsoft.Extensions.Logging;
 using Molder.Service.Exceptions;
 using System.Threading.Tasks;
+using Molder.Service.Models.Provider;
+using System.Threading;
 
 namespace Molder.Service.Models
 {
     public class WebService : IWebService, IDisposable
     {
-        public IFlurlProvider fprovider;
-        private RequestInfo request;
-
-        public WebService(RequestInfo request)
+        protected AsyncLocal<IFlurlProvider> flurlProvider = new AsyncLocal<IFlurlProvider> { Value = null };
+        public IFlurlProvider Provider
         {
-            fprovider = new FlurlProvider();
-            this.request = request;
+            get => flurlProvider.Value;
+            set
+            {
+                flurlProvider.Value = value;
+            }
         }
 
-        public async Task<ResponceInfo> SendMessage()
+        public WebService()
         {
-            var isValid = Validate.ValidateUrl(request.Url);
+            Provider = new FlurlProvider();
+        }
 
+        public async Task<ResponceInfo> SendMessage(RequestInfo request)
+        {
+            var isValid = Helpers.Validate.ValidateUrl(request.Url);
             if (isValid)
             {
                 try
                 {
-                    Log.Logger().LogInformation($"{Messages.CreateMessage(request)}");
+                    Log.Logger().LogInformation(Helpers.Message.CreateMessage(request));
 
-                    var resp = await fprovider.SendRequestAsync(request);
-
-                    var content = ServiceHelpers.GetObjectFromString(resp.Content?.ReadAsStringAsync().Result); 
+                    var responce = await Provider.SendRequestAsync(request);
                             
-                    var responce =  new ResponceInfo
+                    var responceInfo =  new ResponceInfo
                     {
-                        Headers = resp.Headers,
-                        Content = content,
+                        Headers = responce.Headers,
+                        Content = responce.Content?.ReadAsStringAsync().Result,
                         Request = request,
-                        StatusCode = resp.StatusCode
+                        StatusCode = responce.StatusCode
                     };
 
-                    Log.Logger().LogInformation($"{ Messages.CreateMessage(responce)}");
+                    Log.Logger().LogInformation(Helpers.Message.CreateMessage(responceInfo));
 
-                    return responce;
+                    return responceInfo;
                 }
                 catch (FlurlException ex)
                 {
-                    return FlurlExceptionsHelper.GetResponceFromException(ex, request);
+                    return ex.GetResponce(request);
                 }
                 catch (Exception ex) 
                 {
-                    return FlurlExceptionsHelper.GetResponceFromException(ex, request);    
+                    return ex.GetResponce(request);
                 }                
             }
 
             Log.Logger().LogError($"Url:{ request.Url} is not valid." );
-
             return null;
         }
 

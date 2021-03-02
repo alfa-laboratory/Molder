@@ -4,6 +4,6 @@ namespace Molder.Service.Models.Interfaces
 {
     public interface IWebService
     {
-        Task<ResponceInfo> SendMessage();
+        Task<ResponceInfo> SendMessage(RequestInfo requestInfo);
     }
 }

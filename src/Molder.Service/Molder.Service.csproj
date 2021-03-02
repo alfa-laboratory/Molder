@@ -6,7 +6,7 @@
     <AssemblyName>Molder.Service</AssemblyName>
     <Authors>Egor Shokhin</Authors>
     <Company>AlfaBank</Company>
-    <Version>1.0.4-beta</Version>
+    <Version>1.0.5</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <LangVersion>7.1</LangVersion>
