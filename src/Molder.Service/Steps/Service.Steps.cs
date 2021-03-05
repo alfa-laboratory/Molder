@@ -97,6 +97,8 @@ namespace Molder.Service.Steps
             this.variableController.Variables.Should().NotContainKey($"Данные по сервису с именем \"{name}\" уже существуют");
             this.serviceController.Services.Should().NotContainKey($"Данные по сервису с именем \"{name}\" уже существуют");
 
+            url = variableController.ReplaceVariables(url);
+
             if (requestDto.Query.Any())
             {
                 url = url.AddQueryInURL(requestDto.Query.Values.First());
