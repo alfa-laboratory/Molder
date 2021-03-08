@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using TechTalk.SpecFlow;
 using Molder.Models.Directory;
 using System.Threading;
+using Molder.Models.Configuration;
 
 namespace Molder.Configuration.Hooks
 {
@@ -31,8 +32,8 @@ namespace Molder.Configuration.Hooks
         public static void BeforeFeature(FeatureContext featureContext, VariableController variableController)
         {
             BinDirectory.Create();
-            var configuration = ConfigurationFactory.Create(BinDirectory);
-            config.Value = ConfigOptionsFactory.Create(configuration);
+            ConfigurationExtension.Instance.Configuration = ConfigurationFactory.Create(BinDirectory);
+            config.Value = ConfigOptionsFactory.Create(ConfigurationExtension.Instance.Configuration);
 
             var tags = TagHelper.GetTagsBy(featureContext);
             variableController.AddConfig(config.Value, tags);
@@ -42,8 +43,8 @@ namespace Molder.Configuration.Hooks
         public void BeforeScenario()
         {
             BinDirectory.Create();
-            var configuration = ConfigurationFactory.Create(BinDirectory);
-            config.Value = ConfigOptionsFactory.Create(configuration);
+
+            config.Value = ConfigOptionsFactory.Create(ConfigurationExtension.Instance.Configuration);
 
             var tags = TagHelper.GetTagsBy(scenarioContext);
             variableController.AddConfig(config.Value, tags);
