@@ -16,29 +16,36 @@ namespace Molder.Configuration.Hooks
     internal class Hooks : Steps
     {
         private VariableController variableController;
-        private readonly FeatureContext featureContext;
         private readonly ScenarioContext scenarioContext;
 
-        private IDirectory BinDirectory = new BinDirectory();
-        private AsyncLocal<IOptions<IEnumerable<ConfigFile>>> config = new AsyncLocal<IOptions<IEnumerable<ConfigFile>>>();
+        private static IDirectory BinDirectory = new BinDirectory();
+        private static AsyncLocal<IOptions<IEnumerable<ConfigFile>>> config = new AsyncLocal<IOptions<IEnumerable<ConfigFile>>>();
 
-        public Hooks(VariableController variableController,
-            FeatureContext featureContext, ScenarioContext scenarioContext)
+        public Hooks(VariableController variableController, ScenarioContext scenarioContext)
         {
             this.variableController = variableController;
-            this.featureContext = featureContext;
             this.scenarioContext = scenarioContext;
+        }
 
+        [BeforeFeature(Order = -100000)]
+        public static void BeforeFeature(FeatureContext featureContext, VariableController variableController)
+        {
             BinDirectory.Create();
             var configuration = ConfigurationFactory.Create(BinDirectory);
             config.Value = ConfigOptionsFactory.Create(configuration);
+
+            var tags = TagHelper.GetTagsBy(featureContext);
+            variableController.AddConfig(config.Value, tags);
         }
 
-        [BeforeScenario(Order = -30000)]
+        [BeforeScenario(Order = -100000)]
         public void BeforeScenario()
         {
-            var tags = TagHelper.GetAllTags(featureContext, scenarioContext);
+            BinDirectory.Create();
+            var configuration = ConfigurationFactory.Create(BinDirectory);
+            config.Value = ConfigOptionsFactory.Create(configuration);
 
+            var tags = TagHelper.GetTagsBy(scenarioContext);
             variableController.AddConfig(config.Value, tags);
         }
     }
