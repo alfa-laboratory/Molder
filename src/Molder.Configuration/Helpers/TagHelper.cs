@@ -8,12 +8,16 @@ namespace Molder.Configuration.Helpers
     [ExcludeFromCodeCoverage]
     public static class TagHelper
     {
-        public static IEnumerable<string> GetAllTags(FeatureContext feature, ScenarioContext scenario)
+        public static IEnumerable<string> GetTagsBy(FeatureContext feature)
         {
             var featureTags = feature.FeatureInfo.Tags;
-            var scenarioTags = scenario.ScenarioInfo.Tags;
+            return featureTags.ToList();
+        }
 
-            return scenarioTags.Concat(featureTags).OrderBy(tag => tag).ToList();
+        public static IEnumerable<string> GetTagsBy(ScenarioContext scenario)
+        {
+            var scenarioTags = scenario.ScenarioInfo.Tags;
+            return scenarioTags.ToList();
         }
     }
 }
