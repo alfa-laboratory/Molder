@@ -148,7 +148,7 @@ namespace Molder.Controllers
 
                     name = key.Split('[').First();
 
-                    keyPath = Regex.Match(key ?? string.Empty, StringPattern.BRACES).Groups[1].Value;
+                    keyPath = Regex.Match(key ?? string.Empty, StringPattern.BRACES, RegexOptions.IgnoreCase).Groups[1].Value;
                 }
 
                 var var = Variables.SingleOrDefault(_ => _.Key == name).Value;
@@ -204,7 +204,7 @@ namespace Molder.Controllers
                 {
                     if (typeof(DataRow).IsAssignableFrom(varType))
                     {
-                        if (keyPath == String.Empty)
+                        if (keyPath == string.Empty)
                         {
                             return ((DataRow)varValue);
                         }
@@ -329,7 +329,7 @@ namespace Molder.Controllers
                     val = GetVariableValue(m.Groups[1].Value);
                     return foundReplace != null ? foundReplace(val) : Reflection.ConvertObject<string>(val);
                 },
-                RegexOptions.None);
+                RegexOptions.IgnoreCase);
             return fmt;
         }
     }
