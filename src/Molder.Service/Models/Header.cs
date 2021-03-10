@@ -1,4 +1,5 @@
-﻿using TechTalk.SpecFlow.Assist.Attributes;
+﻿using Molder.Service.Infrastructures;
+using TechTalk.SpecFlow.Assist.Attributes;
 
 namespace Molder.Service.Models
 {
@@ -11,6 +12,6 @@ namespace Molder.Service.Models
         public string Value { get; set; }
 
         [TableAliases("Style", "Тип")] 
-        public string Style { get; set; } 
+        public HeaderType Style { get; set; } 
     }
 }

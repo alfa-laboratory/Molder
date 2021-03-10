@@ -24,7 +24,7 @@ namespace Molder.Service.Helpers
         /// <summary>
         /// Определить к какому типу относится строка
         /// </summary>     
-        public static object GetObjectFromString(string str)
+        public static object GetObject(this string str)
         {   
             var xDoc = Converter.CreateXDoc(str);            
             if (xDoc == null)
@@ -64,22 +64,22 @@ namespace Molder.Service.Helpers
         /// <summary>
         /// Получить StringContent для RequestInfo 
         /// </summary>   
-        public static HttpContent GetStringContent(object type, string replaceContent)
+        public static HttpContent GetHttpContent(this object obj, string content)
         {    
-            switch (type)
+            switch (obj)
             {
                 case XDocument xDoc:
                 case XmlDocument xmlDocument:
                     {
-                        return new StringContent(replaceContent, Encoding.UTF8, DefaultContentType.XML);                        
+                        return new StringContent(content, Encoding.UTF8, DefaultContentType.XML);                        
                     }
                 case JObject jObject:
                     {
-                        return new StringContent(replaceContent, Encoding.UTF8, DefaultContentType.JSON);                        
+                        return new StringContent(content, Encoding.UTF8, DefaultContentType.JSON);                        
                     }
                 default:
                     {
-                        return new StringContent(replaceContent, Encoding.UTF8, DefaultContentType.TEXT);                        
+                        return new StringContent(content, Encoding.UTF8, DefaultContentType.TEXT);                        
                     }
             }
         }

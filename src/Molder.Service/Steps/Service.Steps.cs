@@ -60,14 +60,8 @@ namespace Molder.Service.Steps
         [StepArgumentTransformation]
         public RequestDto TableToRequestDTO(Table table)
         {
-            var headers = table.CreateSet<Header>().ToList();
-            var requestDto = new RequestDto(headers, variableController);
-            if (requestDto.Body.Any())
-            {
-                var doc = ServiceHelpers.GetObjectFromString(requestDto.Body.Values.First());
-                requestDto.Content = ServiceHelpers.GetStringContent(doc, requestDto.Body.Values.First());
-            }
-            return requestDto;
+            var headers = table.CreateSet<Header>();
+            return new RequestDto(headers, variableController);
         }
 
         [StepArgumentTransformation]
@@ -91,7 +85,7 @@ namespace Molder.Service.Steps
         /// <param name="method">Метод сервиса.</param>
         /// <param name="service">Название сервиса.</param>
         /// <param name="parameters">Параметры вызова.</param>
-        [When(@"я вызываю веб-сервис ""([A-z]+)"" по адресу ""(.+)"" с методом ""(.+)"", используя параметры:")]
+        [When(@"я вызываю веб-сервис ""(.+)"" по адресу ""(.+)"" с методом ""(.+)"", используя параметры:")]
         public void SendToRestServiceWithBody(string name, string url, HTTPMethodType method, RequestDto requestDto) 
         {
             this.variableController.Variables.Should().NotContainKey($"Данные по сервису с именем \"{name}\" уже существуют");
