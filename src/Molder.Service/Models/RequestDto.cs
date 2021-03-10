@@ -44,9 +44,9 @@ namespace Molder.Service.Models
             var isCheck = headers.Count(h => h.Style == HeaderType.BODY);
             if(isCheck == 1)
             {
-
-                var value = headers.FirstOrDefault(h => h.Style == HeaderType.BODY);
-                return variableController.ReplaceVariables(value.Value);
+                var name = headers.FirstOrDefault(h => h.Style == HeaderType.BODY).Value;
+                var value = variableController.GetVariableValueText(name);
+                return value != null ? variableController.ReplaceVariables(value) : name;
             }
             return null;
         }

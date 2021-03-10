@@ -281,12 +281,13 @@ namespace Molder.Generator.Steps
         /// <param name="varName">Идентификатор переменной.</param>
         /// <param name="expected">Expected значение.</param>
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" равно ""(.+)""")]
-        public void CheckVariableEquals(string varName, object expected)
+        public void CheckVariableEquals(string varName, string expected)
         {
-            expected.Should().NotBeNull($"значение \"expected\" не задано.");
+            expected.Should().NotBeNull($"значение \"expected\" не задано");
+            expected = this.variableController.ReplaceVariables(expected) ?? expected;
 
             var actual = this.variableController.GetVariableValueText(varName);
-            expected.GetType().Should().Be(actual.GetType(), $"тип значения переменной \"{varName}\" не совпадает с типом \"{expected}\"");
+            actual.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
             expected.Should().Be(actual, $"значение переменной \"{varName}\":\"{actual}\" не равно \"{expected}\"");
         }
 
@@ -296,11 +297,13 @@ namespace Molder.Generator.Steps
         /// <param name="varName">Идентификатор переменной.</param>
         /// <param name="expected">Expected значение.</param>
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" не равно ""(.+)""")]
-        public void CheckVariableNotEquals(string varName, object expected)
+        public void CheckVariableNotEquals(string varName, string expected)
         {
             expected.Should().NotBeNull($"значение \"expected\" не задано");
+            expected = this.variableController.ReplaceVariables(expected) ?? expected;
+
             var actual = this.variableController.GetVariableValueText(varName);
-            expected.GetType().Should().Be(actual.GetType(), $"тип значения переменной \"{varName}\" не совпадает с типом \"{expected}\"");
+            actual.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
             expected.Should().NotBe(actual, $"значение переменной \"{varName}\":\"{actual}\" равно \"{expected}\"");
         }
 
@@ -313,9 +316,11 @@ namespace Molder.Generator.Steps
         public void CheckVariableContains(string varName, string expected)
         {
             expected.Should().NotBeNull($"значение \"expected\" не задано");
+            expected = this.variableController.ReplaceVariables(expected) ?? expected;
+
             var actual = this.variableController.GetVariableValueText(varName);
-            actual.Should().NotBeNull($"значение переменной \"{varName}\" NULL");
-            actual.Contains(expected).Should().BeTrue($"значение переменной \"{varName}\":\"{actual}\" не содержит \"{expected}\"");
+            actual.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
+            actual.Should().Contain(expected, $"значение переменной \"{varName}\":\"{actual}\" не содержит \"{expected}\"");
         }
 
         /// <summary>
@@ -327,9 +332,11 @@ namespace Molder.Generator.Steps
         public void CheckVariableNotContains(string varName, string expected)
         {
             expected.Should().NotBeNull($"значение \"expected\" не задано");
+            expected = this.variableController.ReplaceVariables(expected) ?? expected;
+
             var actual = this.variableController.GetVariableValueText(varName);
-            actual.Should().NotBeNull($"значение переменной \"{varName}\" NULL");
-            actual.Contains(expected).Should().BeFalse($"значение переменной \"{varName}\":\"{actual}\" содержит \"{expected}\"");
+            actual.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
+            actual.Should().NotContain(expected, $"значение переменной \"{varName}\":\"{actual}\" содержит \"{expected}\"");
         }
 
         /// <summary>
@@ -340,10 +347,12 @@ namespace Molder.Generator.Steps
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" начинается с ""(.+)""")]
         public void CheckVariableStartsWith(string varName, string expected)
         {
-            var actual = this.variableController.GetVariableValueText(varName);
-            actual.Should().NotBeNull($"значение переменной \"{varName}\" NULL");
             expected.Should().NotBeNull($"значение \"expected\" не задано");
-            actual.StartsWith(expected).Should().BeTrue($"значение переменной \"{varName}\":\"{actual}\" не начинается с \"{expected}\"");
+            expected = this.variableController.ReplaceVariables(expected) ?? expected;
+
+            var actual = this.variableController.GetVariableValueText(varName);
+            actual.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
+            actual.Should().StartWith(expected, $"значение переменной \"{varName}\":\"{actual}\" не начинается с \"{expected}\"");
         }
 
         /// <summary>
@@ -354,82 +363,12 @@ namespace Molder.Generator.Steps
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" заканчивается с ""(.+)""")]
         public void CheckVariableEndsWith(string varName, string expected)
         {
-            var actual = this.variableController.GetVariableValueText(varName);
-            actual.Should().NotBeNull($"значение переменной \"{varName}\" NULL");
             expected.Should().NotBeNull($"значение \"expected\" не задано");
-            actual.EndsWith(expected).Should().BeTrue($"значение переменной \"{varName}\":\"{actual}\" не заканчивается с \"{expected}\"");
-        }
+            expected = this.variableController.ReplaceVariables(expected) ?? expected;
 
-        /// <summary>
-        /// Шаг проверки того, что значение одной переменной равно значению другой переменной.
-        /// </summary>
-        /// <param name="varName1">Переменная 1.</param>
-        /// <param name="varName2">Переменная 2.</param>
-        [Then(@"я убеждаюсь, что значение переменной ""(.+)"" равно значению переменной ""(.+)""")]
-        public void CheckVariablesAreEqual(string varName1, string varName2)
-        {
-            var value1 = this.variableController.GetVariableValueText(varName1);
-            var value2 = this.variableController.GetVariableValueText(varName2);
-
-            value1.Should().NotBeNull($"значения в переменной \"{varName1}\" нет");
-            value2.Should().NotBeNull($"значения в переменной \"{varName2}\" нет");
-
-            value1.Should().Be(
-                value2,
-                $"значение переменной \"{varName1}\":\"{value1}\" не равно значению переменной \"{varName2}\":\"{value2}\"");
-        }
-
-        /// <summary>
-        /// Шаг проверки того, что значение одной переменной не равно значению другой переменной.
-        /// </summary>
-        /// <param name="varName1">Переменная 1.</param>
-        /// <param name="varName2">Переменная 2.</param>
-        [Then(@"я убеждаюсь, что значение переменной ""(.+)"" не равно значению переменной ""(.+)""")]
-        public void CheckVariablesAreNotEqual(string varName1, string varName2)
-        {
-            var value1 = this.variableController.GetVariableValueText(varName1);
-            var value2 = this.variableController.GetVariableValueText(varName2);
-
-            value1.Should().NotBeNull($"значения в переменной \"{varName1}\" нет");
-            value2.Should().NotBeNull($"значения в переменной \"{varName2}\" нет");
-
-            value1.Should().NotBe(
-                value2,
-                $"значение переменной \"{varName1}\":\"{value1}\" равно значению переменной \"{varName2}\":\"{value2}\"");
-        }
-
-        /// <summary>
-        /// Шаг проверки того, что значение одной переменной содержит значение другой переменной.
-        /// </summary>
-        /// <param name="varName1">Переменная 1.</param>
-        /// <param name="varName2">Переменная 2.</param>
-        [Then(@"я убеждаюсь, что значение переменной ""(.+)"" содержит значение переменной ""(.+)""")]
-        public void CheckVariableAreContains(string varName1, string varName2)
-        {
-            var value1 = this.variableController.GetVariableValueText(varName1);
-            var value2 = this.variableController.GetVariableValueText(varName2);
-
-            value1.Should().NotBeNull($"значения в переменной \"{varName1}\" нет");
-            value2.Should().NotBeNull($"значения в переменной \"{varName2}\" нет");
-
-            value1.Contains(value2).Should().BeTrue($"значение переменной \"{varName1}\":\"{value1}\" не содержит значение переменной \"{varName2}\":\"{value2}\"");
-        }
-
-        /// <summary>
-        /// Шаг проверки того, что значение одной переменной не содержит значение другой переменной.
-        /// </summary>
-        /// <param name="varName1">Переменная 1.</param>
-        /// <param name="varName2">Переменная 2.</param>
-        [Then(@"я убеждаюсь, что значение переменной ""(.+)"" не содержит значение переменной ""(.+)""")]
-        public void CheckVariableAreNotContains(string varName1, string varName2)
-        {
-            var value1 = this.variableController.GetVariableValueText(varName1);
-            var value2 = this.variableController.GetVariableValueText(varName2);
-
-            value1.Should().NotBeNull($"значения в переменной \"{varName1}\" нет");
-            value2.Should().NotBeNull($"значения в переменной \"{varName2}\" нет");
-
-            value1.Contains(value2).Should().BeFalse($"значение переменной \"{varName1}\":\"{value1}\" содержит значение переменной \"{varName2}\":\"{value2}\"");
+            var actual = this.variableController.GetVariableValueText(varName);
+            actual.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
+            actual.Should().EndWith(expected, $"значение переменной \"{varName}\":\"{actual}\" не заканчивается с \"{expected}\"");
         }
     }
 }

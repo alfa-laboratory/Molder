@@ -3,6 +3,7 @@ using FluentAssertions;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
+using System.Collections.Generic;
 
 namespace Molder.Service.Tests
 {
@@ -52,30 +53,24 @@ namespace Molder.Service.Tests
                 .Throw<ArgumentNullException>();
         }
 
-        [Theory]
-        [InlineData("  ", "  ")]
-        [InlineData("", "")]
-        public void AddQueryInURL_EmptyString_ReturnString(string url, string query)
+        [Fact]
+        public void AddQueryInURL_NullUrl_ReturnError()
         {
-            var result = ServiceHelpers.AddQueryInURL(url, query);
-            result.Should().Contain("?");
-        }
+            string url = null;
+            Action action = () => url.AddQueryInURL(new Dictionary<string, string>());
 
-        [Theory]
-        [InlineData("test", "?test/")]        
-        public void AddQueryInURL_String_ReturnString(string url, string query)
-        {
-            var result = ServiceHelpers.AddQueryInURL(url, query);
-            result.Should().Be("test?test/");
+            action.Should()
+                .Throw<Exception>().WithMessage("Expected url not to be <null> because web service address not specified.");
         }
 
         [Fact]
-        public void AddQueryInURL_Null_ReturnError()
-        {           
-            Action action = () => ServiceHelpers.AddQueryInURL(null, null);
+        public void AddQueryInURL_NullQuery_ReturnError()
+        {
+            string url = string.Empty;
+            Action action = () => url.AddQueryInURL(null);
 
             action.Should()
-                .Throw<NullReferenceException>();
+                .Throw<Exception>().WithMessage("Expected query not to be <null> because web service query not specified.");
         }
 
         [Fact]

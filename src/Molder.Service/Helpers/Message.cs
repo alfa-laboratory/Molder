@@ -10,15 +10,14 @@ namespace Molder.Service.Helpers
         {
             return request.Content == null ?
                     $"Request: {request.Url} {Environment.NewLine} with method {request.Method}" :
-                    $"Request: {request.Url} {Environment.NewLine} with method {request.Method} {Environment.NewLine} and content: {(request.Content as StringContent).ReadAsStringAsync().GetAwaiter().GetResult()}";              
-       
+                    $"Request: {request.Url} {Environment.NewLine} with method {request.Method} {Environment.NewLine} and content: {Environment.NewLine} {(request.Content as StringContent).ReadAsStringAsync().GetAwaiter().GetResult()}";
         }
 
         public static string CreateMessage(this ResponceInfo responce)
         {            
             return responce.Content == null ?
-                     $"Responce: {responce.StatusCode}" :
-                     $"Responce: {responce.StatusCode} {Environment.NewLine} {responce.Content}";
+                     $"Responce: {responce.Request.Url} status: {responce.StatusCode}" :
+                     $"Responce: {responce.Request.Url} status: {responce.StatusCode} and content: {Environment.NewLine} {responce.Content}";
         }
     }
 }

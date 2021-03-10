@@ -39,7 +39,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.DeleteVariable("test");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"переменная \"test\" не существует.");
+                .WithMessage("Expected this.variableController.Variables {empty} to contain key \"test\" because переменная \"test\" не существует.");
         }
 
         [Fact]
@@ -63,7 +63,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.EmtpyVariable("test");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"переменная \"test\" не существует");
+                .WithMessage("Expected this.variableController.Variables {empty} to contain key \"test\" because переменная \"test\" не существует.");
         }
 
         [Fact]
@@ -115,7 +115,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.ChangeVariable("test", 0);
             act.Should().Throw<Exception>()
-                .Which.Message.Contains("переменная \"test\" не существует");
+                .WithMessage("Expected this.variableController.Variables {empty} to contain key \"test\" because переменная \"test\" не существует.");
         }
 
         [Fact]
@@ -139,7 +139,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.StoreAsVariableString(null, "test");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Переменная \"test\" уже существует");
+                .WithMessage("Expected this.variableController.Variables {[test, Molder.Models.Variable]} not to contain key \"test\" because переменная \"test\" уже существует, but found it anyhow.");
         }
 
         [Fact]
@@ -164,7 +164,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.StoreAsVariableEncriptedString(null, "test");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Переменная \"test\" уже существует");
+                .WithMessage("Expected this.variableController.Variables {[test, Molder.Models.Variable]} not to contain key \"test\" because переменная \"test\" уже существует, but found it anyhow.");
         }
 
         [Fact]
@@ -188,7 +188,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.StoreAsVariableText("test", null);
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Переменная \"test\" уже существует");
+                .WithMessage("Expected this.variableController.Variables {[test, Molder.Models.Variable]} not to contain key \"test\" because переменная \"test\" уже существует, but found it anyhow.");
         }
 
         [Fact]
@@ -201,7 +201,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.StoreAsVariableNumber("test", null);
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Переменная \"test\" уже существует");
+                .WithMessage("Expected this.variableController.Variables {[test, Molder.Models.Variable]} not to contain key \"test\" because переменная \"test\" уже существует, but found it anyhow.");
         }
 
         [Fact]
@@ -211,7 +211,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.StoreAsVariableNumber("test", "test");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Input string was not in a correct format");
+                .WithMessage($"Input string was not in a correct format.");
         }
 
         [Theory]
@@ -236,7 +236,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.StoreAsVariableXmlFromText("test", null);
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Переменная \"test\" уже существует");
+                .WithMessage("Expected this.variableController.Variables {[test, Molder.Models.Variable]} not to contain key \"test\" because переменная \"test\" уже существует, but found it anyhow.");
         }
 
         [Fact]
@@ -246,7 +246,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.StoreAsVariableXmlFromText("test", "test");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Создать XmlDoc из строки \"test\" не удалось.");
+                .WithMessage($"Expected doc not to be <null> because создать XmlDoc из строки \"test\" не удалось.");
         }
 
         [Fact]
@@ -273,7 +273,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.StoreVariableValueToVariable("test", "test");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Переменная \"test\" уже существует");
+                .WithMessage("Expected this.variableController.Variables {[test, Molder.Models.Variable]} not to contain key \"test\" because переменная \"test\" уже существует, but found it anyhow.");
         }
 
         [Fact]
@@ -283,7 +283,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.StoreVariableValueToVariable("test", null);
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"переменная \"test\" не существует");
+                .WithMessage("Expected this.variableController.Variables {empty} to contain key \"test\" because переменная \"test\" не существует.");
         }
 
         [Fact]
@@ -306,7 +306,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableIsNotNull("test");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение переменной \"test\" является NULL");
+                .WithMessage($"Expected value not to be <null> because значение переменной \"test\" является NULL.");
         }
 
         [Fact]
@@ -329,7 +329,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableIsNull("test");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение переменной \"test\" не является NULL");
+                .WithMessage($"Expected value to be <null> because значение переменной \"test\" не является NULL, but found \"\".");
         }
 
         [Fact]
@@ -352,7 +352,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableIsNotEmpty("test");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значения в переменной \"test\" нет");
+                .WithMessage($"Expected value not to be <null> because значения в переменной \"test\" нет.");
         }
 
         [Fact]
@@ -365,7 +365,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableIsNotEmpty("test");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение переменной \"test\" пустая строка");
+                .WithMessage($"Expected string.IsNullOrWhiteSpace((string)value) to be false because значение переменной \"test\" пустая строка, but found True.");
         }
 
         [Fact]
@@ -388,7 +388,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableIsEmpty("test");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значения в переменной \"test\" нет");
+                .WithMessage($"Expected value not to be <null> because значения в переменной \"test\" нет.");
         }
 
         [Fact]
@@ -401,7 +401,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableIsEmpty("test");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение переменной \"test\" не пустая строка");
+                .WithMessage($"Expected string.IsNullOrWhiteSpace((string)value) to be true because значение переменной \"test\" не пустая строка, but found False.");
         }
 
         [Fact]
@@ -423,19 +423,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableEquals("test", null);
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение \"expected\" не задано.");
-        }
-
-        [Fact]
-        public void CheckVariableEquals_InCorrectType_ReturnException()
-        {
-            var variable = new Variable() { Type = typeof(string), Value = "test" };
-            variableController.Variables.TryAdd("test", variable);
-            VariableSteps steps = new VariableSteps(variableController);
-
-            Action act = () => steps.CheckVariableEquals("test", 0);
-            act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Тип значения переменной \"test\" не совпадает с типом \"0\"");
+                .WithMessage($"Expected expected not to be <null> because значение \"expected\" не задано.");
         }
 
         [Fact]
@@ -447,7 +435,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableEquals("test", "mp");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение переменной \"test\":\"test\" не равно \"mp\"");
+                .WithMessage($"Expected expected to be \"test\" with a length of 4 because значение переменной \"test\":\"test\" не равно \"mp\", but \"mp\" has a length of 2, differs near \"mp\" (index 0).");
         }
 
         [Fact]
@@ -469,19 +457,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableNotEquals("test", null);
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение \"expected\" не задано.");
-        }
-
-        [Fact]
-        public void CheckVariableNotEquals_InCorrectType_ReturnException()
-        {
-            var variable = new Variable() { Type = typeof(string), Value = "test" };
-            variableController.Variables.TryAdd("test", variable);
-            VariableSteps steps = new VariableSteps(variableController);
-
-            Action act = () => steps.CheckVariableNotEquals("test", 0);
-            act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Тип значения переменной \"test\" не совпадает с типом \"0\"");
+                .WithMessage($"Expected expected not to be <null> because значение \"expected\" не задано.");
         }
 
         [Fact]
@@ -493,7 +469,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableNotEquals("test", "test");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение переменной \"test\":\"test\" равно \"test\"");
+                .WithMessage($"Expected expected not to be \"test\" because значение переменной \"test\":\"test\" равно \"test\".");
         }
 
         [Fact]
@@ -515,7 +491,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableContains("test", null);
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение \"expected\" не задано.");
+                .WithMessage($"Expected expected not to be <null> because значение \"expected\" не задано.");
         }
 
         [Fact]
@@ -527,7 +503,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableContains("test", "test");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение переменной \"test\" NULL.");
+                .WithMessage($"Expected actual not to be <null> because значения в переменной \"test\" нет.");
         }
 
         [Fact]
@@ -539,7 +515,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableContains("test", "mp");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение переменной \"test\":\"test\" не содержит \"mp\"");
+                .WithMessage($"Expected actual \"test\" to contain \"mp\" because значение переменной \"test\":\"test\" не содержит \"mp\".");
         }
 
         [Fact]
@@ -561,7 +537,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableNotContains("test", null);
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение \"expected\" не задано.");
+                .WithMessage($"Expected expected not to be <null> because значение \"expected\" не задано.");
         }
 
         [Fact]
@@ -573,7 +549,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableNotContains("test", "test");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение переменной \"test\" NULL.");
+                .WithMessage($"Expected actual not to be <null> because значения в переменной \"test\" нет.");
         }
 
         [Fact]
@@ -585,7 +561,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableNotContains("test", "test");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение переменной \"test\":\"test\" содержит \"test\"");
+                .WithMessage($"Did not expect actual \"test\" to contain \"test\" because значение переменной \"test\":\"test\" содержит \"test\".");
         }
 
         [Fact]
@@ -607,7 +583,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableStartsWith("test", null);
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение \"expected\" не задано.");
+                .WithMessage($"Expected expected not to be <null> because значение \"expected\" не задано.");
         }
 
         [Fact]
@@ -619,7 +595,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableStartsWith("test", "test");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение переменной \"test\" NULL.");
+                .WithMessage($"Expected actual not to be <null> because значения в переменной \"test\" нет.");
         }
 
         [Fact]
@@ -631,7 +607,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableStartsWith("test", "mp");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение переменной \"test\":\"test\" не начинается с \"mp\"");
+                .WithMessage($"Expected actual to start with \"mp\" because значение переменной \"test\":\"test\" не начинается с \"mp\", but \"test\" differs near \"tes\" (index 0).");
         }
 
         [Fact]
@@ -653,7 +629,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableEndsWith("test", null);
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение \"expected\" не задано.");
+                .WithMessage($"Expected expected not to be <null> because значение \"expected\" не задано.");
         }
 
         [Fact]
@@ -665,7 +641,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableEndsWith("test", "123");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение переменной \"test\" NULL.");
+                .WithMessage($"Expected actual not to be <null> because значения в переменной \"test\" нет.");
         }
 
         [Fact]
@@ -677,7 +653,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableEndsWith("test", "123");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение переменной \"test\":\"test\" не заканчивается с \"123\"");
+                .WithMessage($"Expected actual \"test\" to end with \"123\" because значение переменной \"test\":\"test\" не заканчивается с \"123\".");
         }
 
         [Fact]
@@ -689,7 +665,7 @@ namespace Molder.Generator.Tests
             variableController.Variables.TryAdd("test2", variable);
 
             VariableSteps steps = new VariableSteps(variableController);
-            steps.CheckVariablesAreEqual("test1", "test2");
+            steps.CheckVariableEquals("test1", "{test2}");
         }
 
         [Fact]
@@ -702,24 +678,9 @@ namespace Molder.Generator.Tests
 
             VariableSteps steps = new VariableSteps(variableController);
 
-            Action act = () => steps.CheckVariablesAreEqual("test1", "test2");
+            Action act = () => steps.CheckVariableEquals("test1", "test2");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значения в переменной \"test1\" нет");
-        }
-
-        [Fact]
-        public void CheckVariablesAreEqual_InCorrectValue2_ReturnException()
-        {
-            var variable = new Variable() { Type = typeof(string), Value = "test" };
-            variableController.Variables.TryAdd("test1", variable);
-            variable = new Variable() { Type = typeof(string), Value = null };
-            variableController.Variables.TryAdd("test2", variable);
-
-            VariableSteps steps = new VariableSteps(variableController);
-
-            Action act = () => steps.CheckVariablesAreEqual("test1", "test2");
-            act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значения в переменной \"test2\" нет");
+                .WithMessage($"Expected actual not to be <null> because значения в переменной \"test1\" нет.");
         }
 
         [Fact]
@@ -731,9 +692,9 @@ namespace Molder.Generator.Tests
             variableController.Variables.TryAdd("test2", variable);
             VariableSteps steps = new VariableSteps(variableController);
 
-            Action act = () => steps.CheckVariablesAreEqual("test1", "test2");
+            Action act = () => steps.CheckVariableEquals("test1", "{test2}");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение переменной \"test1\":\"1\" не равно значению переменной \"test2\":\"2\"");
+                .WithMessage($"Expected expected to be \"1\" because значение переменной \"test1\":\"1\" не равно \"2\", but \"2\" differs near \"2\" (index 0).");
         }
 
         [Fact]
@@ -745,7 +706,7 @@ namespace Molder.Generator.Tests
             variableController.Variables.TryAdd("test2", variable);
 
             VariableSteps steps = new VariableSteps(variableController);
-            steps.CheckVariablesAreNotEqual("test1", "test2");
+            steps.CheckVariableNotEquals("test1", "{test2}");
         }
 
         [Fact]
@@ -758,24 +719,9 @@ namespace Molder.Generator.Tests
 
             VariableSteps steps = new VariableSteps(variableController);
 
-            Action act = () => steps.CheckVariablesAreEqual("test1", "test2");
+            Action act = () => steps.CheckVariableNotEquals("test1", "test2");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значения в переменной \"test1\" нет");
-        }
-
-        [Fact]
-        public void CheckVariablesAreNotEqual_InCorrectValue2_ReturnException()
-        {
-            var variable = new Variable() { Type = typeof(string), Value = "test" };
-            variableController.Variables.TryAdd("test1", variable);
-            variable = new Variable() { Type = typeof(string), Value = null };
-            variableController.Variables.TryAdd("test2", variable);
-
-            VariableSteps steps = new VariableSteps(variableController);
-
-            Action act = () => steps.CheckVariablesAreEqual("test1", "test2");
-            act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значения в переменной \"test2\" нет");
+                .WithMessage($"Expected actual not to be <null> because значения в переменной \"test1\" нет.");
         }
 
         [Fact]
@@ -787,9 +733,9 @@ namespace Molder.Generator.Tests
             variableController.Variables.TryAdd("test2", variable);
             VariableSteps steps = new VariableSteps(variableController);
 
-            Action act = () => steps.CheckVariablesAreNotEqual("test1", "test2");
+            Action act = () => steps.CheckVariableNotEquals("test1", "{test2}");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"значение переменной \"test1\":\"1\" равно значению переменной \"test2\":\"1\"");
+                .WithMessage($"Expected expected not to be \"1\" because значение переменной \"test1\":\"1\" равно \"1\".");
         }
 
         [Fact]
@@ -801,7 +747,7 @@ namespace Molder.Generator.Tests
             variableController.Variables.TryAdd("test2", variable);
 
             VariableSteps steps = new VariableSteps(variableController);
-            steps.CheckVariableAreContains("test1", "test2");
+            steps.CheckVariableContains("test1", "{test2}");
         }
 
         [Fact]
@@ -814,24 +760,9 @@ namespace Molder.Generator.Tests
 
             VariableSteps steps = new VariableSteps(variableController);
 
-            Action act = () => steps.CheckVariableAreContains("test1", "test2");
+            Action act = () => steps.CheckVariableContains("test1", "test2");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значения в переменной \"test1\" нет");
-        }
-
-        [Fact]
-        public void CheckVariableAreContains_InCorrectValue2_ReturnException()
-        {
-            var variable = new Variable() { Type = typeof(string), Value = "test" };
-            variableController.Variables.TryAdd("test1", variable);
-            variable = new Variable() { Type = typeof(string), Value = null };
-            variableController.Variables.TryAdd("test2", variable);
-
-            VariableSteps steps = new VariableSteps(variableController);
-
-            Action act = () => steps.CheckVariableAreContains("test1", "test2");
-            act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значения в переменной \"test2\" нет");
+                .WithMessage($"Expected actual not to be <null> because значения в переменной \"test1\" нет.");
         }
 
         [Fact]
@@ -843,9 +774,9 @@ namespace Molder.Generator.Tests
             variableController.Variables.TryAdd("test2", variable);
             VariableSteps steps = new VariableSteps(variableController);
 
-            Action act = () => steps.CheckVariableAreContains("test1", "test2");
+            Action act = () => steps.CheckVariableContains("test1", "{test2}");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение переменной \"test1\":\"1\" не содержит значение переменной \"test2\":\"2\"");
+                .WithMessage($"Expected actual \"1\" to contain \"2\" because значение переменной \"test1\":\"1\" не содержит \"2\".");
         }
 
         [Fact]
@@ -857,7 +788,7 @@ namespace Molder.Generator.Tests
             variableController.Variables.TryAdd("test2", variable);
 
             VariableSteps steps = new VariableSteps(variableController);
-            steps.CheckVariableAreNotContains("test1", "test2");
+            steps.CheckVariableNotContains("test1", "{test2}");
         }
 
         [Fact]
@@ -870,24 +801,9 @@ namespace Molder.Generator.Tests
 
             VariableSteps steps = new VariableSteps(variableController);
 
-            Action act = () => steps.CheckVariableAreNotContains("test1", "test2");
+            Action act = () => steps.CheckVariableNotContains("test1", "test2");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значения в переменной \"test1\" нет");
-        }
-
-        [Fact]
-        public void CheckVariableAreNotContains_InCorrectValue2_ReturnException()
-        {
-            var variable = new Variable() { Type = typeof(string), Value = "test" };
-            variableController.Variables.TryAdd("test1", variable);
-            variable = new Variable() { Type = typeof(string), Value = null };
-            variableController.Variables.TryAdd("test2", variable);
-
-            VariableSteps steps = new VariableSteps(variableController);
-
-            Action act = () => steps.CheckVariableAreNotContains("test1", "test2");
-            act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значения в переменной \"test2\" нет");
+                .WithMessage($"Expected actual not to be <null> because значения в переменной \"test1\" нет.");
         }
 
         [Fact]
@@ -899,9 +815,9 @@ namespace Molder.Generator.Tests
             variableController.Variables.TryAdd("test2", variable);
             VariableSteps steps = new VariableSteps(variableController);
 
-            Action act = () => steps.CheckVariableAreNotContains("test1", "test2");
+            Action act = () => steps.CheckVariableNotContains("test1", "{test2}");
             act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значение переменной \"test1\":\"1\" содержит значение переменной \"test2\":\"1\"");
+                .WithMessage($"Did not expect actual \"1\" to contain \"1\" because значение переменной \"test1\":\"1\" содержит \"1\".");
         }
 
         [Theory]
@@ -933,7 +849,7 @@ namespace Molder.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .Which.Message.Contains("переменная \"test\" не существует");
+              .WithMessage("Expected this.variableController.Variables {empty} to contain key \"test\" because переменная \"test\" не существует.");
         }
 
         [Fact]
@@ -952,7 +868,7 @@ namespace Molder.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .Which.Message.Contains("переменная \"test2\" уже существует");
+              .WithMessage("Expected this.variableController.Variables {[test, Molder.Models.Variable], [test2, Molder.Models.Variable]} not to contain key \"test2\" because переменная \"test2\" уже существует, but found it anyhow.");
         }
     }
 }
