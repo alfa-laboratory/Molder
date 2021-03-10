@@ -55,34 +55,6 @@ namespace EvidentInstruction.Service.Tests
             result.Content.Headers.ContentType.ToString().Should().Be("text/xml; charset=utf-8");
         }
 
-        [Theory]
-        [InlineData("", "", "")]
-        [InlineData(null, null, null)]             
-        public void GetRequestDTO_IncorrectTable_ReturnEmpty(string name, string value, string style)
-        {
-            var table = new Table(new string[] { "Name", "Value", "Style" });
-            table.AddRow(name, value, style);
-
-            var result = step.TableToRequestDTO(table);
-
-            result.Header.Should().BeEmpty();
-            result.Body.Should().BeEmpty();
-            result.Query.Should().BeEmpty();
-            result.Content.Should().BeNull();
-        }
-
-        [Theory]        
-        [InlineData("test", "test/test", "")]
-        [InlineData("", "test/test", "QuerrY")]
-        public void GetRequestDTO_IncorrectTable_ReturnEmptyQuery(string name, string value, string style)
-        {
-            var table = new Table(new string[] { "Name", "Value", "Style" });
-            table.AddRow(name, value, style);
-
-            var result = step.TableToRequestDTO(table);
-            result.Query.Should().BeEmpty();
-        }
-
 #if ToDOSendToRestServiceWithBody
         [Fact]        
         public void SendToRestServiceWithBody_EmptyUrl_ReturnVariable()

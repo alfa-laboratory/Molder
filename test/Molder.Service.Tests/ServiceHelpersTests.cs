@@ -19,7 +19,7 @@ namespace Molder.Service.Tests
                     "}")]
         public void GetObjectFromString_CorrectString_ReturnJObject(string str)
         {
-            var result = ServiceHelpers.GetObjectFromString(str);
+            var result = str.GetObject();
 
             result.GetType().Name.Should().Be("JObject");
         }
@@ -29,7 +29,7 @@ namespace Molder.Service.Tests
         [InlineData("<b><i>Test</i></b>")]
         public void GetObjectFromString_CorrectString_ReturnXDoc(string str)
         {
-            var result = ServiceHelpers.GetObjectFromString(str);
+            var result = str.GetObject();
             result.GetType().Name.Should().Be("XDocument");
         }
 
@@ -38,14 +38,15 @@ namespace Molder.Service.Tests
         [InlineData("")]
         public void GetObjectFromString_EmptyString_ReturnString(string str)
         {
-            var result = ServiceHelpers.GetObjectFromString(str);
+            var result = str.GetObject(); ;
             result.GetType().Name.Should().Be("String");
         }
 
         [Fact]
         public void GetObjectFromString_Null_ReturnError()
         {
-            Action action = () => ServiceHelpers.GetObjectFromString(null);
+            string str = null;
+            Action action = () => str.GetObject();
 
             action.Should()
                 .Throw<ArgumentNullException>();
@@ -81,9 +82,8 @@ namespace Molder.Service.Tests
         public void GetStringContent_String_ReturnStringContent()
         {
             string str = "test";
-            var type = ServiceHelpers.GetObjectFromString(str);
-
-            var result = ServiceHelpers.GetStringContent(type, str);
+            var type = str.GetObject();
+            var result = type.GetHttpContent(str);
 
             result.Headers.ContentType.ToString().Should().Be("text/plain; charset=utf-8");
             result.Headers.ContentLength.Should().Be(4);            
@@ -93,9 +93,8 @@ namespace Molder.Service.Tests
         public void GetStringContent_JObject_ReturnStringContent()
         {
             string str = "{'Test': 'Test'}";
-            var type = ServiceHelpers.GetObjectFromString(str);
-
-            var result = ServiceHelpers.GetStringContent(type, str);
+            var type = str.GetObject();
+            var result = type.GetHttpContent(str);
 
             result.Headers.ContentType.ToString().Should().Be("application/json; charset=utf-8");            
         }
@@ -104,9 +103,8 @@ namespace Molder.Service.Tests
         public void GetStringContent_XDoc_ReturnStringContent()
         {
             string str = "<p>Test</p>";
-            var type = ServiceHelpers.GetObjectFromString(str);
-
-            var result = ServiceHelpers.GetStringContent(type, str);
+            var type = str.GetObject();
+            var result = type.GetHttpContent(str);
 
             result.Headers.ContentType.ToString().Should().Be("text/xml; charset=utf-8");
         }
@@ -116,7 +114,7 @@ namespace Molder.Service.Tests
         [InlineData(null, null)]
         public void GetStringContent_Null_ReturnError(object type, string str)
         {
-            Action action = () => ServiceHelpers.GetStringContent(type, str);
+            Action action = () => type.GetHttpContent(str);
 
             action.Should()
                 .Throw<ArgumentNullException>();

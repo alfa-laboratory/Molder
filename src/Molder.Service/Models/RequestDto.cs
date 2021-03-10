@@ -21,8 +21,11 @@ namespace Molder.Service.Models
             Query = SetData(HeaderType.QUERY);
 
             var body = GetBody();
-            var obj = body.GetObject();
-            Content = obj.GetHttpContent(body);
+            if (body != null)
+            {
+                var obj = body.GetObject();
+                Content = obj.GetHttpContent(body);
+            }
         }
 
         public Dictionary<string, string> Header { get; private set; } = null;
