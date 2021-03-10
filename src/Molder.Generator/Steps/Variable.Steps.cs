@@ -283,7 +283,7 @@ namespace Molder.Generator.Steps
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" равно ""(.+)""")]
         public void CheckVariableEquals(string varName, string expected)
         {
-            expected.Should().NotBeNull($"значение \"expected\" не задано.");
+            expected.Should().NotBeNull($"значение \"expected\" не задано");
             expected = this.variableController.ReplaceVariables(expected) ?? expected;
 
             var actual = this.variableController.GetVariableValueText(varName);
@@ -320,7 +320,7 @@ namespace Molder.Generator.Steps
 
             var actual = this.variableController.GetVariableValueText(varName);
             actual.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
-            actual.Contains(expected).Should().BeTrue($"значение переменной \"{varName}\":\"{actual}\" не содержит \"{expected}\"");
+            actual.Should().Contain(expected, $"значение переменной \"{varName}\":\"{actual}\" не содержит \"{expected}\"");
         }
 
         /// <summary>
@@ -336,7 +336,7 @@ namespace Molder.Generator.Steps
 
             var actual = this.variableController.GetVariableValueText(varName);
             actual.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
-            actual.Contains(expected).Should().BeFalse($"значение переменной \"{varName}\":\"{actual}\" содержит \"{expected}\"");
+            actual.Should().NotContain(expected, $"значение переменной \"{varName}\":\"{actual}\" содержит \"{expected}\"");
         }
 
         /// <summary>
@@ -352,7 +352,7 @@ namespace Molder.Generator.Steps
 
             var actual = this.variableController.GetVariableValueText(varName);
             actual.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
-            actual.StartsWith(expected).Should().BeTrue($"значение переменной \"{varName}\":\"{actual}\" не начинается с \"{expected}\"");
+            actual.Should().StartWith(expected, $"значение переменной \"{varName}\":\"{actual}\" не начинается с \"{expected}\"");
         }
 
         /// <summary>
@@ -368,7 +368,7 @@ namespace Molder.Generator.Steps
 
             var actual = this.variableController.GetVariableValueText(varName);
             actual.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
-            actual.EndsWith(expected).Should().BeTrue($"значение переменной \"{varName}\":\"{actual}\" не заканчивается с \"{expected}\"");
+            actual.Should().EndWith(expected, $"значение переменной \"{varName}\":\"{actual}\" не заканчивается с \"{expected}\"");
         }
     }
 }
