@@ -1,4 +1,5 @@
 ﻿using Molder.Controllers;
+using Molder.Service.Helpers;
 using Molder.Service.Infrastructures;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,26 +9,46 @@ namespace Molder.Service.Models
 {
     public class RequestDto
     {
-        private readonly List<Header> headers;
+        private readonly IEnumerable<Header> headers;
         private readonly VariableController variableController;
 
-        public RequestDto(List<Header> headers, VariableController variableController)
+        public RequestDto(IEnumerable<Header> headers, VariableController variableController)
         {
             this.headers = headers;
             this.variableController = variableController;
+
+            Header = SetData(HeaderType.HEADER);
+            Query = SetData(HeaderType.QUERY);
+
+            var body = GetBody();
+            if (body != null)
+            {
+                var obj = body.GetObject();
+                Content = obj.GetHttpContent(body);
+            }
         }
 
-        public Dictionary<string, string> Header => GetDictionary(HeaderType.HEADER.ToString());
-        public Dictionary<string, string> Body => GetDictionary(HeaderType.BODY.ToString());
+        public Dictionary<string, string> Header { get; private set; } = null;
+        public Dictionary<string, string> Query { get; private set; } = null;
+        public HttpContent Content { get; private set; } = null;
 
-        public Dictionary<string, string> Query => GetDictionary(HeaderType.QUERY.ToString());
-
-        private Dictionary<string, string> GetDictionary(string header)
+        private Dictionary<string, string> SetData(HeaderType headerType)
         {
-            return headers.Where(x => x.Style.ToString().ToUpper().Equals(header))
-                          .ToDictionary(head => head.Name, head => this.variableController.ReplaceVariables(head.Value));
+            return headers
+                .Where(h => h.Style == headerType)
+                .ToDictionary(e => e.Name, e => this.variableController.ReplaceVariables(e.Value));
         }
 
-        public HttpContent Content = null;
+        private string GetBody()
+        {
+            var isCheck = headers.Count(h => h.Style == HeaderType.BODY);
+            if(isCheck == 1)
+            {
+
+                var value = headers.FirstOrDefault(h => h.Style == HeaderType.BODY);
+                return variableController.ReplaceVariables(value.Value);
+            }
+            return null;
+        }
     }
 }
