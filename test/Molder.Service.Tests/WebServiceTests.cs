@@ -22,9 +22,8 @@ namespace EvidentInstruction.Service.Tests
             requestInfo = new RequestInfo() { Url = "http://test", Method = HttpMethod.Get, Headers = new Dictionary<string, string>() { { "Content-type", "application/json" } }, Content = new StringContent("test")  };
         }
 
-
         [Fact]
-        public void SendMessage_IncorrectRequest_ReturnBadRequest()
+        public void SendMessage_IncorrectRequest_ReturnNull()
         {    
             var mockFlurlProvider = new Mock<IFlurlProvider>();
 
@@ -34,9 +33,8 @@ namespace EvidentInstruction.Service.Tests
                 .Setup(u => u.SendRequestAsync(It.IsAny<RequestInfo>())).Throws<Exception>();
 
             webService.Provider = mockFlurlProvider.Object;
-            var result = webService.SendMessage(requestInfo);
-                        
-            result.Result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            var result = webService.SendMessage(requestInfo).Result;     
+            result.Should().BeNull();
         }
 
         [Fact]

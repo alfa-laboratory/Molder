@@ -1,6 +1,10 @@
-﻿using Molder.Helpers;
+﻿using FluentAssertions;
+using Molder.Helpers;
 using Molder.Service.Infrastructures;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Xml;
@@ -56,9 +60,12 @@ namespace Molder.Service.Helpers
         /// <summary>
         /// Добавить query к url
         /// </summary>        
-        public static string AddQueryInURL(this string url, string query)
+        public static string AddQueryInURL(this string url, Dictionary<string, string> query)
         {
-           return query.StartsWith("?")? url + query: url + "?" + query;
+            url.Should().NotBeNull("web service address not specified");
+            query.Should().NotBeNull("web service query not specified");
+            var queryString = string.Join("&", query.Select(kv => kv.Key + "=" + kv.Value).ToArray());
+            return url.Contains("?") ? $"{url}&{queryString}" : $"{url}?{queryString}";
         }
 
         /// <summary>

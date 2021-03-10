@@ -95,7 +95,7 @@ namespace Molder.Service.Steps
 
             if (requestDto.Query.Any())
             {
-                url = url.AddQueryInURL(requestDto.Query.Values.First());
+                url = url.AddQueryInURL(requestDto.Query);
             }
 
             if(!Uri.TryCreate(url, UriKind.Absolute, out Uri outUrl))
@@ -122,7 +122,7 @@ namespace Molder.Service.Steps
                 }
                 else
                 {
-                    Log.Logger().LogInformation($"Сервис с названием \"{name}\" не добавлен");
+                    Log.Logger().LogInformation($"Сервис с названием \"{name}\" не добавлен. Подробности в логах");
                 }
             }
         }

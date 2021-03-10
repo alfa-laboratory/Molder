@@ -427,18 +427,6 @@ namespace Molder.Generator.Tests
         }
 
         [Fact]
-        public void CheckVariableEquals_InCorrectType_ReturnException()
-        {
-            var variable = new Variable() { Type = typeof(string), Value = "test" };
-            variableController.Variables.TryAdd("test", variable);
-            VariableSteps steps = new VariableSteps(variableController);
-
-            Action act = () => steps.CheckVariableEquals("test", 0);
-            act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Тип значения переменной \"test\" не совпадает с типом \"0\"");
-        }
-
-        [Fact]
         public void CheckVariableEquals_InCorrectEquals_ReturnException()
         {
             var variable = new Variable() { Type = typeof(string), Value = "test" };
@@ -470,18 +458,6 @@ namespace Molder.Generator.Tests
             Action act = () => steps.CheckVariableNotEquals("test", null);
             act.Should().Throw<Exception>()
                 .Which.Message.Contains($"Значение \"expected\" не задано.");
-        }
-
-        [Fact]
-        public void CheckVariableNotEquals_InCorrectType_ReturnException()
-        {
-            var variable = new Variable() { Type = typeof(string), Value = "test" };
-            variableController.Variables.TryAdd("test", variable);
-            VariableSteps steps = new VariableSteps(variableController);
-
-            Action act = () => steps.CheckVariableNotEquals("test", 0);
-            act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Тип значения переменной \"test\" не совпадает с типом \"0\"");
         }
 
         [Fact]
@@ -689,7 +665,7 @@ namespace Molder.Generator.Tests
             variableController.Variables.TryAdd("test2", variable);
 
             VariableSteps steps = new VariableSteps(variableController);
-            steps.CheckVariablesAreEqual("test1", "test2");
+            steps.CheckVariableEquals("test1", "{test2}");
         }
 
         [Fact]
@@ -702,24 +678,9 @@ namespace Molder.Generator.Tests
 
             VariableSteps steps = new VariableSteps(variableController);
 
-            Action act = () => steps.CheckVariablesAreEqual("test1", "test2");
+            Action act = () => steps.CheckVariableEquals("test1", "test2");
             act.Should().Throw<Exception>()
                 .Which.Message.Contains($"Значения в переменной \"test1\" нет");
-        }
-
-        [Fact]
-        public void CheckVariablesAreEqual_InCorrectValue2_ReturnException()
-        {
-            var variable = new Variable() { Type = typeof(string), Value = "test" };
-            variableController.Variables.TryAdd("test1", variable);
-            variable = new Variable() { Type = typeof(string), Value = null };
-            variableController.Variables.TryAdd("test2", variable);
-
-            VariableSteps steps = new VariableSteps(variableController);
-
-            Action act = () => steps.CheckVariablesAreEqual("test1", "test2");
-            act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значения в переменной \"test2\" нет");
         }
 
         [Fact]
@@ -731,7 +692,7 @@ namespace Molder.Generator.Tests
             variableController.Variables.TryAdd("test2", variable);
             VariableSteps steps = new VariableSteps(variableController);
 
-            Action act = () => steps.CheckVariablesAreEqual("test1", "test2");
+            Action act = () => steps.CheckVariableEquals("test1", "{test2}");
             act.Should().Throw<Exception>()
                 .Which.Message.Contains($"Значение переменной \"test1\":\"1\" не равно значению переменной \"test2\":\"2\"");
         }
@@ -745,7 +706,7 @@ namespace Molder.Generator.Tests
             variableController.Variables.TryAdd("test2", variable);
 
             VariableSteps steps = new VariableSteps(variableController);
-            steps.CheckVariablesAreNotEqual("test1", "test2");
+            steps.CheckVariableNotEquals("test1", "{test2}");
         }
 
         [Fact]
@@ -758,24 +719,9 @@ namespace Molder.Generator.Tests
 
             VariableSteps steps = new VariableSteps(variableController);
 
-            Action act = () => steps.CheckVariablesAreEqual("test1", "test2");
+            Action act = () => steps.CheckVariableNotEquals("test1", "test2");
             act.Should().Throw<Exception>()
                 .Which.Message.Contains($"Значения в переменной \"test1\" нет");
-        }
-
-        [Fact]
-        public void CheckVariablesAreNotEqual_InCorrectValue2_ReturnException()
-        {
-            var variable = new Variable() { Type = typeof(string), Value = "test" };
-            variableController.Variables.TryAdd("test1", variable);
-            variable = new Variable() { Type = typeof(string), Value = null };
-            variableController.Variables.TryAdd("test2", variable);
-
-            VariableSteps steps = new VariableSteps(variableController);
-
-            Action act = () => steps.CheckVariablesAreEqual("test1", "test2");
-            act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значения в переменной \"test2\" нет");
         }
 
         [Fact]
@@ -787,7 +733,7 @@ namespace Molder.Generator.Tests
             variableController.Variables.TryAdd("test2", variable);
             VariableSteps steps = new VariableSteps(variableController);
 
-            Action act = () => steps.CheckVariablesAreNotEqual("test1", "test2");
+            Action act = () => steps.CheckVariableNotEquals("test1", "{test2}");
             act.Should().Throw<Exception>()
                 .Which.Message.Contains($"значение переменной \"test1\":\"1\" равно значению переменной \"test2\":\"1\"");
         }
@@ -801,7 +747,7 @@ namespace Molder.Generator.Tests
             variableController.Variables.TryAdd("test2", variable);
 
             VariableSteps steps = new VariableSteps(variableController);
-            steps.CheckVariableAreContains("test1", "test2");
+            steps.CheckVariableContains("test1", "{test2}");
         }
 
         [Fact]
@@ -814,24 +760,9 @@ namespace Molder.Generator.Tests
 
             VariableSteps steps = new VariableSteps(variableController);
 
-            Action act = () => steps.CheckVariableAreContains("test1", "test2");
+            Action act = () => steps.CheckVariableContains("test1", "test2");
             act.Should().Throw<Exception>()
                 .Which.Message.Contains($"Значения в переменной \"test1\" нет");
-        }
-
-        [Fact]
-        public void CheckVariableAreContains_InCorrectValue2_ReturnException()
-        {
-            var variable = new Variable() { Type = typeof(string), Value = "test" };
-            variableController.Variables.TryAdd("test1", variable);
-            variable = new Variable() { Type = typeof(string), Value = null };
-            variableController.Variables.TryAdd("test2", variable);
-
-            VariableSteps steps = new VariableSteps(variableController);
-
-            Action act = () => steps.CheckVariableAreContains("test1", "test2");
-            act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значения в переменной \"test2\" нет");
         }
 
         [Fact]
@@ -843,7 +774,7 @@ namespace Molder.Generator.Tests
             variableController.Variables.TryAdd("test2", variable);
             VariableSteps steps = new VariableSteps(variableController);
 
-            Action act = () => steps.CheckVariableAreContains("test1", "test2");
+            Action act = () => steps.CheckVariableContains("test1", "{test2}");
             act.Should().Throw<Exception>()
                 .Which.Message.Contains($"Значение переменной \"test1\":\"1\" не содержит значение переменной \"test2\":\"2\"");
         }
@@ -857,7 +788,7 @@ namespace Molder.Generator.Tests
             variableController.Variables.TryAdd("test2", variable);
 
             VariableSteps steps = new VariableSteps(variableController);
-            steps.CheckVariableAreNotContains("test1", "test2");
+            steps.CheckVariableNotContains("test1", "{test2}");
         }
 
         [Fact]
@@ -870,24 +801,9 @@ namespace Molder.Generator.Tests
 
             VariableSteps steps = new VariableSteps(variableController);
 
-            Action act = () => steps.CheckVariableAreNotContains("test1", "test2");
+            Action act = () => steps.CheckVariableNotContains("test1", "test2");
             act.Should().Throw<Exception>()
                 .Which.Message.Contains($"Значения в переменной \"test1\" нет");
-        }
-
-        [Fact]
-        public void CheckVariableAreNotContains_InCorrectValue2_ReturnException()
-        {
-            var variable = new Variable() { Type = typeof(string), Value = "test" };
-            variableController.Variables.TryAdd("test1", variable);
-            variable = new Variable() { Type = typeof(string), Value = null };
-            variableController.Variables.TryAdd("test2", variable);
-
-            VariableSteps steps = new VariableSteps(variableController);
-
-            Action act = () => steps.CheckVariableAreNotContains("test1", "test2");
-            act.Should().Throw<Exception>()
-                .Which.Message.Contains($"Значения в переменной \"test2\" нет");
         }
 
         [Fact]
@@ -899,7 +815,7 @@ namespace Molder.Generator.Tests
             variableController.Variables.TryAdd("test2", variable);
             VariableSteps steps = new VariableSteps(variableController);
 
-            Action act = () => steps.CheckVariableAreNotContains("test1", "test2");
+            Action act = () => steps.CheckVariableNotContains("test1", "{test2}");
             act.Should().Throw<Exception>()
                 .Which.Message.Contains($"Значение переменной \"test1\":\"1\" содержит значение переменной \"test2\":\"1\"");
         }

@@ -29,15 +29,11 @@ namespace Molder.Service.Helpers
                     var exception = (((FlurlException)ex).Exception as FlurlHttpException)?.Call.Response;
                     var content = exception?.ResponseMessage.Content.ReadAsStringAsync().Result;
 
-                    var statusCode = exception == null ?
-                                        System.Net.HttpStatusCode.BadRequest :
-                                        exception.ResponseMessage.StatusCode;
-
                     var responce = new ResponceInfo
                     {
                         Headers = null,
                         Content = content,
-                        StatusCode = statusCode,
+                        StatusCode = exception.ResponseMessage.StatusCode,
                         Request = request
                     };
 
@@ -45,14 +41,7 @@ namespace Molder.Service.Helpers
                     return responce;
                 }
             }
-
-            return new ResponceInfo
-            {
-                Headers = null,
-                Content = null,
-                StatusCode = System.Net.HttpStatusCode.BadRequest,
-                Request = request
-            };
+            return null;
         }
     }
 }

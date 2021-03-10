@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <Authors>Egor Shokhin</Authors>
-    <Version>1.0.5</Version>
+    <Version>1.0.6</Version>
     <Company>AlfaBank</Company>
     <Copyright>2021 AlfaBank</Copyright>
     <PackageProjectUrl>https://github.com/alfa-laboratory/Molder</PackageProjectUrl>
@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
-    <PackageReference Include="Molder" Version="1.0.6" />
+    <PackageReference Include="Molder" Version="1.0.10" />
     <PackageReference Include="Noksa.WebDriver.ScreenshotsExtensions" Version="0.1.5.3" />
     <PackageReference Include="Polly" Version="7.2.1" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
