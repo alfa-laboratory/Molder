@@ -148,7 +148,7 @@ namespace Molder.Controllers
 
                     name = key.Split('[').First();
 
-                    keyPath = Regex.Match(key ?? string.Empty, StringPattern.BRACES, RegexOptions.IgnoreCase).Groups[1].Value;
+                    keyPath = Regex.Match(key ?? string.Empty, StringPattern.BRACES, RegexOptions.None).Groups[1].Value;
                 }
 
                 var var = Variables.SingleOrDefault(_ => _.Key == name).Value;
@@ -329,7 +329,7 @@ namespace Molder.Controllers
                     val = GetVariableValue(m.Groups[1].Value);
                     return foundReplace != null ? foundReplace(val) : Reflection.ConvertObject<string>(val);
                 },
-                RegexOptions.IgnoreCase);
+                RegexOptions.None);
             return fmt;
         }
     }
