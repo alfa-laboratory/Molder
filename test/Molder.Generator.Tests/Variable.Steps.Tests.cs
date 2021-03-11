@@ -868,7 +868,7 @@ namespace Molder.Generator.Tests
             // Assert
             act
               .Should().Throw<Exception>()
-              .WithMessage("Expected this.variableController.Variables {[test, Molder.Models.Variable], [test2, Molder.Models.Variable]} not to contain key \"test2\" because переменная \"test2\" уже существует, but found it anyhow.");
+              .WithMessage("Expected this.variableController.Variables {[test2, Molder.Models.Variable], [test, Molder.Models.Variable]} not to contain key \"test2\" because переменная \"test2\" уже существует, but found it anyhow.");
         }
     }
 }
