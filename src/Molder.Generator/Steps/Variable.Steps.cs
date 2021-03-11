@@ -83,7 +83,6 @@ namespace Molder.Generator.Steps
         [StepDefinition(@"я сохраняю текст ""(.*)"" в переменную ""(.+)""")]
         public void StoreAsVariableString(string text, string varName)
         {
-            this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
             this.variableController.SetVariable(varName, typeof(string), text);
         }
 
@@ -95,7 +94,6 @@ namespace Molder.Generator.Steps
         [StepDefinition(@"я сохраняю зашифрованный текст ""(.*)"" в переменную ""(.+)""")]
         public void StoreAsVariableEncriptedString(string text, string varName)
         {
-            this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
             this.variableController.SetVariable(varName, typeof(string), Encryptor.Decrypt(text));
         }
 
@@ -107,7 +105,6 @@ namespace Molder.Generator.Steps
         [StepDefinition(@"я сохраняю текст в переменную ""(.+)"":")]
         public void StoreAsVariableText(string varName, string text)
         {
-            this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
             this.variableController.SetVariable(varName, typeof(string), text);
         }
 
@@ -119,8 +116,6 @@ namespace Molder.Generator.Steps
         [StepDefinition(@"я сохраняю число ""(.+)"" в переменную ""(.*)""")]
         public void StoreAsVariableNumber(string varName, string number)
         {
-            this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
-
             if (decimal.TryParse(number, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.CurrentCulture, out var dec))
             {
                 this.variableController.SetVariable(varName, typeof(decimal), dec);
@@ -144,7 +139,6 @@ namespace Molder.Generator.Steps
         [StepDefinition(@"я сохраняю текст как XML документ в переменную ""(.+)"":")]
         public void StoreAsVariableXmlFromText(string varName, string xml)
         {
-            this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
             var xmlBody = this.variableController.ReplaceVariables(xml);
 
             Log.Logger().LogInformation($"xml is \"{xmlBody}\"");
@@ -164,7 +158,6 @@ namespace Molder.Generator.Steps
         public void StoreVariableValueToVariable(string varName, string newVarName)
         {
             this.variableController.Variables.Should().ContainKey(varName, $"переменная \"{varName}\" не существует");
-            this.variableController.Variables.Should().NotContainKey(newVarName, $"переменная \"{newVarName}\" уже существует");
             var variable = this.variableController.GetVariable(varName);
             variable.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
 
@@ -181,7 +174,6 @@ namespace Molder.Generator.Steps
         public void StoreCDataVariable_ToVariable(string cdataVar, string varName)
         {
             this.variableController.Variables.Should().ContainKey(varName, $"переменная \"{cdataVar}\" не существует");
-            this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
 
             var value = (string)this.variableController.GetVariableValue(varName);
             var cdata = Converter.CreateCData(value);
@@ -200,7 +192,6 @@ namespace Molder.Generator.Steps
         public void StoreAsVariableStringFormat(string varName, string text, string newVarName)
         {
             this.variableController.Variables.Should().ContainKey(varName, $"переменная \"{varName}\" не существует");
-            this.variableController.Variables.Should().NotContainKey(newVarName, $"переменная \"{newVarName}\" уже существует");
 
             var replacement = string.Empty;
 

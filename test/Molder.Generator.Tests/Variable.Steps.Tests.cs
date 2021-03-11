@@ -130,19 +130,6 @@ namespace Molder.Generator.Tests
         }
 
         [Fact]
-        public void StoreAsVariableString_CorrectVariable_ReturnException()
-        {
-            var variable = new Variable() { Type = typeof(string), Value = string.Empty };
-            variableController.Variables.TryAdd("test", variable);
-
-            VariableSteps steps = new VariableSteps(variableController);
-
-            Action act = () => steps.StoreAsVariableString(null, "test");
-            act.Should().Throw<Exception>()
-                .WithMessage("Expected this.variableController.Variables {[test, Molder.Models.Variable]} not to contain key \"test\" because переменная \"test\" уже существует, but found it anyhow.");
-        }
-
-        [Fact]
         public void StoreAsVariableEncriptedString_ValidValue_ReturnNewVariable()
         {
             VariableSteps steps = new VariableSteps(variableController);
@@ -155,19 +142,6 @@ namespace Molder.Generator.Tests
         }
 
         [Fact]
-        public void StoreAsVariableEncriptedString_CorrectVariable_ReturnException()
-        {
-            var variable = new Variable() { Type = typeof(string), Value = string.Empty };
-            variableController.Variables.TryAdd("test", variable);
-
-            VariableSteps steps = new VariableSteps(variableController);
-
-            Action act = () => steps.StoreAsVariableEncriptedString(null, "test");
-            act.Should().Throw<Exception>()
-                .WithMessage("Expected this.variableController.Variables {[test, Molder.Models.Variable]} not to contain key \"test\" because переменная \"test\" уже существует, but found it anyhow.");
-        }
-
-        [Fact]
         public void StoreAsVariableText_ValidValue_ReturnNewVariable()
         {
             VariableSteps steps = new VariableSteps(variableController);
@@ -176,32 +150,6 @@ namespace Molder.Generator.Tests
             var variableCheck = variableController.GetVariable("test");
             variableCheck.Type.Should().Be(typeof(string));
             variableCheck.Value.Should().Be("test");
-        }
-
-        [Fact]
-        public void StoreAsVariableText_CorrectVariable_ReturnException()
-        {
-            var variable = new Variable() { Type = typeof(string), Value = string.Empty };
-            variableController.Variables.TryAdd("test", variable);
-
-            VariableSteps steps = new VariableSteps(variableController);
-
-            Action act = () => steps.StoreAsVariableText("test", null);
-            act.Should().Throw<Exception>()
-                .WithMessage("Expected this.variableController.Variables {[test, Molder.Models.Variable]} not to contain key \"test\" because переменная \"test\" уже существует, but found it anyhow.");
-        }
-
-        [Fact]
-        public void StoreAsVariableNumber_CorrectVariable_ReturnException()
-        {
-            var variable = new Variable() { Type = typeof(string), Value = string.Empty };
-            variableController.Variables.TryAdd("test", variable);
-
-            VariableSteps steps = new VariableSteps(variableController);
-
-            Action act = () => steps.StoreAsVariableNumber("test", null);
-            act.Should().Throw<Exception>()
-                .WithMessage("Expected this.variableController.Variables {[test, Molder.Models.Variable]} not to contain key \"test\" because переменная \"test\" уже существует, but found it anyhow.");
         }
 
         [Fact]
@@ -227,19 +175,6 @@ namespace Molder.Generator.Tests
         }
 
         [Fact]
-        public void StoreAsVariableXmlFromText_CorrectVariable_ReturnException()
-        {
-            var variable = new Variable() { Type = typeof(string), Value = string.Empty };
-            variableController.Variables.TryAdd("test", variable);
-
-            VariableSteps steps = new VariableSteps(variableController);
-
-            Action act = () => steps.StoreAsVariableXmlFromText("test", null);
-            act.Should().Throw<Exception>()
-                .WithMessage("Expected this.variableController.Variables {[test, Molder.Models.Variable]} not to contain key \"test\" because переменная \"test\" уже существует, but found it anyhow.");
-        }
-
-        [Fact]
         public void StoreAsVariableXmlFromText_IncorrectXml_ReturnException()
         {
             VariableSteps steps = new VariableSteps(variableController);
@@ -261,19 +196,6 @@ namespace Molder.Generator.Tests
             var variableCheck = variableController.GetVariable("tmp");
             variableCheck.Type.Should().Be(typeof(string));
             variableCheck.Value.Should().Be("test");
-        }
-
-        [Fact]
-        public void StoreVariableValueToVariable_CorrectFirstVariable_ReturnException()
-        {
-            var variable = new Variable() { Type = typeof(string), Value = string.Empty };
-            variableController.Variables.TryAdd("test", variable);
-
-            VariableSteps steps = new VariableSteps(variableController);
-
-            Action act = () => steps.StoreVariableValueToVariable("test", "test");
-            act.Should().Throw<Exception>()
-                .WithMessage("Expected this.variableController.Variables {[test, Molder.Models.Variable]} not to contain key \"test\" because переменная \"test\" уже существует, but found it anyhow.");
         }
 
         [Fact]
@@ -850,25 +772,6 @@ namespace Molder.Generator.Tests
             act
               .Should().Throw<Exception>()
               .WithMessage("Expected this.variableController.Variables {empty} to contain key \"test\" because переменная \"test\" не существует.");
-        }
-
-        [Fact]
-        public void StoreAsVariableStringFormat_IncorrectNewVariableName_ReturnException()
-        {
-            // Act
-            var variable = new Variable() { Type = typeof(string), Value = string.Empty };
-            variableController.Variables.TryAdd("test", variable);
-            variable = new Variable() { Type = typeof(string), Value = string.Empty };
-            variableController.Variables.TryAdd("test2", variable);
-            VariableSteps steps = new VariableSteps(variableController);
-
-            // Arrange
-            Action act = () => steps.StoreAsVariableStringFormat("test", "text", "test2");
-
-            // Assert
-            act
-              .Should().Throw<Exception>()
-              .Where(e => e.Message.Contains("переменная \"test2\" уже существует"));
         }
     }
 }
