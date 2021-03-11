@@ -158,12 +158,11 @@ namespace Molder.Generator.Steps
         public void StoreVariableValueToVariable(string varName, string newVarName)
         {
             this.variableController.Variables.Should().ContainKey(varName, $"переменная \"{varName}\" не существует");
-            var variable = this.variableController.GetVariable(varName);
-            variable.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
+            var value = this.variableController.GetVariableValueText(varName);
+            value.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
 
-            this.variableController.SetVariable(newVarName, variable.Type, variable.Value);
+            this.variableController.SetVariable(newVarName, value.GetType(), value);
         }
-
 
         /// <summary>
         /// Шаг сохранения результата значения переменной, содержащей cdata в переменную.

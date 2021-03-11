@@ -37,7 +37,7 @@
   <ItemGroup>
     <PackageReference Include="Bogus" Version="33.0.2" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
-    <PackageReference Include="Molder" Version="1.0.12" />
+    <PackageReference Include="Molder" Version="1.0.13" />
     <PackageReference Include="SpecFlow" Version="3.3.30" />
   </ItemGroup>
 
