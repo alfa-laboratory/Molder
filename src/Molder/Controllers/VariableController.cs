@@ -13,6 +13,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using Molder.Infrastructures;
 using Microsoft.Extensions.Logging;
+using System.IO;
 
 namespace Molder.Controllers
 {
@@ -271,7 +272,11 @@ namespace Molder.Controllers
                 case XElement element when element.HasElements == true:
                     {
                         Log.Logger().LogWarning($"Key \"{key}\" is root for (XElement)");
-                        return null;
+                        using (var sw = new StringWriter())
+                        {
+                            element.Save(sw);
+                            return sw.ToString();
+                        }
                     }
 
                 case XmlNode node when node.FirstChild.GetType() == typeof(XmlText):
