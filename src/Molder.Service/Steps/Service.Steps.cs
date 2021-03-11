@@ -74,7 +74,6 @@ namespace Molder.Service.Steps
         [StepDefinition(@"я создаю json документ ""(.+)"":")]
         public void CreateJson(string varName, JToken token)
         {
-            this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
             this.variableController.SetVariable(varName, token.GetType(), token);
         }
 

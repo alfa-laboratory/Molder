@@ -6,7 +6,7 @@
     <AssemblyName>Molder.Generator</AssemblyName>
     <Authors>Egor Shokhin</Authors>
     <Company>AlfaBank</Company>
-    <Version>1.0.7</Version>
+    <Version>1.0.8</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <LangVersion>7.1</LangVersion>
@@ -37,7 +37,7 @@
   <ItemGroup>
     <PackageReference Include="Bogus" Version="33.0.2" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
-    <PackageReference Include="Molder" Version="1.0.11" />
+    <PackageReference Include="Molder" Version="1.0.12" />
     <PackageReference Include="SpecFlow" Version="3.3.30" />
   </ItemGroup>
 
