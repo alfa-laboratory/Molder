@@ -1,4 +1,5 @@
-﻿@DataBase
+﻿@ignore
+@DataBase
 Feature: Example
 Background: 
 	Given write variable "Key1"

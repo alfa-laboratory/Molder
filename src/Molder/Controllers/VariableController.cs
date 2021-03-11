@@ -18,12 +18,12 @@ namespace Molder.Controllers
 {
     public class VariableController
     {
-        public ConcurrentDictionary<string, Variable> Variables = null; 
+        private Lazy<ConcurrentDictionary<string, Variable>> _variables = new Lazy<ConcurrentDictionary<string, Variable>>(() => new ConcurrentDictionary<string, Variable>());
 
-        public VariableController()
+        public ConcurrentDictionary<string, Variable> Variables
         {
-            Variables = new ConcurrentDictionary<string, Variable>();
-        }
+            get => _variables.Value;
+        } 
 
         public string GetVariableName(string key)
         {
@@ -118,12 +118,8 @@ namespace Molder.Controllers
 
             }
 
-            var vars = Variables;
             var variable = new Variable() { Type = type, Value = value, TypeOfAccess = accessType };
-
-            vars.AddOrUpdate(varName, variable, (k, v) => variable);
-            Variables = vars;
-           
+            Variables.AddOrUpdate(varName, variable, (k, v) => variable);
         } 
         public object GetVariableValue(string key)
         {

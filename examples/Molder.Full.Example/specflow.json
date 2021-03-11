@@ -1,0 +1,16 @@
+﻿{
+  "language": {
+    "feature": "en-us"
+  },
+  "stepAssemblies": [
+    {
+      "assembly": "Molder.Generator"
+    },
+    {
+      "assembly": "Molder.Service"
+    },
+    {
+      "assembly": "Molder.Configuration"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
-﻿Feature: Service
+﻿@ignore
+Feature: Service
 
-@ignore
 Scenario: POST
 	Given я сохраняю текст в переменную "input":
 """
@@ -27,7 +27,6 @@ Scenario: POST
 		And я сохраняю результат вызова веб-сервиса "Post" как json в переменную "result"
 		And я убеждаюсь, что значение переменной "result.//" равно "{{output.//}}"
 
-@ignore
 Scenario: GET
 	Given я создаю json документ "output":
 """
@@ -48,7 +47,6 @@ Scenario: GET
 
 Scenario: DELETE
 
-@ignore
 Scenario: PUT
 	Given я сохраняю текст в переменную "input":
 """
@@ -76,7 +74,6 @@ Scenario: PUT
 		And я сохраняю результат вызова веб-сервиса "Put" как json в переменную "result"
 		And я убеждаюсь, что значение переменной "result.//" равно "{{output.//}}"
 
-@ignore
 Scenario: PATCH
 	Given я сохраняю текст в переменную "input":
 """
