@@ -439,16 +439,16 @@ namespace Molder.Tests
         }
 
         [Theory]
-        [InlineData("xDoc", typeof(XDocument), Xml, "xDoc")]
-        [InlineData("xDoc", typeof(XDocument), Xml, "xDoc.//addresses")]
-        [InlineData("xDoc", typeof(XDocument), Xml, "xDoc.//address")]
-        public void GetVariableValueText_CorrectVariablexDocRoot_ReturnText(string key, Type type, string value, string searchKey)
+        [InlineData("xDoc", typeof(XDocument), Xml, "xDoc",             "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<addresses xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"test.xsd\">\r\n  <address>\r\n    <name>Joe Tester</name>\r\n    <street>Baker street</street>\r\n    <house>5</house>\r\n  </address>\r\n</addresses>")]
+        [InlineData("xDoc", typeof(XDocument), Xml, "xDoc.//addresses", "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<addresses xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"test.xsd\">\r\n  <address>\r\n    <name>Joe Tester</name>\r\n    <street>Baker street</street>\r\n    <house>5</house>\r\n  </address>\r\n</addresses>")]
+        [InlineData("xDoc", typeof(XDocument), Xml, "xDoc.//address", "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<address>\r\n  <name>Joe Tester</name>\r\n  <street>Baker street</street>\r\n  <house>5</house>\r\n</address>")]
+        public void GetVariableValueText_CorrectVariablexDocRoot_ReturnText(string key, Type type, string value, string searchKey, string expected)
         {
             var doc = XDocument.Parse(value);
             variableContext.SetVariable(key, type, doc);
 
             var variable = variableContext.GetVariableValueText(searchKey);
-            variable.Should().BeNull();
+            variable.Should().Be(expected);
         }
 
         [Theory]
