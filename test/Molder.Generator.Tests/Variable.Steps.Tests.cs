@@ -199,16 +199,6 @@ namespace Molder.Generator.Tests
         }
 
         [Fact]
-        public void StoreVariableValueToVariable_CorrectSecondVariable_ReturnException()
-        {
-            VariableSteps steps = new VariableSteps(variableController);
-
-            Action act = () => steps.StoreVariableValueToVariable("test", null);
-            act.Should().Throw<Exception>()
-                .WithMessage("Expected this.variableController.Variables {empty} to contain key \"test\" because переменная \"test\" не существует.");
-        }
-
-        [Fact]
         public void CheckVariableIsNotNull_CorrectVarName_ReturnTrue()
         {
             var variable = new Variable() { Type = typeof(string), Value = string.Empty };
@@ -757,21 +747,6 @@ namespace Molder.Generator.Tests
 
             var expected = variableController.Variables["test2"].Value;
             expected.Should().Be(res);
-        }
-
-        [Fact]
-        public void StoreAsVariableStringFormat_IncorrectVariableName_ReturnException()
-        {
-            // Act
-            VariableSteps steps = new VariableSteps(variableController);
-
-            // Arrange
-            Action act = () => steps.StoreAsVariableStringFormat("test", "text", "test2");
-
-            // Assert
-            act
-              .Should().Throw<Exception>()
-              .WithMessage("Expected this.variableController.Variables {empty} to contain key \"test\" because переменная \"test\" не существует.");
         }
     }
 }
