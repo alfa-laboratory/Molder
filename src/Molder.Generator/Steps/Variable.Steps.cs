@@ -157,7 +157,6 @@ namespace Molder.Generator.Steps
         [StepDefinition(@"я сохраняю значение переменной ""(.+)"" в переменную ""(.+)""")]
         public void StoreVariableValueToVariable(string varName, string newVarName)
         {
-            this.variableController.Variables.Should().ContainKey(varName, $"переменная \"{varName}\" не существует");
             var value = this.variableController.GetVariableValue(varName);
             value.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
 
