@@ -164,6 +164,20 @@ namespace Molder.Generator.Steps
         }
 
         /// <summary>
+        /// Шаг для сохранения содержимого (в виде текста) одной переменной в другую.
+        /// </summary>
+        /// <param name="varName">Исходная переменная.</param>
+        /// <param name="newVarName">Переменная-результат.</param>
+        [StepDefinition(@"я сохраняю содержимое переменной ""(.+)"" в переменную ""(.+)""")]
+        public void StoreVariableTextToVariable(string varName, string newVarName)
+        {
+            var value = this.variableController.GetVariableValueText(varName);
+            value.Should().NotBeNull($"содержимого в переменной \"{varName}\" нет");
+
+            this.variableController.SetVariable(newVarName, value.GetType(), value);
+        }
+
+        /// <summary>
         /// Шаг сохранения результата значения переменной, содержащей cdata в переменную.
         /// </summary>
         /// <param name="cdata">Переменная с cdata.</param>
