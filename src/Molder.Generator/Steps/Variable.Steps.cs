@@ -171,9 +171,8 @@ namespace Molder.Generator.Steps
         [StepDefinition(@"я сохраняю значение переменной \""(.+)\"" из CDATA в переменную \""(.+)\""")]
         public void StoreCDataVariable_ToVariable(string cdataVar, string varName)
         {
-            this.variableController.Variables.Should().ContainKey(varName, $"переменная \"{cdataVar}\" не существует");
-
             var value = (string)this.variableController.GetVariableValue(varName);
+            value.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
             var cdata = Converter.CreateCData(value);
             cdata.Should().NotBeNull($"значение переменной \"{Environment.NewLine + cdata + Environment.NewLine}\" не является CDATA");
 
@@ -189,8 +188,6 @@ namespace Molder.Generator.Steps
         [StepDefinition(@"я подставляю значение переменной ""(.+)"" в текст ""(.*)"" и сохраняю в переменную ""(.+)""")]
         public void StoreAsVariableStringFormat(string varName, string text, string newVarName)
         {
-            this.variableController.Variables.Should().ContainKey(varName, $"переменная \"{varName}\" не существует");
-
             var replacement = string.Empty;
 
             if (this.variableController.GetVariableValue(varName) != null)
