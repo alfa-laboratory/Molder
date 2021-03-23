@@ -1,4 +1,4 @@
-﻿@ignore
+﻿
 Feature: Service
 
 Scenario: POST
@@ -28,6 +28,7 @@ Scenario: POST
 		And я убеждаюсь, что значение переменной "result.//" равно "{{output.//}}"
 
 Scenario: GET
+	Given я сохраняю текст "1" в переменную "number"
 	Given я создаю json документ "output":
 """
 {
@@ -37,10 +38,10 @@ Scenario: GET
 	"body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
 }
 """
-	When я вызываю веб-сервис "Get" по адресу "https://jsonplaceholder.typicode.com/posts/1" с методом "Get", используя параметры:
+	When я вызываю веб-сервис "Get" по адресу "https://jsonplaceholder.typicode.com/posts/{{number}}" с методом "Get", используя параметры:
 		| Name         | Value            | Style  |
 		| Content-Type | application/json | HEADER |
-		| ABS          | {output.//id}    | HEADER |
+		| ABS          | {{output.//id}}    | HEADER |
 	Then веб-сервис "Get" выполнился со статусом "200"
 		And я сохраняю результат вызова веб-сервиса "Get" как json в переменную "result"
 		And я убеждаюсь, что значение переменной "result.//" равно "{{output.//}}"
