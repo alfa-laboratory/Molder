@@ -38,7 +38,7 @@ namespace Molder.Generator.Steps
 
         [ExcludeFromCodeCoverage]
         [BeforeScenario(Order = -20000)]
-        public void BeforeFeature()
+        public void BeforeScenario()
         {
             _locale = this.featureContext.Locale();
             fakerGenerator = new FakerGenerator

@@ -9,45 +9,33 @@ using TechTalk.SpecFlow;
 using Molder.Models.Directory;
 using System.Threading;
 using Molder.Models.Configuration;
+using System;
 
 namespace Molder.Configuration.Hooks
 {
     [ExcludeFromCodeCoverage]
     [Binding]
-    internal class Hooks : Steps
+    internal class FeatureHooks : Steps
     {
-        private VariableController variableController;
-        private readonly ScenarioContext scenarioContext;
+        #region Придумать способ разделение Feature от Scenario. При статике сохраняется между сценариями содержимое VariableController (с содержимым первого пройденного сценария)
+#if Feature
+        private static AsyncLocal<VariableController> controller = new AsyncLocal<VariableController> { Value = null };
 
         private static IDirectory BinDirectory = new BinDirectory();
         private static AsyncLocal<IOptions<IEnumerable<ConfigFile>>> config = new AsyncLocal<IOptions<IEnumerable<ConfigFile>>>();
 
-        public Hooks(VariableController variableController, ScenarioContext scenarioContext)
-        {
-            this.variableController = variableController;
-            this.scenarioContext = scenarioContext;
-        }
-
         [BeforeFeature(Order = -100000)]
         public static void BeforeFeature(FeatureContext featureContext, VariableController variableController)
         {
+            controller.Value = variableController;
             BinDirectory.Create();
             ConfigurationExtension.Instance.Configuration = ConfigurationFactory.Create(BinDirectory);
             config.Value = ConfigOptionsFactory.Create(ConfigurationExtension.Instance.Configuration);
-
+        
             var tags = TagHelper.GetTagsBy(featureContext);
-            variableController.AddConfig(config.Value, tags);
+            controller.Value.AddConfig(config.Value, tags);
         }
-
-        [BeforeScenario(Order = -100000)]
-        public void BeforeScenario()
-        {
-            BinDirectory.Create();
-
-            config.Value = ConfigOptionsFactory.Create(ConfigurationExtension.Instance.Configuration);
-
-            var tags = TagHelper.GetTagsBy(scenarioContext);
-            variableController.AddConfig(config.Value, tags);
-        }
+#endif
+        #endregion
     }
 }
