@@ -493,7 +493,7 @@ namespace Molder.Generator.Steps
         /// </summary>
         /// <param name="len">Длина строки.</param>
         /// <param name="varName">Идентификатор переменной.</param>
-        [StepDefinition(@"я сохраняю случайный набор букв и цифр длиной ([1-9]+) знаков в переменную ""(.+)""")]
+        [StepDefinition(@"я сохраняю случайный набор букв и цифр длиной ([0-9]+) знаков в переменную ""(.+)""")]
         public void StoreAsVariableRandomString(int len, string varName)
         {
             this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
