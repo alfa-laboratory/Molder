@@ -25,8 +25,7 @@ namespace Molder.Configuration.Hooks
         private static IDirectory BinDirectory = new BinDirectory();
         private static AsyncLocal<IOptions<IEnumerable<ConfigFile>>> config = new AsyncLocal<IOptions<IEnumerable<ConfigFile>>>();
 
-        public ScenarioHooks(VariableController variableController, 
-            ScenarioContext scenarioContext, FeatureContext featureContext)
+        public ScenarioHooks(VariableController variableController)
         {
             this.controller = variableController;
         }
@@ -38,8 +37,14 @@ namespace Molder.Configuration.Hooks
             config.Value = ConfigOptionsFactory.Create(ConfigurationExtension.Instance.Configuration);
         
             var tags = TagHelper.GetTagsBy(feature);
-            tags.Concat(TagHelper.GetTagsBy(scenario));
+            tags.Concat(TagHelper.GetTagsBy(scenario)).OrderBy(t => t).ToList();
             controller.AddConfig(config.Value, tags);
+        }
+
+        [AfterScenario(Order = -1000000)]
+        public void AfterScenario()
+        {
+            controller.Variables.Clear();
         }
     }
 }
