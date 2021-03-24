@@ -1,4 +1,4 @@
-﻿
+﻿@ignore
 Feature: Service
 
 Scenario: POST
