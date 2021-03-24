@@ -13,12 +13,13 @@ namespace Molder.Database.Models
 {
     public class SqlServerClient : IDbClient, IDisposable
     {
-        public AsyncLocal<ISqlProvider> _provider = new AsyncLocal<ISqlProvider>() { Value = new SqlProvider() };
         public AsyncLocal<IDateTimeHelper> dateTimeHelper = new AsyncLocal<IDateTimeHelper>() { Value = new DateTimeHelper() };
         public DateTime lastConnect;
 
+        public ISqlProvider _provider;
         public SqlServerClient()
         {
+            _provider = new SqlProvider();
             lastConnect = dateTimeHelper.Value.GetDateTimeNow();
         }
 
@@ -26,11 +27,6 @@ namespace Molder.Database.Models
         {
             try
             {
-                if ((dateTimeHelper.Value.GetDateTimeNow() - lastConnect).TotalSeconds < DbSetting.PERIOD)
-                {
-                    Thread.Sleep((int)Math.Ceiling(DbSetting.PERIOD - (dateTimeHelper.Value.GetDateTimeNow() - lastConnect).TotalSeconds) * 1000);
-                }
-
                 var connectionString = new SqlConnectionStringBuilder()
                 {
                     DataSource = parameters.Source,
@@ -50,7 +46,7 @@ namespace Molder.Database.Models
 
                 Log.Logger().LogInformation($"Connection has parameters: {Database.Helpers.Message.CreateMessage(connectionString.ToString())}");
 
-                var connect = _provider.Value.Create(connectionString.ToString());
+                var connect = _provider.Create(connectionString.ToString());
 
                 lastConnect = dateTimeHelper.Value.GetDateTimeNow();
 
@@ -61,7 +57,7 @@ namespace Molder.Database.Models
                 Log.Logger().LogError($"Connection failed.{ex.Message}");
                 throw new ConnectSqlException($"Connection failed. {ex.Message}");
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Log.Logger().LogError($"Connection failed: {ex.Message}");
                 throw new ConnectSqlException($"Connection failed: {ex.Message}");
@@ -69,7 +65,7 @@ namespace Molder.Database.Models
         }
         public bool IsConnectAlive()
         {
-            var result = _provider.Value.IsConnectAlive();
+            var result = _provider.IsConnectAlive();
 
             if (result == true)
                 Log.Logger().LogInformation("Connect is alive");
@@ -82,15 +78,15 @@ namespace Molder.Database.Models
         [ExcludeFromCodeCoverage]
         public void Dispose()
         {
-            _provider.Value.Disconnect();
+            _provider.Disconnect();
         }
 
         public int ExecuteNonQuery(string query, int? timeout = null)
         {
-            var command = _provider.Value.SetupCommand(query, timeout);
+            var command = _provider.SetupCommand(query, timeout);
 
             var affectedRows = 0;
-            _provider.Value.UsingTransaction(
+            _provider.UsingTransaction(
                 (transaction) =>
                 {
                     command.Transaction = transaction;
@@ -113,12 +109,12 @@ namespace Molder.Database.Models
         {
             var results = new DataTable();
 
-            var command = _provider.Value.SetupCommand(query, timeout);
+            var command = _provider.SetupCommand(query, timeout);
 
             IDataReader reader = null;
             var tmpResults = results;
 
-            _provider.Value.UsingTransaction(
+            _provider.UsingTransaction(
                 (transaction) =>
                 {
                     command.Transaction = transaction;
@@ -156,10 +152,10 @@ namespace Molder.Database.Models
 
         public object ExecuteScalar(string query, int? timeout = null)  //todo
         {
-            var command = _provider.Value.SetupCommand(query, timeout);
+            var command = _provider.SetupCommand(query, timeout);
 
             object result = null;
-            _provider.Value.UsingTransaction(
+            _provider.UsingTransaction(
                 (transaction) =>
                 {
                     command.Transaction = transaction;

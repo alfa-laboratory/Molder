@@ -6,7 +6,7 @@ namespace Molder.Database.Hooks
 {
     [ExcludeFromCodeCoverage]
     [Binding]
-    public sealed class Hook
+    public class Hook : TechTalk.SpecFlow.Steps
     {
         private readonly DatabaseController databaseController;
 
