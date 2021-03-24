@@ -1,4 +1,5 @@
 ﻿using Molder.Database.Models;
+using System;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 
@@ -7,11 +8,11 @@ namespace Molder.Database.Controllers
     [ExcludeFromCodeCoverage]
     public class DatabaseController
     {
-        public ConcurrentDictionary<string, (IDbClient connection, int? timeout)> Connections { get; set; }
+        private Lazy<ConcurrentDictionary<string, (IDbClient connection, int? timeout)>> _connections = new Lazy<ConcurrentDictionary<string, (IDbClient connection, int? timeout)>>(() => new ConcurrentDictionary<string, (IDbClient connection, int? timeout)>());
 
-        public DatabaseController()
+        public ConcurrentDictionary<string, (IDbClient connection, int? timeout)> Connections
         {
-            Connections = new ConcurrentDictionary<string, (IDbClient, int?)>();
+            get => _connections.Value;
         }
     }
 }

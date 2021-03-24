@@ -156,7 +156,7 @@ namespace Molder.Database.Steps
         [Given(@"я подключаюсь к БД MS SQL Server с названием ""(.+)"":")]
         public void ConnectToDB_SqlServer(string connectionName, DbConnectionParams connectionParams)
         {
-            var (isValid, results) = Molder.Helpers.Validate.ValidateModel(connectionParams);
+            var (isValid, results) = Validate.ValidateModel(connectionParams);
             isValid.Should().BeTrue(Molder.Helpers.Message.CreateMessage(results));
 
             this.databaseController.Connections.ContainsKey(connectionName).Should().BeFalse($"Connection \"{connectionName}\" already exists");
