@@ -38,15 +38,16 @@ namespace Molder.Database.Tests
         [Fact]
         public void Create_IncorrectConnectionParams_ReturnThrow()
         {
-            var client = new SqlServerClient();
+            var mockSqlProvider = new Mock<ISqlProvider>();
 
-            Action action = () => client.Create(dbConnectionParams).Should().BeFalse();
+            var client = new SqlServerClient();
+            mockSqlProvider.Setup(c => c.Create(It.IsAny<string>())).Throws(new ConnectSqlException("test"));
+            client._provider = mockSqlProvider.Object;
+
+            Action action = () => client.Create(dbConnectionParams);
             action.Should()
                 .Throw<ConnectSqlException>()
-                 .Which.Message.Contains($"Connection failed. Connection with parameters: {Database.Helpers.Message.CreateMessage(dbConnectionParams)}");
-            action.Should()
-                .Throw<ConnectSqlException>()
-                 .WithMessage("*A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections.*");
+                 .WithMessage("Connection failed. test");
         }
 
         [Theory]
