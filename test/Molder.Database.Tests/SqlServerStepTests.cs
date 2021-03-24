@@ -71,19 +71,6 @@ namespace Molder.Database.Tests
         }
 
         [Fact]
-        public void ConnectToDB_SqlServer_IncorrectDbParams_ReturnThrow()
-        {
-            Action action = () => step.ConnectToDB_SqlServer(dbConnectionString, dbConnectionParams);
-
-            action.Should()
-                .Throw<ConnectSqlException>()
-                .Which.Message.Contains($"Connection failed. Connection with parameters: {Helpers.Message.CreateMessage(dbConnectionParams)}");
-            //action.Should()
-            //    .Throw<ConnectSqlException>()
-            //     .WithMessage("*A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections.*");
-        }
-
-        [Fact]
         public void ConnectToDB_SqlServer_DbParamsIsNull_ReturnThrow()
         {
             dbConnectionParams = new DbConnectionParams() { Database = "", Source = "", Login = "", Password = "", Timeout = 0 };
