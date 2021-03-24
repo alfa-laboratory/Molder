@@ -14,13 +14,11 @@ namespace Molder.Database.Models
     public class SqlServerClient : IDbClient, IDisposable
     {
         public AsyncLocal<IDateTimeHelper> dateTimeHelper = new AsyncLocal<IDateTimeHelper>() { Value = new DateTimeHelper() };
-        public DateTime lastConnect;
 
         public ISqlProvider _provider;
         public SqlServerClient()
         {
             _provider = new SqlProvider();
-            lastConnect = dateTimeHelper.Value.GetDateTimeNow();
         }
 
         public bool Create(DbConnectionParams parameters)
@@ -47,8 +45,6 @@ namespace Molder.Database.Models
                 Log.Logger().LogInformation($"Connection has parameters: {Database.Helpers.Message.CreateMessage(connectionString.ToString())}");
 
                 var connect = _provider.Create(connectionString.ToString());
-
-                lastConnect = dateTimeHelper.Value.GetDateTimeNow();
 
                 return connect;
             }

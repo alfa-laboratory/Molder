@@ -1,4 +1,5 @@
 ﻿using Molder.Service.Models;
+using System;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 
@@ -6,12 +7,12 @@ namespace Molder.Service.Controllers
 {
     [ExcludeFromCodeCoverage]
     public class ServiceController
-    {   
-        public ConcurrentDictionary<string, ResponceInfo> Services { get; set; }
+    {
+        private Lazy<ConcurrentDictionary<string, ResponceInfo>> _services = new Lazy<ConcurrentDictionary<string, ResponceInfo>>(() => new ConcurrentDictionary<string, ResponceInfo>());
 
-        public ServiceController()
+        public ConcurrentDictionary<string, ResponceInfo> Services
         {
-            Services = new ConcurrentDictionary<string, ResponceInfo>();
+            get => _services.Value;
         }
     }
 }
