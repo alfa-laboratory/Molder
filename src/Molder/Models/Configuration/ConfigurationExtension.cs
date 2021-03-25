@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Molder.Models.Configuration
 {
+    [ExcludeFromCodeCoverage]
     public sealed class ConfigurationExtension
     {
         private static readonly Lazy<ConfigurationExtension> lazy

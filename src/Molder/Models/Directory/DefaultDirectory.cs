@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading;
 
 namespace Molder.Models.Directory
 {
+    [ExcludeFromCodeCoverage]
     public abstract class DefaultDirectory : IDirectory
     {
         private AsyncLocal<DirectoryInfo> _directory = new AsyncLocal<DirectoryInfo>();
