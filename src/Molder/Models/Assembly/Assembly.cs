@@ -1,5 +1,8 @@
-﻿namespace Molder.Models.Assembly
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Molder.Models.Assembly
 {
+    [ExcludeFromCodeCoverage]
     public class Assembly : IAssembly
     {
         public System.Reflection.Assembly LoadFile(string path)

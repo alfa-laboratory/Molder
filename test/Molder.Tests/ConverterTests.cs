@@ -98,5 +98,21 @@ namespace Molder.Tests
             var cdata = Converter.CreateCData(Xml);
             cdata.Should().BeNull();
         }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        public void GetValueOrNull_ReturnNull(string str)
+        {
+            str.GetValueOrNull<bool>().Should().BeNull();
+        }
+
+        [Theory]
+        [InlineData("true", true)]
+        [InlineData("false", false)]
+        public void GetValueOrNull_ReturnBoolValue(string str, bool value)
+        {
+            str.GetValueOrNull<bool>().Should().Be(value);
+        }
     }
 }

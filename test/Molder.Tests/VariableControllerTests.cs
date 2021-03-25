@@ -557,12 +557,5 @@ namespace Molder.Tests
             var value = variableContext.GetVariableValue("nums[0]");
             value.Should().Be(1);
         }
-
-        [Theory]
-        [InlineData("")]
-        public void GetVariableValueText_JsonSubObject_ReturnValue(string json)
-        {
-            
-        }
     }
 }

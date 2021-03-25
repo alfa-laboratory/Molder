@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using Molder.Helpers;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Molder.Models.Directory
 {
+    [ExcludeFromCodeCoverage]
     public class DllDirectory : DefaultDirectory
     {
         public override string Get()
