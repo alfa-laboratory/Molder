@@ -9,11 +9,12 @@ namespace Molder.Extensions
     {
         public static (string str, bool isMoreMaxRows) ConvertToString(this DataTable dataTable)
         {
-            if(dataTable is null)
+            if (dataTable is null)
             {
                 throw new ArgumentNullException(nameof(dataTable), "The table to convert to string is null");
             }
             var isMoreMaxRows = dataTable.Rows.Count > Constants.MAX_ROWS ? true : false;
+            var rowCount = isMoreMaxRows ? Constants.MAX_ROWS : dataTable.Rows.Count;
 
             var output = new StringBuilder();
             var columnsWidths = dataTable.GetColumnsSize();
@@ -27,6 +28,7 @@ namespace Molder.Extensions
             output.Append($"|{Environment.NewLine}{new string('=', output.Length)}{Environment.NewLine}");
 
             // Write Rows
+            int currentRow = 1;
             foreach (DataRow row in dataTable.Rows)
             {
                 for (int i = 0; i < dataTable.Columns.Count; i++)
@@ -35,6 +37,9 @@ namespace Molder.Extensions
                     output.Append("|" + PadCenter(text, columnsWidths[i] + 2));
                 }
                 output.Append($"|{Environment.NewLine}");
+                if (currentRow < rowCount)
+                    currentRow++;
+                else break;
             }
             return (output.ToString(), isMoreMaxRows);
         }
