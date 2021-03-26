@@ -7,7 +7,7 @@
       "assembly": "Molder.Generator"
     },
     {
-      "assembly": "Molder.Service"
+      "assembly": "Molder.Database"
     },
     {
       "assembly": "Molder.Configuration"

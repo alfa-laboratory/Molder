@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -20,8 +20,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Molder.Configuration\Molder.Configuration.csproj" />
+    <ProjectReference Include="..\..\src\Molder.Database\Molder.Database.csproj" />
     <ProjectReference Include="..\..\src\Molder.Generator\Molder.Generator.csproj" />
-    <ProjectReference Include="..\..\src\Molder.Service\Molder.Service.csproj" />
   </ItemGroup>
 
   <ItemGroup>
