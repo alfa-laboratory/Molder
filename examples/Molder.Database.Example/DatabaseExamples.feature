@@ -1,4 +1,5 @@
-﻿@SqlServer
+﻿@ignore
+@SqlServer
 Feature: DatabaseExamples
 	Background: 
 		Given я подключаюсь к БД MS SQL Server с названием "QA":
