@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using Xunit;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System;
 
 namespace Molder.Tests
 {
@@ -111,14 +112,49 @@ namespace Molder.Tests
         }
 
         [Fact]
-        public void CreateMessage_NullDataTable_ReturnNull()
+        public void CreateMessage_CorrectDataTableWithMaxRow_ReturnStr()
         {
-            DataTable dt = null;
+            var dt = new DataTable();
+            dt.Clear();
+            dt.Columns.Add("1");
+            dt.Columns.Add("2");
+            DataRow row = dt.NewRow();
+            row["1"] = "1"; row["2"] = "2";
+            row["1"] = "1"; row["2"] = "2";
+            row["1"] = "1"; row["2"] = "2";
+            row["1"] = "1"; row["2"] = "2";
+            row["1"] = "1"; row["2"] = "2";
+            row["1"] = "1"; row["2"] = "2";
+            dt.Rows.Add(row);
 
             var message = Message.CreateMessage(dt);
 
-            message.Should().BeNull();
+            message.Should().NotBeEmpty();
         }
 
+        [Fact]
+        public void CreateMessage_CorrectDataRow_ReturnStr()
+        {
+            var dt = new DataTable();
+            dt.Clear();
+            dt.Columns.Add("1");
+            dt.Columns.Add("2");
+            DataRow row = dt.NewRow();
+            row["1"] = "1"; row["2"] = "2";
+
+            dt.Rows.Add(row);
+
+            var message = Message.CreateMessage(dt.Rows[0]);
+
+            message.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void CreateMessage_NullDataTable_ReturnException()
+        {
+            DataTable dt = null;
+            Action action = () => Message.CreateMessage(dt); ;
+            action.Should().Throw<ArgumentNullException>().WithMessage("The table to convert to string is null\nParameter name: dataTable");
+        }
     }
 }
