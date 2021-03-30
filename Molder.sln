@@ -47,7 +47,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Molder.Generator", "Molder.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Molder.Service.Example", "examples\Molder.Service.Example\Molder.Service.Example.csproj", "{00622835-E9D6-46CE-A9B7-ABD6B9427058}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Molder.Database.Example", "examples\Molder.Database.Example\Molder.Database.Example.csproj", "{4F0FBCE1-A245-45A9-8D6E-8CAAC3F34922}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Molder.Database.Example", "examples\Molder.Database.Example\Molder.Database.Example.csproj", "{4F0FBCE1-A245-45A9-8D6E-8CAAC3F34922}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -5,6 +5,7 @@ using Moq;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
+using Molder.Database.Models.Providers;
 
 namespace Molder.Database.Tests
 {

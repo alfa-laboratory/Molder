@@ -1,9 +1,9 @@
-﻿using Molder.Database.Models;
-using Molder.Helpers;
+﻿using Molder.Helpers;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Data;
 using System.Linq;
+using Molder.Database.Models.Parameters;
 
 namespace Molder.Database.Helpers
 {

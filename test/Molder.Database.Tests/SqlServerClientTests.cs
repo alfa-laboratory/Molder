@@ -8,6 +8,8 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
+using Molder.Database.Models.Parameters;
+using Molder.Database.Models.Providers;
 
 namespace Molder.Database.Tests
 {

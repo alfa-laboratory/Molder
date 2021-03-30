@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace Molder.Database.Models
+namespace Molder.Database.Models.Parameters
 {
     public class DbCommandParameter
     {
