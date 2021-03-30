@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using TechTalk.SpecFlow;
 using Xunit;
+using Molder.Database.Extensions;
 
 namespace Molder.Database.Tests
 {
@@ -34,7 +35,7 @@ namespace Molder.Database.Tests
 
             var ListParams = step.TransformationTableToString(table);
 
-            var result = ParserToString.ToSqlQuery(ListParams, tableName);
+            var result = ParserExtensions.ToSqlQuery(ListParams, tableName);
 
             result.Should().BeEquivalentTo("INSERT INTO Table (id,User,Balance,Date,Bool)" +
                 " VALUES (1243,'Петор Петров',100000,'2000-12-12',False)");
@@ -49,7 +50,7 @@ namespace Molder.Database.Tests
 
             var ListParams = step.TransformationTableToString(table);
 
-            Action action = () => ParserToString.ToSqlQuery(ListParams, tableName);
+            Action action = () => ListParams.ToSqlQuery(tableName);
             action.Should()
                 .Throw<ArgumentNullException>()
                 .WithMessage($"Value cannot be null.{Environment.NewLine}Parameter name: Table name is Empty.");
@@ -60,7 +61,7 @@ namespace Molder.Database.Tests
         {
             var ListParams = new List<Dictionary<string, object>>();
 
-            Action action = () => ParserToString.ToSqlQuery(ListParams, tableName);
+            Action action = () => ListParams.ToSqlQuery(tableName);
             action.Should()
                 .Throw<ArgumentNullException>()
                 .WithMessage($"Value cannot be null.{Environment.NewLine}Parameter name: List with table parameters is Empty.");

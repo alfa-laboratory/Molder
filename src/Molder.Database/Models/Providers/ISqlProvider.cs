@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.Common;
 
-namespace Molder.Database.Models
+namespace Molder.Database.Models.Providers
 {
     public interface ISqlProvider
     {

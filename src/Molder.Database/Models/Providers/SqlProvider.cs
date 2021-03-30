@@ -8,7 +8,7 @@ using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
-namespace Molder.Database.Models
+namespace Molder.Database.Models.Providers
 {
     [ExcludeFromCodeCoverage]
     public class SqlProvider : ISqlProvider

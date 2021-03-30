@@ -11,6 +11,7 @@ using Moq;
 using Molder.Database.Infrastructures;
 using TechTalk.SpecFlow;
 using System.Collections.Generic;
+using Molder.Database.Models.Parameters;
 
 namespace Molder.Database.Tests
 {
@@ -35,7 +36,7 @@ namespace Molder.Database.Tests
         public void GetDataBaseParametersFromTableSqlServer_CorrectTable_ReturnDbConnectionParams()
         {
             var table = new Table(new string[] { "Source", "Database", "Login", "Password" });
-            table.AddRow("Db1", "Test", "User", "W9qNIafQbJCZzEafUaYmQw==");
+            table.AddRow("Db1", "Test", "User", "test");
 
             var result = step.GetDataBaseParametersFromTableSqlServer(table);
 
@@ -94,7 +95,7 @@ namespace Molder.Database.Tests
 
             this.databaseController.Connections.TryAdd(connectName, (connection, 30));
 
-            step.ExecuteQuery(QueryType.SELECT, connectName, query);            
+            step.ExecuteQueryType(QueryType.SELECT, connectName, new QueryParam { Query = query });            
         }
 
         [Fact]
@@ -113,7 +114,7 @@ namespace Molder.Database.Tests
 
             this.databaseController.Connections.TryAdd(connectName, (connection, 30));
 
-            step.ExecuteQuery(QueryType.INSERT, connectName, varName, query);
+            step.ExecuteQueryTypeWithVarName(QueryType.INSERT, connectName, varName, new QueryParam { Query = query });
 
             this.variableController.Variables.Should().NotBeEmpty();
         }
