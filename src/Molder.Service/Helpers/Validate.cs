@@ -9,7 +9,7 @@ namespace Molder.Service.Helpers
         /// </summary>   
         public static bool ValidateUrl(string url)
         {
-            return Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute);
+            return Uri.TryCreate(url, UriKind.Absolute, out var tmp) ? true : false;
         }
     }
 }
