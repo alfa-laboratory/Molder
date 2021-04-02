@@ -169,6 +169,24 @@ namespace Molder.Database.Steps
         #endregion
 
         /// <summary>
+        /// Шаг выборки строки (json/xml) из базы данных и сохранения в переменную.
+        /// </summary>
+        /// <param name="connectionName">Название подключения.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        /// <param name="query">Запрос.</param>
+        [StepDefinition(@"я выбираю единственную запись в виде строки из БД ""(.+)"" и сохраняю её в переменную ""(.+)"":")]
+        public void SelectStringFromDbSetVariable(string connectionName, string varName, QueryParam query)
+        {
+            databaseController.Connections.InputValidation(connectionName, query.Query);
+
+            var (connection, timeout) = databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
+            var str = connection.ExecuteStringQuery(query.Query, timeout);
+            
+            Log.Logger().LogInformation($"Request returned: {Environment.NewLine} {(str != null ? $"is not empty" : $"is empty")}");
+            variableController.SetVariable(varName, typeof(string), str);
+        }
+
+        /// <summary>
         /// Шаг выборки записи из базы данных и сохранения в переменную.
         /// </summary>
         /// <param name="connectionName">Название подключения.</param>

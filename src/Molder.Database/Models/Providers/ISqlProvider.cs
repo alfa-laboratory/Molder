@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Data.Common;
+using System.Data.SqlClient;
 
 namespace Molder.Database.Models.Providers
 {
     public interface ISqlProvider
     {
         bool Create(string connectionString);
-        DbConnection Open(string connectionString);
+        SqlConnection Open(string connectionString);
         bool IsConnectAlive();
-        void UsingTransaction(Action<DbTransaction> onExecute, Action<System.Exception> onError, Action onSuccess = null);
-        DbCommand SetupCommand(string query, int? timeout = null);
+        void UsingTransaction(Action<SqlTransaction> onExecute, Action<Exception> onError, Action onSuccess = null);
+        SqlCommand SetupCommand(string query, int? timeout = null);
         bool Disconnect();
     }
 }

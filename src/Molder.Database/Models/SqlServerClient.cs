@@ -10,6 +10,7 @@ using Molder.Models.DateTimeHelpers;
 using System.Threading;
 using Molder.Database.Models.Providers;
 using Molder.Database.Models.Parameters;
+using System.Text;
 
 namespace Molder.Database.Models
 {
@@ -146,6 +147,45 @@ namespace Molder.Database.Models
             var affectedRows = tmpResults?.Rows?.Count ?? 0;
             tmpResults.Dispose();
             return (results, affectedRows);
+        }
+
+        public string ExecuteStringQuery(string query, int? timeout = null)
+        {
+            var command = _provider.SetupCommand(query, timeout);
+
+            SqlDataReader reader = null;
+            var sb = new StringBuilder();
+
+            _provider.UsingTransaction(
+                (transaction) =>
+                {
+                    command.Transaction = transaction;
+                    reader = command.ExecuteReader();
+                    if (reader.HasRows && reader.FieldCount == 1)
+                    {
+                        while(reader.Read())
+                        {
+                            sb.Append(reader[0]);
+                        }
+                    }
+                    else
+                    {
+                        Log.Logger().LogError($"Failed to execute SQL Query.{Environment.NewLine} Error Message: sql query result returns more than one field {Environment.NewLine}Query:{Environment.NewLine}{Helpers.Message.CreateMessage(command)}");
+                        sb.Append((string)null);
+                    }
+
+                    reader.Dispose();
+                },
+                (ex) =>
+                {
+                    Log.Logger().LogError($"Failed to execute SQL Query.{Environment.NewLine} Error Message: {ex.Message}{Environment.NewLine}Query:{Environment.NewLine}{Helpers.Message.CreateMessage(command)}");
+                    reader?.Dispose();
+                },
+                () =>
+                {
+                    Log.Logger().LogInformation("SQL Query: {0}", Helpers.Message.CreateMessage(command));
+                });
+            return sb.ToString();
         }
 
         public object ExecuteScalar(string query, int? timeout = null)  //todo
