@@ -49,6 +49,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Molder.Service.Example", "e
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Molder.Database.Example", "examples\Molder.Database.Example\Molder.Database.Example.csproj", "{4F0FBCE1-A245-45A9-8D6E-8CAAC3F34922}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Molder.ReportPortal", "src\Molder.ReportPortal\Molder.ReportPortal.csproj", "{AF20AC56-0492-4667-A79C-E02015AB549D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -251,6 +253,18 @@ Global
 		{4F0FBCE1-A245-45A9-8D6E-8CAAC3F34922}.Release|x64.Build.0 = Release|Any CPU
 		{4F0FBCE1-A245-45A9-8D6E-8CAAC3F34922}.Release|x86.ActiveCfg = Release|Any CPU
 		{4F0FBCE1-A245-45A9-8D6E-8CAAC3F34922}.Release|x86.Build.0 = Release|Any CPU
+		{AF20AC56-0492-4667-A79C-E02015AB549D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF20AC56-0492-4667-A79C-E02015AB549D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF20AC56-0492-4667-A79C-E02015AB549D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AF20AC56-0492-4667-A79C-E02015AB549D}.Debug|x64.Build.0 = Debug|Any CPU
+		{AF20AC56-0492-4667-A79C-E02015AB549D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AF20AC56-0492-4667-A79C-E02015AB549D}.Debug|x86.Build.0 = Debug|Any CPU
+		{AF20AC56-0492-4667-A79C-E02015AB549D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF20AC56-0492-4667-A79C-E02015AB549D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF20AC56-0492-4667-A79C-E02015AB549D}.Release|x64.ActiveCfg = Release|Any CPU
+		{AF20AC56-0492-4667-A79C-E02015AB549D}.Release|x64.Build.0 = Release|Any CPU
+		{AF20AC56-0492-4667-A79C-E02015AB549D}.Release|x86.ActiveCfg = Release|Any CPU
+		{AF20AC56-0492-4667-A79C-E02015AB549D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
