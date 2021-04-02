@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>   
-    <Version>1.0.13</Version>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <Version>1.0.0</Version>
     <Authors>Egor Shokhin</Authors>
     <Company>AlfaBank</Company>
     <Copyright>2021 AlfaBank</Copyright>
@@ -10,7 +10,7 @@
     <RepositoryUrl>https://github.com/alfa-laboratory/Molder</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IsPackable>true</IsPackable>
-    <Description>Library for adding a block to the appsettings.json configuration file for adding variables to scenarios</Description>
+    <Description>Library for adding report portal log</Description>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
@@ -19,10 +19,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
-    <PackageReference Include="Molder" Version="1.0.13" />
+    <PackageReference Include="Molder" Version="1.0.15" />
+    <PackageReference Include="ReportPortal.Serilog" Version="2.0.0" />
     <PackageReference Include="SpecFlow" Version="3.3.30" />
   </ItemGroup>
 

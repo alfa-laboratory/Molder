@@ -18,25 +18,29 @@ namespace Molder.Configuration.Hooks
 {
     [ExcludeFromCodeCoverage]
     [Binding]
-    public class ScenarioHooks : Steps
+    public class Hooks : Steps
     {
         private VariableController controller;
-        private readonly ScenarioContext scenarioContext;
-        private readonly FeatureContext featureContext;
 
         private static IDirectory BinDirectory = new BinDirectory();
         private static AsyncLocal<IOptions<IEnumerable<ConfigFile>>> config = new AsyncLocal<IOptions<IEnumerable<ConfigFile>>>();
 
-        public ScenarioHooks(VariableController variableController)
+        public Hooks(VariableController variableController)
         {
             this.controller = variableController;
+        }
+
+        [BeforeFeature(Order = -10000000)]
+        public static void InitializeConfiguration()
+        {
+            BinDirectory.Create();
+            ConfigurationExtension.Instance.Configuration = ConfigurationExtension.Instance.Configuration ?? ConfigurationFactory.Create(BinDirectory);
         }
 
         [BeforeFeature(Order = -1000000)]
         public static void BeforeFeature(FeatureContext featureContext, VariableController variableController)
         {
-            BinDirectory.Create();
-            ConfigurationExtension.Instance.Configuration = ConfigurationFactory.Create(BinDirectory);
+            ConfigurationExtension.Instance.Configuration = ConfigurationExtension.Instance.Configuration ?? ConfigurationFactory.Create(BinDirectory);
             config.Value = ConfigOptionsFactory.Create(ConfigurationExtension.Instance.Configuration);
 
             var tags = TagHelper.GetTagsBy(featureContext);
