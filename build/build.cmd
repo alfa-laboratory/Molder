@@ -42,3 +42,31 @@ exit /b 1
 echo Error! Build Molder.Service failed.
 exit /b 1
 )
+
+@set project=..\src\Molder.Web\
+
+@call dotnet build -c Release %project%
+
+@if ERRORLEVEL 1 (
+echo Error! Build Molder.Web failed.
+exit /b 1
+)
+
+@set project=..\src\Molder.Configuration\
+
+@call dotnet build -c Release %project%
+
+@if ERRORLEVEL 1 (
+echo Error! Build Molder.Configuration failed.
+exit /b 1
+)
+
+@set project=..\src\Molder.ReportPortal\
+
+@call dotnet build -c Release %project%
+
+@if ERRORLEVEL 1 (
+echo Error! Build Molder.ReportPortal failed.
+exit /b 1
+)
+
