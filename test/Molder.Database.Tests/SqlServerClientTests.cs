@@ -115,8 +115,8 @@ namespace Molder.Database.Tests
             var client = new SqlServerClient();
 
             mockSqlProvider
-                .Setup(u => u.UsingTransaction(It.IsAny<Action<DbTransaction>>(), It.IsAny<Action<Exception>>(), null))
-                .Callback((Action<DbTransaction> action, Action<Exception> ex, Action success) => new DataTable());
+                .Setup(u => u.UsingTransaction(It.IsAny<Action<SqlTransaction>>(), It.IsAny<Action<Exception>>(), null))
+                .Callback((Action<SqlTransaction> action, Action<Exception> ex, Action success) => new DataTable());
 
             client._provider = mockSqlProvider.Object;
 
@@ -135,8 +135,8 @@ namespace Molder.Database.Tests
             var client = new SqlServerClient();
 
             mockSqlProvider
-                .Setup(u => u.UsingTransaction(It.IsAny<Action<DbTransaction>>(), It.IsAny<Action<Exception>>(), null))
-                .Callback((Action<DbTransaction> action, Action<Exception> ex, Action success) => new DataTable());
+                .Setup(u => u.UsingTransaction(It.IsAny<Action<SqlTransaction>>(), It.IsAny<Action<Exception>>(), null))
+                .Callback((Action<SqlTransaction> action, Action<Exception> ex, Action success) => new DataTable());
 
             client._provider = mockSqlProvider.Object;
 
@@ -172,8 +172,8 @@ namespace Molder.Database.Tests
             var client = new SqlServerClient();
 
             mockSqlProvider
-                .Setup(u => u.UsingTransaction(It.IsAny<Action<DbTransaction>>(), It.IsAny<Action<Exception>>(), null))
-                .Callback((Action<DbTransaction> action, Action<Exception> ex, Action success) => new object());
+                .Setup(u => u.UsingTransaction(It.IsAny<Action<SqlTransaction>>(), It.IsAny<Action<Exception>>(), null))
+                .Callback((Action<SqlTransaction> action, Action<Exception> ex, Action success) => new object());
 
             client._provider = mockSqlProvider.Object;
 

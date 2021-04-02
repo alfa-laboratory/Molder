@@ -3,7 +3,6 @@ using Molder.Helpers;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
@@ -13,7 +12,7 @@ namespace Molder.Database.Models.Providers
     [ExcludeFromCodeCoverage]
     public class SqlProvider : ISqlProvider
     {
-        private AsyncLocal<DbConnection> connection = new AsyncLocal<DbConnection>() { Value = null };
+        private AsyncLocal<SqlConnection> connection = new AsyncLocal<SqlConnection>() { Value = null };
 
         public bool Create(string connectionString)
         {
@@ -39,7 +38,7 @@ namespace Molder.Database.Models.Providers
                     }
                 }
             }
-            catch (DbException ex)
+            catch (SqlException ex)
             {
                 Log.Logger().LogError($"Connection with parameters: {Helpers.Message.CreateMessage(connectionString)} failed.{Environment.NewLine} {ex.Message}");
                 throw new ConnectSqlException($"Connection with parameters: {Helpers.Message.CreateMessage(connectionString)} failed.{Environment.NewLine} {ex.Message}");
@@ -51,7 +50,7 @@ namespace Molder.Database.Models.Providers
             }
         }
 
-        public void UsingTransaction(Action<DbTransaction> onExecute, Action<Exception> onError, Action onSuccess = null)
+        public void UsingTransaction(Action<SqlTransaction> onExecute, Action<Exception> onError, Action onSuccess = null)
         {
             var transaction = connection.Value.BeginTransaction(IsolationLevel.ReadUncommitted);
 
@@ -72,7 +71,7 @@ namespace Molder.Database.Models.Providers
             }
         }
 
-        public DbCommand SetupCommand(string query, int? timeout = null)
+        public SqlCommand SetupCommand(string query, int? timeout = null)
         {
             var command = connection.Value.CreateCommand();
             command.CommandTimeout = Math.Min(300, Math.Max(0, timeout ?? 0));
@@ -122,7 +121,7 @@ namespace Molder.Database.Models.Providers
                 return false;
             }
         }
-        public DbConnection Open(string connectionString)
+        public SqlConnection Open(string connectionString)
         {
             var _connection = new SqlConnection(connectionString);
             _connection.Open();

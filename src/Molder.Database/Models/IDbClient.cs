@@ -8,6 +8,7 @@ namespace Molder.Database.Models
         bool Create(DbConnectionParams parameters);
         bool IsConnectAlive();
         (object, int) ExecuteQuery(string query, int? timeout = null);
+        string ExecuteStringQuery(string query, int? timeout = null);
         int ExecuteNonQuery(string query, int? timeout = null);
         object ExecuteScalar(string query, int? timeout = null);
     }
