@@ -1,5 +1,4 @@
-﻿using Molder.Database.Exceptions;
-using Molder.Database.Infrastructures;
+﻿using Molder.Database.Infrastructures;
 using System;
 using System.Data;
 using System.Data.SqlClient;

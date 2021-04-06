@@ -1,5 +1,4 @@
-﻿using Molder.Database.Exceptions;
-using Molder.Helpers;
+﻿using Molder.Helpers;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Data;

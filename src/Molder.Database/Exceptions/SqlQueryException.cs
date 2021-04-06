@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Molder.Database.Exceptions
+namespace Molder.Database
 {
     public class SqlQueryException : ArgumentException
     {
