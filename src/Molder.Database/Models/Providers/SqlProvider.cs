@@ -21,7 +21,6 @@ namespace Molder.Database.Models.Providers
                 if (connection.Value is null)
                 {
                     connection.Value = Open(connectionString);
-                    Log.Logger().LogInformation($"Connection with parameters: {Helpers.Message.CreateMessage(connectionString)} is open");
                     return true;
                 }
                 else
