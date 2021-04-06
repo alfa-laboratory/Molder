@@ -1,5 +1,4 @@
-﻿using Molder.Database.Exceptions;
-using Molder.Database.Infrastructures;
+﻿using Molder.Database.Infrastructures;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -45,7 +44,7 @@ namespace Molder.Database.Models
                 connectionString.ConnectRetryCount = parameters.ConnectRetryCount;
                 connectionString.ConnectRetryInterval = parameters.ConnectRetryInterval;
 
-                Log.Logger().LogInformation($"Connection has parameters: {Database.Helpers.Message.CreateMessage(connectionString.ToString())}");
+                Log.Logger().LogInformation($"Connection has parameters: {Helpers.Message.CreateMessage(connectionString.ToString())}");
 
                 var connect = _provider.Create(connectionString.ToString());
 
@@ -93,12 +92,12 @@ namespace Molder.Database.Models
                 },
                 (ex) =>
                 {
-                    Log.Logger().LogError($"Failed to execute SQL Query.{Environment.NewLine}Error Message: {ex.Message}{Environment.NewLine}Query:{Environment.NewLine}{Helpers.Message.CreateMessage(command)}");
-                    affectedRows = 0;
+                    Log.Logger().LogError($"Failed to execute SQL Non-Query.{Environment.NewLine}Error Message: {ex.Message}{Environment.NewLine}Query:{Environment.NewLine}{query}");
+                    throw new SqlQueryException($"Failed to execute SQL Non-Query.{Environment.NewLine}Error Message: {ex.Message}{Environment.NewLine}Query:{Environment.NewLine}{query}");
                 },
                 () =>
                 {
-                    Log.Logger().LogInformation("SQL Non-Query: {0}", Helpers.Message.CreateMessage(command));
+                    Log.Logger().LogInformation($"SQL Non-Query: {query}");
                 });
 
             return affectedRows;
@@ -124,19 +123,14 @@ namespace Molder.Database.Models
                 },
                 (ex) =>
                 {
-                    Log.Logger().LogError($"Failed to execute SQL Query.{Environment.NewLine} Error Message: {ex.Message}{Environment.NewLine}Query:{Environment.NewLine}{Helpers.Message.CreateMessage(command)}");
+                    Log.Logger().LogError($"Failed to execute SQL Query.{Environment.NewLine}Error Message: {ex.Message}{Environment.NewLine}Query:{Environment.NewLine}{query}");
                     reader?.Dispose();
-                    tmpResults = null;
+                    throw new SqlQueryException($"Failed to execute SQL Query.{Environment.NewLine}Error Message: {ex.Message}{Environment.NewLine}Query:{Environment.NewLine}{query}");
                 },
                 () =>
                 {
-                    Log.Logger().LogInformation("SQL Query: {0}", Helpers.Message.CreateMessage(command));
+                    Log.Logger().LogInformation($"SQL Query: {query}");
                 });
-
-            if (tmpResults == null)
-            {
-                return (null, 0);
-            }
 
             results = tmpResults;
             if (string.IsNullOrWhiteSpace(results.TableName))
@@ -170,20 +164,21 @@ namespace Molder.Database.Models
                     }
                     else
                     {
-                        Log.Logger().LogError($"Failed to execute SQL Query.{Environment.NewLine} Error Message: sql query result returns more than one field {Environment.NewLine}Query:{Environment.NewLine}{Helpers.Message.CreateMessage(command)}");
-                        sb.Append((string)null);
+                        Log.Logger().LogError($"Failed to execute SQL Query (String).{Environment.NewLine}Error Message: sql query result returns more than one field {Environment.NewLine}Query:{Environment.NewLine}{query}");
+                        throw new SqlQueryException($"Failed to execute SQL Query (String).{Environment.NewLine}Error Message: sql query result returns more than one field {Environment.NewLine}Query:{Environment.NewLine}{query}");
                     }
 
                     reader.Dispose();
                 },
                 (ex) =>
                 {
-                    Log.Logger().LogError($"Failed to execute SQL Query.{Environment.NewLine} Error Message: {ex.Message}{Environment.NewLine}Query:{Environment.NewLine}{Helpers.Message.CreateMessage(command)}");
+                    Log.Logger().LogError($"Failed to execute SQL Query (String).{Environment.NewLine}Error Message: {ex.Message}{Environment.NewLine}Query:{query}");
                     reader?.Dispose();
+                    throw new SqlQueryException($"Failed to execute SQL Query (String).{Environment.NewLine}Error Message: {ex.Message}{Environment.NewLine}Query:{Environment.NewLine}{query}");
                 },
                 () =>
                 {
-                    Log.Logger().LogInformation("SQL Query: {0}", Helpers.Message.CreateMessage(command));
+                    Log.Logger().LogInformation($"SQL Query (String): {query}");
                 });
             return sb.ToString();
         }
@@ -201,14 +196,14 @@ namespace Molder.Database.Models
                 },
                 (ex) =>
                 {
-                    Log.Logger().LogError(ex.Message);
-                    result = null;
+                    Log.Logger().LogError($"Failed to execute SQL Query (Scalar).{Environment.NewLine}Error Message: {ex.Message}{Environment.NewLine}Query:{Environment.NewLine}{query}");
+                    throw new SqlQueryException($"Failed to execute SQL Query (Scalar).{Environment.NewLine}Error Message: {ex.Message}{Environment.NewLine}Query:{Environment.NewLine}{query}");
                 },
                 () =>
                 {
-                    Log.Logger().LogInformation("SQL Query (Scalar): {0}", Helpers.Message.CreateMessage(command));
+                Log.Logger().LogInformation($"SQL Query (Scalar): {query}");
                 });
-            return result; //возвращает affectedrow
+            return result;
         }
     }
 }

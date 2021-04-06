@@ -1,10 +1,8 @@
-﻿using Molder.Database.Exceptions;
-using Molder.Database.Models;
+﻿using Molder.Database.Models;
 using FluentAssertions;
 using Moq;
 using System;
 using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;

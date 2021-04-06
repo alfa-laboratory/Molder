@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.Common;
 
-namespace Molder.Database.Exceptions
+namespace Molder.Database
 {
     [Serializable]
     public class ConnectSqlException : DbException

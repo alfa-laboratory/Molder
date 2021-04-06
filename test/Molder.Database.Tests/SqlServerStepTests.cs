@@ -2,7 +2,6 @@
 using Molder.Database.Controllers;
 using Molder.Database.Models;
 using Molder.Database.Steps;
-using Molder.Database.Exceptions;
 using FluentAssertions;
 using System;
 using System.Diagnostics.CodeAnalysis;
