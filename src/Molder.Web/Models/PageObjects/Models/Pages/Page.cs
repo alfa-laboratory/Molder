@@ -15,7 +15,7 @@ namespace Molder.Web.Models.PageObjects.Pages
 {
     public class Page : BasePage
     {
-        private IDriverProvider _driverProvider;
+        public IDriverProvider _driverProvider;
 
         public override string Name { get; set; }
         public override string Url { get; set; }

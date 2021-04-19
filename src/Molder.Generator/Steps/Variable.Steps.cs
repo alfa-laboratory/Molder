@@ -83,7 +83,9 @@ namespace Molder.Generator.Steps
         [StepDefinition(@"я сохраняю текст ""(.*)"" в переменную ""(.+)""")]
         public void StoreAsVariableString(string text, string varName)
         {
-            this.variableController.SetVariable(varName, typeof(string), text);
+            var str = variableController.ReplaceVariables(text);
+            Log.Logger().LogDebug($"Replaced text with variables is equal to {Environment.NewLine}{str}");
+            this.variableController.SetVariable(varName, typeof(string), str);
         }
 
         /// <summary>
@@ -105,7 +107,9 @@ namespace Molder.Generator.Steps
         [StepDefinition(@"я сохраняю текст в переменную ""(.+)"":")]
         public void StoreAsVariableText(string varName, string text)
         {
-            this.variableController.SetVariable(varName, typeof(string), text);
+            var str = variableController.ReplaceVariables(text);
+            Log.Logger().LogDebug($"Replaced multiline text with variables is equal to {Environment.NewLine}{str}");
+            this.variableController.SetVariable(varName, typeof(string), str);
         }
 
         /// <summary>
