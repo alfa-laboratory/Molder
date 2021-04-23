@@ -4,7 +4,7 @@ using System;
 
 namespace Molder.Extensions
 {
-    public static partial class ReplaceMethodExtensions
+    public static partial class ParseFunctions
     {
         public static object parseInt(string str)
         {

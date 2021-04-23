@@ -30,8 +30,7 @@ namespace Molder.Extensions
 
                     var variable = m.Groups[1].Value;
 
-                    var replaceMethod = new ReplaceMethod();
-                    (string methodName, string[] parameters) = replaceMethod.GetFunction(variable);
+                    (string methodName, string[] parameters) = ReplaceMethodsExtension.GetFunction(variable);
 
                     if (methodName is null)
                     {
@@ -65,12 +64,12 @@ namespace Molder.Extensions
                             }
                         }
 
-                        var function = replaceMethod.Check(methodName);
+                        var function = ReplaceMethodsExtension.Check(methodName);
                         if(function.GetParameters().Count() != _params.Count())
                         {
                             return notFoundReplace != null ? notFoundReplace(variable) : variable;
                         }
-                        var funcVal = replaceMethod.Invoke(methodName, _params);
+                        var funcVal = ReplaceMethodsExtension.Invoke(methodName, _params);
                         return foundReplace != null ? foundReplace(funcVal) : funcVal.ToString();
                     }
                 },
