@@ -7,6 +7,7 @@ using Molder.Models.ReplaceMethod;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using Xunit;
 
 namespace Molder.Generator.Tests
@@ -40,7 +41,10 @@ namespace Molder.Generator.Tests
             var str = "{{currentDateTime(dd-MM-yyyy)}}";
             var outStr = this.variableContext.ReplaceVariables(str);
             Log.Logger().LogWarning($"ReplaceVariables_currentDateTime_ReturnReplaced - {outStr}");
-            Assert.True(DateTime.TryParse(outStr, out var dateValue));
+            Assert.True(DateTime.TryParseExact(outStr, "dd-MM-yyyy",
+                              new CultureInfo("en-US"),
+                              DateTimeStyles.None,
+                              out var dateValue));
         }
 
         /// <summary>
@@ -64,7 +68,10 @@ namespace Molder.Generator.Tests
             var outStr = this.variableContext.ReplaceVariables(str);
             Log.Logger().LogWarning($"ReplaceVariables_futureDateTime_ReturnReplaced - {outStr}");
 
-            Assert.True(DateTime.TryParse(outStr, out var dateValue));
+            Assert.True(DateTime.TryParseExact(outStr, "dd-MM-yyyy",
+                              new CultureInfo("en-US"),
+                              DateTimeStyles.None,
+                              out var dateValue));
         }
 
         /// <summary>
@@ -88,7 +95,10 @@ namespace Molder.Generator.Tests
             var outStr = this.variableContext.ReplaceVariables(str);
             Log.Logger().LogWarning($"ReplaceVariables_pastDateTime_ReturnReplaced - {outStr}");
 
-            Assert.True(DateTime.TryParse(outStr, out var dateValue));
+            Assert.True(DateTime.TryParseExact(outStr, "dd-MM-yyyy",
+                              new CultureInfo("en-US"),
+                              DateTimeStyles.None,
+                              out var dateValue));
         }
 
         /// <summary>
@@ -112,7 +122,10 @@ namespace Molder.Generator.Tests
             var outStr = this.variableContext.ReplaceVariables(str);
             Log.Logger().LogWarning($"ReplaceVariables_randomDateTime_ReturnReplaced - {outStr}");
 
-            Assert.True(DateTime.TryParse(outStr, out var dateValue));
+            Assert.True(DateTime.TryParseExact(outStr, "dd-MM-yyyy",
+                              new CultureInfo("en-US"),
+                              DateTimeStyles.None,
+                              out var dateValue));
         }
 
         /// <summary>
