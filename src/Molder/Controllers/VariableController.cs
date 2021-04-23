@@ -303,35 +303,5 @@ namespace Molder.Controllers
 
             return ret;
         }
-
-        public string ReplaceVariables(string str, Func<object, string> foundReplace = null, Func<string, string> notFoundReplace = null)
-        {
-            return ReplaceVariables(str, StringPattern.SEARCH, foundReplace, notFoundReplace);
-        }
-
-        private string ReplaceVariables(string str, string pattern, Func<object, string> foundReplace = null, Func<string, string> notFoundReplace = null)
-        {
-            object val;
-            var fmt = Regex.Replace(
-                str ?? string.Empty,
-                pattern,
-                m =>
-                {
-                    if(m.Groups[1].Value.Length <= 0 || m.Groups[1].Value[0] == '(')
-                    {
-                        return $"{m.Groups[1].Value}";
-                    }
-
-                    if(GetVariable(m.Groups[1].Value) == null)
-                    {
-                        return notFoundReplace != null ? notFoundReplace(m.Groups[1].Value) : m.Groups[1].Value;
-                    }
-
-                    val = GetVariableValue(m.Groups[1].Value);
-                    return foundReplace != null ? foundReplace(val) : Reflection.ConvertObject<string>(val);
-                },
-                RegexOptions.None);
-            return fmt;
-        }
     }
 }

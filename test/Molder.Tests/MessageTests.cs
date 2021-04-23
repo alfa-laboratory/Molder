@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Molder.Helpers;
+using Molder.Infrastructures;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
@@ -117,15 +118,12 @@ namespace Molder.Tests
             var dt = new DataTable();
             dt.Clear();
             dt.Columns.Add("1");
-            dt.Columns.Add("2");
-            DataRow row = dt.NewRow();
-            row["1"] = "1"; row["2"] = "2";
-            row["1"] = "1"; row["2"] = "2";
-            row["1"] = "1"; row["2"] = "2";
-            row["1"] = "1"; row["2"] = "2";
-            row["1"] = "1"; row["2"] = "2";
-            row["1"] = "1"; row["2"] = "2";
-            dt.Rows.Add(row);
+            for (int i = 0; i < Constants.MAX_ROWS + 1; i++)
+            {
+                DataRow row = dt.NewRow();
+                row["1"] = $"{i}";
+                dt.Rows.Add(row);
+            }
 
             var message = Message.CreateMessage(dt);
 
