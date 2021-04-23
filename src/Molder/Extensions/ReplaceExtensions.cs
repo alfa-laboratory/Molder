@@ -10,12 +10,12 @@ namespace Molder.Extensions
 {
     public static class ReplaceExtensions
     {
-        public static object ReplaceVariables(this VariableController variableController, string str, Func<object, string> foundReplace = null, Func<object, string> notFoundReplace = null)
+        public static string ReplaceVariables(this VariableController variableController, string str, Func<object, string> foundReplace = null, Func<object, string> notFoundReplace = null)
         {
             return variableController.ReplaceVariables(str, StringPattern.SEARCH, foundReplace, notFoundReplace);
         }
 
-        public static object ReplaceVariables(this VariableController variableController, string str, string pattern, Func<object, string> foundReplace = null, Func<object, string> notFoundReplace = null)
+        public static string ReplaceVariables(this VariableController variableController, string str, string pattern, Func<object, string> foundReplace = null, Func<object, string> notFoundReplace = null)
         {
             object val;
             var fmt = Regex.Replace(
