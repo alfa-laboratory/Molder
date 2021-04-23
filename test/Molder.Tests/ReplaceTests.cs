@@ -2,6 +2,7 @@
 using Molder.Extensions;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 using System.Xml;
 using Xunit;
 
@@ -123,7 +124,6 @@ namespace Molder.Tests
         /// <param name="validJson">Корректная json.</param>
         [Theory]
         [InlineData("{\"code\":{{parseDouble(1.1)}}\"}", "{\"code\":1.1\"}")]
-        [InlineData("{\"code\":{{parseDouble(double)}}\"}", "{\"code\":1,1\"}")]
         [InlineData("{\"code\":{{parseDouble(json.//first)}}\"}", "{\"code\":1\"}")]
         [InlineData("{\"code\":{{parseDouble(xml.//house)}}\"}", "{\"code\":5\"}")]
         public void ReplaceVariables_JsonWithParseDouble_ReturnReplacedJson(string json, string validJson)
@@ -131,6 +131,30 @@ namespace Molder.Tests
             var outJson = this.variableContext.ReplaceVariables(json);
             Assert.Equal(outJson, validJson);
         }
+
+        /// <summary>
+        /// Проверка замены функции для парсинга double типа.
+        /// </summary>
+        /// <param name="json">Входная json.</param>
+        /// <param name="validJson">Корректная json.</param>
+        [Theory]
+        [InlineData("{\"code\":{{parseDouble(double)}}\"}")]
+        public void ReplaceVariables_JsonWithParseDoubleOS_ReturnReplacedJson(string json)
+        {
+            string validJson = string.Empty;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                validJson = "{\"code\":1.1\"}";
+            }
+            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+{
+                validJson = "{\"code\":1,1\"}";
+            }
+
+            var outJson = this.variableContext.ReplaceVariables(json);
+            Assert.Equal(outJson, validJson);
+        }
+
 
         /// <summary>
         /// Проверка замены функции для парсинга double типа.
