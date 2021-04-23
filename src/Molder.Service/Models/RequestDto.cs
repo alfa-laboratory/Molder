@@ -1,4 +1,5 @@
 ﻿using Molder.Controllers;
+using Molder.Extensions;
 using Molder.Service.Helpers;
 using Molder.Service.Infrastructures;
 using System.Collections.Generic;
@@ -46,7 +47,7 @@ namespace Molder.Service.Models
             {
                 var name = headers.FirstOrDefault(h => h.Style == HeaderType.BODY).Value;
                 var value = variableController.GetVariableValueText(name);
-                return value != null ? variableController.ReplaceVariables(value) : name;
+                return value ?? name;
             }
             return null;
         }

@@ -7,6 +7,7 @@ using Molder.Controllers;
 using Molder.Helpers;
 using TechTalk.SpecFlow;
 using Microsoft.Extensions.Logging;
+using Molder.Extensions;
 
 namespace Molder.Generator.Steps
 {

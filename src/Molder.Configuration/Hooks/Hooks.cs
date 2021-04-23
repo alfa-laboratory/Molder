@@ -9,7 +9,6 @@ using TechTalk.SpecFlow;
 using Molder.Models.Directory;
 using System.Threading;
 using Molder.Models.Configuration;
-using System;
 using System.Linq;
 using Molder.Helpers;
 using Microsoft.Extensions.Logging;
@@ -30,7 +29,7 @@ namespace Molder.Configuration.Hooks
             this.controller = variableController;
         }
 
-        [BeforeFeature(Order = -10000000)]
+        [BeforeTestRun(Order = -10000000)]
         public static void InitializeConfiguration()
         {
             BinDirectory.Create();
