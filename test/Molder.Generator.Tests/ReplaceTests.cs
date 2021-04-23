@@ -39,7 +39,7 @@ namespace Molder.Generator.Tests
         {
             var str = "{{currentDateTime(dd-MM-yyyy)}}";
             var outStr = this.variableContext.ReplaceVariables(str);
-            Log.Logger().LogTrace($"ReplaceVariables_currentDateTime_ReturnReplaced - {outStr}");
+            Log.Logger().LogWarning($"ReplaceVariables_currentDateTime_ReturnReplaced - {outStr}");
             Assert.True(DateTime.TryParse(outStr, out var dateValue));
         }
 
@@ -62,7 +62,7 @@ namespace Molder.Generator.Tests
         {
             var str = "{{futureDateTime(dd-MM-yyyy)}}";
             var outStr = this.variableContext.ReplaceVariables(str);
-            Log.Logger().LogTrace($"ReplaceVariables_futureDateTime_ReturnReplaced - {outStr}");
+            Log.Logger().LogWarning($"ReplaceVariables_futureDateTime_ReturnReplaced - {outStr}");
 
             Assert.True(DateTime.TryParse(outStr, out var dateValue));
         }
@@ -86,7 +86,7 @@ namespace Molder.Generator.Tests
         {
             var str = "{{pastDateTime(dd-MM-yyyy)}}";
             var outStr = this.variableContext.ReplaceVariables(str);
-            Log.Logger().LogTrace($"ReplaceVariables_pastDateTime_ReturnReplaced - {outStr}");
+            Log.Logger().LogWarning($"ReplaceVariables_pastDateTime_ReturnReplaced - {outStr}");
 
             Assert.True(DateTime.TryParse(outStr, out var dateValue));
         }
@@ -110,7 +110,7 @@ namespace Molder.Generator.Tests
         {
             var str = "{{randomDateTime(dd-MM-yyyy)}}";
             var outStr = this.variableContext.ReplaceVariables(str);
-            Log.Logger().LogTrace($"ReplaceVariables_randomDateTime_ReturnReplaced - {outStr}");
+            Log.Logger().LogWarning($"ReplaceVariables_randomDateTime_ReturnReplaced - {outStr}");
 
             Assert.True(DateTime.TryParse(outStr, out var dateValue));
         }
