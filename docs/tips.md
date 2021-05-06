@@ -144,7 +144,7 @@ public static void Initialize()
 >   Given я сохраняю текст в переменную "jsonBody":
 >   """
 >   {
->     "date": "{{randomDate(dd-MM-yyyy)}}",
+>     "date": "{{randomDateTime(dd-MM-yyyy)}}",
 >     "name": "{{randomString(10)}}"
 >   }
 >   """
