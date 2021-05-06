@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Molder.Database.Extensions;
 using Molder.Database.Models.Parameters;
 using Molder.Extensions;
+using System.Data.SqlClient;
 
 namespace Molder.Database.Steps
 {
@@ -45,9 +46,9 @@ namespace Molder.Database.Steps
         /// <param name="dataTable">Параметры подключения.</param>
         /// <returns>Параметры подключения к SqlServer.</returns>
         [StepArgumentTransformation]
-        public DbConnectionParams GetDataBaseParametersFromTableSqlServer(Table table)
+        public SqlConnectionStringBuilder GetDataBaseParametersFromTableSqlServer(Table table)
         {
-            return table.ReplaceWith(variableController).CreateInstance<DbConnectionParams>();
+            return table.ReplaceWith(variableController).CreateInstance<SqlConnectionStringBuilder>();
         }
 
         /// <summary>
@@ -75,16 +76,13 @@ namespace Molder.Database.Steps
         /// <param name="connectionName">Название подключения.</param>
         /// <param name="params">Параметры подключения.</param>
         [Given(@"я подключаюсь к БД MS SQL Server с названием ""(.+)"":")]
-        public void ConnectToDB_SqlServer(string connectionName, DbConnectionParams connectionParams)
+        public void ConnectToDB_SqlServer(string connectionName, SqlConnectionStringBuilder sqlConnectionString)
         {
-            var (isValid, results) = Validate.ValidateModel(connectionParams);
-            isValid.Should().BeTrue(Message.CreateMessage(results));
-
             databaseController.Connections.Should().NotContainKey(connectionName, $"Connection \"{connectionName}\" already exists");
             var connection = new SqlServerClient();
-            connection.Create(connectionParams).Should().BeTrue();
+            connection.Create(sqlConnectionString).Should().BeTrue();
             connection.IsConnectAlive().Should().BeTrue();
-            databaseController.Connections.TryAdd(connectionName, (connection, connectionParams.Timeout));
+            databaseController.Connections.TryAdd(connectionName, (connection, sqlConnectionString.ConnectTimeout));
         }
         #endregion
         #region Execute Query Type

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Data;
 using System.Linq;
-using Molder.Database.Models.Parameters;
+using System.Data.SqlClient;
 
 namespace Molder.Database.Helpers
 {
@@ -30,15 +30,18 @@ namespace Molder.Database.Helpers
             return string.Join($"{Environment.NewLine}", connectionParams.Split(';'));
         }
 
-        public static string CreateMessage(DbConnectionParams connectionParams)
+        public static string CreateMessage(SqlConnectionStringBuilder sqlConnectionString)
         {
             var message = string.Empty;
-            message = $"{Environment.NewLine}Data Source={connectionParams.Source}{Environment.NewLine}" +
-                $"Initial Catalog={connectionParams.Database}{Environment.NewLine}" +
-                $"User ID={connectionParams.Login}{Environment.NewLine}" +
-                $"Password={connectionParams.Password}{Environment.NewLine}" +
-                $"Connect Timeout={connectionParams.Timeout}{Environment.NewLine}" +
-                $"Load Balance Timeout={connectionParams.Timeout} failed.{Environment.NewLine}";
+            message =   $@"
+                        {Environment.NewLine}
+                        Data Source={sqlConnectionString.DataSource}{Environment.NewLine}
+                        Initial Catalog={sqlConnectionString.InitialCatalog}{Environment.NewLine}
+                        User ID={sqlConnectionString.UserID}{Environment.NewLine}
+                        Password={sqlConnectionString.Password}{Environment.NewLine}
+                        Connect Timeout={sqlConnectionString.ConnectTimeout}{Environment.NewLine}
+                        Load Balance Timeout={sqlConnectionString.LoadBalanceTimeout}.
+                        {Environment.NewLine}";
             return message;
         }
     }
