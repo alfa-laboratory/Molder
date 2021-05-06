@@ -1,11 +1,11 @@
-﻿using Molder.Database.Models.Parameters;
-using System;
+﻿using System;
+using System.Data.Common;
 
 namespace Molder.Database.Models
 {
     public interface IDbClient : IDisposable
     {
-        bool Create(DbConnectionParams parameters);
+        bool Create(DbConnectionStringBuilder parameters);
         bool IsConnectAlive();
         (object, int) ExecuteQuery(string query, int? timeout = null);
         string ExecuteStringQuery(string query, int? timeout = null);

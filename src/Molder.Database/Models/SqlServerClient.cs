@@ -1,5 +1,4 @@
-﻿using Molder.Database.Infrastructures;
-using System;
+﻿using System;
 using System.Data;
 using System.Data.SqlClient;
 using Molder.Helpers;
@@ -8,8 +7,9 @@ using Microsoft.Extensions.Logging;
 using Molder.Models.DateTimeHelpers;
 using System.Threading;
 using Molder.Database.Models.Providers;
-using Molder.Database.Models.Parameters;
 using System.Text;
+using System.Data.Common;
+using Molder.Database.Infrastructures;
 
 namespace Molder.Database.Models
 {
@@ -23,29 +23,21 @@ namespace Molder.Database.Models
             _provider = new SqlProvider();
         }
 
-        public bool Create(DbConnectionParams parameters)
+        public bool Create(DbConnectionStringBuilder sqlConnectionStringBuilder)
         {
             try
             {
-                var connectionString = new SqlConnectionStringBuilder()
-                {
-                    DataSource = parameters.Source,
-                    InitialCatalog = parameters.Database,
-                    UserID = parameters.Login,
-                    Password = parameters.Password
-                };
+                var connectionString = sqlConnectionStringBuilder as SqlConnectionStringBuilder;
 
-                if (connectionString.LoadBalanceTimeout <= 0)
-                {
-                    connectionString.LoadBalanceTimeout = parameters.Timeout != null ? (int)parameters.Timeout : DbSetting.TIMEOUT;
-                }
+                connectionString.ConnectTimeout = connectionString.ConnectTimeout == Default.ConnectTimeout ? DbSetting.TIMEOUT : Default.ConnectTimeout;
+                connectionString.LoadBalanceTimeout = connectionString.LoadBalanceTimeout != Default.LoadBalanceTimeout ? connectionString.ConnectTimeout : Default.LoadBalanceTimeout;
 
-                connectionString.ConnectTimeout = parameters.Timeout != null ? (int)parameters.Timeout : DbSetting.TIMEOUT;
-                connectionString.ConnectRetryCount = parameters.ConnectRetryCount;
-                connectionString.ConnectRetryInterval = parameters.ConnectRetryInterval;
 
-                Log.Logger().LogInformation($"Connection has parameters: {Helpers.Message.CreateMessage(connectionString.ToString())}");
-
+                connectionString.ConnectRetryCount = connectionString.ConnectRetryCount != Default.ConnectRetryCount ? DbSetting.ConnectRetryCount : Default.ConnectRetryCount;
+                connectionString.ConnectRetryInterval = connectionString.ConnectRetryInterval != Default.ConnectRetryInterval ? DbSetting.ConnectRetryInterval : Default.ConnectRetryInterval;
+                
+                Log.Logger().LogInformation($"Connection has parameters: {Helpers.Message.CreateMessage(connectionString)}");
+                
                 var connect = _provider.Create(connectionString.ToString());
 
                 return connect;

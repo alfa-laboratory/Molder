@@ -11,13 +11,14 @@ using Molder.Database.Infrastructures;
 using TechTalk.SpecFlow;
 using System.Collections.Generic;
 using Molder.Database.Models.Parameters;
+using System.Data.SqlClient;
 
 namespace Molder.Database.Tests
 {
     [ExcludeFromCodeCoverage]
     public class SqlServerStepTests
     {
-        private DbConnectionParams dbConnectionParams;
+        private SqlConnectionStringBuilder dbConnectionParams;
         private const string dbConnectionString = "TestConnectionString";
         private DatabaseController databaseController;
         private VariableController variableController;
@@ -25,7 +26,7 @@ namespace Molder.Database.Tests
 
         public SqlServerStepTests()
         {
-            dbConnectionParams = new DbConnectionParams() { Database = "Test", Source = "test", Login = "test", Password = "W9qNIafQbJCZzEafUaYmQw==", Timeout = 1, ConnectRetryCount = 0, ConnectRetryInterval = 1 };
+            dbConnectionParams = new SqlConnectionStringBuilder() { DataSource = "Test", InitialCatalog = "test", UserID = "test", Password = "W9qNIafQbJCZzEafUaYmQw==", ConnectTimeout = 1, ConnectRetryCount = 0, ConnectRetryInterval = 1 };
             databaseController = new DatabaseController();
             variableController = new VariableController();
             step = new SqlServerSteps(databaseController, variableController);
@@ -34,15 +35,15 @@ namespace Molder.Database.Tests
         [Fact]
         public void GetDataBaseParametersFromTableSqlServer_CorrectTable_ReturnDbConnectionParams()
         {
-            var table = new Table(new string[] { "Source", "Database", "Login", "Password" });
+            var table = new Table(new string[] { "DataSource", "InitialCatalog", "UserID", "Password" });
             table.AddRow("Db1", "Test", "User", "test");
 
             var result = step.GetDataBaseParametersFromTableSqlServer(table);
 
             result.Should().NotBeNull();
-            result.Login.Should().Be("User");
-            result.Source.Should().Be("Db1");
-            result.Database.Should().Be("Test");
+            result.UserID.Should().Be("User");
+            result.DataSource.Should().Be("Db1");
+            result.InitialCatalog.Should().Be("Test");
             result.Password.Should().Be("test");
         }
 
@@ -73,11 +74,11 @@ namespace Molder.Database.Tests
         [Fact]
         public void ConnectToDB_SqlServer_DbParamsIsNull_ReturnThrow()
         {
-            dbConnectionParams = new DbConnectionParams() { Database = "", Source = "", Login = "", Password = "", Timeout = 0 };
+            dbConnectionParams = new SqlConnectionStringBuilder() { InitialCatalog = "", DataSource = "", UserID = "", Password = "", ConnectTimeout = 0, ConnectRetryCount = 1 };
 
             Action action = () => step.ConnectToDB_SqlServer(dbConnectionString, dbConnectionParams);
             action.Should()
-                .Throw<Xunit.Sdk.XunitException>();
+                .Throw<ConnectSqlException>();
         }
 
         [Fact]
@@ -88,7 +89,7 @@ namespace Molder.Database.Tests
             var query = "SELECT top 100 * test111";
 
             IDbClient connection = new SqlServerClient();
-            mockSqlProvider.Setup(c => c.Create(It.IsAny<DbConnectionParams>())).Returns(true);
+            mockSqlProvider.Setup(c => c.Create(It.IsAny<SqlConnectionStringBuilder>())).Returns(true);
 
             connection = mockSqlProvider.Object;
 
@@ -107,7 +108,7 @@ namespace Molder.Database.Tests
 
 
             IDbClient connection = new SqlServerClient();
-            mockSqlProvider.Setup(c => c.Create(It.IsAny<DbConnectionParams>())).Returns(true);
+            mockSqlProvider.Setup(c => c.Create(It.IsAny<SqlConnectionStringBuilder>())).Returns(true);
 
             connection = mockSqlProvider.Object;
 
@@ -130,7 +131,7 @@ namespace Molder.Database.Tests
             insertQuery.Add(new Dictionary<string, object>());
 
             IDbClient connection = new SqlServerClient();
-            mockSqlProvider.Setup(c => c.Create(It.IsAny<DbConnectionParams>())).Returns(true);
+            mockSqlProvider.Setup(c => c.Create(It.IsAny<SqlConnectionStringBuilder>())).Returns(true);
             mockSqlProvider.Setup(c => c.IsConnectAlive()).Returns(true);
 
             connection = mockSqlProvider.Object;
