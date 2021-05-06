@@ -138,7 +138,7 @@ public static void Initialize()
     }
 }
 ```
-Как теперь можно описывать тестовые сценарии, используя (функции)[/src/Molder.Generator/Extensions/GenerationFunctions.cs]
+Как теперь можно описывать тестовые сценарии, используя [функции](/src/Molder.Generator/Extensions/GenerationFunctions.cs)
 
 > ```gherkin
 >   Given я сохраняю текст в переменную "jsonBody":
