@@ -6,7 +6,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
-using Molder.Database.Models.Parameters;
 using Molder.Database.Models.Providers;
 
 namespace Molder.Database.Tests
@@ -14,13 +13,13 @@ namespace Molder.Database.Tests
     [ExcludeFromCodeCoverage]
     public class SqlServerClientTests
     {
-        private DbConnectionParams dbConnectionParams;
+        private SqlConnectionStringBuilder dbConnectionParams;
         private const string dbConnectionString = "TestConnectionString";
 
 
         public SqlServerClientTests()
         {
-            dbConnectionParams = new DbConnectionParams() { Database = "Test", Source = "test", Login = "test", Password = "W9qNIafQbJCZzEafUaYmQw==", Timeout = 1, ConnectRetryCount = 0, ConnectRetryInterval = 1 };
+            dbConnectionParams = new SqlConnectionStringBuilder() { DataSource = "Test", InitialCatalog = "test", UserID = "test", Password = "W9qNIafQbJCZzEafUaYmQw==", ConnectTimeout = 1, ConnectRetryCount = 0, ConnectRetryInterval = 1 };
         }
 
         [Fact]
@@ -52,7 +51,7 @@ namespace Molder.Database.Tests
 
         [Theory]
         [InlineData(null)]
-        public void Create_ConnectionParamsIsNull_ReturnThrow(DbConnectionParams parameter)
+        public void Create_ConnectionParamsIsNull_ReturnThrow(SqlConnectionStringBuilder parameter)
         {
 
             var client = new SqlServerClient();

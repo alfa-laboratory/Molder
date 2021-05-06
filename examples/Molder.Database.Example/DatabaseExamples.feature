@@ -3,8 +3,8 @@
 Feature: DatabaseExamples
 	Background: 
 		Given я подключаюсь к БД MS SQL Server с названием "QA":
-		| Source     | Database     | Login     | Password     |
-		| {{SOURCE}} | {{DATABASE}} | {{LOGIN}} | {{PASSWORD}} |
+		| DataSource | InitialCatalog | UserID    | Password     |
+		| {{SOURCE}} | {{DATABASE}}   | {{LOGIN}} | {{PASSWORD}} |
 
 Scenario: SELECT
 	Given я выполняю "SELECT" запрос в БД "QA" и сохраняю результат в переменную "result":
