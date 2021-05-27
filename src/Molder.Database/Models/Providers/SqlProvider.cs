@@ -11,20 +11,28 @@ namespace Molder.Database.Models.Providers
     [ExcludeFromCodeCoverage]
     public class SqlProvider : ISqlProvider
     {
-        private AsyncLocal<SqlConnection> connection = new AsyncLocal<SqlConnection>() { Value = null };
+        private AsyncLocal<SqlConnection> _connection = new AsyncLocal<SqlConnection>() { Value = null };
+        private SqlConnection connection
+        {
+            get => _connection.Value;
+            set
+            {
+                _connection.Value = value;
+            }
+        }
 
         public bool Create(string connectionString)
         {
             try
             {
-                if (connection.Value is null)
+                if (connection is null)
                 {
-                    connection.Value = Open(connectionString);
+                    connection = Open(connectionString);
                     return true;
                 }
                 else
                 {
-                    if (connection.Value.ConnectionString.Equals(connectionString))
+                    if (connection.ConnectionString.Equals(connectionString))
                     {
                         Log.Logger().LogWarning($"Connection with parameters: {Helpers.Message.CreateMessage(connectionString)} is already create");
                         return false;
@@ -50,7 +58,7 @@ namespace Molder.Database.Models.Providers
 
         public void UsingTransaction(Action<SqlTransaction> onExecute, Action<Exception> onError, Action onSuccess = null)
         {
-            var transaction = connection.Value.BeginTransaction(IsolationLevel.ReadUncommitted);
+            var transaction = connection.BeginTransaction(IsolationLevel.ReadUncommitted);
 
             try
             {
@@ -71,7 +79,7 @@ namespace Molder.Database.Models.Providers
 
         public SqlCommand SetupCommand(string query, int? timeout = null)
         {
-            var command = connection.Value.CreateCommand();
+            var command = connection.CreateCommand();
             command.CommandTimeout = Math.Min(300, Math.Max(0, timeout ?? 0));
             command.CommandType = CommandType.Text;
             command.CommandText = query;
@@ -85,41 +93,32 @@ namespace Molder.Database.Models.Providers
             {
                 return false;
             }
-            return connection.Value.State.HasFlag(ConnectionState.Open);
+            return connection.State.HasFlag(ConnectionState.Open);
         }
 
         public bool Disconnect()
         {
+            if (connection == null)
+            {
+                return true;
+            }
+
             try
             {
-                if (connection == null)
-                {
-                    return true;
-                }
-
-                if (connection.Value.State != ConnectionState.Closed && connection.Value.State != ConnectionState.Broken)
-                {
-                    try
-                    {
-                        connection.Value.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Logger().LogError($"Connection not closed {ex.Message}");
-                    }
-                }
-
-                connection.Value.Dispose();
-                connection.Value = null;
+                connection.Dispose();
+                Log.Logger().LogInformation($"Connection is closed and disposed.");
+                connection = null;
                 return true;
             }
             catch (Exception ex)
             {
-                Log.Logger().LogError($"Connection not closed: {ex.Message}");
+                Log.Logger().LogError($"Connection not disposed {ex.Message}");
+                connection = null;
                 return false;
             }
         }
-        public SqlConnection Open(string connectionString)
+
+        protected SqlConnection Open(string connectionString)
         {
             var _connection = new SqlConnection(connectionString);
             _connection.Open();

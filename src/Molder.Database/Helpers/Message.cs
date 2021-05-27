@@ -33,15 +33,7 @@ namespace Molder.Database.Helpers
         public static string CreateMessage(SqlConnectionStringBuilder sqlConnectionString)
         {
             var message = string.Empty;
-            message =   $@"
-                        {Environment.NewLine}
-                        Data Source={sqlConnectionString.DataSource}{Environment.NewLine}
-                        Initial Catalog={sqlConnectionString.InitialCatalog}{Environment.NewLine}
-                        User ID={sqlConnectionString.UserID}{Environment.NewLine}
-                        Password={sqlConnectionString.Password}{Environment.NewLine}
-                        Connect Timeout={sqlConnectionString.ConnectTimeout}{Environment.NewLine}
-                        Load Balance Timeout={sqlConnectionString.LoadBalanceTimeout}.
-                        {Environment.NewLine}";
+            message =   $@"{Environment.NewLine}{sqlConnectionString.ConnectionString.Replace(";", Environment.NewLine)}{Environment.NewLine}";
             return message;
         }
     }

@@ -44,6 +44,7 @@ namespace Molder.Configuration.Hooks
 
             var tags = TagHelper.GetTagsBy(featureContext);
             variableController.AddConfig(config.Value, tags);
+            featureContext.Copy(variableController);
         }
 
         [BeforeScenario(Order = -1000000)]
@@ -57,7 +58,7 @@ namespace Molder.Configuration.Hooks
         }
 
         [AfterScenario(Order = -1000000)]
-        public void AfterScenario()
+        public void AfterScenario(FeatureContext feature)
         {
             Log.Logger().LogInformation("Dictionary with variables is " + (controller.Variables.Any() ? "not empty" : "empty"));
             if (!controller.Variables.Any()) return;
@@ -69,6 +70,8 @@ namespace Molder.Configuration.Hooks
                     controller.Variables.TryRemove(variable.Key, out var value);
                 }
             }
+
+            controller.Reload(feature);
         }
     }
 }

@@ -108,6 +108,7 @@ namespace Molder.Service.Steps
             {
                 Content = requestDto.Content,
                 Headers = requestDto.Header,
+                Credential = requestDto.Credentials,
                 Method = webMethods[method],
                 Url = url 
             };
