@@ -5,6 +5,7 @@ namespace Molder.Service.Infrastructures
     {
         HEADER, 
         QUERY,  
-        BODY 
+        BODY,
+        CREDENTIAL
     }
 }

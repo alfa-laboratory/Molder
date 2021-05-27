@@ -57,8 +57,6 @@ namespace Molder.Database.Tests
 
             var result = Message.CreateMessage(command);
             result.Should().BeNull();
-
-
         }
     }
 }

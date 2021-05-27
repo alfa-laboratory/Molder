@@ -4,6 +4,7 @@ using Molder.Service.Helpers;
 using Molder.Service.Infrastructures;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 
 namespace Molder.Service.Models
@@ -20,6 +21,8 @@ namespace Molder.Service.Models
 
             Header = SetData(HeaderType.HEADER);
             Query = SetData(HeaderType.QUERY);
+            Credentials = GetCredentials();
+
 
             var body = GetBody();
             if (body != null)
@@ -32,6 +35,7 @@ namespace Molder.Service.Models
         public Dictionary<string, string> Header { get; private set; } = null;
         public Dictionary<string, string> Query { get; private set; } = null;
         public HttpContent Content { get; private set; } = null;
+        public ICredentials Credentials { get; private set; } = null;
 
         private Dictionary<string, string> SetData(HeaderType headerType)
         {
@@ -48,6 +52,17 @@ namespace Molder.Service.Models
                 var name = headers.FirstOrDefault(h => h.Style == HeaderType.BODY).Value;
                 var value = variableController.GetVariableValueText(name);
                 return value ?? name;
+            }
+            return null;
+        }
+
+        private ICredentials GetCredentials()
+        {
+            var isCheck = headers.Count(h => h.Style == HeaderType.CREDENTIAL);
+            if (isCheck == 1)
+            {
+                var name = headers.FirstOrDefault(h => h.Style == HeaderType.CREDENTIAL).Value;
+                return variableController.GetVariableValue(name) as ICredentials ?? null;
             }
             return null;
         }

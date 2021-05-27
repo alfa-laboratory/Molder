@@ -9,6 +9,8 @@ using Molder.Generator.Extensions;
 using Molder.Generator.Models.Generators;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
+using Molder.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace Molder.Generator.Steps
 {
@@ -613,10 +615,19 @@ namespace Molder.Generator.Steps
         [StepDefinition(@"я создаю полномочия для хоста ""(.+)"" c типом ""(.+)"" для пользователя с доменом ""(.+)"", логином ""(.+)"", паролем ""(.+)"" и сохраняю в переменную ""(.+)""")]
         public void StoreCredentialsForHostToVariable(string host, AuthType authType, string domain, string username, string password, string varName)
         {
+            var _host = this.variableController.ReplaceVariables(host) ?? host;
+            var _domain = this.variableController.ReplaceVariables(domain) ?? domain;
+            var _username = this.variableController.ReplaceVariables(username) ?? username;
+            var _password = this.variableController.ReplaceVariables(password) ?? password;
+
             this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
+
             var credentialCache = new CredentialCache();
-            var networkCredential = new NetworkCredential(username, Encryptor.Decrypt(password), domain);
-            credentialCache.Add(new Uri(host), authType.ToString(), networkCredential);
+            var networkCredential = new NetworkCredential(_username, _password, _domain);
+            credentialCache.Add(new Uri(_host), authType.ToString(), networkCredential);
+
+            Log.Logger().LogInformation($"Create NetworkCredential for {authType.ToString()} with host:{_host}, domain:{_domain}, username:{_username} and password:{_password}.");
+
             this.variableController.SetVariable(varName, credentialCache.GetType(), credentialCache);
         }
 

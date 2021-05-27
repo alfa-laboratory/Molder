@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 using System.Net.Http;
 
 namespace Molder.Service.Models
@@ -17,5 +18,7 @@ namespace Molder.Service.Models
 
         [Required(ErrorMessage = "Content is required")]
         public HttpContent Content { get; set; } 
+
+        public ICredentials Credential { get; set; }
     }
 }
