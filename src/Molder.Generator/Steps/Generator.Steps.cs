@@ -554,7 +554,7 @@ namespace Molder.Generator.Steps
         /// Шаг для сохранения UUID в переменную.
         /// </summary>
         /// <param name="varName">Идентификатор переменной.</param>
-        [StepDefinition(@"я сохраняю новый (универсальный уникальный идентификатор|UUID) в переменную ""(.+)""")]
+        [StepDefinition(@"я сохраняю новый (?:универсальный уникальный идентификатор|UUID) в переменную ""(.+)""")]
         public void StoreAsVariableUuid(string varName)
         {
             this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
