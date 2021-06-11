@@ -220,5 +220,25 @@ namespace Molder.Database.Steps
             count.Should().NotBe(0, $"INSERT {query} failed. Check table names or values");
             Log.Logger().LogInformation($"INSERT completed {Environment.NewLine} {query}. {Environment.NewLine} Changed {count} row(s).");
         }
+
+        /// <summary>
+        /// Шаг выборки единственной ячейки из базы данных и сохранения в переменную.
+        /// </summary>
+        /// <param name="connectionName">Название подключения.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        /// <param name="query">Запрос.</param>
+        [Scope(Tag = "DBAccess")]
+        [StepDefinition(@"я сохраняю значение единственной ячейки из выборки из БД ""(.+)"" в переменную ""(.+)"":")]
+        public void SelectScalarFromDbSetVariable(string connectionName, string varName, QueryParam query)
+        {
+            this.databaseController.Connections.Should().ContainKey(connectionName, $"Connection: \"{connectionName}\" does not exist");
+            var (connection, timeout) = this.databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
+
+            var (outRecords, count) = connection.ExecuteQuery(query.Query, timeout);
+            Log.Logger().LogInformation($"Request returned: {Environment.NewLine} {(outRecords != null ? Message.CreateMessage((DataTable)outRecords) : $"is empty")}");
+            count.Should().Be(1, "Запрос вернул не одну запись");
+
+            variableController.SetVariable(varName, ((DataTable)outRecords).Columns[0].DataType, ((DataTable)outRecords).Rows[0][0]);
+        }
     }
 }
