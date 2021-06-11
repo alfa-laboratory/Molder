@@ -23,6 +23,12 @@ namespace Molder.Database.Models
             _provider = new SqlProvider();
         }
 
+        [ExcludeFromCodeCoverage]
+        public IDbConnection Get()
+        {
+            return (_provider as SqlProvider).Connection;
+        }
+
         public bool Create(DbConnectionStringBuilder sqlConnectionStringBuilder)
         {
             try
