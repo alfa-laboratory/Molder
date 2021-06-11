@@ -12,7 +12,7 @@ namespace Molder.Database.Models.Providers
     public class SqlProvider : ISqlProvider
     {
         private AsyncLocal<SqlConnection> _connection = new AsyncLocal<SqlConnection>() { Value = null };
-        private SqlConnection connection
+        public SqlConnection Connection
         {
             get => _connection.Value;
             set
@@ -25,14 +25,14 @@ namespace Molder.Database.Models.Providers
         {
             try
             {
-                if (connection is null)
+                if (Connection is null)
                 {
-                    connection = Open(connectionString);
+                    Connection = Open(connectionString);
                     return true;
                 }
                 else
                 {
-                    if (connection.ConnectionString.Equals(connectionString))
+                    if (Connection.ConnectionString.Equals(connectionString))
                     {
                         Log.Logger().LogWarning($"Connection with parameters: {Helpers.Message.CreateMessage(connectionString)} is already create");
                         return false;
@@ -58,7 +58,7 @@ namespace Molder.Database.Models.Providers
 
         public void UsingTransaction(Action<SqlTransaction> onExecute, Action<Exception> onError, Action onSuccess = null)
         {
-            var transaction = connection.BeginTransaction(IsolationLevel.ReadUncommitted);
+            var transaction = Connection.BeginTransaction(IsolationLevel.ReadUncommitted);
 
             try
             {
@@ -79,7 +79,7 @@ namespace Molder.Database.Models.Providers
 
         public SqlCommand SetupCommand(string query, int? timeout = null)
         {
-            var command = connection.CreateCommand();
+            var command = Connection.CreateCommand();
             command.CommandTimeout = Math.Min(300, Math.Max(0, timeout ?? 0));
             command.CommandType = CommandType.Text;
             command.CommandText = query;
@@ -89,31 +89,31 @@ namespace Molder.Database.Models.Providers
 
         public bool IsConnectAlive()
         {
-            if (connection is null)
+            if (Connection is null)
             {
                 return false;
             }
-            return connection.State.HasFlag(ConnectionState.Open);
+            return Connection.State.HasFlag(ConnectionState.Open);
         }
 
         public bool Disconnect()
         {
-            if (connection == null)
+            if (Connection == null)
             {
                 return true;
             }
 
             try
             {
-                connection.Dispose();
+                Connection.Dispose();
                 Log.Logger().LogInformation($"Connection is closed and disposed.");
-                connection = null;
+                Connection = null;
                 return true;
             }
             catch (Exception ex)
             {
                 Log.Logger().LogError($"Connection not disposed {ex.Message}");
-                connection = null;
+                Connection = null;
                 return false;
             }
         }
