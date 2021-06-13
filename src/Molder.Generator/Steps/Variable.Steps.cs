@@ -146,12 +146,12 @@ namespace Molder.Generator.Steps
         {
             var xmlBody = this.variableController.ReplaceVariables(xml);
 
-            Log.Logger().LogInformation($"xml is \"{xmlBody}\"");
+            Log.Logger().LogInformation($"xml is:{Environment.NewLine}{System.Security.SecurityElement.Escape(Reflection.ConvertObject<string>(xmlBody))}");
 
             var doc = Converter.CreateXmlDoc(xmlBody);
-            doc.Should().NotBeNull($"создать XmlDoc из строки \"{xmlBody}\" не удалось");
+            doc.Should().NotBeNull($"создать XmlDoc из строки {Environment.NewLine}\"{System.Security.SecurityElement.Escape(Reflection.ConvertObject<string>(xmlBody))}\" не удалось");
 
-            this.variableController.SetVariable(varName, doc.GetType(), doc);
+            this.variableController.SetVariable(varName, doc.OuterXml.GetType(), doc.OuterXml);
         }
 
         /// <summary>
