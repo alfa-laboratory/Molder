@@ -29,7 +29,7 @@ namespace Molder.Service.Helpers
         {
             try 
             {
-                var xmlDoc = XDocument.Parse(obj.ToString());
+                XDocument.Parse(obj.ToString());
                 return true;
             }
             catch 
