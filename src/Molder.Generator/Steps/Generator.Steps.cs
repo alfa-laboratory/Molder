@@ -64,6 +64,7 @@ namespace Molder.Generator.Steps
             this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
             var dt = fakerGenerator.GetDate(day, month, year);
             dt.Should().NotBeNull($"проверьте корректность создания даты day:{day},month:{month},year:{year}");
+            Log.Logger().LogInformation($"Result date is equal to {Environment.NewLine}{dt}");
             this.variableController.SetVariable(varName, dt.GetType(), dt);
         }
 
@@ -84,6 +85,7 @@ namespace Molder.Generator.Steps
             dt.Should().NotBeNull($"проверьте корректность создания даты day:{day},month:{month},year:{year}");
             var strDate = dt?.ToString(format);
 
+            Log.Logger().LogInformation($"Result date is equal to {Environment.NewLine}{strDate}");
             this.variableController.SetVariable(varName, strDate.GetType(), strDate);
         }
 
@@ -102,6 +104,7 @@ namespace Molder.Generator.Steps
             var dt = fakerGenerator.GetDateTime(1, 1, 1, hours, minutes, seconds, milliseconds);
             dt.Should().NotBeNull($"проверьте корректность создания времени hours:{hours},minutes:{minutes},seconds:{seconds},milliseconds:{milliseconds}");
 
+            Log.Logger().LogInformation($"Result time is equal to {Environment.NewLine}{dt}");
             this.variableController.SetVariable(varName, dt.GetType(), dt);
         }
 
@@ -123,6 +126,7 @@ namespace Molder.Generator.Steps
             dt.Should().NotBeNull($"проверьте корректность создания времени hours:{hours},minutes:{minutes},seconds:{seconds},milliseconds:{milliseconds}");
             var time = dt?.ToString(format);
 
+            Log.Logger().LogInformation($"Result time is equal to {Environment.NewLine}{time}");
             this.variableController.SetVariable(varName, time.GetType(), time);
         }
 
@@ -144,6 +148,7 @@ namespace Molder.Generator.Steps
             var dt = fakerGenerator.GetDateTime(day, month, year, hours, minutes, seconds);
             dt.Should().NotBeNull($"проверьте корректность создания даты и времени day:{day},month:{month},year:{year},hours:{hours},minutes:{minutes},seconds:{seconds}");
 
+            Log.Logger().LogInformation($"Result dateTime is equal to {Environment.NewLine}{dt}");
             this.variableController.SetVariable(varName, dt.GetType(), dt);
         }
 
@@ -168,6 +173,7 @@ namespace Molder.Generator.Steps
 
             var dateTime = dt?.ToString(format);
 
+            Log.Logger().LogInformation($"Result dateTime is equal to {Environment.NewLine}{dateTime}");
             this.variableController.SetVariable(varName, dateTime.GetType(), dateTime);
         }
 
@@ -184,6 +190,7 @@ namespace Molder.Generator.Steps
 
             var now = fakerGenerator.Current();
 
+            Log.Logger().LogInformation($"Result date is equal to {Environment.NewLine}{now}");
             this.variableController.SetVariable(varName, now.GetType(), now);
         }
 
@@ -199,6 +206,7 @@ namespace Molder.Generator.Steps
 
             var now = fakerGenerator.Current().ToString(format);
 
+            Log.Logger().LogInformation($"Result date is equal to {Environment.NewLine}{now}");
             this.variableController.SetVariable(varName, now.GetType(), now);
         }
         #endregion
@@ -209,6 +217,7 @@ namespace Molder.Generator.Steps
             this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
 
             var dt = fakerGenerator.Between();
+            Log.Logger().LogInformation($"Result date is equal to {Environment.NewLine}{dt}");
             this.variableController.SetVariable(varName, dt.GetType(), dt);
         }
 
@@ -239,6 +248,7 @@ namespace Molder.Generator.Steps
             var dt = fakerGenerator.GetDate(day, month, year, false);
             dt.Should().NotBeNull($"проверьте корректность создания даты day:{day},month:{month},year:{year}");
 
+            Log.Logger().LogInformation($"Result date is equal to {Environment.NewLine}{dt}");
             this.variableController.SetVariable(varName, dt.GetType(), dt);
         }
 
@@ -259,6 +269,7 @@ namespace Molder.Generator.Steps
             dt.Should().NotBeNull($"проверьте корректность создания даты day:{day},month:{month},year:{year}");
             var pastDateTime = dt?.ToString(format);
 
+            Log.Logger().LogInformation($"Result date is equal to {Environment.NewLine}{pastDateTime}");
             this.variableController.SetVariable(varName, pastDateTime.GetType(), pastDateTime);
         }
 
@@ -281,6 +292,7 @@ namespace Molder.Generator.Steps
             var pdt = fakerGenerator.GetDate(day, month, year, false, dt);
             pdt.Should().NotBeNull($"проверьте корректность создания даты day:{day},month:{month},year:{year}");
 
+            Log.Logger().LogInformation($"Result date is equal to {Environment.NewLine}{pdt}");
             this.variableController.SetVariable(varName, pdt.GetType(), pdt);
         }
 
@@ -304,6 +316,7 @@ namespace Molder.Generator.Steps
             pdt.Should().NotBeNull($"проверьте корректность создания даты day:{day},month:{month},year:{year}");
             var pastDateTime = pdt?.ToString(format);
 
+            Log.Logger().LogInformation($"Result date is equal to {Environment.NewLine}{pastDateTime}");
             this.variableController.SetVariable(varName, pastDateTime.GetType(), pastDateTime);
         }
         #endregion
@@ -323,6 +336,7 @@ namespace Molder.Generator.Steps
             var dt = fakerGenerator.GetDate(day, month, year, true);
             dt.Should().NotBeNull($"Проверьте корректность создания даты day:{day},month:{month},year:{year}.");
 
+            Log.Logger().LogInformation($"Result date is equal to {Environment.NewLine}{dt}");
             this.variableController.SetVariable(varName, dt.GetType(), dt);
         }
 
@@ -344,6 +358,7 @@ namespace Molder.Generator.Steps
             dt.Should().NotBeNull($"Проверьте корректность создания даты day:{day},month:{month},year:{year}.");
             var futureDateTime = dt?.ToString(format);
 
+            Log.Logger().LogInformation($"Result date is equal to {Environment.NewLine}{futureDateTime}");
             this.variableController.SetVariable(varName, futureDateTime.GetType(), futureDateTime);
         }
 
@@ -365,6 +380,7 @@ namespace Molder.Generator.Steps
             var fdt = fakerGenerator.GetDate(day, month, year, true, dt);
             fdt.Should().NotBeNull($"Проверьте корректность создания даты day:{day},month:{month},year:{year}.");
 
+            Log.Logger().LogInformation($"Result date is equal to {Environment.NewLine}{fdt}");
             this.variableController.SetVariable(varName, fdt.GetType(), fdt);
         }
 
@@ -388,6 +404,7 @@ namespace Molder.Generator.Steps
             fdt.Should().NotBeNull($"Проверьте корректность создания даты day:{day},month:{month},year:{year}.");
             var futureDateTime = fdt?.ToString(format);
 
+            Log.Logger().LogInformation($"Result date is equal to {Environment.NewLine}{futureDateTime}");
             this.variableController.SetVariable(varName, futureDateTime.GetType(), futureDateTime);
         }
         #endregion
@@ -405,6 +422,7 @@ namespace Molder.Generator.Steps
             len.Check(prefix, string.Empty);
 
             var str = prefix + fakerGenerator.String(len - prefix.Length);
+            Log.Logger().LogInformation($"Result string is equal to {Environment.NewLine}{str}");
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -421,6 +439,7 @@ namespace Molder.Generator.Steps
             len.Check(prefix, string.Empty);
 
             var str = prefix + fakerGenerator.Chars(len - prefix.Length);
+            Log.Logger().LogInformation($"Result string is equal to {Environment.NewLine}{str}");
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -437,6 +456,7 @@ namespace Molder.Generator.Steps
             len.Check(prefix, string.Empty);
 
             var str = prefix + fakerGenerator.Numbers(len - prefix.Length);
+            Log.Logger().LogInformation($"Result string is equal to {Environment.NewLine}{str}");
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
         #endregion
@@ -454,6 +474,7 @@ namespace Molder.Generator.Steps
             len.Check(string.Empty, postfix);
 
             var str = fakerGenerator.String(len - postfix.Length) + postfix;
+            Log.Logger().LogInformation($"Result string is equal to {Environment.NewLine}{str}");
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -470,6 +491,7 @@ namespace Molder.Generator.Steps
             len.Check(string.Empty, postfix);
 
             var str = fakerGenerator.Chars(len - postfix.Length) + postfix;
+            Log.Logger().LogInformation($"Result string is equal to {Environment.NewLine}{str}");
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -486,6 +508,7 @@ namespace Molder.Generator.Steps
             len.Check(string.Empty, postfix);
 
             var str = fakerGenerator.Numbers(len - postfix.Length) + postfix;
+            Log.Logger().LogInformation($"Result string is equal to {Environment.NewLine}{str}");
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
         #endregion
@@ -502,6 +525,7 @@ namespace Molder.Generator.Steps
             len.Check();
             var str = fakerGenerator.String(len);
 
+            Log.Logger().LogInformation($"Result string is equal to {Environment.NewLine}{str}");
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -517,6 +541,7 @@ namespace Molder.Generator.Steps
             len.Check();
             var str = fakerGenerator.Chars(len);
 
+            Log.Logger().LogInformation($"Result string is equal to {Environment.NewLine}{str}");
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -532,6 +557,7 @@ namespace Molder.Generator.Steps
             len.Check();
             var str = fakerGenerator.Numbers(len);
 
+            Log.Logger().LogInformation($"Result string is equal to {Environment.NewLine}{str}");
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
         #endregion
@@ -547,6 +573,7 @@ namespace Molder.Generator.Steps
         {
             this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
             var str = fakerGenerator.Phone(mask);
+            Log.Logger().LogInformation($"Result string is equal to {Environment.NewLine}{str}");
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -559,6 +586,7 @@ namespace Molder.Generator.Steps
         {
             this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
             var str = fakerGenerator.Guid();
+            Log.Logger().LogInformation($"Result string is equal to {Environment.NewLine}{str}");
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -567,6 +595,7 @@ namespace Molder.Generator.Steps
         {
             this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
             var str = fakerGenerator.Month();
+            Log.Logger().LogInformation($"Result string is equal to {Environment.NewLine}{str}");
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -575,6 +604,7 @@ namespace Molder.Generator.Steps
         {
             this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
             var str = fakerGenerator.Weekday();
+            Log.Logger().LogInformation($"Result string is equal to {Environment.NewLine}{str}");
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -583,6 +613,7 @@ namespace Molder.Generator.Steps
         {
             this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
             var str = fakerGenerator.Email(provider);
+            Log.Logger().LogInformation($"Result string is equal to {Environment.NewLine}{str}");
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -591,6 +622,7 @@ namespace Molder.Generator.Steps
         {
             this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
             var str = fakerGenerator.Ip();
+            Log.Logger().LogInformation($"Result string is equal to {Environment.NewLine}{str}");
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -599,6 +631,7 @@ namespace Molder.Generator.Steps
         {
             this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
             var str = fakerGenerator.Url();
+            Log.Logger().LogInformation($"Result string is equal to {Environment.NewLine}{str}");
             this.variableController.SetVariable(varName, str.GetType(), str);
         }
 
@@ -628,6 +661,7 @@ namespace Molder.Generator.Steps
 
             Log.Logger().LogInformation($"Create NetworkCredential for {authType.ToString()} with host:{_host}, domain:{_domain}, username:{_username} and password:{_password}.");
 
+            Log.Logger().LogInformation($"Result host credentionals is equal to {Environment.NewLine}{credentialCache}");
             this.variableController.SetVariable(varName, credentialCache.GetType(), credentialCache);
         }
 
@@ -647,7 +681,6 @@ namespace Molder.Generator.Steps
             str.Should().NotBeNull($"Значения в переменной \"{varName}\" нет");
 
             var enumerable = Converter.CreateEnumerable(str, chars);
-
             this.variableController.SetVariable(newVarName, enumerable.GetType(), enumerable);
         }
     }

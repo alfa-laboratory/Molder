@@ -221,6 +221,7 @@ namespace Molder.Generator.Steps
                 }
             }
 
+            Log.Logger().LogInformation($"Result text is equal to {Environment.NewLine}{replacement}");
             this.variableController.SetVariable(newVarName, typeof(string), text?.Replace($"{{{varName}}}", replacement));
         }
 
