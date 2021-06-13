@@ -37,7 +37,7 @@ namespace Molder.Service.Helpers
                         Request = request
                     };
 
-                    Log.Logger().LogInformation($"{Message.CreateMessage(responce)}. {ex}");
+                    Log.Logger().LogInformation($"{Message.CreateMessage(responce)}. \n\nInner exception: {ex}");
                     return responce;
                 }
             }
