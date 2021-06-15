@@ -25,19 +25,6 @@ namespace Molder.Service.Helpers
             return xmlDoc;
         }
 
-        public static bool TryParseToXml(this object obj)
-        {
-            try 
-            {
-                XDocument.Parse(obj.ToString());
-                return true;
-            }
-            catch 
-            {
-                return false;
-            }          
-        }
-
         /// <summary>
         /// Определить к какому типу относится строка
         /// </summary>     
