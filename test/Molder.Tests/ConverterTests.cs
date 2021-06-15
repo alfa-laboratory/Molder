@@ -79,6 +79,27 @@ namespace Molder.Tests
         }
 
         [Fact]
+        public void CreateXMLEscapedString_ValidXml_ReturnString()
+        {
+            var xml = Converter.CreateXMLEscapedString(Xml);
+            xml.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void CreateXMLEscapedString_String_ReturnString()
+        {
+            var xml = Converter.CreateXMLEscapedString("test");
+            xml.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void CreateXMLEscapedString_Digit_ReturnNull()
+        {
+            var xml = Converter.CreateXMLEscapedString(12345);
+            xml.Should().NotBeNull();
+        }
+
+        [Fact]
         public void CreateXmlCData_ValidXml_ReturnXml()
         {
             var cdata = Converter.CreateCData(Cdata);

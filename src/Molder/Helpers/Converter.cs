@@ -62,6 +62,20 @@ namespace Molder.Helpers
             }
         }
 
+        public static string CreateXMLEscapedString(object obj)
+        {
+            try
+            {
+                var str = Reflection.ConvertObject<string>(obj);
+                return System.Security.SecurityElement.Escape(str);
+            }
+            catch (Exception ex)
+            {
+                Log.Logger().LogWarning(ex.Message);
+                return null;
+            }
+        }
+
         public static JObject CreateJson(string str)
         {
             try
