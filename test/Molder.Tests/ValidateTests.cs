@@ -16,6 +16,8 @@ namespace Molder.Tests
     [ExcludeFromCodeCoverage]
     public class ValidateTests
     {
+        private const string Xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><addresses xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation='test.xsd'><address><name>Joe Tester</name><street>Baker street</street><house>5</house></address></addresses>";
+
         [Fact]
         public void ValidateModel_CorrectModel_ReturnTrue()
         {
@@ -45,6 +47,26 @@ namespace Molder.Tests
 
             isValid.Should().BeFalse();
             results.Any(v => v.ErrorMessage == "Url is required" && v.MemberNames.Contains("Url")).Should().BeTrue();
+        }
+
+        [Fact]
+        public void TryParseToXml_ReturnFalse()
+        {
+            // Arrange
+
+            var isValid = Validate.TryParseToXml(Xml.Substring(15));
+            // Assert
+            isValid.Should().BeFalse();
+        }
+
+        [Fact]
+        public void TryParseToXml_ReturnTrue()
+        {
+            // Arrange
+
+            var isValid = Validate.TryParseToXml(Xml);
+            // Assert
+            isValid.Should().BeTrue();
         }
     }
 }
