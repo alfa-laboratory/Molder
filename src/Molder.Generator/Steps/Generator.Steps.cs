@@ -8,7 +8,6 @@ using TechTalk.SpecFlow;
 using Molder.Generator.Extensions;
 using Molder.Generator.Models.Generators;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading;
 using Molder.Extensions;
 using Microsoft.Extensions.Logging;
 
@@ -660,8 +659,6 @@ namespace Molder.Generator.Steps
             credentialCache.Add(new Uri(_host), authType.ToString(), networkCredential);
 
             Log.Logger().LogInformation($"Create NetworkCredential for {authType.ToString()} with host:{_host}, domain:{_domain}, username:{_username} and password:{_password}.");
-
-            Log.Logger().LogInformation($"Result host credentionals is equal to {Environment.NewLine}{credentialCache}");
             this.variableController.SetVariable(varName, credentialCache.GetType(), credentialCache);
         }
 
@@ -681,6 +678,7 @@ namespace Molder.Generator.Steps
             str.Should().NotBeNull($"Значения в переменной \"{varName}\" нет");
 
             var enumerable = Converter.CreateEnumerable(str, chars);
+            Log.Logger().LogInformation($"Result array is equal to {Environment.NewLine}{string.Join(',', enumerable as string[])}");
             this.variableController.SetVariable(newVarName, enumerable.GetType(), enumerable);
         }
     }
