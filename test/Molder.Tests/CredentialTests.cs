@@ -19,7 +19,7 @@ namespace Molder.Tests
         public CredentialTests()
         {
             _url = "http://" + _tmp;
-            _password = Encryptor.Encrypt(_tmp);
+            _password = _tmp;
         }
 
         [Fact]

@@ -8,5 +8,7 @@
 
         public static string MethodPlaceholder = "method";
         public static string ParametersPlaceholder = "parameters";
+
+        public static string DECRYPT_KEY = @"\$([.\w]*)\#";
     }
 }
