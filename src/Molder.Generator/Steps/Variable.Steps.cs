@@ -109,7 +109,10 @@ namespace Molder.Generator.Steps
         public void StoreAsVariableText(string varName, string text)
         {
             var str = variableController.ReplaceVariables(text);
-            Log.Logger().LogDebug($"Replaced multiline text with variables is equal to {Environment.NewLine}{str}");
+
+            if (Validate.TryParseToXml(str)) Log.Logger().LogDebug($"Replaced multiline text with variables is equal to {Environment.NewLine}{Converter.CreateXMLEscapedString(str)}");
+            else Log.Logger().LogDebug($"Replaced multiline text with variables is equal to {Environment.NewLine}{str}");
+
             this.variableController.SetVariable(varName, typeof(string), str);
         }
 
@@ -221,6 +224,7 @@ namespace Molder.Generator.Steps
                 }
             }
 
+            Log.Logger().LogInformation($"Result text is equal to {Environment.NewLine}{replacement}");
             this.variableController.SetVariable(newVarName, typeof(string), text?.Replace($"{{{varName}}}", replacement));
         }
 
