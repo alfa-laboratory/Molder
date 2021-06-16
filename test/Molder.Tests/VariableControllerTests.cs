@@ -12,6 +12,7 @@ using System.Xml.Linq;
 using Xunit;
 using Molder.Models;
 using Molder.Infrastructures;
+using Molder.Helpers;
 
 namespace Molder.Tests
 {
@@ -46,28 +47,28 @@ namespace Molder.Tests
             var varName = variableContext.GetVariableName(key);
             varName.Should().Be(name);
         }
-       
+
         [Theory]
         [InlineData("pointTest.test", "pointTest")]
         [InlineData("bracessTest[test]", "bracessTest")]
         public void GetVariableName_NameWithBracessAndPoint_ReturnName(string key, string name)
         {
-            variableContext.SetVariable(key, typeof(string), "1"); 
-            var varName = variableContext.GetVariableName(key);                     
-            varName.Should().Be(name);            
-        }  
+            variableContext.SetVariable(key, typeof(string), "1");
+            var varName = variableContext.GetVariableName(key);
+            varName.Should().Be(name);
+        }
 
         [Theory]
         [InlineData(null)]
         [InlineData("")]
         public void GetVariableName_InCorrectName_ReturnNull(string key)
-        { 
+        {
             var varName = variableContext.GetVariableName(key);
             varName.Should().BeNull();
         }
 
         [Theory]
-        [InlineData("first", typeof(string) ,"1")]
+        [InlineData("first", typeof(string), "1")]
         [InlineData("second", typeof(string), "2")]
         [InlineData("third", typeof(string), "3")]
         public void GetVariable_CorrectName_ReturnVariable(string key, Type type, string value)
@@ -78,7 +79,7 @@ namespace Molder.Tests
         }
 
         [Theory]
-        [InlineData("zero", typeof(int), 0)]       
+        [InlineData("zero", typeof(int), 0)]
         public void GetVariable_TypeofAccessGlobal_ReturnVariable(string key, Type type, int value)
         {
             variableContext.SetVariable(key, type, value, TypeOfAccess.Global);
@@ -108,12 +109,21 @@ namespace Molder.Tests
         }
 
         [Theory]
-        [InlineData(null, typeof(string), "", TypeOfAccess.Local)]
         [InlineData("", typeof(string), "", TypeOfAccess.Local)]
-        public void SetVariable_KeyIsNull_ReturnVariables(string key, Type type, string value, TypeOfAccess typeOfAccess)
+        public void SetVariable_KeyIsEmpty_ReturnVariables(string key, Type type, string value, TypeOfAccess typeOfAccess)
         {
             variableContext.SetVariable(key, type, value, typeOfAccess);
             variableContext.Variables.Count.Should().Be(3);
+        }
+
+        [Theory]
+        [InlineData(null, typeof(string), "", TypeOfAccess.Local)]
+        public void SetVariable_KeyIsNull_ReturnVariables(string key, Type type, string value, TypeOfAccess typeOfAccess)
+        {
+            Action act = () => variableContext.SetVariable(key, type, value, typeOfAccess);
+            act
+                .Should().Throw<ArgumentNullException>()
+                .WithMessage($"Key is null{Environment.NewLine}Parameter name: key");
         }
 
         [Theory]
@@ -556,6 +566,14 @@ namespace Molder.Tests
 
             var value = variableContext.GetVariableValue("nums[0]");
             value.Should().Be(1);
+        }
+
+        [Fact]
+        public void SetVariableValue_EncryptKey_SetEncryptValue()
+        {
+            variableContext.SetVariable("$enc#", typeof(string), "W9qNIafQbJCZzEafUaYmQw==");
+            var value = variableContext.GetVariableValue("enc");
+            value.Should().Be("test");
         }
     }
 }

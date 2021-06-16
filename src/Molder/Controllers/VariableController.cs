@@ -69,6 +69,23 @@ namespace Molder.Controllers
         }
         public void SetVariable(string key, Type type, object value, TypeOfAccess accessType = TypeOfAccess.Local)
         {
+            if(key is null)
+            {
+                throw new ArgumentNullException(nameof(key), "Key is null");
+            }
+
+            var regex = new Regex(StringPattern.DECRYPT_KEY, RegexOptions.None);
+            var match = regex.Match(key);
+
+            if(match.Success && type == typeof(string))
+            {
+                key = match.Groups[1].Value;
+                if (value != null)
+                {
+                    value = Encryptor.Decrypt(value as string);
+                }
+            }
+
             var varName = GetVariableName(key);
 
             if(string.IsNullOrWhiteSpace(varName))
