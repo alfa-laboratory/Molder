@@ -658,7 +658,7 @@ namespace Molder.Generator.Steps
             var networkCredential = new NetworkCredential(_username, _password, _domain);
             credentialCache.Add(new Uri(_host), authType.ToString(), networkCredential);
 
-            Log.Logger().LogInformation($"Create NetworkCredential for {authType.ToString()} with host:{_host}, domain:{_domain}, username:{_username} and password:{_password}.");
+            Log.Logger().LogInformation($"Create NetworkCredential for {authType.ToString()} with host:{_host}, domain:{_domain} and username:{_username}.");
             this.variableController.SetVariable(varName, credentialCache.GetType(), credentialCache);
         }
 
