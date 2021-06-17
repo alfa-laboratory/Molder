@@ -33,7 +33,7 @@ namespace Molder.Database.Helpers
         public static string CreateMessage(SqlConnectionStringBuilder sqlConnectionString)
         {
             var message = string.Empty;
-            var connectionString = sqlConnectionString;
+            var connectionString = new SqlConnectionStringBuilder(sqlConnectionString.ToString());
             connectionString.Password = "**********";
             message = $@"{Environment.NewLine}{connectionString.ConnectionString.Replace(";", Environment.NewLine)}{Environment.NewLine}";
             return message;
