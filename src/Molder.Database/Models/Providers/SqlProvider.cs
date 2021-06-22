@@ -4,20 +4,20 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading;
 
 namespace Molder.Database.Models.Providers
 {
     [ExcludeFromCodeCoverage]
     public class SqlProvider : ISqlProvider
     {
-        private AsyncLocal<SqlConnection> _connection = new AsyncLocal<SqlConnection>() { Value = null };
+        private Lazy<SqlConnection> _connection = new Lazy<SqlConnection>(() => null);
+
         public SqlConnection Connection
         {
             get => _connection.Value;
             set
             {
-                _connection.Value = value;
+                _connection = new Lazy<SqlConnection>(() => value);
             }
         }
 
