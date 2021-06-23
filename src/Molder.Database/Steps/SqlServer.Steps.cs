@@ -15,6 +15,7 @@ using Molder.Database.Extensions;
 using Molder.Database.Models.Parameters;
 using Molder.Extensions;
 using System.Data.SqlClient;
+using Molder.Infrastructures;
 
 namespace Molder.Database.Steps
 {
@@ -82,7 +83,7 @@ namespace Molder.Database.Steps
             var connection = new SqlServerClient();
             connection.Create(sqlConnectionString).Should().BeTrue();
             connection.IsConnectAlive().Should().BeTrue();
-            databaseController.Connections.TryAdd(connectionName, (connection, sqlConnectionString.ConnectTimeout));
+            databaseController.Connections.TryAdd(connectionName, (connection, TypeOfAccess.Local, sqlConnectionString.ConnectTimeout));
         }
         #endregion
         #region Execute Query Type
@@ -115,7 +116,7 @@ namespace Molder.Database.Steps
         private (object, int) ExecuteAnyRequest(QueryType queryType, string connectionName, QueryParam query)
         {
             databaseController.Connections.InputValidation(connectionName, query.Query);
-            var (connection, timeout) = this.databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
+            var (connection, _, timeout) = this.databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
             Log.Logger().LogInformation($"{queryType} query:" + Environment.NewLine + $"{query}");
 
             switch (queryType)
@@ -143,7 +144,7 @@ namespace Molder.Database.Steps
         {
             databaseController.Connections.InputValidation(connectionName, query.Query);
 
-            var (connection, timeout) = databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
+            var (connection, _, timeout) = databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
             var (outRecords, count) = connection.ExecuteQuery(query.Query, timeout);
             Log.Logger().LogInformation($"Request returned: {Environment.NewLine} {(outRecords != null ? Message.CreateMessage((DataTable)outRecords) : $"is empty")}");
             Log.Logger().LogInformation($"Request {query} returned {count} row(s)");
@@ -159,7 +160,7 @@ namespace Molder.Database.Steps
         {
             databaseController.Connections.Should().ContainKey(connectionName, $"Connection: \"{connectionName}\" does not exist");
 
-            var (connection, timeout) = databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
+            var (connection, _, timeout) = databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
             var count = connection.ExecuteNonQuery(query.Query, timeout);
             Log.Logger().LogInformation($"Request {query} returned {count} row(s)");
 
@@ -178,7 +179,7 @@ namespace Molder.Database.Steps
         {
             databaseController.Connections.InputValidation(connectionName, query.Query);
 
-            var (connection, timeout) = databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
+            var (connection, _, timeout) = databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
             var str = connection.ExecuteStringQuery(query.Query, timeout);
             
             Log.Logger().LogInformation($"Request returned: {Environment.NewLine} {(str != null ? $"is not empty" : $"is empty")}");
@@ -196,7 +197,7 @@ namespace Molder.Database.Steps
         {
             databaseController.Connections.InputValidation(connectionName, query.Query);
 
-            var (connection, timeout) = databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
+            var (connection, _, timeout) = databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
             var (outRecords, count) = connection.ExecuteQuery(query.Query, timeout);
             Log.Logger().LogInformation($"Request returned: {Environment.NewLine} {(outRecords != null ? Message.CreateMessage((DataTable)outRecords) : $"is empty")}");
             count.Should().Be(1, "Запрос вернул не одну запись");
@@ -211,7 +212,7 @@ namespace Molder.Database.Steps
         public void ExecuteInsertQueryFromTable(string tableName, string connectionName, IEnumerable<Dictionary<string, object>> insertQuery)
         {
             this.databaseController.Connections.Should().ContainKey(connectionName, $"Connection: \"{connectionName}\" does not exist");
-            var (connection, timeout) = this.databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
+            var (connection, _, timeout) = this.databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
 
             connection.IsConnectAlive().Should().BeTrue();
             var query = insertQuery.ToSqlQuery(tableName);
@@ -232,7 +233,7 @@ namespace Molder.Database.Steps
         public void SelectScalarFromDbSetVariable(string connectionName, string varName, QueryParam query)
         {
             this.databaseController.Connections.Should().ContainKey(connectionName, $"Connection: \"{connectionName}\" does not exist");
-            var (connection, timeout) = this.databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
+            var (connection, _, timeout) = this.databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
 
             var (outRecords, count) = connection.ExecuteQuery(query.Query, timeout);
             Log.Logger().LogInformation($"Request returned: {Environment.NewLine} {(outRecords != null ? Message.CreateMessage((DataTable)outRecords) : $"is empty")}");
