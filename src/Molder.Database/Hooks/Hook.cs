@@ -8,25 +8,30 @@ namespace Molder.Database.Hooks
     [Binding]
     public class Hook : TechTalk.SpecFlow.Steps
     {
-        private readonly DatabaseController databaseController;
-
-        public Hook(DatabaseController databaseController)
-        {
-            this.databaseController = databaseController;
-        }
-
         /// <summary>
         /// Очистка подключений к базам данных в конце сценария.
         /// </summary>
         [AfterScenario]
-        public void AfterScenario()
+        public void AfterScenario(DatabaseController databaseController)
         {
-            foreach (var kvp in this.databaseController.Connections)
+            foreach (var kvp in databaseController.Connections)
+            {
+                if (kvp.Value.typeOfAccess == Molder.Infrastructures.TypeOfAccess.Local)
+                {
+                    kvp.Value.connection?.Dispose();
+                    databaseController.Connections.TryRemove(kvp.Key, out var connection);
+                }
+            }
+        }
+
+        [AfterFeature]
+        public static void AfterFeature(DatabaseController databaseController)
+        {
+            foreach (var kvp in databaseController.Connections)
             {
                 kvp.Value.connection?.Dispose();
             }
-
-            this.databaseController.Connections.Clear();
+            databaseController.Connections.Clear();
         }
     }
 }
