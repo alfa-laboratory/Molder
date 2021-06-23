@@ -12,6 +12,7 @@ using TechTalk.SpecFlow;
 using System.Collections.Generic;
 using Molder.Database.Models.Parameters;
 using System.Data.SqlClient;
+using Molder.Infrastructures;
 
 namespace Molder.Database.Tests
 {
@@ -93,7 +94,7 @@ namespace Molder.Database.Tests
 
             connection = mockSqlProvider.Object;
 
-            this.databaseController.Connections.TryAdd(connectName, (connection, 30));
+            this.databaseController.Connections.TryAdd(connectName, (connection, TypeOfAccess.Local, 30));
 
             step.ExecuteQueryType(QueryType.SELECT, connectName, new QueryParam { Query = query });            
         }
@@ -112,7 +113,7 @@ namespace Molder.Database.Tests
 
             connection = mockSqlProvider.Object;
 
-            this.databaseController.Connections.TryAdd(connectName, (connection, 30));
+            this.databaseController.Connections.TryAdd(connectName, (connection, TypeOfAccess.Local, 30));
 
             step.ExecuteQueryTypeWithVarName(QueryType.INSERT, connectName, varName, new QueryParam { Query = query });
 
@@ -136,7 +137,7 @@ namespace Molder.Database.Tests
 
             connection = mockSqlProvider.Object;
 
-            this.databaseController.Connections.TryAdd(connectName, (connection, 30));
+            this.databaseController.Connections.TryAdd(connectName, (connection, TypeOfAccess.Local, 30));
             Action action = () => step.ExecuteInsertQueryFromTable(tableName, connectName, insertQuery);
             action.Should()
                 .Throw<Xunit.Sdk.XunitException>();
