@@ -123,6 +123,12 @@ namespace Molder.Web.Models
                             .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                             .Where(f => f.GetCustomAttribute<ElementAttribute>() != null);
 
+                        if (rootObject != null && rootObject.Value.type == ObjectType.Block)
+                        {
+                            var locator = (rootObject.Value.root as Block)?.Locator + (obj as Frame)?.Locator;
+                            ((Frame) obj).Locator = locator;
+                        }
+                        
                         childrens.Add(new Node
                         {
                             Name = name,
