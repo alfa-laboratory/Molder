@@ -22,7 +22,7 @@ namespace Molder.Web.Models
         public IDirectory BaseDirectory { get; set; } = new BinDirectory();
         public IAssembly CustomAssembly { get; set; } = new Molder.Models.Assembly.Assembly();
 
-        public IEnumerable<Node> Pages { get; private set; } = null;
+        public IEnumerable<Node> Pages { get; } = null;
 
         public PageObject(VariableController variableController)
         {
@@ -71,8 +71,8 @@ namespace Molder.Web.Models
 
             return _pages;
         }
-
-        private IEnumerable<Node> GetChildrens(IEnumerable<FieldInfo> elements)
+        
+        private IEnumerable<Node> GetChildrens(IEnumerable<FieldInfo> elements, (object root, ObjectType type)? rootObject = null)
         {
             var childrens = new List<Node>();
             foreach(var element in elements)
@@ -81,31 +81,57 @@ namespace Molder.Web.Models
                 switch(type)
                 {
                     case ObjectType.Element:
+                    {
+                        if (rootObject != null && rootObject.Value.type == ObjectType.Block)
                         {
-                            childrens.Add(new Node
-                            {
-                                Name = name,
-                                Object = obj,
-                                Type = type,
-                                Childrens = null
-                            });
-                            break;
+                            var locator = (rootObject.Value.root as Block)?.Locator + (obj as Element)?.Locator;
+                            ((Element) obj).Locator = locator;
                         }
+                        childrens.Add(new Node
+                        {
+                            Name = name,
+                            Object = obj,
+                            Type = type,
+                            Childrens = null
+                        });
+                        break;
+                    }
                     case ObjectType.Block:
-                    case ObjectType.Frame:
+                    {
+                        var subElements = obj.GetType()
+                            .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                            .Where(f => f.GetCustomAttribute<ElementAttribute>() != null);
+                        
+                        if (rootObject != null && rootObject.Value.type == ObjectType.Block)
                         {
-                            var subElements = obj.GetType()
-                                .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                                .Where(f => f.GetCustomAttribute<ElementAttribute>() != null);
-                            childrens.Add(new Node
-                            {
-                                Name = name,
-                                Object = obj,
-                                Type = type,
-                                Childrens = GetChildrens(subElements)
-                            });
-                            break;
+                            var locator = (rootObject.Value.root as Block)?.Locator + (obj as Block)?.Locator;
+                            ((Block) obj).Locator = locator;
                         }
+                        
+                        childrens.Add(new Node
+                        {
+                            Name = name,
+                            Object = obj,
+                            Type = type,
+                            Childrens = GetChildrens(subElements, (obj, ObjectType.Block))
+                        });
+                        break;
+                    }
+                    case ObjectType.Frame:
+                    {
+                        var subElements = obj.GetType()
+                            .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                            .Where(f => f.GetCustomAttribute<ElementAttribute>() != null);
+
+                        childrens.Add(new Node
+                        {
+                            Name = name,
+                            Object = obj,
+                            Type = type,
+                            Childrens = GetChildrens(subElements)
+                        });
+                        break;
+                    }
                     case ObjectType.Page:
                         break;
                     default:
@@ -119,7 +145,7 @@ namespace Molder.Web.Models
         {
             Attribute attribute;
             string name;
-            object element = null;
+            object element;
             var objectType = ObjectType.Element;
 
             if (fieldInfo.CheckAttribute(typeof(BlockAttribute)))

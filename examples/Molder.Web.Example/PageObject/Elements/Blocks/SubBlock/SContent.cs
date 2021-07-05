@@ -8,7 +8,7 @@ namespace PageObject.Elements.Blocks
     {
         public ScndContent(string name, string locator, bool optional) : base(name, locator, optional) {   }
 
-        [Element(Name = "Text", Locator = "//*[@id=\"content\"]/div[2]/div[2]")]
+        [Element(Name = "Text", Locator = "/div[2]")]
         Div text;
     }
 }
