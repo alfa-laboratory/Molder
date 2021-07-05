@@ -12,7 +12,7 @@ namespace Molder.Web.Models.PageObjects.Elements
         {
             if (Enabled && Displayed)
             {
-                _mediator.Value.Execute(() => _provider.Click());
+                mediator.Execute(() => _provider.Click());
             }
             else
             {
@@ -25,7 +25,7 @@ namespace Molder.Web.Models.PageObjects.Elements
             if (Enabled && Displayed)
             {
                 var action = new Actions(_driverProvider.GetDriver());
-                _mediator.Value.Execute(() => action.DoubleClick(((ElementProvider)_provider).Element).Build().Perform());
+                mediator.Execute(() => action.DoubleClick(((ElementProvider)_provider).WebElement).Build().Perform());
             }
             else
             {
@@ -38,7 +38,7 @@ namespace Molder.Web.Models.PageObjects.Elements
             if (Enabled && Displayed)
             {
                 var action = new Actions(_driverProvider.GetDriver());
-                _mediator.Value.Execute(() => action.ClickAndHold(((ElementProvider)_provider).Element).Build().Perform());
+                mediator.Execute(() => action.ClickAndHold(((ElementProvider)_provider).WebElement).Build().Perform());
             }
             else
             {

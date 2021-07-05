@@ -1,5 +1,4 @@
-﻿using Molder.Web.Models.Settings;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using System;
 using System.Collections.ObjectModel;
 
@@ -7,7 +6,6 @@ namespace Molder.Web.Models.Providers
 {
     public interface IDriverProvider
     {
-        ISetting Settings { get; set; }
         string PageSource { get; }
         string Title { get; }
         string Url { get;  }
@@ -15,7 +13,7 @@ namespace Molder.Web.Models.Providers
         string CurrentWindowHandle { get; }
         ReadOnlyCollection<string> WindowHandles { get; }
 
-        void CreateDriver(Func<IWebDriver> action, ISetting settings);
+        void CreateDriver(Func<IWebDriver> action);
         IWebDriver GetDriver();
 
         bool Close();

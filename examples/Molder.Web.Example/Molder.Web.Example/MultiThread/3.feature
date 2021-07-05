@@ -1,6 +1,7 @@
 ﻿@WebUI
-Feature: Task #3
 @ignore
+Feature: Task #3
+
 Scenario: Add/Remove Elements
 	Given я инициализирую браузер
 		And я развернул веб-страницу на весь экран

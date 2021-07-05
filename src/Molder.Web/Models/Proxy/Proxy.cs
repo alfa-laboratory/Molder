@@ -29,10 +29,10 @@ namespace Molder.Web.Models.Proxy
 
         public int AddEndpoint(Authentication auth)
         {
-            IPGlobalProperties ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
-            IPEndPoint[] conArr = ipGlobalProperties.GetActiveTcpListeners();
+            var ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
+            var conArr = ipGlobalProperties.GetActiveTcpListeners();
 
-            for (int i = 50000; i < 60000; i++)
+            for (var i = 50000; i < 60000; i++)
             {
                 if (conArr.Any(x => x.Port == i)) continue;
 
@@ -44,12 +44,12 @@ namespace Molder.Web.Models.Proxy
             throw new Exception("Couldn't find any available tcp port!");
         }
 
-        public async Task OnRequest(object sender, SessionEventArgs e)
+        public Task OnRequest(object sender, SessionEventArgs e)
         {
             if (!_authentications.TryGetValue(e.ClientLocalEndPoint.Port, out var auth))
             {
                 e.Ok("<html><h>Error with proxy</h></html>");
-                return;
+                return Task.CompletedTask;
             }
 
             Log.Logger().LogInformation(e.HttpClient.Request.Url);
@@ -58,6 +58,7 @@ namespace Molder.Web.Models.Proxy
             {
                 ProxyType = ExternalProxyType.Http
             };
+            return Task.CompletedTask;
         }
 
         public Task OnCertificateValidation(object sender, CertificateValidationEventArgs e)

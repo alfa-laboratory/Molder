@@ -11,14 +11,24 @@ namespace Molder.Web.Models.PageObjects.Elements
 {
     public class Element : IElement
     {
-        protected AsyncLocal<IMediator> _mediator = new AsyncLocal<IMediator> { Value = null };
+        #region Element Mediator
 
+        private AsyncLocal<IMediator> _elementMediator = new AsyncLocal<IMediator>{ Value = null };
+
+        protected IMediator mediator
+        {
+            get => _elementMediator.Value;
+            set => _elementMediator.Value = value;
+        }
+
+        #endregion
+        
         protected IDriverProvider _driverProvider;
-        public IElementProvider _provider = null;
+        protected IElementProvider _provider = null;
 
         public Element() { }
 
-        public Element(string name, string locator = null, bool optional = false)
+        protected Element(string name, string locator = null, bool optional = false)
         {
             Name = name;
             Locator = locator;
@@ -28,9 +38,9 @@ namespace Molder.Web.Models.PageObjects.Elements
         public virtual void SetProvider(IDriverProvider provider)
         {
             _driverProvider = provider;
-            _provider = null;
-            _mediator.Value = new ElementMediator((_driverProvider.Settings as BrowserSetting).ElementTimeout);
-            GetElement();
+            mediator = new ElementMediator(BrowserSettings.Settings.Timeout);
+            
+            _provider = GetElementBy();
         }
 
         public Node Root { get; set; }
@@ -39,31 +49,36 @@ namespace Molder.Web.Models.PageObjects.Elements
         public bool Optional { get; set; }
         public string Locator { get; set; }
 
-        public string Text => _mediator.Value.Execute(() => _provider.Text) as string;
+        public string Text => mediator.Execute(() => _provider.Text) as string;
 
-        public object Value => _mediator.Value.Execute(() => GetAttribute("value"));
+        public object Value => mediator.Execute(() => GetAttribute("value"));
 
-        public string Tag => _mediator.Value.Execute(() => _provider.Tag) as string;
+        public string Tag => mediator.Execute(() => _provider.Tag) as string;
 
-        public bool Loaded => (bool)_mediator.Value.Wait(() => _provider != null);
+        public bool Loaded => (bool)mediator.Wait(() => _provider != null);
+        public bool NotLoaded => (bool)mediator.Wait(() => _provider == null);
 
-        public bool Enabled => (bool)_mediator.Value.Wait(() => _provider.Enabled);
+        public bool Enabled => (bool)mediator.Wait(() => _provider.Enabled);
+        public bool Disabled => (bool)mediator.Wait(() => _provider.Disabled);
 
-        public bool Displayed => (bool)_mediator.Value.Wait(() => _provider.Displayed);
+        public bool Displayed => (bool)mediator.Wait(() => _provider.Displayed);
+        public bool NotDisplayed => (bool)mediator.Wait(() => _provider.NotDisplayed);
 
-        public bool Selected => (bool)_mediator.Value.Wait(() => _provider.Selected);
+        public bool Selected => (bool)mediator.Wait(() => _provider.Selected);
+        public bool NotSelected => (bool)mediator.Wait(() => _provider.NotSelected);
 
-        public bool Editabled => (bool)_mediator.Value.Wait(() => _provider.Editabled);
+        public bool Editabled => (bool)mediator.Wait(() => _provider.Editabled);
+        public bool NotEditable => (bool)mediator.Wait(() => _provider.NotEditabled);
 
         public string GetAttribute(string name)
         {
-            return _mediator.Value.Execute(() => _provider.GetAttribute(name)) as string;
+            return mediator.Execute(() => _provider.GetAttribute(name)) as string;
         }
 
         public void Move()
         {
             var action = new Actions(_driverProvider.GetDriver());
-            _mediator.Value.Execute(() => action.MoveToElement(((ElementProvider)_provider).Element).Build().Perform());
+            mediator.Execute(() => action.MoveToElement(((ElementProvider)_provider).WebElement).Build().Perform());
         }
 
         public void PressKey(string key)
@@ -71,7 +86,7 @@ namespace Molder.Web.Models.PageObjects.Elements
             var field = typeof(Keys).GetField(key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Static);
             if (Enabled && Displayed)
             {
-                _mediator.Value.Execute(() => _provider.SendKeys((string)field?.GetValue(null)));
+                mediator.Execute(() => _provider.SendKeys((string)field?.GetValue(null)));
             }
             else
             {
@@ -81,24 +96,30 @@ namespace Molder.Web.Models.PageObjects.Elements
 
         public bool IsTextContains(string text)
         {
-            return (bool)_mediator.Value.Wait(() => _provider.TextContain(text));
+            return (bool)mediator.Wait(() => _provider.TextContain(text));
         }
 
         public bool IsTextEquals(string text)
         {
-            return (bool)_mediator.Value.Wait(() => _provider.TextEqual(text));
+            return (bool)mediator.Wait(() => _provider.TextEqual(text));
         }
 
         public bool IsTextMatch(string text)
         {
-            return (bool)_mediator.Value.Wait(() => _provider.TextMatch(text));
+            return (bool)mediator.Wait(() => _provider.TextMatch(text));
         }
 
         #region Get webDriver Element
 
         protected void GetElement(string locator = null)
         {
-            _provider = _mediator.Value.Execute(() => _driverProvider.GetElement(By.XPath(locator ?? Locator))) as IElementProvider;
+            _provider = GetElementBy(locator);
+        }
+
+        private IElementProvider GetElementBy(string locator = null)
+        {
+            return mediator.Execute(() => _driverProvider.GetElement(By.XPath(locator ?? Locator))) as
+                IElementProvider;
         }
 
         #endregion

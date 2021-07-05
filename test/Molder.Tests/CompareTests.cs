@@ -18,7 +18,7 @@ namespace Molder.Tests
         {
             var table = CreateObject.CreateDataTable(new List<string>() { "a", "b" }, new List<string>() { "a1;b1" });
 
-            bool isSame = Compare.AreTablesTheSame(table, table);
+            var isSame = table.AreTablesTheSame(table);
             isSame.Should().BeTrue();
         }
 
@@ -27,7 +27,7 @@ namespace Molder.Tests
         {
             var fTable = CreateObject.CreateDataTable(new List<string>() { "a", "b" }, new List<string>() { "a1;b1" });
             var sTable = CreateObject.CreateDataTable(new List<string>() { "a", "b" }, new List<string>() { "a2;b1" });
-            bool isSame = Compare.AreTablesTheSame(fTable, sTable);
+            var isSame = fTable.AreTablesTheSame(sTable);
             isSame.Should().BeFalse();
         }
 
@@ -36,7 +36,7 @@ namespace Molder.Tests
         {
             var fTable = CreateObject.CreateDataTable(new List<string>() { "a", "b", "c" }, new List<string>() { "a1;b1;c1" });
             var sTable = CreateObject.CreateDataTable(new List<string>() { "a", "b" }, new List<string>() { "a2;b1" });
-            bool isSame = Compare.AreTablesTheSame(fTable, sTable);
+            var isSame = fTable.AreTablesTheSame(sTable);
             isSame.Should().BeFalse();
         }
     }

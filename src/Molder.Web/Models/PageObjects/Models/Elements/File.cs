@@ -10,7 +10,7 @@ namespace Molder.Web.Models.PageObjects.Elements
         {
             if (Tag == "file")
             {
-                _mediator.Value.Execute(() => _provider.SendKeys(text));
+                mediator.Execute(() => _provider.SendKeys(text));
             }
             else
             {

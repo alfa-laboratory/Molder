@@ -4,7 +4,7 @@ using Molder.Web.Models.PageObjects.Pages;
 
 namespace PageObject.Pages.SubPages
 {
-    [Page(Name = "Checkboxes", Url = "http://192.168.99.100:9080/checkboxes")]
+    [Page(Name = "Checkboxes", Url = "http://{{url}}/checkboxes")]
     public class Checkboxes : Page
     {
         [Element(Name = "checkbox 1", Locator = "//*[@id=\"checkboxes\"]/input[1]")]

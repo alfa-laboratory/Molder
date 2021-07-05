@@ -4,7 +4,7 @@ using Molder.Web.Models.PageObjects.Pages;
 
 namespace PageObject.Pages.SubPages
 {
-    [Page(Name = "Frames", Url = "http://192.168.99.100:9080/frames")]
+    [Page(Name = "Frames", Url = "http://{{url}}/frames")]
     public class Frames : Page
     {
         [Element(Name = "Nested Frames", Locator = "//*[@id=\"content\"]/div/ul/li[1]/a")]

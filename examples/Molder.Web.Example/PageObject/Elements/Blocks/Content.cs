@@ -7,7 +7,10 @@ namespace PageObject.Elements.Blocks
     {
         public Content(string name, string locator, bool optional) : base(name, locator, optional) {   }
 
-        [Block(Name = "row 1", Locator = "//*[@id=\"content\"]/div[1]")]
+        [Block(Name = "row 1", Locator = "/div[1]")]
         FrsContent fContent;
+        
+        [Block(Name = "row 2", Locator = "/div[2]")]
+        ScndContent scndContent;
     }
 }

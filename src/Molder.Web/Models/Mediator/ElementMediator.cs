@@ -7,7 +7,7 @@ namespace Molder.Web.Models.Mediator
 {
     public class ElementMediator : Mediator
     {
-        public ElementMediator(int? timeout)
+        public ElementMediator(long? timeout)
         {
             retryPolicy = Policy
                 .Handle<StaleElementReferenceException>()
@@ -22,9 +22,9 @@ namespace Molder.Web.Models.Mediator
                 .Or<ElementNotInteractableException>()
                 .Or<InvalidElementStateException>()
                 .WaitAndRetry(CommandSetting.RETRY,
-                    retryAttempt => Math.Pow(2, retryAttempt) <= DefaultSetting.BROWSER_TIMEOUT
+                    retryAttempt => Math.Pow(2, retryAttempt) <= Constants.TIMEOUT
                     ? TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
-                    : TimeSpan.FromSeconds(timeout ?? DefaultSetting.ELEMENT_TIMEOUT));
+                    : TimeSpan.FromSeconds(timeout ?? Constants.TIMEOUT));
         }
     }
 }

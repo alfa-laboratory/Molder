@@ -4,9 +4,9 @@ using Molder.Web.Models.PageObjects.Elements;
 
 namespace PageObject.Elements.Blocks
 {
-    public class FrsContent : Block
+    public class ScndContent : Block
     {
-        public FrsContent(string name, string locator, bool optional) : base(name, locator, optional) {   }
+        public ScndContent(string name, string locator, bool optional) : base(name, locator, optional) {   }
 
         [Element(Name = "Text", Locator = "/div[2]")]
         Div text;

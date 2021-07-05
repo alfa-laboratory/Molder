@@ -1,62 +1,59 @@
 ﻿using Molder.Helpers;
 using Molder.Web.Extensions;
-using Molder.Web.Models.Settings;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Support.Extensions;
 using Selenium.WebDriver.WaitExtensions;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading;
 using WDSE;
 using WDSE.ScreenshotMaker;
-using System.Threading;
+using Molder.Web.Models.Settings;
 
 namespace Molder.Web.Models.Providers
 {
     [ExcludeFromCodeCoverage]
     public class DriverProvider : IDriverProvider
     {
+        #region  WebDriver
+
         private AsyncLocal<IWebDriver> _driver = new AsyncLocal<IWebDriver> { Value = null };
-        public IWebDriver Driver
+        protected IWebDriver WebDriver
         {
             get => _driver.Value;
-            set
-            {
-                _driver.Value = value;
-            }
+            set => _driver.Value = value;
         }
 
-        public string PageSource => _driver.Value.PageSource;
-        public string Title => _driver.Value.Title;
-        public string Url => _driver.Value.Url;
-        public string CurrentWindowHandle => _driver.Value.CurrentWindowHandle;
-        public int Tabs => _driver.Value.WindowHandles.Count; 
-        public ReadOnlyCollection<string> WindowHandles => _driver.Value.WindowHandles;
-        public ISetting Settings { get; set; }
+        #endregion
+        
+        public string PageSource => WebDriver.PageSource;
+        public string Title => WebDriver.Title;
+        public string Url => WebDriver.Url;
+        public string CurrentWindowHandle => WebDriver.CurrentWindowHandle;
+        public int Tabs => WebDriver.WindowHandles.Count; 
+        public ReadOnlyCollection<string> WindowHandles => WebDriver.WindowHandles;
 
-        public void CreateDriver(Func<IWebDriver> action, ISetting settings)
+        public void CreateDriver(Func<IWebDriver> action)
         {
-            _driver.Value = action();
-            this.Settings = settings;
-
+            WebDriver = action();
         }
         public IWebDriver GetDriver()
         {
-            return _driver.Value;
+            return WebDriver;
         }
 
         public void Back()
         {
-            _driver.Value.Navigate().Back();
+            WebDriver.Navigate().Back();
         }
 
         public bool Close()
         {
             try
             {
-                _driver.Value.Close();
+                WebDriver.Close();
                 return true;
             }catch(Exception)
             {
@@ -66,49 +63,42 @@ namespace Molder.Web.Models.Providers
 
         public void Forward()
         {
-            _driver.Value.Navigate().Forward();
+            WebDriver.Navigate().Forward();
         }
 
         public IElementProvider GetActiveElement()
         {
-            var element = _driver.Value.SwitchTo().ActiveElement();
-            return new ElementProvider((Settings as BrowserSetting).ElementTimeout)
+            var element = WebDriver.SwitchTo().ActiveElement();
+            return new ElementProvider(BrowserSettings.Settings.Timeout)
             {
-                Element = element
+                WebElement = element
             };
         }
 
         public IElementProvider GetElement(By by)
         {
-            var element = _driver.Value.Wait((int)(Settings as BrowserSetting).ElementTimeout).ForElement(by).ToExist();
-            return new ElementProvider((Settings as BrowserSetting).ElementTimeout)
+            var element = WebDriver.Wait((int)BrowserSettings.Settings.Timeout).ForElement(by).ToExist();
+            return new ElementProvider(BrowserSettings.Settings.Timeout)
             {
-                Element = element
+                WebElement = element
             };
         }
 
         public ReadOnlyCollection<IElementProvider> GetElements(By by)
         {
-            var elements = _driver.Value.FindElements(by);
-            var listElement = new List<IElementProvider>();
-            foreach (var element in elements)
-            {
-                listElement.Add(new ElementProvider((Settings as BrowserSetting).ElementTimeout)
-                {
-                    Element = element
-                });
-            }
+            var elements = WebDriver.FindElements(by);
+            var listElement = elements.Select(element => new ElementProvider((int)BrowserSettings.Settings.Timeout) {WebElement = element}).Cast<IElementProvider>().ToList();
             return listElement.AsReadOnly();
         }
 
         public void SwitchTo(int number)
         {
-            _driver.Value.SwitchTo().Window(_driver.Value.WindowHandles[number]);
+            _driver.Value.SwitchTo().Window(WebDriver.WindowHandles[number]);
         }
 
         public IAlertProvider GetAlert()
         {
-            var alert = _driver.Value.SwitchTo().Alert();
+            var alert = WebDriver.SwitchTo().Alert();
             return new AlertProvider()
             {
                 Alert = alert
@@ -117,47 +107,47 @@ namespace Molder.Web.Models.Providers
 
         public IDriverProvider GetDefaultFrame()
         {
-            var driver = _driver.Value.SwitchTo().DefaultContent();
+            var driver = WebDriver.SwitchTo().DefaultContent();
             return new DriverProvider()
             {
-                Driver = driver
+                WebDriver = driver
             };
         }
 
         public IDriverProvider GetParentFrame()
         {
-            var driver = _driver.Value.SwitchTo().ParentFrame();
+            var driver = WebDriver.SwitchTo().ParentFrame();
             return new DriverProvider()
             {
-                Driver = driver
+                WebDriver = driver
             };
         }
 
         public IDriverProvider GetFrame(int id)
         {
-            var driver = _driver.Value.SwitchTo().Frame(id);
+            var driver = WebDriver.SwitchTo().Frame(id);
             return new DriverProvider()
             {
-                Driver = driver
+                WebDriver = driver
             };
         }
 
         public IDriverProvider GetFrame(string name)
         {
-            var driver = _driver.Value.SwitchTo().Frame(name);
+            var driver = WebDriver.SwitchTo().Frame(name);
             return new DriverProvider()
             {
-                Driver = driver
+                WebDriver = driver
             };
         }
 
         public IDriverProvider GetFrame(By by)
         {
-            var element = _driver.Value.FindElement(by);
-            var driver = _driver.Value.SwitchTo().Frame(element);
+            var element = WebDriver.FindElement(by);
+            var driver = WebDriver.SwitchTo().Frame(element);
             return new DriverProvider()
             {
-                Driver = driver
+                WebDriver = driver
             };
         }
 
@@ -165,7 +155,7 @@ namespace Molder.Web.Models.Providers
         {
             try
             {
-                _driver.Value.GoToUrl(Settings, url);
+                WebDriver.GoToUrl(url);
                 return true;
             }
             catch (WebDriverException ex)
@@ -177,15 +167,15 @@ namespace Molder.Web.Models.Providers
 
         public void Maximize()
         {
-            _driver.Value.Manage().Window.Maximize();
+            WebDriver.Manage().Window.Maximize();
         }
 
         public bool Quit()
         {
             try
             {
-                _driver.Value.Quit();
-                _driver.Value = null;
+                WebDriver.Quit();
+                WebDriver = null;
                 return true;
             }
             catch (Exception)
@@ -198,7 +188,7 @@ namespace Molder.Web.Models.Providers
         {
             try
             {
-                _driver.Value.Navigate().Refresh();
+                WebDriver.Navigate().Refresh();
                 return true;
             }
             catch (Exception)
@@ -211,14 +201,14 @@ namespace Molder.Web.Models.Providers
         {
             var scmkr = new ScreenshotMaker();
             scmkr.RemoveScrollBarsWhileShooting();
-            return _driver.Value.TakeScreenshot(scmkr);
+            return WebDriver.TakeScreenshot(scmkr);
         }
 
         public bool WindowSize(int width, int height)
         {
             try
             {
-                _driver.Value.Manage().Window.Size = new System.Drawing.Size(width, height);
+                WebDriver.Manage().Window.Size = new System.Drawing.Size(width, height);
                 return true;
             }
             catch (Exception)

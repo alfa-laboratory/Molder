@@ -7,37 +7,37 @@ namespace Molder.Web.Models.Providers
     [ExcludeFromCodeCoverage]
     public class AlertProvider : IAlertProvider
     {
-        private AsyncLocal<IAlert> _alert = new AsyncLocal<IAlert> { Value = null };
+        #region Alert
 
+        private AsyncLocal<IAlert> _alert = new AsyncLocal<IAlert>{ Value = null };
         public IAlert Alert
         {
             get => _alert.Value;
-            set
-            {
-                _alert.Value = value;
-            }
+            set => _alert.Value = value;
         }
 
-        public string Text => _alert.Value.Text;
+        #endregion
+        
+        public string Text => Alert.Text;
 
         public void SendAccept()
         {
-            _alert.Value.Accept();
+            Alert.Accept();
         }
 
         public void SendDismiss()
         {
-            _alert.Value.Dismiss();
+            Alert.Dismiss();
         }
 
         public void SendKeys(string keys)
         {
-            _alert.Value.SendKeys(keys);
+            Alert.SendKeys(keys);
         }
 
         public void SetAuth(string login, string password)
         {
-            _alert.Value.SetAuthenticationCredentials(login, password);
+            Alert.SetAuthenticationCredentials(login, password);
         }
     }
 }
