@@ -9,5 +9,8 @@ namespace PageObject.Elements.Blocks
 
         [Block(Name = "row 1", Locator = "//*[@id=\"content\"]/div[1]")]
         FrsContent fContent;
+        
+        [Block(Name = "row 2", Locator = "//*[@id=\"content\"]/div[2]")]
+        ScndContent scndContent;
     }
 }

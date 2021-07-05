@@ -13,10 +13,15 @@
         object Value { get; }
 
         bool Loaded { get; }
+        bool NotLoaded { get; }
         bool Enabled { get;  }
+        bool Disabled { get; }
         bool Displayed { get;  }
+        bool NotDisplayed { get; }
         bool Selected { get; }
+        bool NotSelected { get; }
         bool Editabled { get; }
+        bool NotEditable { get; }
 
         string GetAttribute(string name);
         void Move();

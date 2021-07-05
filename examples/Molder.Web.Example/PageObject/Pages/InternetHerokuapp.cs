@@ -4,7 +4,7 @@ using Molder.Web.Models.PageObjects.Pages;
 
 namespace PageObject.Pages
 {
-    [Page(Name = "InternetHerokuapp", Url = "http://192.168.99.100:9080/")]
+    [Page(Name = "InternetHerokuapp", Url = "http://{{url}}/")]
     public class InternetHerokuapp : Page
     {
         [Element(Name = "Add/Remove Elements", Locator = "//*[@id=\"content\"]/ul/li[2]/a")]

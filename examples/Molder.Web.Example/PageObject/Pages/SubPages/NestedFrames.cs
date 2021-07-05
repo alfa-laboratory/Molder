@@ -4,13 +4,13 @@ using PageObject.Elements.Frames;
 
 namespace PageObject.Pages.SubPages
 {
-    [Page(Name = "Nested Frames", Url = "http://192.168.99.100:9080/nested_frames")]
+    [Page(Name = "Nested Frames", Url = "http://{{url}}/nested_frames")]
     public class NestedFrames : Page
     {
-        [Frame(Name = "Left", FrameName = "frame-left")]
-        LeftBottom left;
+        [Frame(Name = "Top", FrameName = "frame-top")]
+        TopBottom top;
 
         [Frame(Name = "Bottom", FrameName = "frame-bottom")]
-        LeftBottom bottom;
+        Bottom bottom;
     }
 }

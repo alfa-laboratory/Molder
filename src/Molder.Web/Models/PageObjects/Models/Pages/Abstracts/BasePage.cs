@@ -5,16 +5,30 @@ using Microsoft.Extensions.Logging;
 using Molder.Web.Models.PageObjects.Elements;
 using Molder.Web.Models.PageObjects.Blocks;
 using Molder.Web.Models.PageObjects.Frames;
+using Molder.Controllers;
+using Molder.Web.Models.Providers;
 
 namespace Molder.Web.Models.PageObjects.Pages
 {
     public abstract class BasePage : IPage
     {
-        public abstract string Url { get; set; }
-        public abstract string Name { get; set; }
+        protected VariableController _variableController;
+        protected IDriverProvider _driverProvider;
+        
+        public IDriverProvider DriverProvider
+        {
+            get => _driverProvider;
+            set => _driverProvider = value;
+        }
+        
+        public abstract string Url { get; }
+        public abstract string Name { get; }
         public abstract Node Root { get; set; }
+        public virtual Node Local { get; set; } = null; 
 
         public abstract Block GetBlock(string name);
+        public void BackToPage() => Local = null;
+
         public abstract IElement GetElement(string name);
         public abstract IEnumerable<IElement> GetPrimaryElements();
         public abstract bool GoToPage();
@@ -25,7 +39,7 @@ namespace Molder.Web.Models.PageObjects.Pages
             var errors = new List<string>();
             var elements = GetPrimaryElements();
 
-            (elements as List<IElement>).ForEach(element =>
+            (elements as List<IElement>)?.ForEach(element =>
             {
                 if (!element.Loaded)
                 {
@@ -36,7 +50,7 @@ namespace Molder.Web.Models.PageObjects.Pages
             if (elements.Any())
             {
                 var aggregate = string.Join(", ", elements);
-                Log.Logger().LogError($"элемент/ы \"{aggregate}\" не инициализированы на странице \"{Name}\"");
+                Log.Logger().LogError($"element/s \"{aggregate}\" not initialize on page \"{Name}\"");
                 return false;
             }
             else

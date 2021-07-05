@@ -6,13 +6,13 @@ namespace Molder.Web.Models.PageObjects.Elements
     {
         public A(string name, string locator, bool optional = false) : base(name, locator, optional) { }
 
-        public string Href { get => GetHref(); }
+        public string Href => GetHref();
 
         private string GetHref()
         {
             if (Enabled && Displayed)
             {
-                return (string)_mediator.Value.Execute(() => _provider.GetAttribute("href"));
+                return (string)mediator.Execute(() => _provider.GetAttribute("href"));
             }
             else
             {

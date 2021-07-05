@@ -1,6 +1,7 @@
 ﻿@WebUI
-Feature: WebUI
 @ignore
+Feature: WebUI
+
 Scenario: OpenWebUI
 	Given я инициализирую браузер
 		And я развернул веб-страницу на весь экран
@@ -8,6 +9,7 @@ Scenario: OpenWebUI
 		And я закрываю веб-страницу
 		And я закрываю браузер
 @ignore
+# в процессе тестирования
 Scenario: OpenWebUI with auth
 	Given я инициализирую аутентификацию для прокси сервера:
 		| Proxy          | Port | Username | Password |
@@ -20,7 +22,7 @@ Scenario: OpenWebUI with auth
 	Then на веб-странице текст элемента "Text" содержит значение "Congratulations! You must have the proper credentials."
 		And я закрываю веб-страницу
 		And я закрываю браузер
-@ignore
+
 Scenario: Add/Remove Elements With Block
 	Given я инициализирую браузер
 		And я развернул веб-страницу на весь экран
@@ -28,11 +30,12 @@ Scenario: Add/Remove Elements With Block
 
 	Given выполнено нажатие на элемент "Add/Remove Elements" на веб-странице
 		And я обновляю текущую страницу на "Add/Remove Elements With Block"
-		And выполнено нажатие в блоке "Add/Remove Elements" на элемент "Add Element" на веб-странице
-		And выполнено нажатие в блоке "Add/Remove Elements" на элемент "Delete" на веб-странице
+		And я перехожу на блок "Add/Remove Elements" на веб-странице
+		And выполнено нажатие на элемент "Add Element" на веб-странице
+		And выполнено нажатие на элемент "Delete" на веб-странице
 		And я закрываю веб-страницу
 		And я закрываю браузер
-@ignore
+
 Scenario: Add/Remove Elements
 	Given я инициализирую браузер
 		And я развернул веб-страницу на весь экран
@@ -44,7 +47,7 @@ Scenario: Add/Remove Elements
 		And выполнено нажатие на элемент "Delete" на веб-странице
 		And я закрываю веб-страницу
 		And я закрываю браузер
-@ignore
+
 Scenario: Checkboxes
 	Given я инициализирую браузер
 		And я развернул веб-страницу на весь экран
@@ -63,7 +66,7 @@ Scenario: Checkboxes
 
 		And я закрываю веб-страницу
 		And я закрываю браузер
-@ignore
+
 Scenario: Dropdown
 	Given я инициализирую браузер
 		And я развернул веб-страницу на весь экран
@@ -82,7 +85,7 @@ Scenario: Dropdown
 
 		And я закрываю веб-страницу
 		And я закрываю браузер
-@ignore
+
 Scenario: Dynamic Content
 	Given я инициализирую браузер
 		And я развернул веб-страницу на весь экран
@@ -91,11 +94,48 @@ Scenario: Dynamic Content
 	Given выполнено нажатие на элемент "Dynamic Content" на веб-странице
 		And я обновляю текущую страницу на "Dynamic Content"
 		
-	Then на веб-странице в блоке "Content..row 1" текст элемента "Text" заполнен
+	When я перехожу на блок "Content..row 1" на веб-странице
+	Then на веб-странице текст элемента "Text" заполнен
 
 		And я закрываю веб-страницу
 		And я закрываю браузер
-@ignore
+
+Scenario: Dynamic Content v.2
+		Given я инициализирую браузер
+		And я развернул веб-страницу на весь экран
+		And я перехожу на страницу "InternetHerokuapp"
+
+		Given выполнено нажатие на элемент "Dynamic Content" на веб-странице
+		And я обновляю текущую страницу на "Dynamic Content"
+		
+		When я перехожу на блок "Content..row 1" на веб-странице
+		Then на веб-странице текст элемента "Text" заполнен
+
+		Given я перехожу на страницу "Dynamic Content"
+		When я перехожу на блок "Content..row 2" на веб-странице
+		Then на веб-странице текст элемента "Text" заполнен
+
+		And я закрываю веб-страницу
+		And я закрываю браузер
+
+Scenario: Dynamic Content v.3
+		Given я инициализирую браузер
+		And я развернул веб-страницу на весь экран
+		And я перехожу на страницу "InternetHerokuapp"
+
+		Given выполнено нажатие на элемент "Dynamic Content" на веб-странице
+		And я обновляю текущую страницу на "Dynamic Content"
+		
+		When я перехожу на блок "Content..row 1" на веб-странице
+		Then на веб-странице текст элемента "Text" заполнен
+
+		Given я возвражаюсь к основной веб-странице
+		When я перехожу на блок "Content..row 2" на веб-странице
+		Then на веб-странице текст элемента "Text" заполнен
+
+		And я закрываю веб-страницу
+		And я закрываю браузер
+				
 Scenario: Frames
 	Given я инициализирую браузер
 		And я развернул веб-страницу на весь экран
@@ -106,6 +146,28 @@ Scenario: Frames
 	Given выполнено нажатие на элемент "Nested Frames" на веб-странице
 		And я обновляю текущую страницу на "Nested Frames"
 		
-	Then на веб-странице во фрейме "Bottom" текст элемента "Text" заполнен
+	When я перехожу на фрейм "Bottom" на веб-странице
+	Then на веб-странице текст элемента "Text" заполнен
+		And я закрываю веб-страницу
+		And я закрываю браузер
+		
+Scenario: Frames v.2
+		Given я инициализирую браузер
+		And я развернул веб-страницу на весь экран
+		And я перехожу на страницу "InternetHerokuapp"
+
+		Given выполнено нажатие на элемент "Frames" на веб-странице
+		And я обновляю текущую страницу на "Frames"
+		Given выполнено нажатие на элемент "Nested Frames" на веб-странице
+		And я обновляю текущую страницу на "Nested Frames"
+		
+		When я перехожу на фрейм "Bottom" на веб-странице
+		Then на веб-странице текст элемента "Text" заполнен
+			#переход по Frame.Default() к основной странице
+			And я перехожу на стандартный фрейм на веб-странице
+		When я перехожу на фрейм "Top" на веб-странице
+		When я перехожу на фрейм "Left" на веб-странице
+		Then на веб-странице текст элемента "Text" заполнен
+			And я перехожу на стандартный фрейм на веб-странице
 		And я закрываю веб-страницу
 		And я закрываю браузер

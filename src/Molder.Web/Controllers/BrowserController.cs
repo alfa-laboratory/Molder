@@ -4,64 +4,54 @@ using Molder.Web.Models.Settings;
 using Microsoft.Extensions.Logging;
 using System;
 using Molder.Web.Models.Browser;
-using Molder.Web.Models.Proxy;
 using System.Threading;
+using Molder.Web.Infrastructures;
 
 namespace Molder.Web.Controllers
 {
     public class BrowserController
     {
-        private static AsyncLocal<IBrowser> _browser = new AsyncLocal<IBrowser> { Value = null };
-        private static AsyncLocal<VariableController> _variables = new AsyncLocal<VariableController> { Value = null };
-        private static AsyncLocal<Authentication> _authentication = new AsyncLocal<Authentication> { Value = null };
-
+        private static AsyncLocal<IBrowser> Browser = new AsyncLocal<IBrowser> { Value = null };
+        private static Lazy<VariableController> _variableController;
         private BrowserController() { }
-
         public static IBrowser GetBrowser()
         {
-            if (_browser.Value == null)
-            {
-                var settings = new BrowserSetting(_variables.Value);
-                settings.Create();
-
-                return Create(settings);
-            }
-            return _browser.Value;
+            return Browser.Value ?? Create();
         }
 
-        public static IBrowser Create(ISetting setting)
+        private static IBrowser Create()
         {
-            var browserSetting = setting as BrowserSetting;
-            browserSetting.Authentication = _authentication.Value;
-            if (_browser.Value == null)
+            if (Browser.Value != null) return Browser.Value;
+            switch (BrowserSettings.Settings.Browser)
             {
-                switch (browserSetting.BrowserType)
+                case BrowserType.CHROME:
                 {
-                    case Infrastructures.BrowserType.CHROME:
-                        {
-                            _browser.Value = new Chrome(browserSetting);
-                            Log.Logger().LogInformation($"Сессия браузера - {_browser.Value.SessionId.ToString()}");
-                            return _browser.Value;
-                        }
-                    default:
-                        throw new InvalidOperationException("unknown browser type");
+                    Browser.Value = new Chrome();
+                    Log.Logger().LogInformation($"ChromeBrowser session is - {Browser.Value.SessionId.ToString()}");
+                    return Browser.Value;
                 }
+                case BrowserType.FIREFOX:
+                    break;
+                case BrowserType.EDGE:
+                    break;
+                case BrowserType.OPERA:
+                    break;
+                default:
+                    throw new InvalidOperationException("unknown browser type");
             }
-            return _browser.Value;
+            return Browser.Value;
         }
 
         public static void Quit()
         {
-            if (_browser.Value != null)
-            {
-                _browser.Value.Dispose();
-                _browser.Value.Quit();
-                _browser.Value = null;
-            }
+            if (GetBrowser() == null) return;
+            GetBrowser().Dispose();
+            Log.Logger().LogInformation("Browser is disposed");
+            GetBrowser().Quit();
+            Log.Logger().LogInformation("Browser is quited");
+            Browser.Value = null;
         }
 
-        public static void SetVariables(VariableController variables) => _variables.Value = variables;
-
-        public static void CreateProxy(Authentication authentification) => _authentication.Value = authentification;
+        public static void SetVariables(VariableController variableController) => _variableController = new Lazy<VariableController>(() => variableController);
     }
 }

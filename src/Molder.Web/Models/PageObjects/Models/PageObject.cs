@@ -1,4 +1,5 @@
-﻿using Molder.Exceptions;
+﻿using Molder.Controllers;
+using Molder.Exceptions;
 using Molder.Models.Assembly;
 using Molder.Models.Directory;
 using Molder.Web.Extensions;
@@ -17,22 +18,24 @@ namespace Molder.Web.Models
 {
     public class PageObject
     {
+        private VariableController _variableController;
         public IDirectory BaseDirectory { get; set; } = new BinDirectory();
         public IAssembly CustomAssembly { get; set; } = new Molder.Models.Assembly.Assembly();
 
         public IEnumerable<Node> Pages { get; private set; } = null;
 
-        public PageObject()
+        public PageObject(VariableController variableController)
         {
+            _variableController = variableController;
             Pages = Initialize(GetPages());
         }
 
         private IEnumerable<Node> GetPages()
         {
-            var _projects = GetAssembly();
+            var projects = GetAssembly();
             var pages = new List<Node>();
 
-            foreach (var project in _projects)
+            foreach (var project in projects)
             {
                 var classes = project.GetTypes().Where(t => t.IsClass).Where(t => t.GetCustomAttribute(typeof(PageAttribute), true) != null);
 
@@ -40,6 +43,8 @@ namespace Molder.Web.Models
                 {
                     var pageAttribute = cl.GetCustomAttribute<PageAttribute>();
                     var page = (Page)Activator.CreateInstance(cl);
+                    page.SetVariables(_variableController);
+
                     pages.Add(new Node
                     {
                         Name = pageAttribute.Name,
@@ -89,7 +94,7 @@ namespace Molder.Web.Models
                     case ObjectType.Block:
                     case ObjectType.Frame:
                         {
-                            var _elements = obj.GetType()
+                            var subElements = obj.GetType()
                                 .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                                 .Where(f => f.GetCustomAttribute<ElementAttribute>() != null);
                             childrens.Add(new Node
@@ -97,10 +102,14 @@ namespace Molder.Web.Models
                                 Name = name,
                                 Object = obj,
                                 Type = type,
-                                Childrens = GetChildrens(_elements)
+                                Childrens = GetChildrens(subElements)
                             });
                             break;
                         }
+                    case ObjectType.Page:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
             return childrens;
@@ -109,9 +118,9 @@ namespace Molder.Web.Models
         private (string, ObjectType, object) GetElement(FieldInfo fieldInfo)
         {
             Attribute attribute;
-            string name = string.Empty;
+            string name;
             object element = null;
-            ObjectType objectType = ObjectType.Element;
+            var objectType = ObjectType.Element;
 
             if (fieldInfo.CheckAttribute(typeof(BlockAttribute)))
             {
@@ -147,10 +156,7 @@ namespace Molder.Web.Models
             if (BaseDirectory.Exists())
             {
                 var files = BaseDirectory.GetFiles("*.dll");
-                foreach (var file in files)
-                {
-                    assemblies.Add(CustomAssembly.LoadFile(file.FullName));
-                }
+                assemblies.AddRange(files.Select(file => CustomAssembly.LoadFile(file.FullName)));
                 return assemblies;
             }
             else

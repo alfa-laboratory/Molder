@@ -8,15 +8,14 @@ namespace Molder.Web.Models.PageObjects.Alerts
 {
     public class Alert : IAlert
     {
-        private AsyncLocal<IMediator> _mediator = new AsyncLocal<IMediator> { Value = null };
         private IAlertProvider _alertProvider = null;
 
         public string Text => _alertProvider.Text;
 
         public Alert(IDriverProvider driverProvider)
         {
-            _mediator.Value = new AlertMediator((driverProvider.Settings as BrowserSetting).ElementTimeout);
-            _alertProvider = (IAlertProvider)_mediator.Value.Wait(() => driverProvider.GetAlert());
+            var mediator = new AsyncLocal<IMediator>{ Value = new AlertMediator(BrowserSettings.Settings.Timeout) };
+            _alertProvider = (IAlertProvider)mediator.Value.Wait(driverProvider.GetAlert);
         }
 
         public void Accept()

@@ -1,6 +1,7 @@
 ﻿@WebUI
-Feature: Task #1
 @ignore
+Feature: Task #1
+
 Scenario: OpenWebUI
 	Given я инициализирую браузер
 		And я развернул веб-страницу на весь экран

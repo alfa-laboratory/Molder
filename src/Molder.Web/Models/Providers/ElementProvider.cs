@@ -1,14 +1,13 @@
 ﻿using Molder.Helpers;
 using Molder.Web.Extensions;
-using Molder.Web.Infrastructures;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
 using Selenium.WebDriver.WaitExtensions;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 
 namespace Molder.Web.Models.Providers
@@ -16,59 +15,61 @@ namespace Molder.Web.Models.Providers
     [ExcludeFromCodeCoverage]
     public class ElementProvider : IElementProvider
     {
-        private int? _timeout;
+        private long? _timeout;
 
-        public ElementProvider(int? timeout)
-        {
-            _timeout = timeout ?? DefaultSetting.ELEMENT_TIMEOUT;
-        }
+        #region WebElement
 
-        private AsyncLocal<IWebElement> _element = new AsyncLocal<IWebElement> { Value = null };
+        private AsyncLocal<IWebElement> _element = new AsyncLocal<IWebElement>{ Value = null };
 
-        public IWebElement Element
+        public IWebElement WebElement
         {
             get => _element.Value;
-            set
-            {
-                _element.Value = value;
-            }
+            set => _element.Value = value;
         }
 
-        public bool Displayed => _element.Value.ToBeVisible((int)_timeout);
+        #endregion
+        
+        public ElementProvider(long? timeout) => _timeout = timeout;
+        public bool Displayed => WebElement.ToBeVisible((int)_timeout);
+        public bool NotDisplayed => WebElement.ToBeInvisible((int)_timeout);
 
-        public bool Selected => _element.Value.ToBeSelected((int)_timeout);
+        public bool Selected => WebElement.ToBeSelected((int)_timeout);
+        public bool NotSelected => WebElement.ToNotBeSelected((int)_timeout);
 
-        public bool Enabled => _element.Value.ToBeEnabled((int)_timeout);
-
-        public bool Loaded => _element.Value is null ? false : true;
+        public bool Enabled => WebElement.ToBeEnabled((int)_timeout);
+        public bool Disabled => WebElement.ToBeDisabled((int)_timeout);
+        
+        public bool Loaded => !(WebElement is null);
+        public bool NotLoaded => WebElement is null;
 
         public bool Editabled => IsEditabled();
+        public bool NotEditabled => !IsEditabled();
 
-        public Point Location => _element.Value.Location;
+        public Point Location => WebElement.Location;
 
-        public string Text => _element.Value.Text;
+        public string Text => WebElement.Text;
 
-        public string Tag => _element.Value.TagName;
+        public string Tag => WebElement.TagName;
 
         public void Clear()
         {
-            _element.Value.Clear();
+            WebElement.Clear();
         }
 
         public void Click()
         {
-            _element.Value.Click();
+            WebElement.Click();
         }
 
         public bool TextEqual(string text)
         {
             try
             {
-                return _element.Value.Wait((int)_timeout).ForText().ToEqual(text);
+                return WebElement.Wait((int)_timeout).ForText().ToEqual(text);
             }
             catch (WebDriverTimeoutException ex)
             {
-                Log.Logger().LogWarning($"\"{_element.Value.Text}\" is not equal \"{text}\". Exception is {ex.Message}");
+                Log.Logger().LogWarning($"\"{WebElement.Text}\" is not equal \"{text}\". Exception is {ex.Message}");
                 return false;
             }
         }
@@ -77,11 +78,11 @@ namespace Molder.Web.Models.Providers
         {
             try
             {
-                return _element.Value.Wait((int)_timeout).ForText().ToContain(text);
+                return WebElement.Wait((int)_timeout).ForText().ToContain(text);
             }
             catch (WebDriverTimeoutException ex)
             {
-                Log.Logger().LogWarning($"\"{_element.Value.Text}\" is not contain \"{text}\". Exception is {ex.Message}");
+                Log.Logger().LogWarning($"\"{WebElement.Text}\" is not contain \"{text}\". Exception is {ex.Message}");
                 return false;
             }
         }
@@ -90,51 +91,44 @@ namespace Molder.Web.Models.Providers
         {
             try
             {
-                return _element.Value.Wait((int)_timeout).ForText().ToMatch(text);
+                return WebElement.Wait((int)_timeout).ForText().ToMatch(text);
             }
             catch (WebDriverTimeoutException ex)
             {
-                Log.Logger().LogWarning($"\"{_element.Value.Text}\" is not match \"{text}\". Exception is {ex.Message}");
+                Log.Logger().LogWarning($"\"{WebElement.Text}\" is not match \"{text}\". Exception is {ex.Message}");
                 return false;
             }
         }
 
         public IElementProvider FindElement(By by)
         {
-            var element = _element.Value.FindElement(by);
+            var element = WebElement.FindElement(by);
             return new ElementProvider(_timeout)
             {
-                Element = element
+                WebElement = element
             };
         }
 
         public ReadOnlyCollection<IElementProvider> FindElements(By by)
         {
-            var elements = _element.Value.FindElements(by);
-            var listElement = new List<IElementProvider>();
-            foreach (var element in elements)
-            {
-                listElement.Add(new ElementProvider(_timeout)
-                {
-                    Element = element
-                });
-            }
+            var elements = WebElement.FindElements(by);
+            var listElement = elements.Select(element => new ElementProvider(_timeout) {WebElement = element}).Cast<IElementProvider>().ToList();
             return listElement.AsReadOnly();
         }
 
         public string GetAttribute(string name)
         {
-            return _element.Value.GetAttribute(name);
+            return WebElement.GetAttribute(name);
         }
 
         public string GetCss(string name)
         {
-            return _element.Value.GetCssValue(name);
+            return WebElement.GetCssValue(name);
         }
 
         public void SendKeys(string keys)
         {
-            _element.Value.SendKeys(keys);
+            WebElement.SendKeys(keys);
         }
 
         private bool IsEditabled()

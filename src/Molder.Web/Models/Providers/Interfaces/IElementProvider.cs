@@ -7,10 +7,16 @@ namespace Molder.Web.Models.Providers
     public interface IElementProvider
     {
         bool Displayed { get; }
+        bool NotDisplayed { get; }
         bool Selected { get; }
+        bool NotSelected { get; }
         bool Enabled { get; }
+        bool Disabled { get; }
         bool Editabled { get; }
+        bool NotEditabled { get; }
         bool Loaded { get; }
+        bool NotLoaded { get; }
+        
         Point Location { get; }
         string Text { get; }
         string Tag { get; }
