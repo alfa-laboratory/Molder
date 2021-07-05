@@ -571,7 +571,7 @@ namespace Molder.Web.Steps
             BrowserController.GetBrowser().GetCurrentPage().GetBlock(block);
         }
         
-        [StepDefinition(@"я возвражаюсь к основной веб-странице")]
+        [StepDefinition(@"я возвращаюсь к основной веб-странице")]
         public void BackToPage()
         {
             BrowserController.GetBrowser().GetCurrentPage().BackToPage();
