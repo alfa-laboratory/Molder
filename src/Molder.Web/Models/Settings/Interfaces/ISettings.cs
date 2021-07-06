@@ -2,9 +2,10 @@
 {
     public interface ISettings
     {
-        bool IsRemote();
+        bool IsRemoteRun();
         bool IsBinaryPath();
         bool CheckRemoteRun();
+        bool IsOptions();
         bool CheckCapability();
     }
 }

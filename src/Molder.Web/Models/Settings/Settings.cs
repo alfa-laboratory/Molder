@@ -16,12 +16,15 @@ namespace Molder.Web.Models.Settings
             set => _timeout = value;
         }
 
+        public bool IsRemote { get; set; } = false;
+
         public Remote Remote { get; set; }
 
-        public bool IsRemote() => Remote != null;
+        public bool IsRemoteRun() => Remote != null && IsRemote;
+        public bool IsOptions() => Options != null;
         public bool IsBinaryPath() => !string.IsNullOrWhiteSpace(BinaryLocation);
 
-        public bool CheckRemoteRun() => IsRemote() && !string.IsNullOrWhiteSpace(Remote.Url);
+        public bool CheckRemoteRun() => IsRemoteRun() && !string.IsNullOrWhiteSpace(Remote.Url);
 
         public bool CheckCapability() => Capabilities != null;
     }

@@ -28,7 +28,7 @@ namespace Molder.Web.Models.PageObjects.Elements
 
         public Element() { }
 
-        protected Element(string name, string locator = null, bool optional = false)
+        public Element(string name, string locator = null, bool optional = false)
         {
             Name = name;
             Locator = locator;
