@@ -16,7 +16,7 @@ namespace Molder.Web.Models.Browser
         public Chrome()
         {
             var options = CreateOptions();
-            if(BrowserSettings.Settings.IsRemote())
+            if(BrowserSettings.Settings.IsRemoteRun())
             {
                 WebDriver.CreateDriver(() => new RemoteWebDriver(new Uri(BrowserSettings.Settings.Remote.Url), options.ToCapabilities()));
                 SessionId = (WebDriver.GetDriver() as RemoteWebDriver)?.SessionId;
@@ -34,14 +34,18 @@ namespace Molder.Web.Models.Browser
         {
             var options = new ChromeOptions();
             
-            if (BrowserSettings.Settings.IsRemote())
+            if (BrowserSettings.Settings.IsRemoteRun())
             {
                 options.AddAdditionalCapability("version", BrowserSettings.Settings.Remote.Version ?? Constants.DEFAULT_VERSION, true);
                 options.AddAdditionalCapability("enableVNC", true, true);
                 options.AddAdditionalCapability("platform", BrowserSettings.Settings.Remote.Platform ?? Constants.DEFAULT_PLATFORM, true);
                 options.AddAdditionalCapability("name", BrowserSettings.Settings.Remote.Project ?? Constants.DEFAULT_PROJECT, true);
             }
-            options.AddArguments(BrowserSettings.Settings.Options);
+
+            if (BrowserSettings.Settings.IsOptions())
+            {
+                options.AddArguments(BrowserSettings.Settings.Options);
+            }
             
             if(!BrowserSettings.Settings.IsBinaryPath())
             {
