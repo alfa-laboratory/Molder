@@ -1,5 +1,4 @@
 ﻿using Molder.Controllers;
-using Molder.Exceptions;
 using Molder.Models.Assembly;
 using Molder.Models.Directory;
 using Molder.Web.Extensions;
@@ -13,14 +12,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Extensions.Logging;
+using Molder.Helpers;
 
 namespace Molder.Web.Models
 {
     public class PageObject
     {
         private VariableController _variableController;
-        public IDirectory BaseDirectory { get; set; } = new BinDirectory();
-        public IAssembly CustomAssembly { get; set; } = new Molder.Models.Assembly.Assembly();
 
         public IEnumerable<Node> Pages { get; } = null;
 
@@ -33,6 +32,8 @@ namespace Molder.Web.Models
         private IEnumerable<Node> GetPages()
         {
             var projects = GetAssembly();
+            if (projects is null) return null;
+            
             var pages = new List<Node>();
 
             foreach (var project in projects)
@@ -158,7 +159,7 @@ namespace Molder.Web.Models
             {
                 attribute = fieldInfo.GetCustomAttribute<BlockAttribute>();
                 name = ((BlockAttribute)attribute).Name;
-                element = (Block)Activator.CreateInstance(fieldInfo.FieldType, ((BlockAttribute)attribute).Name, ((BlockAttribute)attribute).Locator, ((BlockAttribute)attribute).Optional);
+                element = Activator.CreateInstance(fieldInfo.FieldType, ((BlockAttribute)attribute).Name, ((BlockAttribute)attribute).Locator, ((BlockAttribute)attribute).Optional);
                 objectType = ObjectType.Block;
             }
             else
@@ -167,14 +168,14 @@ namespace Molder.Web.Models
                 {
                     attribute = fieldInfo.GetCustomAttribute<FrameAttribute>();
                     name = ((FrameAttribute)attribute).Name;
-                    element = (Frame)Activator.CreateInstance(fieldInfo.FieldType, ((FrameAttribute)attribute).Name, ((FrameAttribute)attribute).FrameName, ((FrameAttribute)attribute).Number, ((FrameAttribute)attribute).Locator, ((FrameAttribute)attribute).Optional);
+                    element = Activator.CreateInstance(fieldInfo.FieldType, ((FrameAttribute)attribute).Name, ((FrameAttribute)attribute).FrameName, ((FrameAttribute)attribute).Number, ((FrameAttribute)attribute).Locator, ((FrameAttribute)attribute).Optional);
                     objectType = ObjectType.Frame;
                 }
                 else
                 {
                     attribute = fieldInfo.GetCustomAttribute<ElementAttribute>();
                     name = ((ElementAttribute)attribute).Name;
-                    element = (Element)Activator.CreateInstance(fieldInfo.FieldType, ((ElementAttribute)attribute).Name, ((ElementAttribute)attribute).Locator, ((ElementAttribute)attribute).Optional);
+                    element = Activator.CreateInstance(fieldInfo.FieldType, ((ElementAttribute)attribute).Name, ((ElementAttribute)attribute).Locator, ((ElementAttribute)attribute).Optional);
                 }
             }
             return (name, objectType, element);
@@ -182,19 +183,32 @@ namespace Molder.Web.Models
 
         private IEnumerable<System.Reflection.Assembly> GetAssembly()
         {
-            var assemblies = new List<System.Reflection.Assembly>();
+            try
+            {
+                return AppDomain.CurrentDomain.GetAssemblies().ToList();
+            }
+            catch (Exception ex)
+            {
+                Log.Logger().LogError($@"Loading all assembly is failed, because {ex.Message}");
+                return null;
+            }
 
-            BaseDirectory.Create();
-            if (BaseDirectory.Exists())
-            {
-                var files = BaseDirectory.GetFiles("*.dll");
-                assemblies.AddRange(files.Select(file => CustomAssembly.LoadFile(file.FullName)));
-                return assemblies;
-            }
-            else
-            {
-                throw new DirectoryException($"BaseDirectory from path \"{BaseDirectory}\" is not exist");
-            }
+            /// TODO исправить получение Assembly так как необходимо, чтобы PageObjects был в текущей сборке (CurrentDomain)
+            /*
+                var assemblies = new List<System.Reflection.Assembly>();
+                BaseDirectory.Create();
+                if (BaseDirectory.Exists())
+                {
+                    var files = BaseDirectory.GetFiles("*.dll");
+                    assemblies.AddRange(files.Select(file => System.Reflection.Assembly.Load(File.ReadAllBytes(file.FullName))));
+                    //assemblies.AddRange(files.Select(file => CustomAssembly.LoadFile(file.FullName)));
+                    return assemblies;
+                }
+                else
+                {
+                    throw new DirectoryException($"BaseDirectory from path \"{BaseDirectory}\" is not exist");
+                }
+            */
         }
     }
 }

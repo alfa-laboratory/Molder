@@ -1,5 +1,5 @@
-﻿@WebUI
-@ignore
+﻿@ignore
+@WebUI
 Feature: WebUI
 
 Scenario: OpenWebUI
