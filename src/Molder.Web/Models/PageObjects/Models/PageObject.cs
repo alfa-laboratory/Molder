@@ -20,8 +20,6 @@ namespace Molder.Web.Models
     public class PageObject
     {
         private VariableController _variableController;
-        public IDirectory BaseDirectory { get; set; } = new BinDirectory();
-        public IAssembly CustomAssembly { get; set; } = new Molder.Models.Assembly.Assembly();
 
         public IEnumerable<Node> Pages { get; } = null;
 
@@ -191,7 +189,7 @@ namespace Molder.Web.Models
             }
             catch (Exception ex)
             {
-                Log.Logger().LogError(@$"Loading all assembly is failed, because {ex.Message}");
+                Log.Logger().LogError($@"Loading all assembly is failed, because {ex.Message}");
                 return null;
             }
 
