@@ -31,8 +31,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Molder.Web", "src\Molder.We
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Molder.Service.Tests", "test\Molder.Service.Tests\Molder.Service.Tests.csproj", "{56A2E62B-E49A-41EE-B35B-612ED6EF25CE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Molder.Web.Example", "examples\Molder.Web.Example\Molder.Web.Example\Molder.Web.Example.csproj", "{5453A3B6-9137-4FB1-A448-E91C2E9D29FB}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{57B59398-1656-404B-8D7E-4EB9B77B57B6}"
 	ProjectSection(SolutionItems) = preProject
 		docs\index.md = docs\index.md
