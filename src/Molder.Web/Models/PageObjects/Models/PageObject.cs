@@ -1,5 +1,4 @@
 ﻿using Molder.Controllers;
-using Molder.Exceptions;
 using Molder.Models.Assembly;
 using Molder.Models.Directory;
 using Molder.Web.Extensions;
@@ -13,6 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Extensions.Logging;
+using Molder.Helpers;
 
 namespace Molder.Web.Models
 {
@@ -27,12 +28,14 @@ namespace Molder.Web.Models
         public PageObject(VariableController variableController)
         {
             _variableController = variableController;
-            Pages = Pages ?? Initialize(GetPages());
+            Pages = Initialize(GetPages());
         }
 
         private IEnumerable<Node> GetPages()
         {
             var projects = GetAssembly();
+            if (projects is null) return null;
+            
             var pages = new List<Node>();
 
             foreach (var project in projects)
@@ -182,8 +185,16 @@ namespace Molder.Web.Models
 
         private IEnumerable<System.Reflection.Assembly> GetAssembly()
         {
-            return AppDomain.CurrentDomain.GetAssemblies().ToList();
-            
+            try
+            {
+                return AppDomain.CurrentDomain.GetAssemblies().ToList();
+            }
+            catch (Exception ex)
+            {
+                Log.Logger().LogError(@$"Loading all assembly is failed, because {ex.Message}");
+                return null;
+            }
+
             /// TODO исправить получение Assembly так как необходимо, чтобы PageObjects был в текущей сборке (CurrentDomain)
             /*
                 var assemblies = new List<System.Reflection.Assembly>();
