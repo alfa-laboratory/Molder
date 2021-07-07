@@ -27,7 +27,7 @@ namespace Molder.Web.Models
         public PageObject(VariableController variableController)
         {
             _variableController = variableController;
-            Pages = Initialize(GetPages());
+            Pages = Pages ?? Initialize(GetPages());
         }
 
         private IEnumerable<Node> GetPages()
@@ -158,7 +158,7 @@ namespace Molder.Web.Models
             {
                 attribute = fieldInfo.GetCustomAttribute<BlockAttribute>();
                 name = ((BlockAttribute)attribute).Name;
-                element = (Block)Activator.CreateInstance(fieldInfo.FieldType, ((BlockAttribute)attribute).Name, ((BlockAttribute)attribute).Locator, ((BlockAttribute)attribute).Optional);
+                element = Activator.CreateInstance(fieldInfo.FieldType, ((BlockAttribute)attribute).Name, ((BlockAttribute)attribute).Locator, ((BlockAttribute)attribute).Optional);
                 objectType = ObjectType.Block;
             }
             else
@@ -167,14 +167,14 @@ namespace Molder.Web.Models
                 {
                     attribute = fieldInfo.GetCustomAttribute<FrameAttribute>();
                     name = ((FrameAttribute)attribute).Name;
-                    element = (Frame)Activator.CreateInstance(fieldInfo.FieldType, ((FrameAttribute)attribute).Name, ((FrameAttribute)attribute).FrameName, ((FrameAttribute)attribute).Number, ((FrameAttribute)attribute).Locator, ((FrameAttribute)attribute).Optional);
+                    element = Activator.CreateInstance(fieldInfo.FieldType, ((FrameAttribute)attribute).Name, ((FrameAttribute)attribute).FrameName, ((FrameAttribute)attribute).Number, ((FrameAttribute)attribute).Locator, ((FrameAttribute)attribute).Optional);
                     objectType = ObjectType.Frame;
                 }
                 else
                 {
                     attribute = fieldInfo.GetCustomAttribute<ElementAttribute>();
                     name = ((ElementAttribute)attribute).Name;
-                    element = (Element)Activator.CreateInstance(fieldInfo.FieldType, ((ElementAttribute)attribute).Name, ((ElementAttribute)attribute).Locator, ((ElementAttribute)attribute).Optional);
+                    element = Activator.CreateInstance(fieldInfo.FieldType, ((ElementAttribute)attribute).Name, ((ElementAttribute)attribute).Locator, ((ElementAttribute)attribute).Optional);
                 }
             }
             return (name, objectType, element);
@@ -182,19 +182,24 @@ namespace Molder.Web.Models
 
         private IEnumerable<System.Reflection.Assembly> GetAssembly()
         {
-            var assemblies = new List<System.Reflection.Assembly>();
-
-            BaseDirectory.Create();
-            if (BaseDirectory.Exists())
-            {
-                var files = BaseDirectory.GetFiles("*.dll");
-                assemblies.AddRange(files.Select(file => CustomAssembly.LoadFile(file.FullName)));
-                return assemblies;
-            }
-            else
-            {
-                throw new DirectoryException($"BaseDirectory from path \"{BaseDirectory}\" is not exist");
-            }
+            return AppDomain.CurrentDomain.GetAssemblies().ToList();
+            
+            /// TODO исправить получение Assembly так как необходимо, чтобы PageObjects был в текущей сборке (CurrentDomain)
+            /*
+                var assemblies = new List<System.Reflection.Assembly>();
+                BaseDirectory.Create();
+                if (BaseDirectory.Exists())
+                {
+                    var files = BaseDirectory.GetFiles("*.dll");
+                    assemblies.AddRange(files.Select(file => System.Reflection.Assembly.Load(File.ReadAllBytes(file.FullName))));
+                    //assemblies.AddRange(files.Select(file => CustomAssembly.LoadFile(file.FullName)));
+                    return assemblies;
+                }
+                else
+                {
+                    throw new DirectoryException($"BaseDirectory from path \"{BaseDirectory}\" is not exist");
+                }
+            */
         }
     }
 }

@@ -11,18 +11,18 @@ namespace Molder.Web.Extensions
     {
         public static Node SearchElementBy(this Node node, string name)
         {
-            return (node.Childrens as List<Node>).SingleOrDefault(n => n.Type == ObjectType.Element && n.Name == name) ?? throw new SearchException($"A element \"{name}\" was not found in the {node.Type.ToString().ToLower()} \"{node.Name}\"");
+            return (node.Childrens as List<Node>)?.SingleOrDefault(n => n.Type == ObjectType.Element && n.Name == name) ?? throw new SearchException($"A element \"{name}\" was not found in the {node.Type.ToString().ToLower()} \"{node.Name}\"");
         }
 
         public static Node SearchPageBy(this IEnumerable<Node> nodes, string name)
         {
-            return (nodes as List<Node>).SingleOrDefault(n => n.Type == ObjectType.Page && n.Name == name) ?? throw new SearchException($"A page \"{name}\" was not found");
+            return (nodes as List<Node>)?.SingleOrDefault(n => n.Type == ObjectType.Page && n.Name == name) ?? throw new SearchException($"A page \"{name}\" was not found");
         }
 
         public static IEnumerable<T> GetObjectFrom<T>(this IEnumerable<Node> nodes)
         {
             var objects = new List<T>();
-            (nodes as List<Node>).ForEach(node => objects.Add((T)node.Object));
+            (nodes as List<Node>)?.ForEach(node => objects.Add((T)node.Object));
             return objects;
         }
 
@@ -45,7 +45,7 @@ namespace Molder.Web.Extensions
                 foreach (var name in new List<string>(_names))
                 {
                     _node =
-                        (node.Childrens as List<Node>).SingleOrDefault(n => n.Type == objectType && n.Name == name) ??
+                        (node.Childrens as List<Node>)?.SingleOrDefault(n => n.Type == objectType && n.Name == name) ??
                         throw new SearchException(
                             $"A element \"{name}\" was not found in the {_node.Type.ToString().ToLower()} \"{_node.Name}\"");
                     _names.Remove(name);
