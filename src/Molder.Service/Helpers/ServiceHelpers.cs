@@ -2,7 +2,6 @@
 using Molder.Helpers;
 using Molder.Service.Infrastructures;
 using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -75,12 +74,12 @@ namespace Molder.Service.Helpers
         {    
             switch (obj)
             {
-                case XDocument xDoc:
-                case XmlDocument xmlDocument:
+                case XDocument _:
+                case XmlDocument _:
                     {
                         return new StringContent(content, Encoding.UTF8, DefaultContentType.XML);                        
                     }
-                case JObject jObject:
+                case JObject _:
                     {
                         return new StringContent(content, Encoding.UTF8, DefaultContentType.JSON);                        
                     }

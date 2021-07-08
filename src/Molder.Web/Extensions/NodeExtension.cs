@@ -40,19 +40,17 @@ namespace Molder.Web.Extensions
             {
                 throw new SearchException($"A element for searching was empty");
             }
-            else
+
+            foreach (var name in new List<string>(_names))
             {
-                foreach (var name in new List<string>(_names))
+                _node =
+                    (node.Childrens as List<Node>)?.SingleOrDefault(n => n.Type == objectType && n.Name == name) ??
+                    throw new SearchException(
+                        $"A element \"{name}\" was not found in the {_node.Type.ToString().ToLower()} \"{_node.Name}\"");
+                _names.Remove(name);
+                if (_names.Any())
                 {
-                    _node =
-                        (node.Childrens as List<Node>)?.SingleOrDefault(n => n.Type == objectType && n.Name == name) ??
-                        throw new SearchException(
-                            $"A element \"{name}\" was not found in the {_node.Type.ToString().ToLower()} \"{_node.Name}\"");
-                    _names.Remove(name);
-                    if (_names.Any())
-                    {
-                        return _node.SearchBy(_names, objectType);
-                    }
+                    return _node.SearchBy(_names, objectType);
                 }
             }
             return _node;

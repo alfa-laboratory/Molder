@@ -1,7 +1,10 @@
-﻿using Molder.Controllers;
+﻿using Microsoft.Extensions.Logging;
+using Molder.Controllers;
+using Molder.Helpers;
 using Molder.Models.Configuration;
 using Molder.Web.Controllers;
 using Molder.Web.Helpers;
+using Molder.Web.Infrastructures;
 using Molder.Web.Models;
 using Molder.Web.Models.Settings;
 using TechTalk.SpecFlow;
@@ -15,7 +18,16 @@ namespace Molder.Web.Hooks
         public static void InitializeConfiguration()
         {
             var settings = ConfigOptionsFactory.Create(ConfigurationExtension.Instance.Configuration);
-            BrowserSettings.Settings = settings.Value;
+            if (settings.Value is null)
+            {
+                Log.Logger().LogInformation($@"appsettings is not contains {Constants.CONFIG_BLOCK} block. Standard settings selected.");
+                BrowserSettings.Settings = new Settings();
+            }
+            else
+            {
+                Log.Logger().LogInformation($@"appsettings contains {Constants.CONFIG_BLOCK} block. Settings selected.");
+                BrowserSettings.Settings = settings.Value;
+            }
         }
 
         [BeforeFeature]

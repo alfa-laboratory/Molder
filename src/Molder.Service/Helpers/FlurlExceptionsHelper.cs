@@ -13,7 +13,7 @@ namespace Molder.Service.Helpers
         {
             if (ex is FlurlException)
             {
-                if (((FlurlException)ex).ExceptionName == (typeof(FlurlHttpTimeoutException)).Name)
+                if (((FlurlException)ex).ExceptionName == nameof(FlurlHttpTimeoutException))
                 {
                     return new ResponceInfo
                     {
@@ -24,7 +24,7 @@ namespace Molder.Service.Helpers
                     };
                 }
 
-                if (((FlurlException)ex).ExceptionName == (typeof(FlurlHttpException)).Name)
+                if (((FlurlException)ex).ExceptionName == nameof(FlurlHttpException))
                 {
                     var exception = (((FlurlException)ex).Exception as FlurlHttpException)?.Call.Response;
                     var content = exception?.ResponseMessage.Content.ReadAsStringAsync().Result;
@@ -37,7 +37,7 @@ namespace Molder.Service.Helpers
                         Request = request
                     };
 
-                    Log.Logger().LogInformation($"{Message.CreateMessage(responce)}. \n\nInner exception: {ex}");
+                    Log.Logger().LogInformation($"{responce.CreateMessage()}. \n\nInner exception: {ex}");
                     return responce;
                 }
             }
