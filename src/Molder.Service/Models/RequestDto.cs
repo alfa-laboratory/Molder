@@ -1,4 +1,5 @@
-﻿using Molder.Controllers;
+﻿using System;
+using Molder.Controllers;
 using Molder.Extensions;
 using Molder.Service.Helpers;
 using Molder.Service.Infrastructures;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using Molder.Service.Extension;
 
 namespace Molder.Service.Models
 {
@@ -21,12 +23,20 @@ namespace Molder.Service.Models
 
             Header = SetData(HeaderType.HEADER);
             Query = SetData(HeaderType.QUERY);
-            Credentials = GetCredentials();
-
-
-            var body = GetBody();
-            if (body != null)
+            
+            if (headers.CheckParameter(HeaderType.CREDENTIAL))
             {
+                Credentials = GetCredentials();
+            }
+
+            if (headers.CheckParameter(HeaderType.TIMEOUT))
+            {
+                Timeout = GetTimeout();
+            }
+
+            if (headers.CheckParameter(HeaderType.BODY))
+            {
+                var body = GetBody();
                 var obj = body.GetObject();
                 Content = obj.GetHttpContent(body);
             }
@@ -36,6 +46,7 @@ namespace Molder.Service.Models
         public Dictionary<string, string> Query { get; private set; } = null;
         public HttpContent Content { get; private set; } = null;
         public ICredentials Credentials { get; private set; } = null;
+        public int? Timeout { get; set; } = null;
 
         private Dictionary<string, string> SetData(HeaderType headerType)
         {
@@ -44,27 +55,25 @@ namespace Molder.Service.Models
                 .ToDictionary(e => e.Name, e => this.variableController.ReplaceVariables(e.Value));
         }
 
+        private int GetTimeout()
+        {
+            var headerValue = headers.FirstOrDefault(h => h.Style == HeaderType.TIMEOUT)?.Value;
+            var value = variableController.ReplaceVariables(headerValue) ?? headerValue;
+
+            return int.Parse(value);
+        }
+
         private string GetBody()
         {
-            var isCheck = headers.Count(h => h.Style == HeaderType.BODY);
-            if(isCheck == 1)
-            {
-                var name = headers.FirstOrDefault(h => h.Style == HeaderType.BODY).Value;
-                var value = variableController.GetVariableValueText(name);
-                return value ?? name;
-            }
-            return null;
+            var name = headers.FirstOrDefault(h => h.Style == HeaderType.BODY)?.Value;
+            var value = variableController.GetVariableValueText(name);
+            return value ?? name;
         }
 
         private ICredentials GetCredentials()
         {
-            var isCheck = headers.Count(h => h.Style == HeaderType.CREDENTIAL);
-            if (isCheck == 1)
-            {
-                var name = headers.FirstOrDefault(h => h.Style == HeaderType.CREDENTIAL).Value;
-                return variableController.GetVariableValue(name) as ICredentials ?? null;
-            }
-            return null;
+            var name = headers.FirstOrDefault(h => h.Style == HeaderType.CREDENTIAL)?.Value;
+            return variableController.GetVariableValue(name) as ICredentials ?? null;
         }
     }
 }

@@ -16,10 +16,7 @@ namespace Molder.Service.Models
         public IFlurlProvider Provider
         {
             get => flurlProvider.Value;
-            set
-            {
-                flurlProvider.Value = value;
-            }
+            set => flurlProvider.Value = value;
         }
 
         public WebService()
@@ -34,7 +31,7 @@ namespace Molder.Service.Models
             {
                 try
                 {
-                    Log.Logger().LogInformation(Helpers.Message.CreateMessage(request));
+                    Log.Logger().LogInformation(request.CreateMessage());
 
                     var responce = await Provider.SendRequestAsync(request);
                             
@@ -46,7 +43,7 @@ namespace Molder.Service.Models
                         StatusCode = responce.StatusCode
                     };
 
-                    Log.Logger().LogInformation(Helpers.Message.CreateMessage(responceInfo));
+                    Log.Logger().LogInformation(responceInfo.CreateMessage());
 
                     return responceInfo;
                 }

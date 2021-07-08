@@ -9,7 +9,7 @@ namespace Molder.Service.Helpers
         /// </summary>   
         public static bool ValidateUrl(string url)
         {
-            return Uri.TryCreate(url, UriKind.Absolute, out var tmp) ? true : false;
+            return Uri.TryCreate(url, UriKind.Absolute, out _);
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Http;
+using Molder.Service.Infrastructures;
 
 namespace Molder.Service.Models
 {
@@ -20,5 +21,12 @@ namespace Molder.Service.Models
         public HttpContent Content { get; set; } 
 
         public ICredentials Credential { get; set; }
+
+        private int? _timeout = null;
+        public int? Timeout
+        {
+            get => _timeout ?? Constants.DEFAULT_TIMEOUT;
+            set => _timeout = value;
+        }
     }
 }

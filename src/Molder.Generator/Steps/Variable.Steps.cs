@@ -122,7 +122,7 @@ namespace Molder.Generator.Steps
         /// <param name="varName">Идентификатор переменной.</param>
         /// <param name="number">Число.</param>
         [StepDefinition(@"я сохраняю число ""(.+)"" в переменную ""(.*)""")]
-        public void StoreAsVariableNumber(string varName, string number)
+        public void StoreAsVariableNumber(string number, string varName)
         {
             if (decimal.TryParse(number, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.CurrentCulture, out var dec))
             {

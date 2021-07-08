@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Molder.Web.Models.Settings
 {
+    [ExcludeFromCodeCoverage]
     public class BrowserSettings
     {
         private BrowserSettings() {}

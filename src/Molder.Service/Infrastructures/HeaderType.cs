@@ -6,6 +6,7 @@ namespace Molder.Service.Infrastructures
         HEADER, 
         QUERY,  
         BODY,
-        CREDENTIAL
+        CREDENTIAL,
+        TIMEOUT
     }
 }

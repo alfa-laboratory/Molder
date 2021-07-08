@@ -9,7 +9,7 @@ using System.Net.Http;
 using TechTalk.SpecFlow;
 using Xunit;
 
-namespace EvidentInstruction.Service.Tests
+namespace Molder.Service.Tests
 {
 
     [ExcludeFromCodeCoverage]

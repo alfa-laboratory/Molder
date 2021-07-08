@@ -11,7 +11,7 @@
     <PackageTags>specflow bdd steps web alfabank</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Library for working with WebUI</Description>
-    <LangVersion>7.1</LangVersion>
+    <LangVersion>8</LangVersion>
     <PackageVersion>1.0.13</PackageVersion>
   </PropertyGroup>
 

@@ -5,7 +5,7 @@ namespace Molder.Web.Models.Settings
 {
     public class Settings : ISettings
     {
-        public BrowserType Browser { get; set; }
+        public BrowserType Browser { get; set; } = BrowserType.CHROME;
         public string BinaryLocation { get; set; }
         public List<string> Options { get; set; }
         public Dictionary<string, string> Capabilities { get; set; }

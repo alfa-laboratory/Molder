@@ -10,7 +10,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace EvidentInstruction.Service.Tests
+namespace Molder.Service.Tests
 {
     [ExcludeFromCodeCoverage]
     public class WebServiceTests

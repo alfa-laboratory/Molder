@@ -4,9 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Molder.Service.Exceptions;
 using Flurl.Http;
-using Microsoft.Extensions.Logging;
 using Molder.Service.Models.ClientFactory;
-using Molder.Helpers;
 
 namespace Molder.Service.Models.Provider
 {
@@ -17,7 +15,7 @@ namespace Molder.Service.Models.Provider
         { 
             try
             {
-                IFlurlResponse responce = null;
+                IFlurlResponse responce;
 
                 if (request.Credential != null)
                 {
@@ -33,6 +31,7 @@ namespace Molder.Service.Models.Provider
                             settings.HttpClientFactory.CreateMessageHandler();
                         }))
                         .WithHeaders(request.Headers)
+                        .WithTimeout((int)request.Timeout)
                         .SendAsync(request.Method) :
                     await request.Url
                         .WithClient(new FlurlClient(request.Url).Configure(settings => {
@@ -40,17 +39,20 @@ namespace Molder.Service.Models.Provider
                             settings.HttpClientFactory.CreateMessageHandler();
                         }))
                         .WithHeaders(request.Headers)
-                        .SendAsync(request.Method, request.Content as HttpContent);
+                        .WithTimeout((int)request.Timeout)
+                        .SendAsync(request.Method, request.Content);
                 }
                 else
                 {
                     responce = request.Content is null ?
                     await request.Url
                         .WithHeaders(request.Headers)
+                        .WithTimeout((int)request.Timeout)
                         .SendAsync(request.Method) :
                     await request.Url
                         .WithHeaders(request.Headers)
-                        .SendAsync(request.Method, request.Content as HttpContent);
+                        .WithTimeout((int)request.Timeout)
+                        .SendAsync(request.Method, request.Content);
                 }
 
                 return responce.ResponseMessage;                

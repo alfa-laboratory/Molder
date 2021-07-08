@@ -10,9 +10,6 @@ namespace Molder.Service.Controllers
     {
         private Lazy<ConcurrentDictionary<string, ResponceInfo>> _services = new Lazy<ConcurrentDictionary<string, ResponceInfo>>(() => new ConcurrentDictionary<string, ResponceInfo>());
 
-        public ConcurrentDictionary<string, ResponceInfo> Services
-        {
-            get => _services.Value;
-        }
+        public ConcurrentDictionary<string, ResponceInfo> Services => _services.Value;
     }
 }
