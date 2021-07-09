@@ -26,7 +26,7 @@ namespace Molder.Configuration.Hooks
 
         public Hooks(VariableController variableController)
         {
-            this.controller = variableController;
+            controller = variableController;
         }
 
         [BeforeTestRun(Order = -10000000)]
@@ -63,11 +63,11 @@ namespace Molder.Configuration.Hooks
             Log.Logger().LogInformation("Dictionary with variables is " + (controller.Variables.Any() ? "not empty" : "empty"));
             if (!controller.Variables.Any()) return;
 
-            foreach (var variable in controller.Variables)
+            foreach (var (key, variable) in controller.Variables)
             {
-                if(variable.Value.TypeOfAccess == Molder.Infrastructures.TypeOfAccess.Local)
+                if(variable.TypeOfAccess == Molder.Infrastructures.TypeOfAccess.Local)
                 {
-                    controller.Variables.TryRemove(variable.Key, out var value);
+                    controller.Variables.TryRemove(key, out _);
                 }
             }
 

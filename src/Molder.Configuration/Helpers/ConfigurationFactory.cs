@@ -26,7 +26,7 @@ namespace Molder.Configuration.Helpers
                     .AddEnvironmentVariables()
                     .Build();
 
-                Log.Logger().LogInformation("Config file connected successfully.");
+                Log.Logger().LogInformation("Config file connected successfully");
 
                 return configuration;
             }
