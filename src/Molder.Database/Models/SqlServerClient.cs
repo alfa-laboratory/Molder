@@ -4,8 +4,6 @@ using System.Data.SqlClient;
 using Molder.Helpers;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
-using Molder.Models.DateTimeHelpers;
-using System.Threading;
 using Molder.Database.Models.Providers;
 using System.Text;
 using System.Data.Common;
@@ -15,8 +13,6 @@ namespace Molder.Database.Models
 {
     public class SqlServerClient : IDbClient, IDisposable
     {
-        public AsyncLocal<IDateTimeHelper> dateTimeHelper = new AsyncLocal<IDateTimeHelper>() { Value = new DateTimeHelper() };
-
         public ISqlProvider _provider;
         public SqlServerClient()
         {
@@ -63,10 +59,7 @@ namespace Molder.Database.Models
         {
             var result = _provider.IsConnectAlive();
 
-            if (result == true)
-                Log.Logger().LogInformation("Connect is alive");
-            else
-                Log.Logger().LogInformation("Connect isn't alive");
+            Log.Logger().LogInformation(result ? "Connect is alive" : "Connect isn't alive");
 
             return result;
         }
@@ -181,7 +174,7 @@ namespace Molder.Database.Models
             return sb.ToString();
         }
 
-        public object ExecuteScalar(string query, int? timeout = null)  //todo
+        public object ExecuteScalar(string query, int? timeout = null)
         {
             var command = _provider.SetupCommand(query, timeout);
 

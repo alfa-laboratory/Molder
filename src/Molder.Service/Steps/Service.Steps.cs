@@ -98,7 +98,7 @@ namespace Molder.Service.Steps
                 url = url.AddQueryInURL(requestDto.Query);
             }
 
-            if(!Uri.TryCreate(url, UriKind.Absolute, out Uri outUrl))
+            if(!Uri.TryCreate(url, UriKind.Absolute, out _))
             {
                 Log.Logger().LogWarning($"Url {url} is not valid.");
                 throw new ArgumentException($"Url {url} is not valid.");

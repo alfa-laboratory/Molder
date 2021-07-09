@@ -17,14 +17,8 @@ namespace Molder.Generator.Models.Generators
 
         public string Locale
         {
-            get
-            {
-                return _locale.Value;
-            }
-            set
-            {
-                _locale.Value = value;
-            }
+            get => _locale.Value;
+            set => _locale.Value = value;
         }
 
         public void ReloadLocale()

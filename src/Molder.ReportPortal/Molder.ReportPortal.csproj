@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <Version>1.0.1</Version>
     <Authors>Egor Shokhin</Authors>
     <Company>AlfaBank</Company>
     <Copyright>2021 AlfaBank</Copyright>
@@ -12,6 +11,7 @@
     <IsPackable>true</IsPackable>
     <Description>Library for adding report portal log</Description>
     <LangVersion>7.1</LangVersion>
+    <PackageVersion>1.0.2</PackageVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -19,9 +19,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Molder" Version="1.0.19" />
+    <PackageReference Include="Molder" Version="1.0.23" />
     <PackageReference Include="ReportPortal.Serilog" Version="2.0.0" />
     <PackageReference Include="SpecFlow" Version="3.3.30" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+  
 </Project>

@@ -14,13 +14,12 @@ namespace Molder.Database.Hooks
         [AfterScenario]
         public void AfterScenario(DatabaseController databaseController)
         {
-            foreach (var kvp in databaseController.Connections)
+            foreach (var (key, (dbClient, typeOfAccess, _)) in databaseController.Connections)
             {
-                if (kvp.Value.typeOfAccess == Molder.Infrastructures.TypeOfAccess.Local)
-                {
-                    kvp.Value.connection?.Dispose();
-                    databaseController.Connections.TryRemove(kvp.Key, out var connection);
-                }
+                if (typeOfAccess != Molder.Infrastructures.TypeOfAccess.Local) continue;
+                
+                dbClient?.Dispose();
+                databaseController.Connections.TryRemove(key, out _);
             }
         }
 

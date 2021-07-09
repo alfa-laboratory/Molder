@@ -6,16 +6,14 @@
     <AssemblyName>Molder.Generator</AssemblyName>
     <Authors>Egor Shokhin</Authors>
     <Company>AlfaBank</Company>
-    <Version>1.0.20</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <LangVersion>7.1</LangVersion>
-    <PackageVersion>1.0.20</PackageVersion>
+    <PackageVersion>1.0.21</PackageVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn>NU1701;1702;1591</NoWarn>
-    <DocumentationFile></DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -25,7 +23,6 @@
     <Copyright>2021 AlfaBank</Copyright>
     <RepositoryUrl>https://github.com/alfa-laboratory/Molder</RepositoryUrl>
     <PackageProjectUrl>https://github.com/alfa-laboratory/Molder</PackageProjectUrl>
-    <PackageLicenseExpression></PackageLicenseExpression>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageId>Molder.Generator</PackageId>
     <Product>Molder.Generator</Product>
@@ -38,7 +35,7 @@
   <ItemGroup>
     <PackageReference Include="Bogus" Version="33.0.2" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
-    <PackageReference Include="Molder" Version="1.0.20" />
+    <PackageReference Include="Molder" Version="1.0.23" />
     <PackageReference Include="SpecFlow" Version="3.3.30" />
   </ItemGroup>
 
@@ -48,5 +45,5 @@
       <PackagePath></PackagePath>
     </None>
   </ItemGroup>
-
-</Project>
+  
+  </Project>

@@ -89,11 +89,7 @@ namespace Molder.Database.Models.Providers
 
         public bool IsConnectAlive()
         {
-            if (Connection is null)
-            {
-                return false;
-            }
-            return Connection.State.HasFlag(ConnectionState.Open);
+            return !(Connection is null) && Connection.State.HasFlag(ConnectionState.Open);
         }
 
         public bool Disconnect()
