@@ -104,7 +104,7 @@ namespace Molder.Database.Steps
         public void ExecuteQueryTypeWithVarName(QueryType queryType, string connectionName, string varName, QueryParam query)
         {
             var (outRecords, count) = ExecuteAnyRequest(queryType, connectionName, query);
-            Log.Logger().LogInformation($"Request returned: {Environment.NewLine} {(outRecords != null ? Message.CreateMessage((DataTable)outRecords) : $"is empty")}");
+            Log.Logger().LogInformation($"Request returned: {Environment.NewLine} {(outRecords != null ? ((DataTable)outRecords).CreateMessage() : $"is empty")}");
 
             this.variableController.SetVariable(varName, typeof(DataTable), outRecords);
             Log.Logger().LogInformation($"Request {query} returned {count} row(s)");
@@ -125,7 +125,7 @@ namespace Molder.Database.Steps
                     Log.Logger().LogInformation($"Choose {queryType} query. Query type is ExecuteQuery");
                     var (outRecords, queryCount) = connection.ExecuteQuery(query.Query, timeout);
 
-                    Log.Logger().LogInformation($"Request returned: {Environment.NewLine} {(outRecords != null ? Message.CreateMessage((DataTable)outRecords) : $"is empty")}");
+                    Log.Logger().LogInformation($"Request returned: {Environment.NewLine} {(outRecords != null ? ((DataTable)outRecords).CreateMessage() : $"is empty")}");
                     return (outRecords, queryCount);
                 default:
                     Log.Logger().LogInformation($"Choose {queryType} query. Query type is ExecuteNonQuery");
@@ -146,7 +146,7 @@ namespace Molder.Database.Steps
 
             var (connection, _, timeout) = databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
             var (outRecords, count) = connection.ExecuteQuery(query.Query, timeout);
-            Log.Logger().LogInformation($"Request returned: {Environment.NewLine} {(outRecords != null ? Message.CreateMessage((DataTable)outRecords) : $"is empty")}");
+            Log.Logger().LogInformation($"Request returned: {Environment.NewLine} {(outRecords != null ? ((DataTable)outRecords).CreateMessage() : $"is empty")}");
             Log.Logger().LogInformation($"Request {query} returned {count} row(s)");
 
             variableController.SetVariable(varName, typeof(DataTable), outRecords);
@@ -199,7 +199,7 @@ namespace Molder.Database.Steps
 
             var (connection, _, timeout) = databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
             var (outRecords, count) = connection.ExecuteQuery(query.Query, timeout);
-            Log.Logger().LogInformation($"Request returned: {Environment.NewLine} {(outRecords != null ? Message.CreateMessage((DataTable)outRecords) : $"is empty")}");
+            Log.Logger().LogInformation($"Request returned: {Environment.NewLine} {(outRecords != null ? ((DataTable)outRecords).CreateMessage() : $"is empty")}");
             count.Should().Be(1, "Запрос вернул не одну запись");
 
             variableController.SetVariable(varName, typeof(DataRow), ((DataTable)outRecords).Rows[0]);
@@ -236,7 +236,7 @@ namespace Molder.Database.Steps
             var (connection, _, timeout) = this.databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
 
             var (outRecords, count) = connection.ExecuteQuery(query.Query, timeout);
-            Log.Logger().LogInformation($"Request returned: {Environment.NewLine} {(outRecords != null ? Message.CreateMessage((DataTable)outRecords) : $"is empty")}");
+            Log.Logger().LogInformation($"Request returned: {Environment.NewLine} {(outRecords != null ? ((DataTable)outRecords).CreateMessage() : $"is empty")}");
             count.Should().Be(1, "Запрос вернул не одну запись");
 
             variableController.SetVariable(varName, ((DataTable)outRecords).Columns[0].DataType, ((DataTable)outRecords).Rows[0][0]);

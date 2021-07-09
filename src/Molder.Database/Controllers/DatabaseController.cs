@@ -11,9 +11,6 @@ namespace Molder.Database.Controllers
     {
         private Lazy<ConcurrentDictionary<string, (IDbClient connection, TypeOfAccess typeOfAccess, int? timeout)>> _connections = new Lazy<ConcurrentDictionary<string, (IDbClient connection, TypeOfAccess typeOfAccess, int? timeout)>>(() => new ConcurrentDictionary<string, (IDbClient connection, TypeOfAccess typeOfAccess, int? timeout)>());
 
-        public ConcurrentDictionary<string, (IDbClient connection, TypeOfAccess typeOfAccess, int? timeout)> Connections
-        {
-            get => _connections.Value;
-        }
+        public ConcurrentDictionary<string, (IDbClient connection, TypeOfAccess typeOfAccess, int? timeout)> Connections => _connections.Value;
     }
 }
