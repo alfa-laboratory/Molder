@@ -30,12 +30,10 @@ namespace Molder.Extensions
         }
 
         [ExcludeFromCodeCoverage]
-        public static object Invoke(string methodName, string[] parameters)
+        public static object Invoke(string methodName, object[] parameters)
         {
             var method = Check(methodName);
-            if (method is null) return null;
-
-            return method.Invoke(null, parameters);
+            return method?.Invoke(null, parameters);
         }
 
         [ExcludeFromCodeCoverage]

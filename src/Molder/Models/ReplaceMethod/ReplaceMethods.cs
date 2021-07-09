@@ -17,14 +17,12 @@ namespace Molder.Models.ReplaceMethod
         private static ReplaceMethods _instance;
         public static IEnumerable<Type> Get()
         {
-            if (_instance == null)
+            if (_instance != null) return _instance._types.Value;
+            lock (syncRoot)
             {
-                lock (syncRoot)
+                if (_instance == null)
                 {
-                    if (_instance == null)
-                    {
-                        _instance = new ReplaceMethods();
-                    }
+                    _instance = new ReplaceMethods();
                 }
             }
             return _instance._types.Value;

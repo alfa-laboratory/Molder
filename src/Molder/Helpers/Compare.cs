@@ -17,9 +17,9 @@ namespace Molder.Helpers
                 return false;
             }
 
-            for (int i = 0; i < fTable.Rows.Count; i++)
+            for (var i = 0; i < fTable.Rows.Count; i++)
             {
-                for (int c = 0; c < fTable.Columns.Count; c++)
+                for (var c = 0; c < fTable.Columns.Count; c++)
                 {
                     if (!Equals(fTable.Rows[i][c], sTable.Rows[i][c]))
                     {
@@ -27,13 +27,12 @@ namespace Molder.Helpers
                     }
                 }
             }
-            if(errors.Any())
-            {
-                Log.Logger().LogError(Message.CreateMessage(errors));
-                return false;
-            }
 
-            return true;
+            if (!errors.Any()) return true;
+            
+            Log.Logger().LogError(Message.CreateMessage(errors));
+            return false;
+
         }
     }
 }

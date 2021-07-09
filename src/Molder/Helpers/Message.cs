@@ -1,10 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
-using Molder.Extensions;
-using Molder.Infrastructures;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
+using Microsoft.Extensions.Logging;
+using Molder.Extensions;
+using Molder.Infrastructures;
 
 namespace Molder.Helpers
 {
@@ -16,15 +17,13 @@ namespace Molder.Helpers
             {
                 if (list.Any())
                 {
-                    string message = string.Empty;
-                    message = list.Aggregate((i, j) => i + System.Environment.NewLine + j);
+                    var message = string.Empty;
+                    message = list.Aggregate((i, j) => i + Environment.NewLine + j);
                     return message;
                 }
-                else
-                {
-                    Log.Logger().LogWarning("The IEnumerable<string> array contains no elements");
-                    return null;
-                }
+
+                Log.Logger().LogWarning("The IEnumerable<string> array contains no elements");
+                return null;
             }
             catch(ArgumentNullException)
             {
@@ -34,21 +33,19 @@ namespace Molder.Helpers
             
         }
 
-        public static string CreateMessage(ICollection<System.ComponentModel.DataAnnotations.ValidationResult> results)
+        public static string CreateMessage(ICollection<ValidationResult> results)
         {
             try
             {
                 if (results.Any())
                 {
-                    string message = string.Empty;
+                    var message = string.Empty;
                     results.ToList().ForEach(res => message += res.ErrorMessage + Environment.NewLine);
                     return message;
                 }
-                else
-                {
-                    Log.Logger().LogWarning("The ICollection<ValidationResult> array contains no elements.");
-                    return null;
-                }
+
+                Log.Logger().LogWarning("The ICollection<ValidationResult> array contains no elements");
+                return null;
             }
             catch (ArgumentNullException)
             {

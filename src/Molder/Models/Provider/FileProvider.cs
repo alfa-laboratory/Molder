@@ -12,9 +12,9 @@ namespace Molder.Models.Profider
     {
         public bool CheckFileExtension(string filename)
         {
-            string extension = Path.GetExtension(filename);
-            string extMustBeTxt = FileExtensions.TXT;
-            bool result = (extension == extMustBeTxt) ? true : false;
+            var extension = Path.GetExtension(filename);
+            var extMustBeTxt = FileExtensions.TXT;
+            var result = (extension == extMustBeTxt);
             return result;
         }
 

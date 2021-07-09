@@ -21,10 +21,7 @@ namespace Molder.Controllers
     {
         private Lazy<ConcurrentDictionary<string, Variable>> _variables = new Lazy<ConcurrentDictionary<string, Variable>>(() => new ConcurrentDictionary<string, Variable>());
 
-        public ConcurrentDictionary<string, Variable> Variables
-        {
-            get => _variables.Value;
-        } 
+        public ConcurrentDictionary<string, Variable> Variables => _variables.Value;
 
         public string GetVariableName(string key)
         {
@@ -248,8 +245,6 @@ namespace Molder.Controllers
 
                     var offset = key.IndexOf(']') + 1;
 
-                    var tst = key.IndexOf('[', offset);
-
                     if (key.IndexOf('[', offset) < 0)
                     {
                         return row;
@@ -286,7 +281,7 @@ namespace Molder.Controllers
                         ret = element.Value;
                         break;
                     }
-                case XElement element when element.HasElements == true:
+                case XElement element when element.HasElements:
                     {
                         Log.Logger().LogWarning($"Key \"{key}\" is root for (XElement)");
                         using (var sw = new StringWriter())
@@ -301,13 +296,13 @@ namespace Molder.Controllers
                         ret = node.FirstChild.Value;
                         break;
                     }
-                case XmlElement element when element.HasChildNodes == true:
+                case XmlElement element when element.HasChildNodes:
                     {
                         Log.Logger().LogWarning($"Key \"{key}\" is root for (XmlElement)");
                         return null;
                     }
 
-                case JToken token when token.HasValues == true:
+                case JToken token when token.HasValues:
                     {
                         ret = token.ToString();
                         break;
