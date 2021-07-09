@@ -50,7 +50,7 @@ namespace Molder.Generator.Steps
         public void DeleteVariable(string varName)
         {
             this.variableController.Variables.Should().ContainKey(varName, $"переменная \"{varName}\" не существует");
-            this.variableController.Variables.TryRemove(varName, out var variable);
+            this.variableController.Variables.TryRemove(varName, out _);
         }
 
         /// <summary>
@@ -110,8 +110,9 @@ namespace Molder.Generator.Steps
         {
             var str = variableController.ReplaceVariables(text);
 
-            if (Validate.TryParseToXml(str)) Log.Logger().LogDebug($"Replaced multiline text with variables is equal to {Environment.NewLine}{Converter.CreateXMLEscapedString(str)}");
-            else Log.Logger().LogDebug($"Replaced multiline text with variables is equal to {Environment.NewLine}{str}");
+            Log.Logger().LogDebug(str.TryParseToXml()
+                ? $"Replaced multiline text with variables is equal to {Environment.NewLine}{Converter.CreateXMLEscapedString(str)}"
+                : $"Replaced multiline text with variables is equal to {Environment.NewLine}{str}");
 
             this.variableController.SetVariable(varName, typeof(string), str);
         }

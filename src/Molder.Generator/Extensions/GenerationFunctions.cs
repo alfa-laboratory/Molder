@@ -3,7 +3,7 @@ using Molder.Generator.Models.Generators;
 
 namespace Molder.Generator.Extensions
 {
-    public static partial class GenerationFunctions
+    public static class GenerationFunctions
     {
         public static string currentDateTime(string format = "dd-MM-yyyy")
         {
