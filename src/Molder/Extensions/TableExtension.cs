@@ -13,14 +13,14 @@ namespace Molder.Extensions
             {
                 throw new ArgumentNullException(nameof(dataTable), "The table to convert to string is null");
             }
-            var isMoreMaxRows = dataTable.Rows.Count > Constants.MAX_ROWS ? true : false;
+            var isMoreMaxRows = dataTable.Rows.Count > Constants.MAX_ROWS;
             var rowCount = isMoreMaxRows ? Constants.MAX_ROWS : dataTable.Rows.Count;
 
             var output = new StringBuilder();
             var columnsWidths = dataTable.GetColumnsSize();
 
             // Write Column titles
-            for (int i = 0; i < dataTable.Columns.Count; i++)
+            for (var i = 0; i < dataTable.Columns.Count; i++)
             {
                 var text = dataTable.Columns[i].ColumnName.Shorten();
                 output.Append("|" + PadCenter(text, columnsWidths[i] + 2));
@@ -98,7 +98,7 @@ namespace Molder.Extensions
             var columnsWidths = new int[columns.Count];
 
             // Get Column Titles
-            for (int i = 0; i < columns.Count; i++)
+            for (var i = 0; i < columns.Count; i++)
             {
                 var length = columns[i].ColumnName.Length;
                 if (columnsWidths[i] < length)
@@ -109,7 +109,7 @@ namespace Molder.Extensions
 
             // Get column widths
 
-            for (int i = 0; i < columns.Count; i++)
+            for (var i = 0; i < columns.Count; i++)
             {
                 var length = row[i].ToString().Length;
                 if (columnsWidths[i] < length)
@@ -120,7 +120,7 @@ namespace Molder.Extensions
 
         private static string PadCenter(string text, int maxLength)
         {
-            int diff = maxLength - text.Length;
+            var diff = maxLength - text.Length;
             return new string(' ', diff / 2) + text + new string(' ', (int)(diff / 2.0 + 0.5));
         }
 

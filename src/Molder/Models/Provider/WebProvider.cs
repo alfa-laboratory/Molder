@@ -17,19 +17,17 @@ namespace Molder.Models.Profider
             {
                 using (var webclient = new WebClient())
                 {
-                    string endPath = new TextFile().PathProvider.Combine(pathToSave, filename);
+                    var endPath = new TextFile().PathProvider.Combine(pathToSave, filename);
                     webclient.DownloadFile(new Uri(url), endPath);
-                    bool isExist = new TextFile().IsExist(filename, pathToSave);
+                    var isExist = new TextFile().IsExist(filename, pathToSave);
                     if (isExist)
                     {
                         Log.Logger().LogWarning($"The file \"{filename}\" has been downloaded to the \"{endPath}\"");
                         return true;
                     }
-                    else
-                    {
-                        Log.Logger().LogWarning($"File \"{filename}\" not downloaded");
-                        throw new FileNotFoundException($"File \"{filename}\" not downloaded");
-                    }
+
+                    Log.Logger().LogWarning($"File \"{filename}\" not downloaded");
+                    throw new FileNotFoundException($"File \"{filename}\" not downloaded");
                 }
             }
 

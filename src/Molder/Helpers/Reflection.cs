@@ -172,7 +172,7 @@ namespace Molder.Helpers
 
         public static T[] CreateArray<T>(int length)
         {
-            return (T[])Array.CreateInstance(typeof(T), length);
+            return new T[length];
         }
 
         public static object TryConvertObject(this object obj, Type type)

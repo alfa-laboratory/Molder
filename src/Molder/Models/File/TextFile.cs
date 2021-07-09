@@ -28,7 +28,7 @@ namespace Molder.Models.File
 
             var fullpath = PathProvider.Combine(path, filename);
 
-            return FileProvider.Exist(fullpath) ? true : false;
+            return FileProvider.Exist(fullpath);
         }
 
         public bool DownloadFile(string url, string filename, string pathToSave = null)

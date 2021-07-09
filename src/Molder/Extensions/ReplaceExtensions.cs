@@ -1,7 +1,5 @@
 ﻿using Molder.Controllers;
-using Molder.Helpers;
 using Molder.Infrastructures;
-using Molder.Models.ReplaceMethod;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;

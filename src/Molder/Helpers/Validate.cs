@@ -8,9 +8,9 @@ namespace Molder.Helpers
     {
         public static (bool isValid, ICollection<ValidationResult> results) ValidateModel(object obj)
         {
-            ValidationContext vc = new ValidationContext(obj);
+            var vc = new ValidationContext(obj);
             var results = new List<ValidationResult>();
-            bool isValid = Validator.TryValidateObject(obj, vc, results, true);
+            var isValid = Validator.TryValidateObject(obj, vc, results, true);
             return (isValid, results);
         }
 

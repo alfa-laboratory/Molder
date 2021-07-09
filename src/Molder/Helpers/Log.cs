@@ -28,14 +28,12 @@ namespace Molder.Helpers
         {
             get
             {
-                if (_Factory == null)
-                {
-                    _Factory = new LoggerFactory();
-                    ConfigureLogger(_Factory);
-                }
+                if (_Factory != null) return _Factory;
+                _Factory = new LoggerFactory();
+                ConfigureLogger(_Factory);
                 return _Factory;
             }
-            set { _Factory = value; }
+            set => _Factory = value;
         }
 
         public static Microsoft.Extensions.Logging.ILogger Logger() => LoggerFactory.CreateLogger("Default");
