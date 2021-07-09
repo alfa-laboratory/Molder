@@ -11,10 +11,10 @@ namespace Molder.Service.Helpers
     {
         public static ResponceInfo GetResponce(this Exception ex, RequestInfo request)
         {
-            if (ex is FlurlException)
+            if (!(ex is FlurlException)) return null;
+            switch (((FlurlException)ex).ExceptionName)
             {
-                if (((FlurlException)ex).ExceptionName == nameof(FlurlHttpTimeoutException))
-                {
+                case nameof(FlurlHttpTimeoutException):
                     return new ResponceInfo
                     {
                         Headers = null,
@@ -22,9 +22,7 @@ namespace Molder.Service.Helpers
                         StatusCode = System.Net.HttpStatusCode.GatewayTimeout,
                         Request = request
                     };
-                }
-
-                if (((FlurlException)ex).ExceptionName == nameof(FlurlHttpException))
+                case nameof(FlurlHttpException):
                 {
                     var exception = (((FlurlException)ex).Exception as FlurlHttpException)?.Call.Response;
                     var content = exception?.ResponseMessage.Content.ReadAsStringAsync().Result;
@@ -40,8 +38,9 @@ namespace Molder.Service.Helpers
                     Log.Logger().LogInformation($"{responce.CreateMessage()}. \n\nInner exception: {ex}");
                     return responce;
                 }
+                default:
+                    return null;
             }
-            return null;
         }
     }
 }

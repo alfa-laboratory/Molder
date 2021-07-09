@@ -29,31 +29,15 @@ namespace Molder.Service.Helpers
         /// </summary>     
         public static object GetObject(this string str)
         {   
-            var xDoc = Converter.CreateXDoc(str);            
-            if (xDoc == null)
-            {
-                var xmlDoc = Converter.CreateXmlDoc(str);
-                if (xmlDoc == null)
-                {
-                    var jsonDoc = Converter.CreateJson(str);
-                    if (jsonDoc == null)
-                    {
-                        return str;
-                    }
-                    else
-                    {
-                        return jsonDoc;
-                    }
-                }
-                else
-                {
-                    return xmlDoc;
-                }
-            }
-            else
-            {
-                return xDoc;
-            }
+            var xDoc = Converter.CreateXDoc(str);
+            if (xDoc != null) return xDoc;
+            
+            var xmlDoc = Converter.CreateXmlDoc(str);
+            if (xmlDoc != null) return xmlDoc;
+            
+            var jsonDoc = Converter.CreateJson(str);
+            
+            return jsonDoc ?? (object) str;
         }
 
         /// <summary>
