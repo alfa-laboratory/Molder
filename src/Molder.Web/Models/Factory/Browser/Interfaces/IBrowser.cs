@@ -11,14 +11,14 @@ namespace Molder.Web.Models.Browser
         SessionId SessionId { get; }
         int Tabs { get; }
 
-        bool Close();
-        bool Quit();
-        bool WindowSize(int width, int height);
+        void Close();
+        void Quit();
+        void WindowSize(int width, int height);
         void Maximize();
         void Back();
         void Forward();
-        bool GoToPage(string url);
-        bool Refresh();
+        void GoToPage(string url);
+        void Refresh();
 
         void SetCurrentPage(string name, bool loading = true);
         void UpdateCurrentPage(string name);

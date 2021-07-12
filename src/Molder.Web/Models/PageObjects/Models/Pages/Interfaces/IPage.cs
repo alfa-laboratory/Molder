@@ -21,7 +21,7 @@ namespace Molder.Web.Models.PageObjects.Pages
         Frame GetParentFrame();
         Frame GetFrame(string name);
 
-        bool GoToPage();
+        void GoToPage();
         void PageTop();
         void PageDown();
 

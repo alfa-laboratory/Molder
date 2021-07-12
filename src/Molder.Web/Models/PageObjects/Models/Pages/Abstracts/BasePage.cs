@@ -31,7 +31,7 @@ namespace Molder.Web.Models.PageObjects.Pages
 
         public abstract IElement GetElement(string name);
         public abstract IEnumerable<IElement> GetPrimaryElements();
-        public abstract bool GoToPage();
+        public abstract void GoToPage();
         public abstract void PageTop();
         public abstract void PageDown();
         public bool IsLoadElements()

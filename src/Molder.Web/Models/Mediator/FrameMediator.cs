@@ -2,9 +2,11 @@
 using OpenQA.Selenium;
 using Polly;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Molder.Web.Models.Mediator
 {
+    [ExcludeFromCodeCoverage]
     public class FrameMediator : Mediator
     {
         public FrameMediator(long? timeout)
