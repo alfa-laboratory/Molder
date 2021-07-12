@@ -17,8 +17,8 @@ namespace Molder.Web.Models.PageObjects.Pages
 {
     public class Page : BasePage
     {
-        public override string Name => this.GetType().GetCustomAttribute<PageAttribute>()?.Name;
-        public override string Url => _variableController.ReplaceVariables(this.GetType().GetCustomAttribute<PageAttribute>()?.Url);
+        public override string Name => GetType().GetCustomAttribute<PageAttribute>()?.Name;
+        public override string Url => _variableController.ReplaceVariables(GetType().GetCustomAttribute<PageAttribute>()?.Url);
         public override Node Root { get; set; }
 
         public Page(){ }
@@ -59,7 +59,7 @@ namespace Molder.Web.Models.PageObjects.Pages
 
         public override IPage GetDefaultFrame()
         {
-            if (Local != null && Local.Type == ObjectType.Frame)
+            if (Local is {Type: ObjectType.Frame})
             {
                 _driverProvider = (Local.Object as Frame)?.Default();
                 Local = null;
@@ -84,9 +84,9 @@ namespace Molder.Web.Models.PageObjects.Pages
 
         #endregion
 
-        public override bool GoToPage()
+        public override void GoToPage()
         {
-            return _driverProvider.GoToUrl(Url);
+            _driverProvider.GoToUrl(Url);
         }
 
         public override void PageTop()

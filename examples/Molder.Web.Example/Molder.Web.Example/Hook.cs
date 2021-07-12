@@ -1,4 +1,5 @@
-﻿using TechTalk.SpecFlow;
+﻿using PageObject;
+using TechTalk.SpecFlow;
 
 namespace Molder.Web.Example
 {
@@ -6,13 +7,11 @@ namespace Molder.Web.Example
     public static class Hook
     {
 #if DEBUG
-        /*
-        [BeforeTestRun(Order = Int32.MinValue)]
+        [BeforeTestRun(Order = int.MinValue)]
         public static void PageObjectInit()
         {
             HealthCheck.IsHealthCheck();
         }
-        */
 #endif 
     }
 }

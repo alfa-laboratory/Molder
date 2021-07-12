@@ -1,5 +1,8 @@
-﻿namespace Molder.Web.Models.Proxy
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Molder.Web.Models.Proxy
 {
+    [ExcludeFromCodeCoverage]
     public class Authentication
     {
         public string Proxy { get; set; }
