@@ -1384,8 +1384,8 @@ namespace Molder.Generator.Tests
             steps.StoreAsVariableUuid("test");
 
             // Assert
-            string guid = (string)variableController.GetVariableValue("test");
-            bool isValid = Guid.TryParse(guid, out Guid outGuid);
+            var guid = (string)variableController.GetVariableValue("test");
+            var isValid = Guid.TryParse(guid, out _);
             isValid.Should().BeTrue();
         }
 
@@ -1521,8 +1521,8 @@ namespace Molder.Generator.Tests
             steps.StoreAsVariableIp("test");
 
             // Assert
-            string ip = (string)variableController.GetVariableValue("test");
-            bool isValid = IPAddress.TryParse(ip, out IPAddress outIp);
+            var ip = (string)variableController.GetVariableValue("test");
+            var isValid = IPAddress.TryParse(ip, out _);
             isValid.Should().BeTrue();
         }
 
@@ -1555,8 +1555,8 @@ namespace Molder.Generator.Tests
             steps.StoreAsVariableUrl("test");
 
             // Assert
-            string url = (string)variableController.GetVariableValue("test");
-            bool isValid = Uri.TryCreate(url, UriKind.Absolute, out Uri outUrl);
+            var url = (string)variableController.GetVariableValue("test");
+            var isValid = Uri.TryCreate(url, UriKind.Absolute, out _);
             isValid.Should().BeTrue();
         }
 
