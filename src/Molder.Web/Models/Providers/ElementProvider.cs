@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using Molder.Web.Exceptions;
 using Molder.Web.Models.Settings;
+using OpenQA.Selenium.Support.UI;
 
 namespace Molder.Web.Models.Providers
 {
@@ -192,6 +193,12 @@ namespace Molder.Web.Models.Providers
         private bool IsEditabled()
         {
             return Convert.ToBoolean(GetAttribute("readonly"));
+        }
+        
+        public void WaitUntilAttributeValueEquals(string attributeName, string attributeValue)
+        {      
+            var wait = new WebDriverWait(WebDriver, TimeSpan.FromSeconds((long)BrowserSettings.Settings.Timeout));
+            WebElement = wait.Until<IWebElement>(d => WebElement.GetAttribute(attributeName) == attributeValue ? WebElement : throw new ElementException($"Waiting until attribute \"{attributeName}\" becomes value \"{attributeValue ?? "null"}\" is failed"));
         }
     }
 }
