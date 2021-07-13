@@ -11,7 +11,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Library for working with WebUI</Description>
     <LangVersion>8</LangVersion>
-    <PackageVersion>1.0.14</PackageVersion>
+    <PackageVersion>1.0.15</PackageVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
