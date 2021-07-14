@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
+using System.Collections;
 using System.Threading;
 using System.Xml.Linq;
 using FluentAssertions;
@@ -8,6 +10,7 @@ using Molder.Helpers;
 using TechTalk.SpecFlow;
 using Microsoft.Extensions.Logging;
 using Molder.Extensions;
+using Molder.Generator.Extensions;
 
 namespace Molder.Generator.Steps
 {
@@ -18,7 +21,7 @@ namespace Molder.Generator.Steps
     public class VariableSteps
     {
         private readonly VariableController variableController;
-
+        private readonly Dictionary<string, Type> variablesType;
         /// <summary>
         /// Initializes a new instance of the <see cref="Generator"/> class.
         /// Привязка общих шагов к работе с переменным через контекст.
@@ -27,6 +30,31 @@ namespace Molder.Generator.Steps
         public VariableSteps(VariableController variableController)
         {
             this.variableController = variableController;
+            variablesType = new Dictionary<string, Type>()
+            {
+                { "int", typeof(int)},
+                { "string", typeof(string)},
+                { "double", typeof(double)},
+                { "bool", typeof(bool)}
+            };
+        }
+
+        [StepArgumentTransformation]
+        public IEnumerable<object> TransformationTableToEnumerable(Table table)
+        {
+            return table.ToEnumerable(variableController);
+        }
+
+        [StepArgumentTransformation]
+        public Dictionary<string,object> TransformationTableToDictionary(Table table)
+        {
+            return table.ToDictionary(variableController);
+        }
+
+        [StepArgumentTransformation]
+        public Type TransformationTableToEnumerable(string type)
+        {
+            return variablesType[type];
         }
 
         /// <summary>
@@ -380,5 +408,179 @@ namespace Molder.Generator.Steps
             actual.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
             actual.Should().EndWith(expected, $"значение переменной \"{varName}\":\"{actual}\" не заканчивается с \"{expected}\"");
         }
+
+        /// <summary>
+        /// Шаг для сохранения коллекции в переменную без указания типа.
+        /// </summary>
+        /// <param name="varName">Идентификатор переменной.</param>
+        /// <param name="collection">Коллекция.</param>
+        [StepDefinition(@"я сохраняю Enumerable массив в переменную ""(.+)"":")]
+        public void StoreEnumerableAsVariableNoType(string varName, IEnumerable<object> collection)
+        {
+            this.variableController.SetVariable(varName, collection.GetType(), collection);
+        }
+
+        /// <summary>
+        /// Шаг для сохранения коллекции в переменную c указанием типа.
+        /// </summary>
+        /// <param name="varType">Идентификатор переменной.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        /// <param name="collection">Коллекция.</param>
+        [StepDefinition(@"я сохраняю Enumerable массив с типом ""(.+)"" в переменную ""(.+)"":")]
+        public void StoreEnumerableAsVariableWithType(string varType, string varName, IEnumerable<object> collection)
+        {
+            varType = varType.ToLower();
+            switch (varType) {
+                case "object":
+                    this.variableController.SetVariable(varName, collection.TryParse<object>().GetType(), collection.TryParse<object>());
+                    break;
+                case "int":
+                    this.variableController.SetVariable(varName,collection.TryParse<int>().GetType(), collection.TryParse<int>());
+                    break;
+                case "bool":
+                    this.variableController.SetVariable(varName, collection.TryParse<bool>().GetType(), collection.TryParse<bool>());
+                    break;
+                case "string":
+                    this.variableController.SetVariable(varName, collection.TryParse<string>().GetType(), collection.TryParse<string>());
+                    break;
+                case "double":
+                    this.variableController.SetVariable(varName, collection.TryParse<double>().GetType(), collection.TryParse<double>());
+                    break;
+                case "float":
+                    this.variableController.SetVariable(varName, collection.TryParse<float>().GetType(), collection.TryParse<float>());
+                    break;
+                case "long":
+                    this.variableController.SetVariable(varName, collection.TryParse<long>().GetType(), collection.TryParse<long>());
+                    break;
+                default:
+                    break;
+            }
+            var t = this.variableController.GetVariableValue(varName);
+            Console.WriteLine(varType);
+        }
+
+        /// <summary>
+        /// Шаг для сохранения произвольного значения из коллекции в переменную.
+        /// </summary>
+        /// <param name="collectionName">Идентификатор коллекции.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я выбираю произвольное значение из коллекции ""(.+)"" и записываю его в переменную ""(.+)""")]
+        public void StoreRandomVariableFromEnumerable(string collectionName, string varName)
+        {
+            var tmpCollection = this.variableController.GetVariableValue(collectionName);
+            switch (tmpCollection.GetType().ToString())
+            {
+                case "System.Collections.Generic.List`1[System.Object]":
+                    var var1 = ((List<object>)tmpCollection).GetRandomValueFromEnumerable();
+                    this.variableController.SetVariable(varName, var1.GetType(), var1);
+                    break;
+                case "System.Collections.Generic.List`1[System.Int32]":
+                    var1 = ((List<int>)tmpCollection).GetRandomValueFromEnumerable();
+                    this.variableController.SetVariable(varName, var1.GetType(), var1);
+                    break;
+                case "System.Collections.Generic.List`1[System.Boolean]":
+                    var1 = ((List<bool>)tmpCollection).GetRandomValueFromEnumerable();
+                    this.variableController.SetVariable(varName, var1.GetType(), var1);
+                    break;
+                case "System.Collections.Generic.List`1[System.Double]":
+                    var1 = ((List<double>)tmpCollection).GetRandomValueFromEnumerable();
+                    this.variableController.SetVariable(varName, var1.GetType(), var1);
+                    break;
+                case "System.Collections.Generic.List`1[System.String]":
+                    var1 = ((List<string>)tmpCollection).GetRandomValueFromEnumerable();
+                    this.variableController.SetVariable(varName, var1.GetType(), var1);
+                    break;
+                case "System.Collections.Generic.List`1[System.Single]":
+                    var1 = ((List<float>)tmpCollection).GetRandomValueFromEnumerable();
+                    this.variableController.SetVariable(varName, var1.GetType(), var1);
+                    break;
+                case "System.Collections.Generic.List`1[System.Int64]":
+                    var1 = ((List<long>)tmpCollection).GetRandomValueFromEnumerable();
+                    this.variableController.SetVariable(varName, var1.GetType(), var1);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Шаг для сохранения значения из коллекции в переменную.
+        /// </summary>
+        /// <param name="collectionName">Идентификатор коллекции.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я выбираю значение из коллекции ""(.+)"" с номером ""(.+)"" и записываю его в переменную ""(.+)""")]
+        public void StoreVariableFromEnumerable(string collectionName, string number, string varName)
+        {
+            var tmpCollection = this.variableController.GetVariableValue(collectionName);
+            switch (tmpCollection.GetType().ToString()) {
+                case "System.Collections.Generic.List`1[System.Object]":
+                    var var1 = ((List<object>)tmpCollection).GetValueFromEnumerable<object>(Convert.ToInt32(number));
+                    this.variableController.SetVariable(varName, var1.GetType(), var1);
+                    break;
+                case "System.Collections.Generic.List`1[System.Int32]":
+                    var1 = ((List<int>)tmpCollection).GetValueFromEnumerable<int>(Convert.ToInt32(number));
+                    this.variableController.SetVariable(varName, var1.GetType(), var1);
+                    break;
+                case "System.Collections.Generic.List`1[System.Boolean]":
+                    var1 = ((List<bool>)tmpCollection).GetValueFromEnumerable<bool>(Convert.ToInt32(number));
+                    this.variableController.SetVariable(varName, var1.GetType(), var1);
+                    break;
+                case "System.Collections.Generic.List`1[System.Double]":
+                    var1 = ((List<double>)tmpCollection).GetValueFromEnumerable<double>(Convert.ToInt32(number));
+                    this.variableController.SetVariable(varName, var1.GetType(), var1);
+                    break;
+                case "System.Collections.Generic.List`1[System.String]":
+                    var1 = ((List<string>)tmpCollection).GetValueFromEnumerable<string>(Convert.ToInt32(number));
+                    this.variableController.SetVariable(varName, var1.GetType(), var1);
+                    break;
+                case "System.Collections.Generic.List`1[System.Single]":
+                    var1 = ((List<float>)tmpCollection).GetValueFromEnumerable<float>(Convert.ToInt32(number));
+                    this.variableController.SetVariable(varName, var1.GetType(), var1);
+                    break;
+                case "System.Collections.Generic.List`1[System.Int64]":
+                    var1 = ((List<long>)tmpCollection).GetValueFromEnumerable<long>(Convert.ToInt32(number));
+                    this.variableController.SetVariable(varName, var1.GetType(), var1);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Шаг для сохранения словаря в переменную без указания типа.
+        /// </summary>
+        /// <param name="varName">Идентификатор переменной.</param>
+        /// <param name="dictionary">Словарь.</param>
+        [StepDefinition(@"я сохраняю словарь в переменную ""(.+)"":")]
+        public void StoreDictionaryAsVariableNoType(string varName, Dictionary<string,object> dictionary)
+        {
+            this.variableController.SetVariable(varName, dictionary.GetType(), dictionary);
+        }
+
+        /// <summary>
+        /// Шаг для сохранения произвольного значения из словаря в переменную.
+        /// </summary>
+        /// <param name="collectionName">Идентификатор словаря.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я выбираю произвольное значение из словаря ""(.+)"" и записываю его в переменную ""(.+)""")]
+        public void StoreRandomVariableFromDictionary(string collectionName, string varName)
+        {
+            var var1 = ((Dictionary<string, object>)this.variableController.GetVariableValue(collectionName)).GetRandomValueFromDictionary();
+            this.variableController.SetVariable(varName, var1.GetType(), var1);
+        }
+
+        /// <summary>
+        /// Шаг для сохранения значения из коллекции в переменную.
+        /// </summary>
+        /// <param name="collectionName">Идентификатор словаря.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я выбираю значение из словаря ""(.+)"" с ключом ""(.+)"" и записываю его в переменную ""(.+)""")]
+        public void StoreRandomVariableFromDictionary(string collectionName, string key, string varName)
+        {
+            key = variableController.ReplaceVariables(key) ?? key;
+            var var1 = ((Dictionary<string, object>)this.variableController.GetVariableValue(collectionName)).GetValueFromDictionary(key);
+            this.variableController.SetVariable(varName, var1.GetType(), var1);
+        }
+
     }
 }

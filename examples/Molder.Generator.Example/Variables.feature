@@ -14,3 +14,9 @@ Scenario: Create Random Text
 	
 Scenario: Create Random UUID
 	Given я сохраняю новый UUID в переменную "randomUUID"
+
+Scenario: Create Enumerable list
+	Given я сохраняю Enumerable массив с типом "string" в переменную "Test":
+	| 9999999999999 | 888888888888888 | 12345678912345 |
+	When я выбираю произвольное значение из коллекции "Test" и записываю его в переменную "tmp"
+	Then write variable "tmp"
