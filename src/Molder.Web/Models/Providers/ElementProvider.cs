@@ -198,7 +198,7 @@ namespace Molder.Web.Models.Providers
         public void WaitUntilAttributeValueEquals(string attributeName, string attributeValue)
         {      
             var wait = new WebDriverWait(WebDriver, TimeSpan.FromSeconds((long)BrowserSettings.Settings.Timeout));
-            WebElement = wait.Until<IWebElement>(d => WebElement.GetAttribute(attributeName) == attributeValue ? WebElement : throw new ElementException($"Waiting until attribute \"{attributeName}\" becomes value \"{attributeValue ?? "null"}\" is failed"));
+            WebElement = wait.Until(d => WebElement.GetAttribute(attributeName) == attributeValue ? WebElement : throw new ElementException($"Waiting until attribute \"{attributeName}\" becomes value \"{attributeValue ?? "null"}\" is failed"));
         }
     }
 }
