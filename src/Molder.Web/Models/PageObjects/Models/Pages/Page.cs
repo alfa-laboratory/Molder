@@ -49,10 +49,10 @@ namespace Molder.Web.Models.PageObjects.Pages
             return (IElement) element.Object;
         }
 
-        public override IEnumerable<IElement> GetPrimaryElements()
+        public override IEnumerable<string> GetPrimaryElements()
         {
             var elements = Root.Childrens.Where(c => ((Element) c.Object).Optional == false);
-            return elements.GetObjectFrom<IElement>();
+            return elements.Select(element => element.Name).ToList();
         }
 
         #region Работа с фреймами
