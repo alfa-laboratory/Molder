@@ -2,7 +2,6 @@
 using Molder.Controllers;
 using Molder.Helpers;
 using Molder.Models.Configuration;
-using Molder.Web.Controllers;
 using Molder.Web.Helpers;
 using Molder.Web.Infrastructures;
 using Molder.Web.Models;
@@ -33,12 +32,10 @@ namespace Molder.Web.Hooks
         [BeforeFeature]
         public static void BeforeFeature(VariableController variableController)
         {
-            BrowserController.SetVariables(variableController);
-
             TreePages.SetVariables(variableController);
             TreePages.Get();
         }
-
+        
         [AfterScenario()]
         public void AfterScenario(ScenarioContext scenario)
         {

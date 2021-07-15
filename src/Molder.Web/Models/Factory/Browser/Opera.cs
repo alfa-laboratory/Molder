@@ -1,40 +1,40 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using Microsoft.Extensions.Logging;
 using Molder.Helpers;
 using Molder.Web.Extensions;
 using Molder.Web.Infrastructures;
 using Molder.Web.Models.Settings;
-using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Opera;
 using OpenQA.Selenium.Remote;
-using System;
 
 namespace Molder.Web.Models.Browser
 {
-    public class Chrome : Browser
+    public class Opera : Browser
     {
         public sealed override SessionId SessionId { get; protected set; }
-
-        public Chrome()
+        
+        public Opera()
         {
             var options = CreateOptions();
             if(BrowserSettings.Settings.IsRemoteRun())
             {
-                Log.Logger().LogInformation($@"Start remote chrome browser...");
+                Log.Logger().LogInformation($@"Start remote opera browser...");
                 DriverProvider.CreateDriver(() => new RemoteWebDriver(new Uri(BrowserSettings.Settings.Remote.Url), options.ToCapabilities()));
                 SessionId = (DriverProvider.GetDriver() as RemoteWebDriver)?.SessionId;
-                Log.Logger().LogInformation($@"Remote chrome browser (SessionId is {SessionId}) is starting with options: {Helpers.Message.CreateMessage(options)}");
+                Log.Logger().LogInformation($@"Remote opera browser (SessionId is {SessionId}) is starting with options: {Helpers.Message.CreateMessage(options)}");
                 return;
             }
-            Log.Logger().LogInformation($@"Start chrome browser...");
-            var service = ChromeDriverService.CreateDefaultService();
+            Log.Logger().LogInformation($@"Start opera browser...");
+            var service = OperaDriverService.CreateDefaultService();
             service.HideCommandPromptWindow = true;
-            DriverProvider.CreateDriver(() => new ChromeDriver(service, options));
-            SessionId = (DriverProvider.GetDriver() as ChromeDriver)?.SessionId;
-            Log.Logger().LogInformation($@"Local chrome browser (SessionId is {SessionId}) is starting with options: {Helpers.Message.CreateMessage(options)}");
+            DriverProvider.CreateDriver(() => new OperaDriver(service, options));
+            SessionId = (DriverProvider.GetDriver() as OperaDriver)?.SessionId;
+            Log.Logger().LogInformation($@"Local opera browser (SessionId is {SessionId}) is starting with options: {Helpers.Message.CreateMessage(options)}");
         }
 
-        private ChromeOptions CreateOptions()
+        private OperaOptions CreateOptions()
         {
-            var options = new ChromeOptions();
+            var options = new OperaOptions();
             
             if (BrowserSettings.Settings.IsRemoteRun())
             {

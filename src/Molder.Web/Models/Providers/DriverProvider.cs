@@ -1,6 +1,4 @@
-﻿using Molder.Helpers;
-using Molder.Web.Extensions;
-using Microsoft.Extensions.Logging;
+﻿using Molder.Web.Extensions;
 using OpenQA.Selenium;
 using Selenium.WebDriver.WaitExtensions;
 using System;
@@ -8,9 +6,14 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
+using Microsoft.Extensions.Logging;
+using Molder.Helpers;
+using Molder.Web.Exceptions;
 using WDSE;
 using WDSE.ScreenshotMaker;
 using Molder.Web.Models.Settings;
+using OpenQA.Selenium.Support.UI;
+using static OpenQA.Selenium.Support.UI.ExpectedConditions;
 
 namespace Molder.Web.Models.Providers
 {
@@ -20,7 +23,7 @@ namespace Molder.Web.Models.Providers
         #region  WebDriver
 
         private AsyncLocal<IWebDriver> _driver = new AsyncLocal<IWebDriver> { Value = null };
-        protected IWebDriver WebDriver
+        public IWebDriver WebDriver
         {
             get => _driver.Value;
             set => _driver.Value = value;
@@ -34,186 +37,240 @@ namespace Molder.Web.Models.Providers
         public string CurrentWindowHandle => WebDriver.CurrentWindowHandle;
         public int Tabs => WebDriver.WindowHandles.Count; 
         public ReadOnlyCollection<string> WindowHandles => WebDriver.WindowHandles;
-
         public void CreateDriver(Func<IWebDriver> action)
         {
-            WebDriver = action();
+            try
+            {
+                WebDriver = action();
+            }
+            catch (Exception ex)
+            {
+                throw new DriverException($"Create driver is return error with message {ex.Message}");
+            }
         }
         public IWebDriver GetDriver()
         {
             return WebDriver;
         }
-
         public void Back()
         {
-            WebDriver.Navigate().Back();
+            try
+            {
+                WebDriver.Navigate().Back();
+            }
+            catch (Exception ex)
+            {
+                throw new DriverException($"Navigate().Back() is return error with message {ex.Message}");
+            }
         }
-
-        public bool Close()
+        public void Close()
         {
             try
             {
                 WebDriver.Close();
-                return true;
-            }catch(Exception)
+            }
+            catch (Exception ex)
             {
-                return false;
+                throw new DriverException($"Close() is return error with message {ex.Message}");
             }
         }
-
         public void Forward()
-        {
-            WebDriver.Navigate().Forward();
-        }
-
-        public IElementProvider GetActiveElement()
-        {
-            var element = WebDriver.SwitchTo().ActiveElement();
-            return new ElementProvider(BrowserSettings.Settings.Timeout)
-            {
-                WebElement = element
-            };
-        }
-
-        public IElementProvider GetElement(By by)
-        {
-            var element = WebDriver.Wait((int)BrowserSettings.Settings.Timeout).ForElement(by).ToExist();
-            return new ElementProvider(BrowserSettings.Settings.Timeout)
-            {
-                WebElement = element
-            };
-        }
-
-        public ReadOnlyCollection<IElementProvider> GetElements(By by)
-        {
-            var elements = WebDriver.FindElements(by);
-            var listElement = elements.Select(element => new ElementProvider((int)BrowserSettings.Settings.Timeout) {WebElement = element}).Cast<IElementProvider>().ToList();
-            return listElement.AsReadOnly();
-        }
-
-        public void SwitchTo(int number)
-        {
-            _driver.Value.SwitchTo().Window(WebDriver.WindowHandles[number]);
-        }
-
-        public IAlertProvider GetAlert()
-        {
-            var alert = WebDriver.SwitchTo().Alert();
-            return new AlertProvider()
-            {
-                Alert = alert
-            };
-        }
-
-        public IDriverProvider GetDefaultFrame()
-        {
-            var driver = WebDriver.SwitchTo().DefaultContent();
-            return new DriverProvider()
-            {
-                WebDriver = driver
-            };
-        }
-
-        public IDriverProvider GetParentFrame()
-        {
-            var driver = WebDriver.SwitchTo().ParentFrame();
-            return new DriverProvider()
-            {
-                WebDriver = driver
-            };
-        }
-
-        public IDriverProvider GetFrame(int id)
-        {
-            var driver = WebDriver.SwitchTo().Frame(id);
-            return new DriverProvider()
-            {
-                WebDriver = driver
-            };
-        }
-
-        public IDriverProvider GetFrame(string name)
-        {
-            var driver = WebDriver.SwitchTo().Frame(name);
-            return new DriverProvider()
-            {
-                WebDriver = driver
-            };
-        }
-
-        public IDriverProvider GetFrame(By by)
-        {
-            var element = WebDriver.FindElement(by);
-            var driver = WebDriver.SwitchTo().Frame(element);
-            return new DriverProvider()
-            {
-                WebDriver = driver
-            };
-        }
-
-        public bool GoToUrl(string url)
         {
             try
             {
-                WebDriver.GoToUrl(url);
-                return true;
+                WebDriver.Navigate().Forward();
             }
-            catch (WebDriverException ex)
+            catch (Exception ex)
             {
-                Log.Logger().LogError($"Page by url \"{url}\" is not correct. Exception is \"{ex.Message}\"");
-                return false;
+                throw new DriverException($"Navigate().Forward() is return error with message {ex.Message}");
             }
         }
-
+        public IElementProvider GetElement(By by)
+        {
+            var element = WebDriver.Wait((int)BrowserSettings.Settings.Timeout).ForElement(by).ToExist();
+            return new ElementProvider(BrowserSettings.Settings.Timeout, by)
+            {
+                WebElement = element,
+                WebDriver = WebDriver
+            };
+        }
+        public ReadOnlyCollection<IElementProvider> GetElements(By by)
+        {
+            WebDriver.Wait((int) BrowserSettings.Settings.Timeout).ForElement(by).ToExist();
+            
+            var elements = WebDriver.FindElements(by);
+            var listElement = elements.Select(element => new ElementProvider((int)BrowserSettings.Settings.Timeout, by) {WebElement = element, WebDriver = WebDriver}).Cast<IElementProvider>().ToList();
+            return listElement.AsReadOnly();
+        }
+        public void SwitchTo(int number)
+        {
+            try
+            {
+                Log.Logger().LogInformation($"SwitchTo().Window to number");
+                WebDriver.SwitchTo().Window(WebDriver.WindowHandles[number]);
+            }
+            catch (Exception ex)
+            {
+                throw new DriverException($"SwitchTo().Window is return error with message {ex.Message}");
+            }
+        }
+        public IAlertProvider GetAlert()
+        {
+            try
+            {
+                var wait = new WebDriverWait(WebDriver, TimeSpan.FromSeconds((long) BrowserSettings.Settings.Timeout));
+                var alert = wait.Until(AlertIsPresent());
+                return new AlertProvider()
+                {
+                    Alert = alert
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new DriverException($"Switch().Alert is return error with message {ex.Message}");
+            }
+        }
+        public IDriverProvider GetDefaultFrame()
+        {
+            try
+            {
+                var driver = WebDriver.SwitchTo().DefaultContent();
+                return new DriverProvider()
+                {
+                    WebDriver = driver
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new DriverException($"SwitchTo().DefaultContent is return error with message {ex.Message}");
+            }
+        }
+        public IDriverProvider GetParentFrame()
+        {
+            try
+            {
+                var driver = WebDriver.SwitchTo().ParentFrame();
+                return new DriverProvider()
+                {
+                    WebDriver = driver
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new DriverException($"SwitchTo().ParentFrame is return error with message {ex.Message}");
+            }
+        }
+        public IDriverProvider GetFrame(int id)
+        {
+            try
+            {
+                Log.Logger().LogDebug($"SwitchTo().Frame by id \"{id}\"");
+                var driver = WebDriver.SwitchTo().Frame(id);
+                return new DriverProvider()
+                {
+                    WebDriver = driver
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new DriverException($"SwitchTo().Frame by id \"{id}\" is return error with message {ex.Message}");
+            }
+        }
+        public IDriverProvider GetFrame(string name)
+        {
+            try
+            {
+                Log.Logger().LogDebug($"SwitchTo().Frame by name \"{name}\"");
+                var driver = WebDriver.SwitchTo().Frame(name);
+                return new DriverProvider()
+                {
+                    WebDriver = driver
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new DriverException($"SwitchTo().Frame by name \"{name}\" is return error with message {ex.Message}");
+            }
+        }
+        public IDriverProvider GetFrame(By by)
+        {
+            try
+            {
+                Log.Logger().LogDebug($"SwitchTo().Frame by locator");
+                var element = WebDriver.FindElement(by);
+                var driver = WebDriver.SwitchTo().Frame(element);
+                return new DriverProvider()
+                {
+                    WebDriver = driver
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new DriverException($"SwitchTo().Frame by locator is return error with message {ex.Message}");
+            }
+        }
+        public void GoToUrl(string url)
+        {
+            try
+            {
+                Log.Logger().LogDebug($"Go to \"{url}\"");
+                WebDriver.GoToUrl(url);
+            }
+            catch (Exception ex)
+            {
+                throw new DriverException($"Go to \"{url}\" is return error with message {ex.Message}");
+            }
+        }
         public void Maximize()
         {
-            WebDriver.Manage().Window.Maximize();
+            try
+            {
+                WebDriver.Manage().Window.Maximize();
+            }
+            catch (Exception ex)
+            {
+                throw new DriverException($"Manage().Window.Maximize is return error with message {ex.Message}");
+            }
         }
-
-        public bool Quit()
+        public void Quit()
         {
             try
             {
                 WebDriver.Quit();
                 WebDriver = null;
-                return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                throw new DriverException($"Quit browser is return error with message {ex.Message}");
             }
         }
-
-        public bool Refresh()
+        public void Refresh()
         {
             try
             {
                 WebDriver.Navigate().Refresh();
-                return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                throw new DriverException($"Navigate().Refresh is return error with message {ex.Message}");
             }
         }
-
         public byte[] Screenshot()
         {
             var scmkr = new ScreenshotMaker();
             scmkr.RemoveScrollBarsWhileShooting();
             return WebDriver.TakeScreenshot(scmkr);
         }
-
-        public bool WindowSize(int width, int height)
+        public void WindowSize(int width, int height)
         {
             try
             {
+                Log.Logger().LogDebug($"Set browser window size as ({width},{height})");
                 WebDriver.Manage().Window.Size = new System.Drawing.Size(width, height);
-                return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                throw new DriverException($"Manage().Window.Size as ({width},{height}) is return error with message {ex.Message}");
             }
         }
     }

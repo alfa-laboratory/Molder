@@ -1,5 +1,4 @@
 ﻿using Molder.Helpers;
-using Molder.Web.Extensions;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
 using Selenium.WebDriver.WaitExtensions;
@@ -9,6 +8,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
+using Molder.Web.Exceptions;
+using Molder.Web.Models.Settings;
+using OpenQA.Selenium.Support.UI;
 
 namespace Molder.Web.Models.Providers
 {
@@ -16,6 +18,7 @@ namespace Molder.Web.Models.Providers
     public class ElementProvider : IElementProvider
     {
         private long? _timeout;
+        private By _locator;
 
         #region WebElement
 
@@ -23,21 +26,41 @@ namespace Molder.Web.Models.Providers
 
         public IWebElement WebElement
         {
-            get => _element.Value;
+            get
+            {
+                _element.Value = WebDriver.Wait((int)BrowserSettings.Settings.Timeout).ForElement(_locator).ToExist();
+                return _element.Value;
+            }
             set => _element.Value = value;
         }
 
         #endregion
         
-        public ElementProvider(long? timeout) => _timeout = timeout;
-        public bool Displayed => WebElement.ToBeVisible((int)_timeout);
-        public bool NotDisplayed => WebElement.ToBeInvisible((int)_timeout);
+        #region  WebDriver
 
-        public bool Selected => WebElement.ToBeSelected((int)_timeout);
-        public bool NotSelected => WebElement.ToNotBeSelected((int)_timeout);
+        private AsyncLocal<IWebDriver> _driver = new AsyncLocal<IWebDriver> { Value = null };
+        public IWebDriver WebDriver
+        {
+            get => _driver.Value;
+            set => _driver.Value = value;
+        }
 
-        public bool Enabled => WebElement.ToBeEnabled((int)_timeout);
-        public bool Disabled => WebElement.ToBeDisabled((int)_timeout);
+        #endregion
+        
+        public ElementProvider(long? timeout, By locator)
+        {
+            _timeout = timeout;
+            _locator = locator;
+        }
+        
+        public bool Displayed => WebElement.Displayed;
+        public bool NotDisplayed => !WebElement.Displayed;
+
+        public bool Selected => WebElement.Selected;
+        public bool NotSelected => !WebElement.Selected;
+
+        public bool Enabled => WebElement.Enabled;
+        public bool Disabled => !WebElement.Enabled;
         
         public bool Loaded => !(WebElement is null);
         public bool NotLoaded => WebElement is null;
@@ -53,12 +76,26 @@ namespace Molder.Web.Models.Providers
 
         public void Clear()
         {
-            WebElement.Clear();
+            try
+            {
+                WebElement.Clear();
+            }
+            catch (Exception ex)
+            {
+                throw new ElementException($"Clear element is return error with message {ex.Message}");
+            }
         }
 
         public void Click()
         {
-            WebElement.Click();
+            try
+            {
+                WebElement.Click();
+            }
+            catch (Exception ex)
+            {
+                throw new ElementException($"Click element is return error with message {ex.Message}");
+            }
         }
 
         public bool TextEqual(string text)
@@ -103,7 +140,7 @@ namespace Molder.Web.Models.Providers
         public IElementProvider FindElement(By by)
         {
             var element = WebElement.FindElement(by);
-            return new ElementProvider(_timeout)
+            return new ElementProvider(_timeout, by)
             {
                 WebElement = element
             };
@@ -112,28 +149,56 @@ namespace Molder.Web.Models.Providers
         public ReadOnlyCollection<IElementProvider> FindElements(By by)
         {
             var elements = WebElement.FindElements(by);
-            var listElement = elements.Select(element => new ElementProvider(_timeout) {WebElement = element}).Cast<IElementProvider>().ToList();
+            var listElement = elements.Select(element => new ElementProvider(_timeout, by) {WebElement = element}).Cast<IElementProvider>().ToList();
             return listElement.AsReadOnly();
         }
 
         public string GetAttribute(string name)
         {
-            return WebElement.GetAttribute(name);
+            try
+            {
+                Log.Logger().LogDebug($"Get attribute by name \"{name}\"");
+                return WebElement.GetAttribute(name);
+            }
+            catch (Exception ex)
+            {
+                throw new ElementException($"Get attribute by name \"{name}\" is return error with message {ex.Message}");
+            }
         }
 
         public string GetCss(string name)
         {
-            return WebElement.GetCssValue(name);
+            try
+            {
+                return WebElement.GetCssValue(name);
+            }
+            catch (Exception ex)
+            {
+                throw new ElementException($"GetCssValue by name \"{name}\" is return error with message {ex.Message}");
+            }
         }
 
         public void SendKeys(string keys)
         {
-            WebElement.SendKeys(keys);
+            try
+            {
+                WebElement.SendKeys(keys);
+            }
+            catch (Exception ex)
+            {
+                throw new ElementException($"SendKeys \"{keys}\" in element is return error with message {ex.Message}");
+            }
         }
 
         private bool IsEditabled()
         {
             return Convert.ToBoolean(GetAttribute("readonly"));
+        }
+        
+        public void WaitUntilAttributeValueEquals(string attributeName, string attributeValue)
+        {      
+            var wait = new WebDriverWait(WebDriver, TimeSpan.FromSeconds((long)BrowserSettings.Settings.Timeout));
+            WebElement = wait.Until(d => WebElement.GetAttribute(attributeName) == attributeValue ? WebElement : throw new ElementException($"Waiting until attribute \"{attributeName}\" becomes value \"{attributeValue ?? "null"}\" is failed"));
         }
     }
 }

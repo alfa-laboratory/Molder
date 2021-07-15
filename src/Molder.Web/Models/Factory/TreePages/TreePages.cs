@@ -1,10 +1,12 @@
 ﻿using Molder.Controllers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 namespace Molder.Web.Models
 {
+    [ExcludeFromCodeCoverage]
     public class TreePages
     {
         private static AsyncLocal<IEnumerable<Node>> _pages = new AsyncLocal<IEnumerable<Node>>{ Value = null };
