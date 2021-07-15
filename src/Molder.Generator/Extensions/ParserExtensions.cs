@@ -24,7 +24,6 @@ namespace Molder.Generator.Extensions
         public static Dictionary<string, object> ToDictionary(this Table table, VariableController variableController)
         {
             var enumerable = new Dictionary<string, object>();
-            table.Header.ToList().Count.Should().BeInRange(1, 1, "Table must have only 2 rows: Keys and Values");
             var keys = table.Header.ToList();
             table.Rows.ToList().Count.Should().BeInRange(1,1, "Table must have only 2 rows: Keys and Values");
             var values = table.Rows.ToList()[0];
@@ -44,7 +43,9 @@ namespace Molder.Generator.Extensions
                 {
                     tmpList.Add((T)Convert.ChangeType(value, typeof(T)));
                 }
-                catch (InvalidCastException){}
+                catch (Exception){
+                    throw new Exception($"значение \"{value}\" не подходит под формат {typeof(T)}");
+                }
             }
             return tmpList;
         }

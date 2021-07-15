@@ -6,7 +6,9 @@ using Molder.Models;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Xml;
+using TechTalk.SpecFlow;
 using Xunit;
+
 
 namespace Molder.Generator.Tests
 {
@@ -747,6 +749,19 @@ namespace Molder.Generator.Tests
 
             var expected = variableController.Variables["test2"].Value;
             expected.Should().Be(res);
+        }
+        [Fact]
+        public void CheckStoreEnumerableAsVariableNoType_ReturnException()
+        {
+            var table = new Table(new string[] { "8", "qwerty" });
+
+            var variable = new Variable() { Type = typeof(string), Value = null };
+            variableController.Variables.TryAdd("test", variable);
+            VariableSteps steps = new VariableSteps(variableController);
+            var result = steps.TransformationTableToEnumerable(table);
+            Action act = () => steps.StoreEnumerableAsVariableNoType(null, result);
+            act.Should().Throw<Exception>()
+                .WithMessage($"Expected varname not to be <null> because Значение \"varname\" не задано.");
         }
     }
 }
