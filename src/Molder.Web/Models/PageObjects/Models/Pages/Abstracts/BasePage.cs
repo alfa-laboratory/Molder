@@ -30,33 +30,32 @@ namespace Molder.Web.Models.PageObjects.Pages
         public void BackToPage() => Local = null;
 
         public abstract IElement GetElement(string name);
-        public abstract IEnumerable<IElement> GetPrimaryElements();
+        public abstract IEnumerable<string> GetPrimaryElements();
         public abstract void GoToPage();
         public abstract void PageTop();
         public abstract void PageDown();
         public bool IsLoadElements()
         {
             var errors = new List<string>();
-            var elements = GetPrimaryElements();
+            var elementsNames = GetPrimaryElements();
 
-            (elements as List<IElement>)?.ForEach(element =>
+            (elementsNames as List<string>)?.ForEach(name =>
             {
+                var element = GetElement(name);
                 if (!element.Loaded)
                 {
-                    errors.Add(element.Name);
+                    errors.Add(name);
                 }
             });
 
-            if (elements.Any())
+            if (errors.Any())
             {
-                var aggregate = string.Join(", ", elements);
+                var aggregate = string.Join(", ", errors);
                 Log.Logger().LogError($"element/s \"{aggregate}\" not initialize on page \"{Name}\"");
                 return false;
             }
-            else
-            {
-                return true;
-            }
+
+            return true;
         }
 
         public abstract IPage GetDefaultFrame();

@@ -53,6 +53,7 @@ namespace Molder.Web.Extensions
             catch (NullReferenceException)
             {
                 Log.Logger().LogError($"IEnumerable<Node> contains null object for GetObjectFrom function");
+                ///TODO throw
                 return null;
             }
         }
