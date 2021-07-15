@@ -55,7 +55,7 @@ namespace Molder.Generator.Steps
         }
 
         [StepArgumentTransformation]
-        public TypeCode TransformationTableToEnumerable(string type)
+        public TypeCode StringToTypeCode(string type)
         {
             type.Should().NotBeNull("Значение \"type\" не задано");
             type = type.ToLower();
@@ -436,7 +436,6 @@ namespace Molder.Generator.Steps
         [StepDefinition(@"я сохраняю коллекцию с типом ""(.+)"" в переменную ""(.+)"":")]
         public void StoreEnumerableAsVariableWithType(TypeCode varType, string varName, IEnumerable<object> collection)
         {
-            varType.Should().NotBeNull("Значение \"varType\" не задано");
             varName.Should().NotBeNull("Значение \"varName\" не задано");
             switch (varType) {
                 case TypeCode.Object:
@@ -533,7 +532,7 @@ namespace Molder.Generator.Steps
             number.Should().NotBeNull("Значение \"number\" не задано");
             if (!Int32.TryParse(number, out int tmpNumber))
             {
-                throw new Exception($"значение \"number\" не является числом");
+                throw new Exception("Значение \"number\" не является числом.");
             }
             var tmpCollection = this.variableController.GetVariableValue(collectionName);
             tmpCollection.Should().NotBeNull($"значения в переменной \"{collectionName}\" нет");
@@ -544,7 +543,7 @@ namespace Molder.Generator.Steps
                     ((List<object>)tmpCollection).Count.Should().BeGreaterThan(tmpNumber, 
                         "\"number\" должно быть меньше количества записей в \"collectionName\"");
                     var var1 = ((List<object>)tmpCollection).GetValueFromEnumerable<object>(tmpNumber);
-                    this.variableController.SetVariable(varName, var1.GetType(), var1);
+                    this.variableController.SetVariable(varName, typeof(object), var1);
                     break;
                 case "System.Collections.Generic.List`1[System.Int32]":
                     ((List<int>)tmpCollection).Count.Should().BeGreaterThan(tmpNumber,
