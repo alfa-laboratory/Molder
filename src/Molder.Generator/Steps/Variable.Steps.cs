@@ -606,7 +606,7 @@ namespace Molder.Generator.Steps
         [StepDefinition(@"я выбираю произвольное значение из словаря ""(.+)"" и записываю его в переменную ""(.+)""")]
         public void StoreRandomVariableFromDictionary(string dictionaryName, string varName)
         {
-            varName.Should().NotBeNull("Значение \"varname\" не задано");
+            varName.Should().NotBeNull("Значение \"varName\" не задано");
             dictionaryName.Should().NotBeNull("Значение \"dictionaryName\" не задано");
             var var1 = ((Dictionary<string, object>)this.variableController.GetVariableValue(dictionaryName)).GetRandomValueFromDictionary();
             this.variableController.SetVariable(varName, var1.GetType(), var1);
@@ -618,7 +618,7 @@ namespace Molder.Generator.Steps
         /// <param name="dictionaryName">Идентификатор словаря.</param>
         /// <param name="varName">Идентификатор переменной.</param>
         [StepDefinition(@"я выбираю значение из словаря ""(.+)"" с ключом ""(.+)"" и записываю его в переменную ""(.+)""")]
-        public void StoreRandomVariableFromDictionary(string dictionaryName, string key, string varName)
+        public void StoreVariableFromDictionary(string dictionaryName, string key, string varName)
         {
             dictionaryName.Should().NotBeNull("Значение \"dictionaryName\" не задано");
             key.Should().NotBeNull("Значение \"key\" не задано");
