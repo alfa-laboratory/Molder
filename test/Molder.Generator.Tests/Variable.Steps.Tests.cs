@@ -1193,7 +1193,6 @@ namespace Molder.Generator.Tests
 
             steps.StoreDictionaryAsVariableNoType(varName, dictionary);
 
-            var newVarName = "tmp";
             Action act = () => steps.StoreVariableFromDictionary(varName, key, null);
             act.Should().Throw<Exception>()
                 .WithMessage("Expected varName not to be <null> because Значение \"varName\" не задано.");

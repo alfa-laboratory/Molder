@@ -26,6 +26,7 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageId>Molder.Generator</PackageId>
     <Product>Molder.Generator</Product>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
