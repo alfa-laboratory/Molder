@@ -9,7 +9,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <LangVersion>7.1</LangVersion>
-    <PackageVersion>1.0.21</PackageVersion>
+    <PackageVersion>1.0.22</PackageVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -26,7 +26,6 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageId>Molder.Generator</PackageId>
     <Product>Molder.Generator</Product>
-    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -36,6 +35,7 @@
   <ItemGroup>
     <PackageReference Include="Bogus" Version="33.0.2" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="Molder" Version="1.0.23" />
     <PackageReference Include="SpecFlow" Version="3.3.30" />
     <PackageReference Include="SpecFlow.Assist.Dynamic" Version="1.4.2" />
   </ItemGroup>
@@ -45,10 +45,6 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Molder\Molder.csproj" />
   </ItemGroup>
   
   </Project>
