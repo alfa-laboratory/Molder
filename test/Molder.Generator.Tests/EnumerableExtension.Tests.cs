@@ -1,9 +1,5 @@
 ﻿using FluentAssertions;
-using Molder.Controllers;
 using Molder.Generator.Extensions;
-using Molder.Generator.Steps;
-using Molder.Models;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
@@ -13,169 +9,51 @@ namespace Molder.Generator.Tests
     [ExcludeFromCodeCoverage]
     public class EnumerableExtension
     {
-        private VariableController variableController;
-        public EnumerableExtension()
+        public EnumerableExtension() { }
+
+        public static IEnumerable<object[]> Data =>
+        new List<object[]>
         {
-            variableController = new VariableController();
+            new object[] { "test", 2, 3.45,999999999999999L, 5.5f, true }
+        };
+
+        [Theory]
+        [MemberData(nameof(Data))]
+        public void GetRandomValueFromEnumerable_ReturnTrue(string value1, int value2, double value3, long value4, float value5, bool value6)
+        {
+            var collection = new List<object>() { value1, value2, value3, value4, value5, value6 };
+            var resVar = collection.GetRandomValueFromEnumerable();
+            collection.Should().Contain(resVar);
         }
 
-
-        [Fact]
-        public void CheckGetRandomValueFromEnumerable_TypeInt_ReturnTrue()
+        public static IEnumerable<object[]> DataForDictionary =>
+        new List<object[]>
         {
-            var enumerable = new List<object>() { 5 };
-            var res = enumerable.TryParse<int>();
-            var resVar = res.GetRandomValueFromEnumerable<int>();
-            res.GetType().Name.Should().Be("List`1");
-            resVar.Should().Be(5);
-        }
+            new object[] { "test", "qwerty", "asd", 456, "wer", true }
+        };
 
-        [Fact]
-        public void CheckGetRandomValueFromEnumerable_TypeObject_ReturnTrue()
-        {
-            var enumerable = new List<object>() { 5 };
-            var res = enumerable.TryParse<object>();
-            var resVar = res.GetRandomValueFromEnumerable<object>();
-            res.GetType().Name.Should().Be("List`1");
-            resVar.Should().Be(5);
-        }
-
-        [Fact]
-        public void CheckGetRandomValueFromEnumerable_TypeDouble_ReturnTrue()
-        {
-            var enumerable = new List<object>() { 5.5 };
-            var res = enumerable.TryParse<double>();
-            var resVar = res.GetRandomValueFromEnumerable<double>();
-            res.GetType().Name.Should().Be("List`1");
-            resVar.Should().Be(5.5);
-        }
-
-        [Fact]
-        public void CheckGetRandomValueFromEnumerable_TypeBoolean_ReturnTrue()
-        {
-            var enumerable = new List<object>() { "True" };
-            var res = enumerable.TryParse<bool>();
-            var resVar = res.GetRandomValueFromEnumerable<bool>();
-            res.GetType().Name.Should().Be("List`1");
-            resVar.Should().Be(true);
-        }
-
-        [Fact]
-        public void CheckGetRandomValueFromEnumerable_TypeLong_ReturnTrue()
-        {
-            var enumerable = new List<object>() { 9999999999999L };
-            var res = enumerable.TryParse<long>();
-            var resVar = res.GetRandomValueFromEnumerable<long>();
-            res.GetType().Name.Should().Be("List`1");
-            resVar.Should().Be(9999999999999L);
-        }
-
-        [Fact]
-        public void CheckGetRandomValueFromEnumerable_TypeFloat_ReturnTrue()
-        {
-            var enumerable = new List<object>() { 16.5f };
-            var res = enumerable.TryParse<float>();
-            var resVar = res.GetRandomValueFromEnumerable<float>();
-            res.GetType().Name.Should().Be("List`1");
-            resVar.Should().Be(16.5f);
-        }
-
-        [Fact]
-        public void CheckGetRandomValueFromEnumerable_TypeString_ReturnTrue()
-        {
-            var enumerable = new List<object>() { "test" };
-            var res = enumerable.TryParse<string>();
-            var resVar = res.GetRandomValueFromEnumerable<string>();
-            res.GetType().Name.Should().Be("List`1");
-            resVar.Should().Be("test");
-        }
-
-        [Fact]
-        public void CheckGetValueFromEnumerable_TypeInt_ReturnTrue()
-        {
-            var enumerable = new List<object>() { 5 };
-            var res = enumerable.TryParse<int>();
-            var resVar = res.GetValueFromEnumerable<int>(0);
-            res.GetType().Name.Should().Be("List`1");
-            resVar.Should().Be(5);
-        }
-
-        [Fact]
-        public void CheckGetValueFromEnumerable_TypeObject_ReturnTrue()
-        {
-            var enumerable = new List<object>() { 5 };
-            var res = enumerable.TryParse<object>();
-            var resVar = res.GetValueFromEnumerable<object>(0);
-            res.GetType().Name.Should().Be("List`1");
-            resVar.Should().Be(5);
-        }
-
-        [Fact]
-        public void CheckGetValueFromEnumerable_TypeDouble_ReturnTrue()
-        {
-            var enumerable = new List<object>() { 5.5 };
-            var res = enumerable.TryParse<double>();
-            var resVar = res.GetValueFromEnumerable<double>(0);
-            res.GetType().Name.Should().Be("List`1");
-            resVar.Should().Be(5.5);
-        }
-
-        [Fact]
-        public void CheckGetValueFromEnumerable_TypeBoolean_ReturnTrue()
-        {
-            var enumerable = new List<object>() { "True" };
-            var res = enumerable.TryParse<bool>();
-            var resVar = res.GetValueFromEnumerable<bool>(0);
-            res.GetType().Name.Should().Be("List`1");
-            resVar.Should().Be(true);
-        }
-
-        [Fact]
-        public void CheckGetValueFromEnumerable_TypeLong_ReturnTrue()
-        {
-            var enumerable = new List<object>() { 9999999999999L };
-            var res = enumerable.TryParse<long>();
-            var resVar = res.GetValueFromEnumerable<long>(0);
-            res.GetType().Name.Should().Be("List`1");
-            resVar.Should().Be(9999999999999L);
-        }
-
-        [Fact]
-        public void CheckGetValueFromEnumerable_TypeFloat_ReturnTrue()
-        {
-            var enumerable = new List<object>() { 16.5f };
-            var res = enumerable.TryParse<float>();
-            var resVar = res.GetValueFromEnumerable<float>(0);
-            res.GetType().Name.Should().Be("List`1");
-            resVar.Should().Be(16.5f);
-        }
-
-        [Fact]
-        public void CheckGetValueFromEnumerable_TypeString_ReturnTrue()
-        {
-            var enumerable = new List<object>() { "test" };
-            var res = enumerable.TryParse<string>();
-            var resVar = res.GetValueFromEnumerable<string>(0);
-            res.GetType().Name.Should().Be("List`1");
-            resVar.Should().Be("test");
-        }
-
-        [Fact]
-        public void CheckGetRandomValueFromDictionary_ReturnTrue()
+        [Theory]
+        [MemberData(nameof(DataForDictionary))]
+        public void GetRandomValueFromDictionary_ReturnTrue(string key1, object value1, string key2, object value2, string key3, object value3)
         {
             var dictionary = new Dictionary<string,object>();
-            dictionary.Add("test", 5);
+            dictionary.Add(key1, value1);
+            dictionary.Add(key2, value2);
+            dictionary.Add(key3, value3);
             var resVar = dictionary.GetRandomValueFromDictionary();
-            resVar.Should().Be(5);
+            dictionary.Values.Should().Contain(resVar);
         }
 
-        [Fact]
-        public void CheckGetValueFromDictionary_ReturnTrue()
+        [Theory]
+        [MemberData(nameof(DataForDictionary))]
+        public void GetValueFromDictionary_ReturnTrue(string key1, object value1, string key2, object value2, string key3, object value3)
         {
             var dictionary = new Dictionary<string, object>();
-            dictionary.Add("test", 5);
-            var resVar = dictionary.GetValueFromDictionary("test");
-            resVar.Should().Be(5);
+            dictionary.Add(key1, value1);
+            dictionary.Add(key2, value2);
+            dictionary.Add(key3, value3);
+            var resVar = dictionary.GetValueFromDictionary(key2);
+            resVar.Should().Be(value2);
         }
     }
 }

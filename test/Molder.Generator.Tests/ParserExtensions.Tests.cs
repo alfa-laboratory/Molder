@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Molder.Controllers;
 using Molder.Generator.Extensions;
-using Molder.Models;
+using Molder.Generator.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -20,156 +20,122 @@ namespace Molder.Generator.Tests
         }
 
         [Fact]
-        public void CheckToEnumerable_ReturnException()
+        public void toEnumerable_ExtraRow_ReturnException()
         {
-            var table = new Table(new string[] { "test", "qwerty" });
-            table.AddRow("5", "6");
-
-            var variable = new Variable() { Type = typeof(string), Value = null };
-            variableController.Variables.TryAdd("test", variable);
+            var table = new Table(new string[] {"test"});
+            table.AddRow("test");
             Action act = () => table.ToEnumerable(variableController);
             act.Should().Throw<Exception>()
-                .WithMessage("Expected table.Rows.ToList().Count to be less than 1 because Table must have only 1 row: Values, but found 1.");
+                .WithMessage("Expected table.Rows.ToList().Count to be 0 because Table must have only 1 row: Values, but found 1.");
+        }
+
+        [Theory]
+        [InlineData(5)]
+        [InlineData(true)]
+        [InlineData("test")]
+        [InlineData(999999999999L)]
+        [InlineData(3.45)]
+        public void ToEnumerable_Object_ReturnTrue(object value)
+        {
+            var table = new Table(new string[] {value.ToString()});
+            var res = table.ToEnumerable(variableController);
+            (res is IEnumerable<object>).Should().BeTrue();
         }
 
         [Fact]
-        public void CheckToEnumerable_ReturnTrue()
+        public void toDoctionary_NoValues_ReturnException()
         {
-            var table = new Table(new string[] { "test", "qwerty" });
-
-            var variable = new Variable() { Type = typeof(string), Value = null };
-            variableController.Variables.TryAdd("test", variable);
-            var res = table.ToEnumerable(variableController).GetType().Name;
-            res.Should().Be("List`1");
-        }
-
-        [Fact]
-        public void ChecktoDoctionary_NoValues_ReturnException()
-        {
-            var table = new Table(new string[] { "test", "qwerty" });
-
-            var variable = new Variable() { Type = typeof(string), Value = null };
-            variableController.Variables.TryAdd("test", variable);
+            var table = new Table(new string[] {"test"});
             Action act = () => table.ToDictionary(variableController);
             act.Should().Throw<Exception>()
-                .WithMessage("Expected table.Rows.ToList().Count to be between 1 and 1 because Table must have only 2 rows: Keys and Values, but found 0.");
+                .WithMessage("Expected table.Rows.ToList().Count to be 1 because Table must have only 2 rows: Keys and Values, but found 0.");
         }
 
         [Fact]
-        public void ChecktoDoctionary_ManyValues_ReturnException()
+        public void toDoctionary_TooManyRows_ReturnException()
         {
             var table = new Table(new string[] { "test", "qwerty" });
             table.AddRow("test", "qwerty");
             table.AddRow("test", "qwerty");
-            var variable = new Variable() { Type = typeof(string), Value = null };
-            variableController.Variables.TryAdd("test", variable);
             Action act = () => table.ToDictionary(variableController);
             act.Should().Throw<Exception>()
-                .WithMessage("Expected table.Rows.ToList().Count to be between 1 and 1 because Table must have only 2 rows: Keys and Values, but found 2.");
+                .WithMessage("Expected table.Rows.ToList().Count to be 1 because Table must have only 2 rows: Keys and Values, but found 2.");
         }
 
-        [Fact]
-        public void ChecktoDoctionary_DictionaryOf2_ReturnTrue()
+        [Theory]
+        [InlineData("int","5","double","3.54")]
+        [InlineData("qwert", "asd", "zxcv", "poiu")]
+        public void toDoctionary_Values_ReturnTrue(string key1, string value1, string key2, string value2)
         {
-            var table = new Table(new string[] { "test", "qwerty" });
-            table.AddRow("test", "qwerty");
-            var variable = new Variable() { Type = typeof(string), Value = null };
-            variableController.Variables.TryAdd("test", variable);
-            var res = table.ToDictionary(variableController).GetType().Name;
-            res.Should().Be("Dictionary`2");
-        }
-
-        [Fact]
-        public void ChecktoDoctionary_DictionaryOf1_ReturnTrue()
-        {
-            var table = new Table(new string[] { "test" });
-            table.AddRow("test");
-            var variable = new Variable() { Type = typeof(string), Value = null };
-            variableController.Variables.TryAdd("test", variable);
+            var table = new Table(new string[] { key1, value1 });
+            table.AddRow(key2,value2);
             var res = table.ToDictionary(variableController);
-            res["test"].Should().Be("test");
-            res.GetType().Name.Should().Be("Dictionary`2");
+            (res is Dictionary<string, object>).Should().BeTrue();
         }
 
         [Fact]
-        public void CheckTryParse_StringToInt_ReturnException()
+        public void TryParse_StringToInt_ReturnException()
         {
-            var enumerable = new List<object>() {"test"};
-
+            var enumerable = new List<object>() { "test" };
             Action act = () => ((IEnumerable<object>)enumerable).TryParse<int>();
-            act.Should().Throw<Exception>();
+            act.Should().Throw<NotValideCastException>();
         }
 
         [Fact]
         public void CheckTryParse_LongToInt_ReturnException()
         {
-            var enumerable = new List<object>() { 999999999999999 };
-
+            var enumerable = new List<object>() { 999999999999999L };
             Action act = () => ((IEnumerable<object>)enumerable).TryParse<int>();
-            act.Should().Throw<Exception>();
+            act.Should().Throw<NotValideCastException>();
         }
 
-        [Fact]
-        public void CheckTryParse_TypeInt_ReturnTrue()
+        public static IEnumerable<object[]> Data =>
+        new List<object[]>
         {
-            var enumerable = new List<object>() {5};
-            var res = enumerable.TryParse<int>();
-            res.GetType().Name.Should().Be("List`1");
-            ((List<int>)res)[0].Should().Be(5);
-        }
+            new object[] { TypeCode.Int32, 5, 6},
+            new object[] { TypeCode.Object, 5, 6},
+            new object[] { TypeCode.Double, 5.64, 6.24},
+            new object[] { TypeCode.Single, 5.5f, 6.6f},
+            new object[] { TypeCode.Boolean, true, false},
+            new object[] { TypeCode.Int64, 999999999999L, 6L},
+            new object[] { TypeCode.String, "test", "qwerty"}
+        };
 
-        [Fact]
-        public void CheckTryParse_TypeObject_ReturnTrue()
+        [Theory]
+        [MemberData(nameof(Data))]
+        public void CheckTryParse_Values_ReturnTrue(TypeCode type, object value1, object value2)
         {
-            var enumerable = new List<object>() { 5 };
-            var res = enumerable.TryParse<object>();
-            res.GetType().Name.Should().Be("List`1");
-            ((List<object>)res)[0].Should().Be(5);
-        }
-
-        [Fact]
-        public void CheckTryParse_TypeDouble_ReturnTrue()
-        {
-            var enumerable = new List<object>() { 5.5 };
-            var res = enumerable.TryParse<double>();
-            res.GetType().Name.Should().Be("List`1");
-            ((List<double>)res)[0].Should().Be(5.5);
-        }
-
-        [Fact]
-        public void CheckTryParse_TypeBoolean_ReturnTrue()
-        {
-            var enumerable = new List<object>() { "True" };
-            var res = enumerable.TryParse<bool>();
-            res.GetType().Name.Should().Be("List`1");
-            ((List<bool>)res)[0].Should().Be(true);
-        }
-
-        [Fact]
-        public void CheckTryParse_TypeLong_ReturnTrue()
-        {
-            var enumerable = new List<object>() { 9999999999999L };
-            var res = enumerable.TryParse<long>();
-            res.GetType().Name.Should().Be("List`1");
-            ((List<long>)res)[0].Should().Be(9999999999999L);
-        }
-
-        [Fact]
-        public void CheckTryParse_TypeFloat_ReturnTrue()
-        {
-            var enumerable = new List<object>() { 16.5f };
-            var res = enumerable.TryParse<float>();
-            res.GetType().Name.Should().Be("List`1");
-            ((List<float>)res)[0].Should().Be(16.5f);
-        }
-
-        [Fact]
-        public void CheckTryParse_TypeString_ReturnTrue()
-        {
-            var enumerable = new List<object>() { "test" };
-            var res = enumerable.TryParse<string>();
-            res.GetType().Name.Should().Be("List`1");
-            ((List<string>)res)[0].Should().Be("test");
+            switch (type)
+            {
+                case (TypeCode.Int32):
+                    var resInt = new List<object>(){ value1, value2 }.TryParse<int>();
+                    (resInt is IEnumerable<int>).Should().BeTrue();
+                    break;
+                case (TypeCode.Object):
+                    var resObj = new List<object>() { value1, value2 }.TryParse<object>();
+                    (resObj is IEnumerable<object>).Should().BeTrue();
+                    break;
+                case (TypeCode.Double):
+                    var resDouble = new List<object>() { value1, value2 }.TryParse<double>();
+                    (resDouble is IEnumerable<double>).Should().BeTrue();
+                    break;
+                case (TypeCode.Single):
+                    var resFloat = new List<object>() { value1, value2 }.TryParse<float>();
+                    (resFloat is IEnumerable<float>).Should().BeTrue();
+                    break;
+                case (TypeCode.Boolean):
+                    var resBool = new List<object>() { value1, value2 }.TryParse<bool>();
+                    (resBool is IEnumerable<bool>).Should().BeTrue();
+                    break;
+                case (TypeCode.Int64):
+                    var resLong = new List<object>() { value1, value2 }.TryParse<long>();
+                    (resLong is IEnumerable<long>).Should().BeTrue();
+                    break;
+                case (TypeCode.String):
+                    var resString = new List<object>() { value1, value2 }.TryParse<string>();
+                    (resString is IEnumerable<string>).Should().BeTrue();
+                    break;
+            }
         }
     }
 }

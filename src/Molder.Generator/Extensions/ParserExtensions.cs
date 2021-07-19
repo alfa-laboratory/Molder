@@ -5,7 +5,7 @@ using System.Linq;
 using Molder.Controllers;
 using Molder.Extensions;
 using FluentAssertions;
-using FluentAssertions.Numeric;
+using Molder.Generator.Exceptions;
 
 namespace Molder.Generator.Extensions
 {
@@ -13,7 +13,7 @@ namespace Molder.Generator.Extensions
     {
         public static IEnumerable<object> ToEnumerable(this Table table, VariableController variableController) {
             var enumerable = new List<object>();
-            table.Rows.ToList().Count.Should().BeLessThan(1, "Table must have only 1 row: Values");
+            table.Rows.ToList().Count.Should().Be(0, "Table must have only 1 row: Values");
             foreach (var value in table.Header.ToList()) 
             {
                 enumerable.Add(variableController.ReplaceVariables(value) ?? value);
@@ -25,9 +25,9 @@ namespace Molder.Generator.Extensions
         {
             var enumerable = new Dictionary<string, object>();
             var keys = table.Header.ToList();
-            table.Rows.ToList().Count.Should().BeInRange(1,1, "Table must have only 2 rows: Keys and Values");
+            table.Rows.ToList().Count.Should().Be(1, "Table must have only 2 rows: Keys and Values");
             var values = table.Rows.ToList()[0];
-            for  (int i=0;i<keys.Count;i++)
+            for  (var i=0 ; i < keys.Count ; i++)
             {
                 enumerable.Add(variableController.ReplaceVariables(keys[i]) ?? keys[i], variableController.ReplaceVariables(values[i]) ?? values[i]);
             }
@@ -36,15 +36,15 @@ namespace Molder.Generator.Extensions
 
         public static IEnumerable<T> TryParse<T>(this IEnumerable<object> enumerable)
         {
-            List<T> tmpList = new List<T>();
-            foreach (object value in enumerable)
+            var tmpList = new List<T>();
+            foreach (var value in enumerable)
             {
                 try
                 {
                     tmpList.Add((T)Convert.ChangeType(value, typeof(T)));
                 }
                 catch (Exception){
-                    throw new Exception($"значение \"{value}\" не подходит под формат {typeof(T)}");
+                    throw new NotValideCastException($"значение \"{value}\" не подходит под формат {typeof(T)}");
                 }
             }
             return tmpList;
