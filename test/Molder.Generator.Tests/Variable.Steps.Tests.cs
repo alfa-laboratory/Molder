@@ -4,9 +4,13 @@ using Molder.Generator.Steps;
 using Molder.Helpers;
 using Molder.Models;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Xml;
+using TechTalk.SpecFlow;
 using Xunit;
+
 
 namespace Molder.Generator.Tests
 {
@@ -501,7 +505,7 @@ namespace Molder.Generator.Tests
         [Fact]
         public void CheckVariableStartsWith_InCorrectActual_ReturnException()
         {
-            var variable = new Variable() { Type = typeof(string), Value = null};
+            var variable = new Variable() { Type = typeof(string), Value = null };
             variableController.Variables.TryAdd("test", variable);
             VariableSteps steps = new VariableSteps(variableController);
 
@@ -747,6 +751,410 @@ namespace Molder.Generator.Tests
 
             var expected = variableController.Variables["test2"].Value;
             expected.Should().Be(res);
+        }
+
+        [Theory]
+        [InlineData("8","qwerty")]
+        [InlineData("99999999999999999", "5.23")]
+        public void TransformationToEnumerable_Strings_ReturnTrue(string value1, string value2)
+        {
+            var table = new Table(new string[] { value1, value2 });
+            var variable = new Variable() { Type = typeof(string), Value = null };
+            variableController.Variables.TryAdd("test", variable);
+            var steps = new VariableSteps(variableController);
+            var result = steps.TransformationTableToEnumerable(table);
+            result.GetType().Name.Should().Be("List`1");
+        }
+
+        [Theory]
+        [InlineData("8", "qwerty")]
+        [InlineData("99999999999999999", "5.23")]
+        public void TransformationToDictionary_Strings_ReturnTrue(string value1, string value2)
+        {
+            var table = new Table(new string[] { value1 });
+            table.AddRow(value2);
+            var variable = new Variable() { Type = typeof(string), Value = null };
+            variableController.Variables.TryAdd("test", variable);
+            var steps = new VariableSteps(variableController);
+            var result = steps.TransformationTableToDictionary(table);
+            result[value1].Should().Be(value2);
+            result.GetType().Name.Should().Be("Dictionary`2");
+        }
+
+        [Fact]
+        public void ToTypeCode_WrongString_ReturnException()
+        {
+            var type = "qwerty";
+            var steps = new VariableSteps(variableController);
+            Action act = () => steps.StringToTypeCode(type);
+            act.Should().Throw<Exception>()
+                .WithMessage($"There is no type \"{type}\"");
+        }
+
+        [Fact]
+        public void StringToTypeCode_NullType_ReturnException()
+        {
+            var steps = new VariableSteps(variableController);
+            Action act = () => steps.StringToTypeCode(null);
+            act.Should().Throw<Exception>()
+                .WithMessage("Expected type not to be <null> because Значение \"type\" не задано.");
+        }
+
+        [Theory]
+        [InlineData("int", "Int32")]
+        [InlineData("bool", "Boolean")]
+        [InlineData("long", "Int64")]
+        [InlineData("double", "Double")]
+        [InlineData("float", "Single")]
+        [InlineData("string", "String")]
+        [InlineData("object", "Object")]
+        public void StringToTypeCode_Type_ReturnTrue(string value, string regType)
+        {
+            var steps = new VariableSteps(variableController);
+            var res = steps.StringToTypeCode(value);
+            res.ToString().Should().Be(regType);
+        }
+
+        [Fact]
+        public void StoreEnumerableAsVariableNoType_NoVarName_ReturnException()
+        {
+            var table = new Table(new string[] { "test1", "test2" });
+            var steps = new VariableSteps(variableController);
+            var result = steps.TransformationTableToEnumerable(table);
+            Action act = () => steps.StoreEnumerableAsVariableNoType(null, result);
+            act.Should().Throw<Exception>()
+                .WithMessage($"Expected varName not to be <null> because Значение \"varName\" не задано.");
+        }
+
+        [Theory]
+        [InlineData("Test","8", "qwerty")]
+        [InlineData("test","99999999999999999", "5.23")]
+        [InlineData("543", "99999999999999999", "5.23")]
+        public void StoreEnumerableAsVariableNoType_ReturnTrue(string varName, string value1, string value2)
+        {
+            var table = new Table(new string[] { value1, value2 });
+            var steps = new VariableSteps(variableController);
+            var res = steps.TransformationTableToEnumerable(table);
+            steps.StoreEnumerableAsVariableNoType(varName, res);
+            var result = variableController.GetVariableValue(varName);
+            result.Should().NotBeNull();
+        }
+
+        [Theory]
+        [InlineData("Test", "int", "5")]
+        [InlineData("Test", "object", "5")]
+        [InlineData("Test", "long", "5")]
+        [InlineData("Test", "float", "5")]
+        [InlineData("Test", "double", "5")]
+        [InlineData("Test", "string", "test")]
+        [InlineData("Test", "bool", "True")]
+        public void StoreEnumerableAsVariableWithType_ReturnTrue(string varName, string type, string value)
+        {
+            var table = new Table(new string[] { value });
+            var steps = new VariableSteps(variableController);
+            var varType = steps.StringToTypeCode(type);
+            var res = steps.TransformationTableToEnumerable(table);
+            steps.StoreEnumerableAsVariableWithType(varType, varName, res);
+            var result = variableController.GetVariableValue(varName);
+            (result is IEnumerable).Should().BeTrue();
+        }
+
+        [Fact]
+        public void StoreEnumerableAsVariableWithType_NoVarName_ReturnException()
+        {
+            var steps = new VariableSteps(variableController);
+            var table = new Table(new string[] { "test" });
+            var res = steps.TransformationTableToEnumerable(table);
+            Action act = () => steps.StoreEnumerableAsVariableWithType(TypeCode.Int32, null, res);
+            act.Should().Throw<Exception>()
+                .WithMessage("Expected varName not to be <null> because Значение \"varName\" не задано.");
+        }
+
+        [Theory]
+        [InlineData("int", 5,6)]
+        [InlineData("object", 5,6)]
+        [InlineData("long", 5L,6L)]
+        [InlineData("float", 5.1F,6.2F)]
+        [InlineData("double", 5.84,6.32)]
+        [InlineData("string", "test","qwerty")]
+        [InlineData("bool", true,false)]
+        public void StoreRandomVariableFromEnumerable_ReturnTrue(string type, object value1, object value2)
+        {
+            var steps = new VariableSteps(variableController);
+            var collectionName = "Test";
+            var newVarName = "Test2";
+            var varType = steps.StringToTypeCode(type);
+            var collection = new List<object>() {value1,value2};
+            steps.StoreEnumerableAsVariableWithType(varType, collectionName, collection);
+            steps.StoreRandomVariableFromEnumerable(collectionName, newVarName);
+            var result = variableController.GetVariableValue(newVarName);
+            collection.Should().Contain(result);
+        }
+
+        [Fact]
+        public void StoreRandomVariableFromEnumerable_NoCollName_ReturnException()
+        {
+            var steps = new VariableSteps(variableController);
+            Action act = () => steps.StoreRandomVariableFromEnumerable(null, "Test2");
+            act.Should().Throw<Exception>()
+                .WithMessage("Expected collectionName not to be <null> because Значение \"collectionName\" не задано.");
+        }
+
+        [Fact]
+        public void StoreRandomVariableFromEnumerable_NoVarName_ReturnException()
+        {
+            var steps = new VariableSteps(variableController);
+            Action act = () => steps.StoreRandomVariableFromEnumerable("Test", null);
+            act.Should().Throw<Exception>()
+                .WithMessage("Expected varName not to be <null> because Значение \"varName\" не задано.");
+        }
+
+        [Fact]
+        public void StoreRandomVariableFromEnumerable_NoColl_ReturnException()
+        {
+            var steps = new VariableSteps(variableController);
+            Action act = () => steps.StoreRandomVariableFromEnumerable("Test", "Test2");
+            act.Should().Throw<Exception>()
+                .WithMessage("Expected collection not to be <null> because значения в переменной \"Test\" нет.");
+        }
+
+        [Fact]
+        public void StoreRandomVariableFromEnumerable_NotColl_ReturnException()
+        {
+            var steps = new VariableSteps(variableController);
+            var tmp = 5;
+            variableController.SetVariable("Test", tmp.GetType(), tmp);
+            Action act = () => steps.StoreRandomVariableFromEnumerable("Test", "Test2");
+            act.Should().Throw<Exception>()
+                .WithMessage("Expected (collection is IEnumerable) to be true because \"Test\" не является коллекцией, but found False.");
+        }
+
+        public static IEnumerable<object[]> Data =>
+        new List<object[]>
+        {
+            new object[] { new List<object> { 0, 1, 2, 3, 4, 5, 6 }, TypeCode.Int32, },
+            new object[] { new List<object> { 0, 1, 2, 3, 4, 5, 6 }, TypeCode.Object },
+            new object[] { new List<object> { 0, 1, 2, 3, 4, 5, 6 }, TypeCode.Int64 },
+            new object[] { new List<object> { 0, 1, 2, 3, 4, 5, 6 }, TypeCode.Single },
+            new object[] { new List<object> { 0.0, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6 }, TypeCode.Double },
+            new object[] { new List<object> { "0", "1", "2", "3", "4", "5", "6" }, TypeCode.String },
+            new object[] { new List<object> { true, false }, TypeCode.Boolean }
+        };
+
+        [Theory]
+        [MemberData(nameof(Data))]
+        public void StoreVariableFromEnumerable_ReturnTrue( List<object> collection, TypeCode type)
+        {
+            var expected = collection[1];
+            var steps = new VariableSteps(variableController);
+            steps.StoreEnumerableAsVariableWithType(type, "Test", collection);
+            steps.StoreVariableFromEnumerable("Test", "1","Test2");
+            var actual = variableController.GetVariableValue("Test2");
+            expected.Should().BeEquivalentTo(actual);
+        }
+
+        [Fact]
+        public void StoreVariableFromEnumerable_NoCollName_ReturnException()
+        {
+            var steps = new VariableSteps(variableController);
+            Action act = () => steps.StoreVariableFromEnumerable(null, "0", "Test2");
+            act.Should().Throw<Exception>()
+                .WithMessage("Expected collectionName not to be <null> because Значение \"collectionName\" не задано.");
+        }
+
+        [Fact]
+        public void StoreVariableFromEnumerable_NoVarName_ReturnException()
+        {
+            var steps = new VariableSteps(variableController);
+            Action act = () => steps.StoreVariableFromEnumerable("Test", null, "Test2");
+            act.Should().Throw<Exception>()
+                .WithMessage("Expected number not to be <null> because Значение \"number\" не задано.");
+        }
+
+        [Fact]
+        public void StoreVariableFromEnumerable_NoColl_ReturnException()
+        {
+            var steps = new VariableSteps(variableController);
+            Action act = () => steps.StoreVariableFromEnumerable("Test", "0", "Test2");
+            act.Should().Throw<Exception>()
+                .WithMessage("Expected (collection is IEnumerable) to be true because \"Test\" не является коллекцией, but found False.");
+        }
+
+        [Fact]
+        public void StoreVariableFromEnumerable_NotColl_ReturnException()
+        {
+            var steps = new VariableSteps(variableController);
+            var tmp = 5;
+            variableController.SetVariable("Test", tmp.GetType(), tmp);
+            Action act = () => steps.StoreVariableFromEnumerable("Test", "0", "Test2");
+            act.Should().Throw<Exception>()
+                .WithMessage("Expected (collection is IEnumerable) to be true because \"Test\" не является коллекцией, but found False.");
+        }
+
+        [Fact]
+        public void StoreVariableFromEnumerable_BigNumber_ReturnException()
+        {
+            var steps = new VariableSteps(variableController);
+            var table = new Table(new string[] { "5" });
+            var res = steps.TransformationTableToEnumerable(table);
+            var varName = "Test";
+            var varType = steps.StringToTypeCode("int");
+            steps.StoreEnumerableAsVariableWithType(varType, varName, res);
+            Action act = () => steps.StoreVariableFromEnumerable(varName, "10", "Test2");
+            act.Should().Throw<Exception>()
+                .WithMessage("Expected count to be greater than 10 because Номер значения - \"10\" не содержится в коллекции \"Test\" с размером 1, but found 1.");
+        }
+
+        [Fact]
+        public void StoreVariableFromEnumerable_BadNumber_ReturnException()
+        {
+            var steps = new VariableSteps(variableController);
+            var table = new Table(new string[] { "5" });
+            var res = steps.TransformationTableToEnumerable(table);
+            var varName = "Test";
+            var varType = steps.StringToTypeCode("int");
+            steps.StoreEnumerableAsVariableWithType(varType, varName, res);
+            Action act = () => steps.StoreVariableFromEnumerable(varName, "qwerty", "Test2");
+            act.Should().Throw<Exception>()
+                .WithMessage("Значение \"qwerty\" не является числом.");
+        }
+
+        [Fact]
+        public void StoreDictionaryAsVariableNoType_ReturnException()
+        {
+            var steps = new VariableSteps(variableController);
+            var table = new Table(new string[] { "Test" });
+            table.AddRow("5");
+            var dictionary = steps.TransformationTableToDictionary(table);
+            Action act = () => steps.StoreDictionaryAsVariableNoType(null, dictionary);
+            act.Should().Throw<Exception>()
+                .WithMessage("Expected varName not to be <null> because Значение \"varname\" не задано.");
+        }
+
+        [Fact]
+        public void StoreDictionaryAsVariableNoType_ReturnTrue()
+        {
+            var steps = new VariableSteps(variableController);
+            var table = new Table(new string[] { "Test" });
+            table.AddRow("5");
+            var varName = "Test";
+            var dictionary = steps.TransformationTableToDictionary(table);
+            steps.StoreDictionaryAsVariableNoType(varName, dictionary);
+            var result = variableController.GetVariableValue(varName);
+            result.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void StoreRandomVariableFromDictionary_NoDictName_ReturnException()
+        {
+            var steps = new VariableSteps(variableController);
+            var table = new Table(new string[] { "Test" });
+            table.AddRow("5");
+            var varName = "Test";
+            var dictionary = steps.TransformationTableToDictionary(table);
+            steps.StoreDictionaryAsVariableNoType(varName, dictionary);
+            var newVarName = "tmp";
+            Action act = () => steps.StoreRandomVariableFromDictionary(null, newVarName);
+            act.Should().Throw<Exception>()
+                .WithMessage("Expected dictionaryName not to be <null> because Значение \"dictionaryName\" не задано.");
+        }
+
+        [Fact]
+        public void StoreRandomVariableFromDictionary_NoVarName_ReturnException()
+        {
+            var steps = new VariableSteps(variableController);
+            var table = new Table(new string[] { "Test" });
+            table.AddRow("5");
+            var varName = "Test";
+            var dictionary = steps.TransformationTableToDictionary(table);
+            steps.StoreDictionaryAsVariableNoType(varName, dictionary);
+            Action act = () => steps.StoreRandomVariableFromDictionary(varName, null);
+            act.Should().Throw<Exception>()
+                .WithMessage("Expected varName not to be <null> because Значение \"varname\" не задано.");
+        }
+
+        [Theory]
+        [InlineData("string")]
+        [InlineData("test")]
+        [InlineData("845")]
+        public void StoreRandomVariableFromDictionary_ReturnTrue(string value)
+        {
+            var steps = new VariableSteps(variableController);
+            var table = new Table(new string[] { "Test" });
+            table.AddRow(value);
+            var varName = "Test";
+            var dictionary = steps.TransformationTableToDictionary(table);
+            steps.StoreDictionaryAsVariableNoType(varName, dictionary);
+            var newVarName = "tmp";
+            steps.StoreRandomVariableFromDictionary(varName, newVarName);
+            var result = variableController.GetVariableValueText(newVarName);
+            result.Should().Be(value);
+        }
+
+        [Fact]
+        public void StoreVariableFromDictionary_NoDictName_ReturnException()
+        {
+            var steps = new VariableSteps(variableController);
+
+            var table = new Table(new string[] { "Test" });
+            table.AddRow("5");
+            var dictionary = steps.TransformationTableToDictionary(table);
+            var key = "Test";
+            var varName = "Test";
+            steps.StoreDictionaryAsVariableNoType(varName, dictionary);
+            var newVarName = "tmp";
+            Action act = () => steps.StoreVariableFromDictionary(null,key, newVarName);
+            act.Should().Throw<Exception>()
+                .WithMessage("Expected dictionaryName not to be <null> because Значение \"dictionaryName\" не задано.");
+        }
+
+        [Fact]
+        public void StoreVariableFromDictionary_NoKey_ReturnException()
+        {
+            var steps = new VariableSteps(variableController);
+            var table = new Table(new string[] { "Test" });
+            table.AddRow("5");
+            var dictionary = steps.TransformationTableToDictionary(table);
+            var varName = "Test";
+            steps.StoreDictionaryAsVariableNoType(varName, dictionary);
+            var newVarName = "tmp";
+            Action act = () => steps.StoreVariableFromDictionary(varName, null, newVarName);
+            act.Should().Throw<Exception>()
+                .WithMessage("Expected key not to be <null> because Значение \"key\" не задано.");
+        }
+
+        [Fact]
+        public void StoreVariableFromDictionary_NoVarName_ReturnException()
+        {
+            var steps = new VariableSteps(variableController);
+            var table = new Table(new string[] { "Test" });
+            table.AddRow("5");
+            var dictionary = steps.TransformationTableToDictionary(table);
+            var key = "Test";
+            var varName = "Test";
+            steps.StoreDictionaryAsVariableNoType(varName, dictionary);
+            Action act = () => steps.StoreVariableFromDictionary(varName, key, null);
+            act.Should().Throw<Exception>()
+                .WithMessage("Expected varName not to be <null> because Значение \"varName\" не задано.");
+        }
+
+        [Theory]
+        [InlineData("string")]
+        [InlineData("test")]
+        [InlineData("845")]
+        public void StoreVariableFromDictionary_ReturnTrue(string value)
+        {
+            var steps = new VariableSteps(variableController);
+            var table = new Table(new string[] { "Test" });
+            table.AddRow(value);
+            var dictionary = steps.TransformationTableToDictionary(table);
+            var key = "Test";
+            var varName = "Test";
+            steps.StoreDictionaryAsVariableNoType(varName, dictionary);
+            var newVarName = "tmp";
+            steps.StoreVariableFromDictionary(varName, key, newVarName);
+            var result = variableController.GetVariableValueText(newVarName);
+            result.Should().Be(value);
         }
     }
 }
