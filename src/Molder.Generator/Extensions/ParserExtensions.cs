@@ -27,7 +27,7 @@ namespace Molder.Generator.Extensions
             var keys = table.Header.ToList();
             table.Rows.ToList().Count.Should().Be(1, "Table must have only 2 rows: Keys and Values");
             var values = table.Rows.ToList()[0];
-            for  (var i=0 ; i < keys.Count ; i++)
+            for (var i = 0; i < keys.Count; i++)
             {
                 enumerable.Add(variableController.ReplaceVariables(keys[i]) ?? keys[i], variableController.ReplaceVariables(values[i]) ?? values[i]);
             }

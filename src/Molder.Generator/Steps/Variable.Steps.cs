@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Threading;
 using System.Xml.Linq;
+using System.Linq;
 using FluentAssertions;
 using Molder.Controllers;
 using Molder.Helpers;
@@ -488,30 +489,37 @@ namespace Molder.Generator.Steps
                 case List<object> listObj:
                     var valueObj = listObj.GetRandomValueFromEnumerable();
                     variableController.SetVariable(varName, valueObj.GetType(), valueObj);
+                    Log.Logger().LogDebug($"Got random variable {valueObj} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
                     break;
                 case List<int> listInt:
                     var valueInt = listInt.GetRandomValueFromEnumerable();
                     variableController.SetVariable(varName, valueInt.GetType(), valueInt);
+                    Log.Logger().LogDebug($"Got random variable {valueInt} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
                     break;
                 case List<bool> listBool:
                     var valueBool = listBool.GetRandomValueFromEnumerable();
                     variableController.SetVariable(varName, valueBool.GetType(), valueBool);
+                    Log.Logger().LogDebug($"Got random variable {valueBool} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
                     break;
                 case List<double> listDouble:
                     var valueDouble = listDouble.GetRandomValueFromEnumerable();
                     variableController.SetVariable(varName, valueDouble.GetType(), valueDouble);
+                    Log.Logger().LogDebug($"Got random variable {valueDouble} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
                     break;
                 case List<string> listString:
                     var valueString = listString.GetRandomValueFromEnumerable();
                     variableController.SetVariable(varName, valueString.GetType(), valueString);
+                    Log.Logger().LogDebug($"Got random variable {valueString} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
                     break;
                 case List<float> listFloat:
                     var valueFloat = listFloat.GetRandomValueFromEnumerable();
                     variableController.SetVariable(varName, valueFloat.GetType(), valueFloat);
+                    Log.Logger().LogDebug($"Got random variable {valueFloat} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
                     break;
                 case List<long> listLong:
                     var valueLong = listLong.GetRandomValueFromEnumerable();
                     variableController.SetVariable(varName, valueLong.GetType(), valueLong);
+                    Log.Logger().LogDebug($"Got random variable {valueLong} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
                     break;
             }
         }
@@ -529,52 +537,48 @@ namespace Molder.Generator.Steps
             collectionName.Should().NotBeNull("Значение \"collectionName\" не задано");
             varName.Should().NotBeNull("Значение \"varName\" не задано");
             number.Should().NotBeNull("Значение \"number\" не задано");
-            if (!int.TryParse(number, out var numberValue)) throw new NotValidNumberException($"Значение \"{number}\" не является числом.");
+            if (!int.TryParse(number, out var numberValue)) throw new NotValideNumberException($"Значение \"{number}\" не является числом.");
             var collection = this.variableController.GetVariableValue(collectionName);
             (collection is IEnumerable).Should().BeTrue($"\"{collectionName}\" не является коллекцией");
+            var count = ((IEnumerable)collection).Cast<object>().ToList().Count;
+            count.Should().BeGreaterThan(numberValue,
+                        $"Номер значения - \"{number}\" не содержится в коллекции \"{collectionName}\" с размером {count}");
             switch (collection)
             {
                 case List<object> listObj:
-                    listObj.Count.Should().BeGreaterThan(numberValue,
-                        $"Номер значения - \"{number}\" не содержится в коллекции \"{collectionName}\" с размером {listObj.Count}");
                     var valueObj = listObj.GetValueFromEnumerable(numberValue);
-                    this.variableController.SetVariable(varName, valueObj.GetType(), valueObj);
+                    variableController.SetVariable(varName, valueObj.GetType(), valueObj);
+                    Log.Logger().LogDebug($"Got variable {valueObj} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
                     break;
                 case List<int> listInt:
-                    listInt.Count.Should().BeGreaterThan(numberValue,
-                        $"Номер значения - \"{number}\" не содержится в коллекции \"{collectionName}\" с размером {listInt.Count}");
                     var valueInt = listInt.GetValueFromEnumerable(numberValue);
-                    this.variableController.SetVariable(varName, valueInt.GetType(), valueInt);
+                    variableController.SetVariable(varName, valueInt.GetType(), valueInt);
+                    Log.Logger().LogDebug($"Got variable {valueInt} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
                     break;
                 case List<bool> listBool:
-                    listBool.Count.Should().BeGreaterThan(numberValue,
-                        $"Номер значения - \"{number}\" не содержится в коллекции \"{collectionName}\" с размером {listBool.Count}");
                     var valueBool = listBool.GetValueFromEnumerable(numberValue);
-                    this.variableController.SetVariable(varName, valueBool.GetType(), valueBool);
+                    variableController.SetVariable(varName, valueBool.GetType(), valueBool);
+                    Log.Logger().LogDebug($"Got variable {valueBool} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
                     break;
                 case List<double> listDouble:
-                    listDouble.Count.Should().BeGreaterThan(numberValue,
-                        $"Номер значения - \"{number}\" не содержится в коллекции \"{collectionName}\" с размером {listDouble.Count}");
                     var valueDouble = listDouble.GetValueFromEnumerable(numberValue);
-                    this.variableController.SetVariable(varName, valueDouble.GetType(), valueDouble);
+                    variableController.SetVariable(varName, valueDouble.GetType(), valueDouble);
+                    Log.Logger().LogDebug($"Got variable {valueDouble} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
                     break;
                 case List<string> listString:
-                    listString.Count.Should().BeGreaterThan(numberValue,
-                        $"Номер значения - \"{number}\" не содержится в коллекции \"{collectionName}\" с размером {listString.Count}");
                     var valueString = listString.GetValueFromEnumerable(numberValue);
-                    this.variableController.SetVariable(varName, valueString.GetType(), valueString);
+                    variableController.SetVariable(varName, valueString.GetType(), valueString);
+                    Log.Logger().LogDebug($"Got variable {valueString} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
                     break;
                 case List<float> listFloat:
-                    listFloat.Count.Should().BeGreaterThan(numberValue,
-                        $"Номер значения - \"{number}\" не содержится в коллекции \"{collectionName}\" с размером {listFloat.Count}");
                     var valueFloat = listFloat.GetValueFromEnumerable(numberValue);
-                    this.variableController.SetVariable(varName, valueFloat.GetType(), valueFloat);
+                    variableController.SetVariable(varName, valueFloat.GetType(), valueFloat);
+                    Log.Logger().LogDebug($"Got variable {valueFloat} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
                     break;
                 case List<long> listLong:
-                    listLong.Count.Should().BeGreaterThan(numberValue,
-                        $"Номер значения - \"{number}\" не содержится в коллекции \"{collectionName}\" с размером {listLong.Count}");
                     var valueLong = listLong.GetValueFromEnumerable(numberValue);
-                    this.variableController.SetVariable(varName, valueLong.GetType(), valueLong);
+                    variableController.SetVariable(varName, valueLong.GetType(), valueLong);
+                    Log.Logger().LogDebug($"Got variable {valueLong} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
                     break;
             }
         }
@@ -589,6 +593,7 @@ namespace Molder.Generator.Steps
         {
             varName.Should().NotBeNull("Значение \"varname\" не задано");
             this.variableController.SetVariable(varName, dictionary.GetType(), dictionary);
+
         }
 
         /// <summary>
@@ -603,6 +608,7 @@ namespace Molder.Generator.Steps
             dictionaryName.Should().NotBeNull("Значение \"dictionaryName\" не задано");
             var value = ((Dictionary<string, object>)this.variableController.GetVariableValue(dictionaryName)).GetRandomValueFromDictionary();
             this.variableController.SetVariable(varName, value.GetType(), value);
+            Log.Logger().LogDebug($"Got random variable {value} from dictionary \"{dictionaryName}\" and put it into new variable\"{varName}\"");
         }
 
         /// <summary>
@@ -620,6 +626,7 @@ namespace Molder.Generator.Steps
             var value = ((Dictionary<string, object>)this.variableController.GetVariableValue(dictionaryName)).GetValueFromDictionary(key);
             value.Should().NotBeNull($"В словаре {dictionaryName} нет записи с ключом {key}");
             this.variableController.SetVariable(varName, value.GetType(), value);
+            Log.Logger().LogDebug($"Got variable {value} from dictionary \"{dictionaryName}\" and put it into new variable\"{varName}\"");
         }
     }
 }

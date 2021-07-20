@@ -929,26 +929,28 @@ namespace Molder.Generator.Tests
                 .WithMessage("Expected (collection is IEnumerable) to be true because \"Test\" не является коллекцией, but found False.");
         }
 
-        [Theory]
-        [InlineData("int", "5", "Int32")]
-        [InlineData("object", "5", "String")]
-        [InlineData("long", "5", "Int64")]
-        [InlineData("float", "5", "Single")]
-        [InlineData("double", "5", "Double")]
-        [InlineData("string", "test", "String")]
-        [InlineData("bool", "True", "Boolean")]
-        public void StoreVariableFromEnumerable_ReturnTrue(string type, string value, string resultType)
+        public static IEnumerable<object[]> Data =>
+        new List<object[]>
         {
+            new object[] { new List<object> { 0, 1, 2, 3, 4, 5, 6 }, TypeCode.Int32, },
+            new object[] { new List<object> { 0, 1, 2, 3, 4, 5, 6 }, TypeCode.Object },
+            new object[] { new List<object> { 0, 1, 2, 3, 4, 5, 6 }, TypeCode.Int64 },
+            new object[] { new List<object> { 0, 1, 2, 3, 4, 5, 6 }, TypeCode.Single },
+            new object[] { new List<object> { 0.0, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6 }, TypeCode.Double },
+            new object[] { new List<object> { "0", "1", "2", "3", "4", "5", "6" }, TypeCode.String },
+            new object[] { new List<object> { true, false }, TypeCode.Boolean }
+        };
+
+        [Theory]
+        [MemberData(nameof(Data))]
+        public void StoreVariableFromEnumerable_ReturnTrue( List<object> collection, TypeCode type)
+        {
+            var expected = collection[1];
             var steps = new VariableSteps(variableController);
-            var table = new Table(new string[] { value });
-            var varName = "Test";
-            var newVarName = "Test2";
-            var varType = steps.StringToTypeCode(type);
-            var res = steps.TransformationTableToEnumerable(table);
-            steps.StoreEnumerableAsVariableWithType(varType, varName, res);
-            steps.StoreVariableFromEnumerable(varName, "0", newVarName);
-            var result = variableController.GetVariableValue(newVarName);
-            result.GetType().Name.Should().Be(resultType);
+            steps.StoreEnumerableAsVariableWithType(type, "Test", collection);
+            steps.StoreVariableFromEnumerable("Test", "1","Test2");
+            var actual = variableController.GetVariableValue("Test2");
+            expected.Should().BeEquivalentTo(actual);
         }
 
         [Fact]
@@ -1000,7 +1002,7 @@ namespace Molder.Generator.Tests
             steps.StoreEnumerableAsVariableWithType(varType, varName, res);
             Action act = () => steps.StoreVariableFromEnumerable(varName, "10", "Test2");
             act.Should().Throw<Exception>()
-                .WithMessage("Expected listInt.Count to be greater than 10 because Номер значения - \"10\" не содержится в коллекции \"Test\" с размером 1, but found 1.");
+                .WithMessage("Expected count to be greater than 10 because Номер значения - \"10\" не содержится в коллекции \"Test\" с размером 1, but found 1.");
         }
 
         [Fact]

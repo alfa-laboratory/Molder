@@ -2,6 +2,7 @@
 using Molder.Generator.Extensions;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Xunit;
 
 namespace Molder.Generator.Tests
@@ -14,46 +15,43 @@ namespace Molder.Generator.Tests
         public static IEnumerable<object[]> Data =>
         new List<object[]>
         {
-            new object[] { "test", 2, 3.45,999999999999999L, 5.5f, true }
+            new object[] { new List<object> { "test", 2, 3.45, 999999999999999L, 5.5f, true } }
         };
 
         [Theory]
         [MemberData(nameof(Data))]
-        public void GetRandomValueFromEnumerable_ReturnTrue(string value1, int value2, double value3, long value4, float value5, bool value6)
+        public void GetRandomValueFromEnumerable_ReturnTrue(List<object> collection)
         {
-            var collection = new List<object>() { value1, value2, value3, value4, value5, value6 };
             var resVar = collection.GetRandomValueFromEnumerable();
             collection.Should().Contain(resVar);
         }
 
         public static IEnumerable<object[]> DataForDictionary =>
-        new List<object[]>
-        {
-            new object[] { "test", "qwerty", "asd", 456, "wer", true }
+            new List<object[]>
+            {
+                new object[] { new Dictionary<string,object> 
+                {
+                    { "test", "qwerty"}, 
+                    { "asd", 456 }, 
+                    { "wer", true } 
+                } 
+            } 
         };
 
         [Theory]
         [MemberData(nameof(DataForDictionary))]
-        public void GetRandomValueFromDictionary_ReturnTrue(string key1, object value1, string key2, object value2, string key3, object value3)
+        public void GetRandomValueFromDictionary_ReturnTrue(Dictionary<string, object> dictionary)
         {
-            var dictionary = new Dictionary<string,object>();
-            dictionary.Add(key1, value1);
-            dictionary.Add(key2, value2);
-            dictionary.Add(key3, value3);
             var resVar = dictionary.GetRandomValueFromDictionary();
             dictionary.Values.Should().Contain(resVar);
         }
 
         [Theory]
         [MemberData(nameof(DataForDictionary))]
-        public void GetValueFromDictionary_ReturnTrue(string key1, object value1, string key2, object value2, string key3, object value3)
-        {
-            var dictionary = new Dictionary<string, object>();
-            dictionary.Add(key1, value1);
-            dictionary.Add(key2, value2);
-            dictionary.Add(key3, value3);
-            var resVar = dictionary.GetValueFromDictionary(key2);
-            resVar.Should().Be(value2);
+        public void GetValueFromDictionary_ReturnTrue(Dictionary<string, object> dictionary)
+        {   var key = (string)(Enumerable.ToList(dictionary.Keys)[1]);
+            var resVar = dictionary.GetValueFromDictionary(key);
+            resVar.Should().Be(dictionary[key]);
         }
     }
 }
