@@ -61,7 +61,7 @@ namespace Molder.Generator.Steps
             };
             type.Should().NotBeNull("Значение \"type\" не задано");
             type = type.ToLower();
-            if (!variablesType.TryGetValue(type, out Type value)) throw new NotValideTypeException($"There is no type \"{type}\"");
+            if (!variablesType.TryGetValue(type, out Type value)) throw new NotValidTypeException($"There is no type \"{type}\"");
             return Type.GetTypeCode(value);
         }
 
@@ -537,7 +537,7 @@ namespace Molder.Generator.Steps
             collectionName.Should().NotBeNull("Значение \"collectionName\" не задано");
             varName.Should().NotBeNull("Значение \"varName\" не задано");
             number.Should().NotBeNull("Значение \"number\" не задано");
-            if (!int.TryParse(number, out var numberValue)) throw new NotValideNumberException($"Значение \"{number}\" не является числом.");
+            if (!int.TryParse(number, out var numberValue)) throw new NotValidNumberException($"Значение \"{number}\" не является числом.");
             var collection = this.variableController.GetVariableValue(collectionName);
             (collection is IEnumerable).Should().BeTrue($"\"{collectionName}\" не является коллекцией");
             var count = ((IEnumerable)collection).Cast<object>().ToList().Count;

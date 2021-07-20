@@ -44,7 +44,7 @@ namespace Molder.Generator.Extensions
                     tmpList.Add((T)Convert.ChangeType(value, typeof(T)));
                 }
                 catch (Exception){
-                    throw new NotValideCastException($"значение \"{value}\" не подходит под формат {typeof(T)}");
+                    throw new NotValidCastException($"значение \"{value}\" не подходит под формат {typeof(T)}");
                 }
             }
             return tmpList;

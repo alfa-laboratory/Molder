@@ -78,7 +78,7 @@ namespace Molder.Generator.Tests
         {
             var enumerable = new List<object>() { "test" };
             Action act = () => ((IEnumerable<object>)enumerable).TryParse<int>();
-            act.Should().Throw<NotValideCastException>();
+            act.Should().Throw<NotValidCastException>();
         }
 
         [Fact]
@@ -86,7 +86,7 @@ namespace Molder.Generator.Tests
         {
             var enumerable = new List<object>() { 999999999999999L };
             Action act = () => ((IEnumerable<object>)enumerable).TryParse<int>();
-            act.Should().Throw<NotValideCastException>();
+            act.Should().Throw<NotValidCastException>();
         }
 
         public static IEnumerable<object[]> Data =>
