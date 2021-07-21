@@ -14,6 +14,8 @@ using System.Xml.XPath;
 using Molder.Infrastructures;
 using Microsoft.Extensions.Logging;
 using System.IO;
+using System.Collections.Generic;
+using System.Collections;
 
 namespace Molder.Controllers
 {
@@ -181,6 +183,18 @@ namespace Molder.Controllers
                     var objArray = ((Array)varValue).Cast<object>().ToArray();
                     varValue = (objArray)[index];
                     varType = varType.GetElementType();
+                }
+
+                if (typeof(IEnumerable).IsAssignableFrom(varType) && index >= 0)
+                {
+                    var objList = ((IEnumerable)varValue).Cast<object>().ToList();
+                    return objList[index];
+                }
+
+                if (typeof(ICollection).IsAssignableFrom(varType) && keyPath != string.Empty)
+                {
+                    var objDict = ((Dictionary<string,object>)varValue);
+                    return objDict[keyPath];
                 }
 
                 if (typeof(BsonDocument).IsAssignableFrom(varType))

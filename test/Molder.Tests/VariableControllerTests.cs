@@ -310,7 +310,7 @@ namespace Molder.Tests
             act
               .Should().Throw<ArgumentException>()
               .WithMessage($"Element with key: \"{key}\" has already created with type 'Global'");
-        }        
+        }
 
         [Fact]
         public void GetVariableValue_SearchDataTable_ReturnValue()
@@ -351,7 +351,7 @@ namespace Molder.Tests
 
             var variable = variableContext.GetVariableValue("DataTable[0]");
             (variable is DataRow).Should().BeTrue();
-        }       
+        }
 
         [Fact]
         public void GetVariableValue_VariableValueNullByName_ReturnNull()
@@ -437,7 +437,7 @@ namespace Molder.Tests
 
         [Theory]
         [InlineData("xml", typeof(XmlDocument), Xml, "xml.//street", "Baker street")]
-        [InlineData("xml", typeof(XmlDocument), Xml, "xml.//house",  "5")]
+        [InlineData("xml", typeof(XmlDocument), Xml, "xml.//house", "5")]
         public void GetVariableValueText_CorrectVariableXml_ReturnText(string key, Type type, string value, string searchKey, string searchValue)
         {
             var doc = new XmlDocument();
@@ -449,7 +449,7 @@ namespace Molder.Tests
         }
 
         [Theory]
-        [InlineData("xDoc", typeof(XDocument), Xml, "xDoc",             "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<addresses xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"test.xsd\">\r\n  <address>\r\n    <name>Joe Tester</name>\r\n    <street>Baker street</street>\r\n    <house>5</house>\r\n  </address>\r\n</addresses>")]
+        [InlineData("xDoc", typeof(XDocument), Xml, "xDoc", "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<addresses xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"test.xsd\">\r\n  <address>\r\n    <name>Joe Tester</name>\r\n    <street>Baker street</street>\r\n    <house>5</house>\r\n  </address>\r\n</addresses>")]
         [InlineData("xDoc", typeof(XDocument), Xml, "xDoc.//addresses", "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<addresses xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"test.xsd\">\r\n  <address>\r\n    <name>Joe Tester</name>\r\n    <street>Baker street</street>\r\n    <house>5</house>\r\n  </address>\r\n</addresses>")]
         [InlineData("xDoc", typeof(XDocument), Xml, "xDoc.//address", "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<address>\r\n  <name>Joe Tester</name>\r\n  <street>Baker street</street>\r\n  <house>5</house>\r\n</address>")]
         public void GetVariableValueText_CorrectVariablexDocRoot_ReturnText(string key, Type type, string value, string searchKey, string expected)
@@ -574,6 +574,45 @@ namespace Molder.Tests
             variableContext.SetVariable("$enc#", typeof(string), "W9qNIafQbJCZzEafUaYmQw==");
             var value = variableContext.GetVariableValue("enc");
             value.Should().Be("test");
+        }
+
+        public static IEnumerable<object[]> DataForEnumerable =>
+            new List<object[]>
+            {
+                new object[] { new List<object> { 5, 6, 7, 4 }},
+                new object[] { new List<object> { 5.5, 6.6, 7.7, 4.4 }},
+                new object[] { new List<object> { 9999999999999, 6, 7, 4 }},
+                new object[] { new List<object> { 5.5f, 6.6f }},
+                new object[] { new List<object> { "test", "qwerty" }},
+                new object[] { new List<object> { true, false }},
+                new object[] { new List<object> { 5, "test" }},
+            };
+
+        [Theory]
+        [MemberData(nameof(DataForEnumerable))]
+        public void GetVariableValue_Enumerable_ReturnValue(List <object> collection)
+        {
+            variableContext.SetVariable("Test",collection.GetType(),collection);
+            var actual = variableContext.GetVariableValue("Test[0]");
+            actual.Should().Be(collection[0]);
+        }
+
+        public static IEnumerable<object[]> DataForDictionary =>
+            new List<object[]>
+            {
+                new object[] { new Dictionary<string,object> {
+                    { "test","qwerty"},
+                    { "asdf",12345}
+                }}
+            };
+
+        [Theory]
+        [MemberData(nameof(DataForDictionary))]
+        public void GetVariableValue_Dictionary_ReturnValue(Dictionary<string, object> dictionary)
+        {
+            variableContext.SetVariable("Test", dictionary.GetType(), dictionary);
+            var actual = variableContext.GetVariableValue("Test[asdf]");
+            actual.Should().Be(dictionary["asdf"]);
         }
     }
 }
