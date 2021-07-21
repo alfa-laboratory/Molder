@@ -12,7 +12,7 @@ using System.Xml.Linq;
 using Xunit;
 using Molder.Models;
 using Molder.Infrastructures;
-using Molder.Helpers;
+using Molder.Exceptions;
 
 namespace Molder.Tests
 {
@@ -597,22 +597,92 @@ namespace Molder.Tests
             actual.Should().Be(collection[0]);
         }
 
+        [Theory]
+        [MemberData(nameof(DataForEnumerable))]
+        public void GetVariableValue_EnumerableNoIndex_ReturnCollection(List<object> collection)
+        {
+            variableContext.SetVariable("Test", collection.GetType(), collection);
+            var actual = variableContext.GetVariableValue("Test");
+            actual.Should().BeEquivalentTo(collection);
+        }
+
+        [Fact]
+        public void GetVariableValue_EnumerableWrongIndex_ReturnException()
+        {
+            var collection = new List<object>() { 5, 6 };
+            variableContext.SetVariable("Test", collection.GetType(), collection);
+            Action act = () => variableContext.GetVariableValue("Test[9]");
+            act.Should().Throw<ArgumentOutOfRangeException>();
+        }
+
         public static IEnumerable<object[]> DataForDictionary =>
             new List<object[]>
             {
                 new object[] { new Dictionary<string,object> {
                     { "test","qwerty"},
                     { "asdf",12345}
-                }}
+                }, "Test[]" },
+
+                new object[] { new Dictionary<string,object> {
+                    { "test","qwerty"},
+                    { "asdf",12345}
+                }, "Test[   ]" }
             };
 
         [Theory]
         [MemberData(nameof(DataForDictionary))]
-        public void GetVariableValue_Dictionary_ReturnValue(Dictionary<string, object> dictionary)
+        public void GetVariableValue_Dictionary_ReturnValue(Dictionary<string, object> dictionary, string _)
         {
             variableContext.SetVariable("Test", dictionary.GetType(), dictionary);
             var actual = variableContext.GetVariableValue("Test[asdf]");
             actual.Should().Be(dictionary["asdf"]);
+        }
+
+        [Theory]
+        [MemberData(nameof(DataForDictionary))]
+        public void GetVariableValue_DictionaryNoKey_ReturnDictionary(Dictionary<string, object> dictionary, string regex)
+        {
+            variableContext.SetVariable("Test", dictionary.GetType(), dictionary);
+            var actual = variableContext.GetVariableValue(regex);
+            actual.Should().Be(dictionary);
+        }
+
+        [Theory]
+        [MemberData(nameof(DataForEnumerable))]
+        public void GetVariableValueText_Enumerable_ReturnValueText(List<object> collection)
+        {
+            variableContext.SetVariable("Test", collection.GetType(), collection);
+            var actual = variableContext.GetVariableValueText("Test[0]");
+            actual.Should().BeEquivalentTo(collection[0].ToString());
+        }
+
+        [Fact]
+        public void GetVariableValueText_EnumerableNoIndex_ReturnException()
+        {
+            var collection = new List<object>() { 5, 6 };
+            variableContext.SetVariable("Test", collection.GetType(), collection);
+            Action act =() => variableContext.GetVariableValueText("Test");
+            act.Should().Throw<IEnumerableException>()
+                .WithMessage("IEnumerable cant be converted to String");
+        }
+
+        [Theory]
+        [MemberData(nameof(DataForDictionary))]
+        public void GetVariableValueText_Dictionary_ReturnValueText(Dictionary<string,object> dictionary, string _)
+        {
+            variableContext.SetVariable("Test", dictionary.GetType(), dictionary);
+            var actual = variableContext.GetVariableValueText("Test[asdf]");
+            actual.Should().Be(dictionary["asdf"].ToString());
+        }
+
+        [Fact]
+        public void GetVariableValueText_DictionaryNoKey_ReturnException()
+        {
+            var dictionary = new Dictionary<string, object>() { { "test", "qwerty" } };
+            variableContext.SetVariable("Test", dictionary.GetType(), dictionary);
+            Action act = () => variableContext.GetVariableValueText("Test");
+            act.Should().Throw<IEnumerableException>()
+                .WithMessage("IEnumerable cant be converted to String");
         }
     }
 }
