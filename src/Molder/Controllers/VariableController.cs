@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using System.IO;
 using System.Collections.Generic;
 using System.Collections;
+using Molder.Exceptions;
 
 namespace Molder.Controllers
 {
@@ -185,16 +186,40 @@ namespace Molder.Controllers
                     varType = varType.GetElementType();
                 }
 
-                if (typeof(IEnumerable).IsAssignableFrom(varType) && index >= 0)
+                if (typeof(Dictionary<string, object>).IsAssignableFrom(varType))
                 {
-                    var objList = ((IEnumerable)varValue).Cast<object>().ToList();
-                    return objList[index];
+                    if (!string.IsNullOrWhiteSpace(keyPath))
+                    {
+                        var objDict = ((Dictionary<string, object>)varValue);
+                        return objDict[keyPath];
+                    }
+                    else
+                    {
+                        throw new KeyIsNotValidException($"Key {keyPath} is not valid");
+                    }
                 }
 
-                if (typeof(ICollection).IsAssignableFrom(varType) && keyPath != string.Empty)
+                if (typeof(IEnumerable).IsAssignableFrom(varType))
                 {
-                    var objDict = ((Dictionary<string,object>)varValue);
-                    return objDict[keyPath];
+                    if (index >= 0)
+                    {
+                        var objList = ((IEnumerable)varValue).Cast<object>().ToList();
+                        return objList[index];
+                    }
+                    else
+                    {
+                        throw new IndexIsNotValidException($"Index {index} is less then 0");
+                    }
+                }
+
+                if (typeof(IEnumerable).IsAssignableFrom(varType) && index < 0)
+                {
+                    throw new IndexIsNotValidException($"Index {index} is less then 0");
+                }
+
+                if (typeof(ICollection).IsAssignableFrom(varType) && string.IsNullOrWhiteSpace(keyPath))
+                {
+                    throw new KeyIsNotValidException($"Key {keyPath} is not valid");
                 }
 
                 if (typeof(BsonDocument).IsAssignableFrom(varType))
