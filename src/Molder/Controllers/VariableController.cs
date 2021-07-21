@@ -16,7 +16,6 @@ using Microsoft.Extensions.Logging;
 using System.IO;
 using System.Collections.Generic;
 using System.Collections;
-using Molder.Exceptions;
 
 namespace Molder.Controllers
 {
@@ -186,42 +185,6 @@ namespace Molder.Controllers
                     varType = varType.GetElementType();
                 }
 
-                if (typeof(Dictionary<string, object>).IsAssignableFrom(varType))
-                {
-                    if (!string.IsNullOrWhiteSpace(keyPath))
-                    {
-                        var objDict = ((Dictionary<string, object>)varValue);
-                        return objDict[keyPath];
-                    }
-                    else
-                    {
-                        throw new KeyIsNotValidException($"Key {keyPath} is not valid");
-                    }
-                }
-
-                if (typeof(IEnumerable).IsAssignableFrom(varType))
-                {
-                    if (index >= 0)
-                    {
-                        var objList = ((IEnumerable)varValue).Cast<object>().ToList();
-                        return objList[index];
-                    }
-                    else
-                    {
-                        throw new IndexIsNotValidException($"Index {index} is less then 0");
-                    }
-                }
-
-                if (typeof(IEnumerable).IsAssignableFrom(varType) && index < 0)
-                {
-                    throw new IndexIsNotValidException($"Index {index} is less then 0");
-                }
-
-                if (typeof(ICollection).IsAssignableFrom(varType) && string.IsNullOrWhiteSpace(keyPath))
-                {
-                    throw new KeyIsNotValidException($"Key {keyPath} is not valid");
-                }
-
                 if (typeof(BsonDocument).IsAssignableFrom(varType))
                 {
                     var json = JObject.Parse(((BsonDocument)varValue).ToJson(new JsonWriterSettings { OutputMode = JsonOutputMode.CanonicalExtendedJson }));
@@ -249,7 +212,19 @@ namespace Molder.Controllers
                 {
                     return ((XmlNode)varValue).SelectSingleNode(path ?? "/*");
                 }
+                
+                if (typeof(Dictionary<string, object>).IsAssignableFrom(varType))
+                {
+                    var objDict = ((Dictionary<string, object>)varValue);
+                    return !string.IsNullOrWhiteSpace(keyPath) ? objDict[keyPath] : objDict;
+                }
 
+                if (typeof(ICollection).IsAssignableFrom(varType))
+                {
+                    var objList = ((IEnumerable)varValue).Cast<object>().ToList();
+                    return index >= 0 ? objList[index] : objList;
+                }
+                
                 try
                 {
                     if (typeof(DataRow).IsAssignableFrom(varType))
@@ -258,11 +233,7 @@ namespace Molder.Controllers
                         {
                             return ((DataRow)varValue);
                         }
-                        if (int.TryParse(keyPath, out int id))
-                        {
-                            return ((DataRow)varValue).ItemArray[id].ToString();
-                        }
-                        return ((DataRow)varValue)[keyPath].ToString();
+                        return int.TryParse(keyPath, out var id) ? ((DataRow)varValue).ItemArray[id].ToString() : ((DataRow)varValue)[keyPath].ToString();
                     }
 
                     if (!typeof(DataTable).IsAssignableFrom(varType))

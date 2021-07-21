@@ -550,7 +550,7 @@ namespace Molder.Tests
             variableContext.Variables.TryAdd("list", variable);
 
             var value = variableContext.GetVariableValue("list");
-            value.Should().Be(list);
+            value.Should().BeEquivalentTo(list);
         }
 
         [Fact]
