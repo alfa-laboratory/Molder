@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using System.IO;
 using System.Collections.Generic;
 using System.Collections;
+using Molder.Exceptions;
 
 namespace Molder.Controllers
 {
@@ -286,6 +287,7 @@ namespace Molder.Controllers
             string ret;
             switch (val)
             {
+                
                 case XElement element when element.HasElements == false:
                     {
                         ret = element.Value;
@@ -319,6 +321,10 @@ namespace Molder.Controllers
                     }
 
                 default:
+                    if (val is Dictionary<string, object> || val is ICollection)
+                    {
+                        throw new IEnumerableException("IEnumerable cant be converted to String");
+                    }
                     ret = Reflection.ConvertObject<string>(val);
                     break;
             }
