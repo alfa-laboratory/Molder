@@ -426,7 +426,7 @@ namespace Molder.Generator.Steps
         public void StoreEnumerableAsVariableNoType(string varName, IEnumerable<object> collection)
         {
             varName.Should().NotBeNull("Значение \"varName\" не задано");
-            this.variableController.SetVariable(varName, collection.GetType(), collection);
+            variableController.SetVariable(varName, collection.GetType(), collection);
         }
 
         /// <summary>
@@ -442,31 +442,31 @@ namespace Molder.Generator.Steps
             switch (varType) {
                 case TypeCode.Object:
                     var tmpParserObject = collection.TryParse<object>();
-                    this.variableController.SetVariable(varName, tmpParserObject.GetType(), tmpParserObject);
+                    variableController.SetVariable(varName, tmpParserObject.GetType(), tmpParserObject);
                     break;
                 case TypeCode.Int32:
                     var tmpParserInt = collection.TryParse<int>();
-                    this.variableController.SetVariable(varName, tmpParserInt.GetType(), tmpParserInt);
+                    variableController.SetVariable(varName, tmpParserInt.GetType(), tmpParserInt);
                     break;
                 case TypeCode.Boolean:
                     var tmpParserBool = collection.TryParse<bool>();
-                    this.variableController.SetVariable(varName, tmpParserBool.GetType(), tmpParserBool);
+                    variableController.SetVariable(varName, tmpParserBool.GetType(), tmpParserBool);
                     break;
                 case TypeCode.String:
                     var tmpParserString = collection.TryParse<string>();
-                    this.variableController.SetVariable(varName, tmpParserString.GetType(), tmpParserString);
+                    variableController.SetVariable(varName, tmpParserString.GetType(), tmpParserString);
                     break;
                 case TypeCode.Double:
                     var tmpParserStringDouble = collection.TryParse<double>();
-                    this.variableController.SetVariable(varName, tmpParserStringDouble.GetType(), tmpParserStringDouble);
+                    variableController.SetVariable(varName, tmpParserStringDouble.GetType(), tmpParserStringDouble);
                     break;
                 case TypeCode.Single:
                     var tmpParserStringFloat = collection.TryParse<float>();
-                    this.variableController.SetVariable(varName, tmpParserStringFloat.GetType(), tmpParserStringFloat);
+                    variableController.SetVariable(varName, tmpParserStringFloat.GetType(), tmpParserStringFloat);
                     break;
                 case TypeCode.Int64:
                     var tmpParserStringLong = collection.TryParse<long>();
-                    this.variableController.SetVariable(varName, tmpParserStringLong.GetType(), tmpParserStringLong);
+                    variableController.SetVariable(varName, tmpParserStringLong.GetType(), tmpParserStringLong);
                     break;
             }
         }
@@ -481,106 +481,34 @@ namespace Molder.Generator.Steps
         {
             collectionName.Should().NotBeNull("Значение \"collectionName\" не задано");
             varName.Should().NotBeNull("Значение \"varName\" не задано");
-            var collection = this.variableController.GetVariableValue(collectionName);
+            var collection = variableController.GetVariableValue(collectionName);
             collection.Should().NotBeNull($"Значения в переменной \"{collectionName}\" нет");
             (collection is IEnumerable).Should().BeTrue($"\"{collectionName}\" не является коллекцией");
-            switch (collection)
-            {
-                case List<object> listObj:
-                    var valueObj = listObj.GetRandomValueFromEnumerable();
-                    variableController.SetVariable(varName, valueObj.GetType(), valueObj);
-                    Log.Logger().LogDebug($"Got random variable {valueObj} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
-                    break;
-                case List<int> listInt:
-                    var valueInt = listInt.GetRandomValueFromEnumerable();
-                    variableController.SetVariable(varName, valueInt.GetType(), valueInt);
-                    Log.Logger().LogDebug($"Got random variable {valueInt} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
-                    break;
-                case List<bool> listBool:
-                    var valueBool = listBool.GetRandomValueFromEnumerable();
-                    variableController.SetVariable(varName, valueBool.GetType(), valueBool);
-                    Log.Logger().LogDebug($"Got random variable {valueBool} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
-                    break;
-                case List<double> listDouble:
-                    var valueDouble = listDouble.GetRandomValueFromEnumerable();
-                    variableController.SetVariable(varName, valueDouble.GetType(), valueDouble);
-                    Log.Logger().LogDebug($"Got random variable {valueDouble} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
-                    break;
-                case List<string> listString:
-                    var valueString = listString.GetRandomValueFromEnumerable();
-                    variableController.SetVariable(varName, valueString.GetType(), valueString);
-                    Log.Logger().LogDebug($"Got random variable {valueString} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
-                    break;
-                case List<float> listFloat:
-                    var valueFloat = listFloat.GetRandomValueFromEnumerable();
-                    variableController.SetVariable(varName, valueFloat.GetType(), valueFloat);
-                    Log.Logger().LogDebug($"Got random variable {valueFloat} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
-                    break;
-                case List<long> listLong:
-                    var valueLong = listLong.GetRandomValueFromEnumerable();
-                    variableController.SetVariable(varName, valueLong.GetType(), valueLong);
-                    Log.Logger().LogDebug($"Got random variable {valueLong} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
-                    break;
-            }
+            var rand = new Random();
+            var param = rand.Next() % ((IEnumerable)collection).Cast<object>().ToList().Count;
+            var variable = variableController.GetVariableValue(string.Concat(collectionName,"[",param,"]"));
+            variableController.SetVariable(varName, variable.GetType(), variable);
+            Log.Logger().LogDebug($"Got variable {variable} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
         }
 
         /// <summary>
         /// Шаг для сохранения значения из коллекции в переменную.
         /// </summary>
-        /// <param name="collectionName">Идентификатор коллекции.</param>
-        /// <param name="number">Номер переменной.</param>
+        /// <param name="collectionNameIndex">Идентификатор коллекции и индекcа значения.</param>
         /// <param name="varName">Идентификатор переменной.</param>
 
-        [StepDefinition(@"я выбираю значение из коллекции ""(.+)"" с номером ""(.+)"" и записываю его в переменную ""(.+)""")]
-        public void StoreVariableFromEnumerable(string collectionName, string number, string varName)
+        [StepDefinition(@"я выбираю значение из коллекции ""(.+)"" и записываю его в переменную ""(.+)""")]
+        public void StoreVariableFromEnumerable(string collectionNameIndex, string varName)
         {
-            collectionName.Should().NotBeNull("Значение \"collectionName\" не задано");
+            collectionNameIndex.Should().NotBeNull("Значение \"collectionNameIndex\" не задано");
             varName.Should().NotBeNull("Значение \"varName\" не задано");
-            number.Should().NotBeNull("Значение \"number\" не задано");
-            if (!int.TryParse(number, out var numberValue)) throw new NotValidNumberException($"Значение \"{number}\" не является числом.");
-            var collection = this.variableController.GetVariableValue(collectionName);
+            var collectionName = collectionNameIndex.Split("[").First();
+            var collection = variableController.GetVariableValue(collectionName);
             (collection is IEnumerable).Should().BeTrue($"\"{collectionName}\" не является коллекцией");
-            var count = ((IEnumerable)collection).Cast<object>().ToList().Count;
-            count.Should().BeGreaterThan(numberValue,
-                        $"Номер значения - \"{number}\" не содержится в коллекции \"{collectionName}\" с размером {count}");
-            switch (collection)
-            {
-                case List<object> listObj:
-                    var valueObj = listObj.GetValueFromEnumerable(numberValue);
-                    variableController.SetVariable(varName, valueObj.GetType(), valueObj);
-                    Log.Logger().LogDebug($"Got variable {valueObj} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
-                    break;
-                case List<int> listInt:
-                    var valueInt = listInt.GetValueFromEnumerable(numberValue);
-                    variableController.SetVariable(varName, valueInt.GetType(), valueInt);
-                    Log.Logger().LogDebug($"Got variable {valueInt} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
-                    break;
-                case List<bool> listBool:
-                    var valueBool = listBool.GetValueFromEnumerable(numberValue);
-                    variableController.SetVariable(varName, valueBool.GetType(), valueBool);
-                    Log.Logger().LogDebug($"Got variable {valueBool} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
-                    break;
-                case List<double> listDouble:
-                    var valueDouble = listDouble.GetValueFromEnumerable(numberValue);
-                    variableController.SetVariable(varName, valueDouble.GetType(), valueDouble);
-                    Log.Logger().LogDebug($"Got variable {valueDouble} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
-                    break;
-                case List<string> listString:
-                    var valueString = listString.GetValueFromEnumerable(numberValue);
-                    variableController.SetVariable(varName, valueString.GetType(), valueString);
-                    Log.Logger().LogDebug($"Got variable {valueString} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
-                    break;
-                case List<float> listFloat:
-                    var valueFloat = listFloat.GetValueFromEnumerable(numberValue);
-                    variableController.SetVariable(varName, valueFloat.GetType(), valueFloat);
-                    Log.Logger().LogDebug($"Got variable {valueFloat} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
-                    break;
-                case List<long> listLong:
-                    var valueLong = listLong.GetValueFromEnumerable(numberValue);
-                    variableController.SetVariable(varName, valueLong.GetType(), valueLong);
-                    Log.Logger().LogDebug($"Got variable {valueLong} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
-                    break;
-            }
+            var variable = variableController.GetVariableValue(collectionNameIndex);
+            (variable is ICollection).Should().BeFalse($"\"{collectionNameIndex}\" не является значением коллекции");
+            variableController.SetVariable(varName, variable.GetType(), variable);
+            Log.Logger().LogDebug($"Got variable {variable} from collection \"{collectionNameIndex}\" and put it into new variable\"{varName}\"");
         }
 
         /// <summary>
@@ -606,27 +534,34 @@ namespace Molder.Generator.Steps
         {
             varName.Should().NotBeNull("Значение \"varName\" не задано");
             dictionaryName.Should().NotBeNull("Значение \"dictionaryName\" не задано");
-            var value = ((Dictionary<string, object>)this.variableController.GetVariableValue(dictionaryName)).GetRandomValueFromDictionary();
-            this.variableController.SetVariable(varName, value.GetType(), value);
-            Log.Logger().LogDebug($"Got random variable {value} from dictionary \"{dictionaryName}\" and put it into new variable\"{varName}\"");
+            var dictionary = variableController.GetVariableValue(dictionaryName);
+            dictionary.Should().NotBeNull($"Значения в переменной \"{dictionaryName}\" нет");
+            (dictionary is Dictionary<string,object>).Should().BeTrue($"\"{dictionaryName}\" не является словарем");
+            var rand = new Random();
+            var param = rand.Next() % Enumerable.ToList(((Dictionary<string, object>)dictionary).Keys).Count;
+            var key = Enumerable.ToList(((Dictionary<string, object>)dictionary).Keys)[param];
+           var variable = variableController.GetVariableValue(string.Concat(dictionaryName, "[", key, "]"));
+            variableController.SetVariable(varName, variable.GetType(), variable);
+            Log.Logger().LogDebug($"Got variable {variable} from collection \"{dictionaryName}\" and put it into new variable\"{varName}\"");
         }
 
         /// <summary>
         /// Шаг для сохранения значения из коллекции в переменную.
         /// </summary>
-        /// <param name="dictionaryName">Идентификатор словаря.</param>
+        /// <param name="dictionaryNameKey">Идентификатор словаря.</param>
         /// <param name="varName">Идентификатор переменной.</param>
-        [StepDefinition(@"я выбираю значение из словаря ""(.+)"" с ключом ""(.+)"" и записываю его в переменную ""(.+)""")]
-        public void StoreVariableFromDictionary(string dictionaryName, string key, string varName)
+        [StepDefinition(@"я выбираю значение из словаря ""(.+)"" и записываю его в переменную ""(.+)""")]
+        public void StoreVariableFromDictionary(string dictionaryNameKey, string varName)
         {
-            dictionaryName.Should().NotBeNull("Значение \"dictionaryName\" не задано");
-            key.Should().NotBeNull("Значение \"key\" не задано");
+            dictionaryNameKey.Should().NotBeNull("Значение \"dictionaryNameKey\" не задано");
             varName.Should().NotBeNull("Значение \"varName\" не задано");
-            key = variableController.ReplaceVariables(key) ?? key;
-            var value = ((Dictionary<string, object>)this.variableController.GetVariableValue(dictionaryName)).GetValueFromDictionary(key);
-            value.Should().NotBeNull($"В словаре {dictionaryName} нет записи с ключом {key}");
-            this.variableController.SetVariable(varName, value.GetType(), value);
-            Log.Logger().LogDebug($"Got variable {value} from dictionary \"{dictionaryName}\" and put it into new variable\"{varName}\"");
+            var dictionaryName = dictionaryNameKey.Split("[").First();
+            var dictionary = variableController.GetVariableValue(dictionaryName);
+            (dictionary is IEnumerable).Should().BeTrue($"\"{dictionaryName}\" не является словарем");
+            var variable = variableController.GetVariableValue(dictionaryNameKey);
+            (variable is Dictionary<string,object>).Should().BeFalse($"\"{dictionaryNameKey}\" не является значением коллекции");
+            this.variableController.SetVariable(varName, variable.GetType(), variable);
+            Log.Logger().LogDebug($"Got variable {variable} from dictionary \"{dictionaryName}\" and put it into new variable\"{varName}\"");
         }
     }
 }
