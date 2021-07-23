@@ -1593,7 +1593,7 @@ namespace Molder.Generator.Tests
             steps.StoreVariableValueToArrayVariable("test", chars, "nTest");
 
             // Assert
-            var array = (IEnumerable<string>)variableController.GetVariableValue("nTest");
+            var array = (IEnumerable<object>)variableController.GetVariableValue("nTest");
             array.Should().HaveCount(count);
         }
 
