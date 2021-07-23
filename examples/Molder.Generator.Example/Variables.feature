@@ -23,7 +23,7 @@ Scenario: Create Enumerable list
 
 Scenario: Create Dictionary
 	Given я сохраняю словарь в переменную "Test":
-	| Test | Qwerty   | asdf  |
-	| 56   | "qweasd" | "zxc" |
+	| Test | Qwerty | asdf |
+	| 56   | qweasd | zxc  |
 	When я выбираю значение из коллекции "Test[Qwerty]" и записываю его в переменную "tmp"
 	Then write variable "tmp"

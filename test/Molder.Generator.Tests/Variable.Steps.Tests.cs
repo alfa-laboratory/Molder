@@ -959,7 +959,7 @@ namespace Molder.Generator.Tests
             var steps = new VariableSteps(variableController);
             Action act = () => steps.StoreVariableFromEnumerable(null, "Test2");
             act.Should().Throw<Exception>()
-                .WithMessage("Expected collectionNameIndex not to be <null> because Значение \"collectionNameIndex\" не задано.");
+                .WithMessage("Expected collectionName not to be <null> because Значение \"collectionName\" не задано.");
         }
 
         [Fact]
@@ -968,7 +968,7 @@ namespace Molder.Generator.Tests
             var steps = new VariableSteps(variableController);
             Action act = () => steps.StoreVariableFromEnumerable("Test", "Test2");
             act.Should().Throw<Exception>()
-                .WithMessage("Expected (collection is IEnumerable) to be true because \"Test\" не является коллекцией, but found False.");
+                .WithMessage("Expected collection not to be <null> because Значения в переменной \"Test\" нет.");
         }
 
         [Fact]
@@ -1070,7 +1070,7 @@ namespace Molder.Generator.Tests
             variableController.SetVariable("Test", variable.GetType(), variable);
             Action act = () => steps.StoreRandomVariableFromDictionary("Test", "Test2");
             act.Should().Throw<Exception>()
-                .WithMessage("Expected (dictionary is Dictionary<string,object>) to be true because \"Test\" не является словарем, but found False.");
+                .WithMessage("Expected (dictionary is Dictionary<string, object>) to be true because \"Test\" не является словарем, but found False.");
         }
 
         [Theory]
@@ -1095,7 +1095,7 @@ namespace Molder.Generator.Tests
             var steps = new VariableSteps(variableController);
             Action act = () => steps.StoreVariableFromDictionary(null, "Test2");
             act.Should().Throw<Exception>()
-                .WithMessage("Expected dictionaryNameKey not to be <null> because Значение \"dictionaryNameKey\" не задано.");
+                .WithMessage("Expected dictionaryName not to be <null> because Значение \"dictionaryName\" не задано.");
         }
 
         [Fact]

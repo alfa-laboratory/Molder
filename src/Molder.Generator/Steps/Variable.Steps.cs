@@ -481,12 +481,11 @@ namespace Molder.Generator.Steps
         {
             collectionName.Should().NotBeNull("Значение \"collectionName\" не задано");
             varName.Should().NotBeNull("Значение \"varName\" не задано");
+            collectionName.IsEnumerable(variableController);
             var collection = variableController.GetVariableValue(collectionName);
-            collection.Should().NotBeNull($"Значения в переменной \"{collectionName}\" нет");
-            (collection is IEnumerable).Should().BeTrue($"\"{collectionName}\" не является коллекцией");
             var rand = new Random();
             var param = rand.Next() % ((IEnumerable)collection).Cast<object>().ToList().Count;
-            var variable = variableController.GetVariableValue(string.Concat(collectionName,"[",param,"]"));
+            var variable = variableController.GetVariableValue($"{collectionName}[{param}]");
             variableController.SetVariable(varName, variable.GetType(), variable);
             Log.Logger().LogDebug($"Got variable {variable} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
         }
@@ -494,21 +493,19 @@ namespace Molder.Generator.Steps
         /// <summary>
         /// Шаг для сохранения значения из коллекции в переменную.
         /// </summary>
-        /// <param name="collectionNameIndex">Идентификатор коллекции и индекcа значения.</param>
+        /// <param name="collectionName">Идентификатор коллекции и индекcа значения.</param>
         /// <param name="varName">Идентификатор переменной.</param>
 
         [StepDefinition(@"я выбираю значение из коллекции ""(.+)"" и записываю его в переменную ""(.+)""")]
-        public void StoreVariableFromEnumerable(string collectionNameIndex, string varName)
+        public void StoreVariableFromEnumerable(string collectionName, string varName)
         {
-            collectionNameIndex.Should().NotBeNull("Значение \"collectionNameIndex\" не задано");
+            collectionName.Should().NotBeNull("Значение \"collectionName\" не задано");
             varName.Should().NotBeNull("Значение \"varName\" не задано");
-            var collectionName = collectionNameIndex.Split("[").First();
-            var collection = variableController.GetVariableValue(collectionName);
-            (collection is IEnumerable).Should().BeTrue($"\"{collectionName}\" не является коллекцией");
-            var variable = variableController.GetVariableValue(collectionNameIndex);
-            (variable is ICollection).Should().BeFalse($"\"{collectionNameIndex}\" не является значением коллекции");
+            collectionName.IsEnumerable(variableController);
+            var variable = variableController.GetVariableValue(collectionName);
+            (variable is ICollection).Should().BeFalse($"\"{collectionName}\" не является значением коллекции");
             variableController.SetVariable(varName, variable.GetType(), variable);
-            Log.Logger().LogDebug($"Got variable {variable} from collection \"{collectionNameIndex}\" and put it into new variable\"{varName}\"");
+            Log.Logger().LogDebug($"Got variable {variable} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
         }
 
         /// <summary>
@@ -534,13 +531,12 @@ namespace Molder.Generator.Steps
         {
             varName.Should().NotBeNull("Значение \"varName\" не задано");
             dictionaryName.Should().NotBeNull("Значение \"dictionaryName\" не задано");
+            dictionaryName.IsDictionary(variableController);
             var dictionary = variableController.GetVariableValue(dictionaryName);
-            dictionary.Should().NotBeNull($"Значения в переменной \"{dictionaryName}\" нет");
-            (dictionary is Dictionary<string,object>).Should().BeTrue($"\"{dictionaryName}\" не является словарем");
             var rand = new Random();
             var param = rand.Next() % Enumerable.ToList(((Dictionary<string, object>)dictionary).Keys).Count;
             var key = Enumerable.ToList(((Dictionary<string, object>)dictionary).Keys)[param];
-           var variable = variableController.GetVariableValue(string.Concat(dictionaryName, "[", key, "]"));
+           var variable = variableController.GetVariableValue($"{dictionaryName}[{key}]");
             variableController.SetVariable(varName, variable.GetType(), variable);
             Log.Logger().LogDebug($"Got variable {variable} from collection \"{dictionaryName}\" and put it into new variable\"{varName}\"");
         }
@@ -548,18 +544,16 @@ namespace Molder.Generator.Steps
         /// <summary>
         /// Шаг для сохранения значения из коллекции в переменную.
         /// </summary>
-        /// <param name="dictionaryNameKey">Идентификатор словаря.</param>
+        /// <param name="dictionaryName">Идентификатор словаря.</param>
         /// <param name="varName">Идентификатор переменной.</param>
         [StepDefinition(@"я выбираю значение из словаря ""(.+)"" и записываю его в переменную ""(.+)""")]
-        public void StoreVariableFromDictionary(string dictionaryNameKey, string varName)
+        public void StoreVariableFromDictionary(string dictionaryName, string varName)
         {
-            dictionaryNameKey.Should().NotBeNull("Значение \"dictionaryNameKey\" не задано");
+            dictionaryName.Should().NotBeNull("Значение \"dictionaryName\" не задано");
             varName.Should().NotBeNull("Значение \"varName\" не задано");
-            var dictionaryName = dictionaryNameKey.Split("[").First();
-            var dictionary = variableController.GetVariableValue(dictionaryName);
-            (dictionary is IEnumerable).Should().BeTrue($"\"{dictionaryName}\" не является словарем");
-            var variable = variableController.GetVariableValue(dictionaryNameKey);
-            (variable is Dictionary<string,object>).Should().BeFalse($"\"{dictionaryNameKey}\" не является значением коллекции");
+            dictionaryName.IsDictionary(variableController);
+            var variable = variableController.GetVariableValue(dictionaryName);
+            (variable is Dictionary<string,object>).Should().BeFalse($"\"{dictionaryName}\" не является значением коллекции");
             this.variableController.SetVariable(varName, variable.GetType(), variable);
             Log.Logger().LogDebug($"Got variable {variable} from dictionary \"{dictionaryName}\" and put it into new variable\"{varName}\"");
         }
