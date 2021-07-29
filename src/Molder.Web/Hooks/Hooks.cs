@@ -7,6 +7,7 @@ using Molder.Web.Helpers;
 using Molder.Web.Infrastructures;
 using Molder.Web.Models;
 using Molder.Web.Models.Settings;
+using System.Collections.Generic;
 using TechTalk.SpecFlow;
 
 namespace Molder.Web.Hooks
@@ -37,6 +38,26 @@ namespace Molder.Web.Hooks
 
             TreePages.SetVariables(variableController);
             TreePages.Get();
+            var _var = TreePages.Get();
+            LogPageObject(_var);
+        }
+
+        public static void LogPageObject(IEnumerable<Node> pages, int level = 0)
+        {
+            string s = "";
+            for (int i = 0; i < level; i++)
+            {
+                s += "|   ";
+            }
+            foreach (Node page in pages)
+            {
+                if (!(page.Childrens is null))
+                {
+                    Log.Logger().LogDebug(s + "└───" + page.Type.ToString() + "(" + page.Name + ")");
+                    LogPageObject(page.Childrens, level + 1);
+                }
+                else Log.Logger().LogDebug(s + "|   " + page.Type.ToString() + "(" + page.Name + ")");
+            }
         }
 
         [AfterScenario()]
