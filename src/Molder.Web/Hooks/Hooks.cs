@@ -39,7 +39,7 @@ namespace Molder.Web.Hooks
             TreePages.SetVariables(variableController);
             TreePages.Get();
             var pageObject = TreePages.Get();
-            Log.Logger().LogDebug(LogPageObjectExtensions.PageObjectToString(pageObject));
+            Log.Logger().LogDebug(pageObject.PageObjectToString());
         }
 
         [AfterScenario()]

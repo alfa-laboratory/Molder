@@ -82,10 +82,8 @@ namespace Molder.Web.Tests.Extensions
         [MemberData(nameof(Data))]
         public void PageObjectToString(List<Node> pageObject, string actual)
         {
-            var expected = LogPageObjectExtensions.PageObjectToString(pageObject);
-            //Debug.WriteLine(expected);
+            var expected = pageObject.PageObjectToString();
             expected.Should().Be(actual);
-
         }
     }
 }
