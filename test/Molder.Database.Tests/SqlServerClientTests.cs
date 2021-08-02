@@ -19,7 +19,7 @@ namespace Molder.Database.Tests
 
         public SqlServerClientTests()
         {
-            dbConnectionParams = new SqlConnectionStringBuilder() { DataSource = "Test", InitialCatalog = "test", UserID = "test", Password = "W9qNIafQbJCZzEafUaYmQw==", ConnectTimeout = 1, ConnectRetryCount = 0, ConnectRetryInterval = 1 };
+            dbConnectionParams = new SqlConnectionStringBuilder { DataSource = "Test", InitialCatalog = "test", UserID = "test", Password = "W9qNIafQbJCZzEafUaYmQw==", ConnectTimeout = 1, ConnectRetryCount = 0, ConnectRetryInterval = 1 };
         }
 
         [Fact]
@@ -57,7 +57,7 @@ namespace Molder.Database.Tests
             var client = new SqlServerClient();
             Action action = () => client.Create(parameter).Should().BeFalse();
             action.Should()
-                .Throw<System.Exception>()
+                .Throw<Exception>()
                 .WithMessage("Connection failed: Object reference not set to an instance of an object.");
         }
 
@@ -97,7 +97,7 @@ namespace Molder.Database.Tests
             mockSqlProvider.Setup(c => c.SetupCommand(It.IsAny<string>(), null)).Returns(connect.CreateCommand);
 
             client._provider = mockSqlProvider.Object;
-            var (outResult, count) = client.ExecuteQuery(query);
+            var (_, count) = client.ExecuteQuery(query);
 
             count.Should().Be(0);
         }
@@ -112,8 +112,8 @@ namespace Molder.Database.Tests
             var client = new SqlServerClient();
 
             mockSqlProvider
-                .Setup(u => u.UsingTransaction(It.IsAny<Action<SqlTransaction>>(), It.IsAny<Action<Exception>>(), null))
-                .Callback((Action<SqlTransaction> action, Action<Exception> ex, Action success) => new DataTable());
+                .Setup(u => u.UsingTransaction(It.IsAny<Action<SqlTransaction>>(), It.IsAny<Action<Exception>>(), null!))
+                .Callback((Action<SqlTransaction> action, Action<Exception> ex, Action success) => { new DataTable(); });
 
             client._provider = mockSqlProvider.Object;
 
@@ -132,7 +132,7 @@ namespace Molder.Database.Tests
             var client = new SqlServerClient();
 
             mockSqlProvider
-                .Setup(u => u.UsingTransaction(It.IsAny<Action<SqlTransaction>>(), It.IsAny<Action<Exception>>(), null))
+                .Setup(u => u.UsingTransaction(It.IsAny<Action<SqlTransaction>>(), It.IsAny<Action<Exception>>(), null!))
                 .Callback((Action<SqlTransaction> action, Action<Exception> ex, Action success) => new DataTable());
 
             client._provider = mockSqlProvider.Object;
@@ -169,7 +169,7 @@ namespace Molder.Database.Tests
             var client = new SqlServerClient();
 
             mockSqlProvider
-                .Setup(u => u.UsingTransaction(It.IsAny<Action<SqlTransaction>>(), It.IsAny<Action<Exception>>(), null))
+                .Setup(u => u.UsingTransaction(It.IsAny<Action<SqlTransaction>>(), It.IsAny<Action<Exception>>(), null!))
                 .Callback((Action<SqlTransaction> action, Action<Exception> ex, Action success) => new object());
 
             client._provider = mockSqlProvider.Object;
@@ -178,6 +178,5 @@ namespace Molder.Database.Tests
 
             outResult.Should().BeNull();
         }
-
     }
 }

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <Authors>Egor Shokhin</Authors>
     <Company>AlfaBank</Company>
     <Copyright>2021 AlfaBank</Copyright>
@@ -10,18 +10,23 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IsPackable>true</IsPackable>
     <Description>Library for adding report portal log</Description>
-    <LangVersion>7.1</LangVersion>
-    <PackageVersion>1.0.2</PackageVersion>
+    <LangVersion>9</LangVersion>
+    <PackageVersion>2.0.0-beta</PackageVersion>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>NU1701;1702</NoWarn>
+    <NoWarn>NU1701;1702;CS8604;CS8602;CS8618</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <WarningsAsErrors>NU1701;1702;CS8604;CS8602;CS8618</WarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Molder" Version="1.0.23" />
+    <PackageReference Include="Molder" Version="2.0.0-beta" />
     <PackageReference Include="ReportPortal.Serilog" Version="2.0.0" />
-    <PackageReference Include="SpecFlow" Version="3.3.30" />
+    <PackageReference Include="SpecFlow" Version="3.9.22" />
   </ItemGroup>
 
   <ItemGroup>

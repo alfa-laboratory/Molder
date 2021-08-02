@@ -12,7 +12,7 @@ namespace Molder.Models
             get; set;
         }
 
-        public object? Value
+        public object Value
         {
             get; set;
         }

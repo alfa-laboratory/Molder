@@ -43,7 +43,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.DeleteVariable("test");
             act.Should().Throw<Exception>()
-                .WithMessage("Expected this.variableController.Variables {empty} to contain key \"test\" because переменная \"test\" не существует.");
+                .WithMessage("Expected variableController.Variables {empty} to contain key \"test\" because переменная \"test\" не существует.");
         }
 
         [Fact]
@@ -67,7 +67,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.EmtpyVariable("test");
             act.Should().Throw<Exception>()
-                .WithMessage("Expected this.variableController.Variables {empty} to contain key \"test\" because переменная \"test\" не существует.");
+                .WithMessage("Expected variableController.Variables {empty} to contain key \"test\" because переменная \"test\" не существует.");
         }
 
         [Fact]
@@ -119,7 +119,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.ChangeVariable("test", 0);
             act.Should().Throw<Exception>()
-                .WithMessage("Expected this.variableController.Variables {empty} to contain key \"test\" because переменная \"test\" не существует.");
+                .WithMessage("Expected variableController.Variables {empty} to contain key \"test\" because переменная \"test\" не существует.");
         }
 
         [Fact]
@@ -281,7 +281,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableIsNotEmpty("test");
             act.Should().Throw<Exception>()
-                .WithMessage($"Expected string.IsNullOrWhiteSpace((string)value) to be false because значение переменной \"test\" пустая строка, but found True.");
+                .WithMessage($"Expected string.IsNullOrWhiteSpace((string)value!) to be false because значение переменной \"test\" пустая строка, but found True.");
         }
 
         [Fact]
@@ -317,7 +317,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableIsEmpty("test");
             act.Should().Throw<Exception>()
-                .WithMessage($"Expected string.IsNullOrWhiteSpace((string)value) to be true because значение переменной \"test\" не пустая строка, but found False.");
+                .WithMessage($"Expected string.IsNullOrWhiteSpace((string)value!) to be true because значение переменной \"test\" не пустая строка, but found False.");
         }
 
         [Fact]
@@ -991,7 +991,7 @@ namespace Molder.Generator.Tests
             steps.StoreEnumerableAsVariableWithType(TypeCode.Object, "Test", collection);
             Action act = () => steps.StoreVariableFromEnumerable(varName, "Test2");
             act.Should().Throw<Exception>()
-                .WithMessage("Index was out of range. Must be non-negative and less than the size of the collection.\nParameter name: index");
+                .WithMessage("Index was out of range. Must be non-negative and less than the size of the collection. (Parameter 'index')");
         }
 
         [Fact]

@@ -54,7 +54,7 @@ namespace Molder.Tests
         [Fact]
         public void CreateMessage_NullList_ReturnNull()
         {
-            List<string>? list = null;
+            List<string> list = null;
             var message = Message.CreateMessage(list);
 
             message.Should().BeNull();
@@ -88,7 +88,7 @@ namespace Molder.Tests
         [Fact]
         public void CreateMessage_NullValidationResult_ReturnNull()
         {
-            List<ValidationResult>? list = null;
+            List<ValidationResult> list = null;
 
             var message = Message.CreateMessage(list);
 
@@ -150,7 +150,7 @@ namespace Molder.Tests
         [Fact]
         public void CreateMessage_NullDataTable_ReturnException()
         {
-            DataTable? dt = null;
+            DataTable dt = null;
             Action action = () => dt.CreateMessage();
             action.Should().Throw<ArgumentNullException>().WithMessage("The table to convert to string is null (Parameter 'dataTable')");
         }

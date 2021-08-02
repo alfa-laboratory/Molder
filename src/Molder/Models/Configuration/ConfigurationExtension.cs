@@ -13,7 +13,7 @@ namespace Molder.Models.Configuration
         public static ConfigurationExtension Instance
             => lazy.Value;
 
-        public IConfiguration? Configuration { get; set; } = null;
+        public IConfiguration Configuration { get; set; } = null;
 
         private ConfigurationExtension() { }
     }

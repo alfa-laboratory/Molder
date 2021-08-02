@@ -12,7 +12,7 @@ namespace Molder.Helpers
 {
     public static class Converter
     {
-        public static IEnumerable? CreateEnumerable(string str, string splitChars)
+        public static IEnumerable CreateEnumerable(string str, string splitChars)
         {
             try
             { 
@@ -27,15 +27,13 @@ namespace Molder.Helpers
                     Log.Logger().LogWarning("Input string for creating the list is not specified");
                     return null;
                 }
-                else
-                {
-                    Log.Logger().LogWarning("Input string for creating the list is not specified");
-                    return new List<string> { str };
-                }
+
+                Log.Logger().LogWarning("Input string for creating the list is not specified");
+                return new List<string> { str };
             }
         }
 
-        public static XDocument? CreateXDoc(string str)
+        public static XDocument CreateXDoc(string str)
         {
             try
             {
@@ -48,7 +46,7 @@ namespace Molder.Helpers
             }
         }
 
-        public static XmlDocument? CreateXmlDoc(string str)
+        public static XmlDocument CreateXmlDoc(string str)
         {
             try
             {
@@ -62,7 +60,7 @@ namespace Molder.Helpers
             }
         }
 
-        public static string? CreateXMLEscapedString(object obj)
+        public static string CreateXMLEscapedString(object obj)
         {
             try
             {
@@ -76,7 +74,7 @@ namespace Molder.Helpers
             }
         }
 
-        public static JObject? CreateJson(string str)
+        public static JObject CreateJson(string str)
         {
             try
             {
@@ -88,7 +86,7 @@ namespace Molder.Helpers
             }
         }
 
-        public static XDocument? CreateCData(string str)
+        public static XDocument CreateCData(string str)
         {
             try
             {

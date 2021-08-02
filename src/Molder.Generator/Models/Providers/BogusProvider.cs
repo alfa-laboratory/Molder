@@ -28,8 +28,8 @@ namespace Molder.Generator.Models.Providers
 
         public DateTime Between(DateTime? start = null, DateTime? end = null)
         {
-            start = start ?? Constants.START_DATETIME;
-            end = end ?? Constants.LAST_DATETIME;
+            start ??= Constants.START_DATETIME;
+            end ??= Constants.LAST_DATETIME;
             return faker.Date.Between
                 ((DateTime)start, (DateTime)end);
         }

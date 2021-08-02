@@ -10,14 +10,14 @@ namespace Molder.Helpers
     [ExcludeFromCodeCoverage]
     public static class Reflection
     {
-        public static IEnumerable<ParameterInfo?> GetMethodParameters(this MethodInfo method)
+        public static IEnumerable<ParameterInfo> GetMethodParameters(this MethodInfo method)
         {
             return method.GetParameters();
         }
 
-        public static Type? GetObjectType(this object obj, bool checkElementType = false)
+        public static Type GetObjectType(this object obj, bool checkElementType = false)
         {
-            Type? t;
+            Type t;
             switch(obj)
             {
                 case null:
@@ -54,23 +54,23 @@ namespace Molder.Helpers
             return Array.CreateInstance(type, length);
         }
 
-        public static object? GetDefault(this Type type)
+        public static object GetDefault(this Type type)
         {
             if(type == null || type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 return null;
             }
 
-            Func<object?> f = GetDefault<object>;
+            Func<object> f = GetDefault<object>;
             return f.Method.GetGenericMethodDefinition().MakeGenericMethod(type).Invoke(null, null);
         }
 
-        public static T? GetDefault<T>()
+        public static T GetDefault<T>()
         {
             return default;
         }
 
-        public static object? ConvertObject(object obj, Type type)
+        public static object ConvertObject(object obj, Type type)
         {
             var t = GetObjectType(type);
 
@@ -176,7 +176,7 @@ namespace Molder.Helpers
             return new T[length];
         }
 
-        public static object? TryConvertObject(this object obj, Type type)
+        public static object TryConvertObject(this object obj, Type type)
         {
             try
             {

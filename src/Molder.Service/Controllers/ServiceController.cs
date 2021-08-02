@@ -8,7 +8,7 @@ namespace Molder.Service.Controllers
     [ExcludeFromCodeCoverage]
     public class ServiceController
     {
-        private Lazy<ConcurrentDictionary<string, ResponceInfo>> _services = new Lazy<ConcurrentDictionary<string, ResponceInfo>>(() => new ConcurrentDictionary<string, ResponceInfo>());
+        private Lazy<ConcurrentDictionary<string, ResponceInfo>> _services = new(() => new ConcurrentDictionary<string, ResponceInfo>());
 
         public ConcurrentDictionary<string, ResponceInfo> Services => _services.Value;
     }

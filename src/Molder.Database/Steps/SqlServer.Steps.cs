@@ -44,7 +44,7 @@ namespace Molder.Database.Steps
         /// <summary>
         /// Трансформация параметров подключения к SqlServer в DbConnectionParams.
         /// </summary>
-        /// <param name="dataTable">Параметры подключения.</param>
+        /// <param name="table">Параметры подключения.</param>
         /// <returns>Параметры подключения к SqlServer.</returns>
         [StepArgumentTransformation]
         public SqlConnectionStringBuilder GetDataBaseParametersFromTableSqlServer(Table table)
@@ -75,7 +75,7 @@ namespace Molder.Database.Steps
         /// Подключение к SQLServer.
         /// </summary>
         /// <param name="connectionName">Название подключения.</param>
-        /// <param name="params">Параметры подключения.</param>
+        /// <param name="sqlConnectionString">Параметры подключения.</param>
         [Given(@"я подключаюсь к БД MS SQL Server с названием ""(.+)"":")]
         public void ConnectToDB_SqlServer(string connectionName, SqlConnectionStringBuilder sqlConnectionString)
         {
@@ -113,7 +113,7 @@ namespace Molder.Database.Steps
         /// <summary>
         /// Выполнение ExecuteQuery или ExecuteNonQuery
         /// </summary>      
-        private (object, int) ExecuteAnyRequest(QueryType queryType, string connectionName, QueryParam query)
+        private (object outRecords, int queryCount) ExecuteAnyRequest(QueryType queryType, string connectionName, QueryParam query)
         {
             databaseController.Connections.InputValidation(connectionName, query.Query);
             var (connection, _, timeout) = this.databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
@@ -202,7 +202,7 @@ namespace Molder.Database.Steps
             Log.Logger().LogInformation($"Request returned: {Environment.NewLine} {(outRecords != null ? ((DataTable)outRecords).CreateMessage() : $"is empty")}");
             count.Should().Be(1, "Запрос вернул не одну запись");
 
-            variableController.SetVariable(varName, typeof(DataRow), ((DataTable)outRecords).Rows[0]);
+            variableController.SetVariable(varName, typeof(DataRow), ((DataTable)outRecords!).Rows[0]);
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace Molder.Database.Steps
         [StepDefinition(@"я добавляю записи в таблицу ""(.+)"" в БД ""(.+)"":")]
         public void ExecuteInsertQueryFromTable(string tableName, string connectionName, IEnumerable<Dictionary<string, object>> insertQuery)
         {
-            this.databaseController.Connections.Should().ContainKey(connectionName, $"Connection: \"{connectionName}\" does not exist");
+            databaseController.Connections.Should().ContainKey(connectionName, $"Connection: \"{connectionName}\" does not exist");
             var (connection, _, timeout) = this.databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
 
             connection.IsConnectAlive().Should().BeTrue();
@@ -232,14 +232,14 @@ namespace Molder.Database.Steps
         [StepDefinition(@"я сохраняю значение единственной ячейки из выборки из БД ""(.+)"" в переменную ""(.+)"":")]
         public void SelectScalarFromDbSetVariable(string connectionName, string varName, QueryParam query)
         {
-            this.databaseController.Connections.Should().ContainKey(connectionName, $"Connection: \"{connectionName}\" does not exist");
+            databaseController.Connections.Should().ContainKey(connectionName, $"Connection: \"{connectionName}\" does not exist");
             var (connection, _, timeout) = this.databaseController.Connections.SingleOrDefault(_ => _.Key == connectionName).Value;
 
             var (outRecords, count) = connection.ExecuteQuery(query.Query, timeout);
             Log.Logger().LogInformation($"Request returned: {Environment.NewLine} {(outRecords != null ? ((DataTable)outRecords).CreateMessage() : $"is empty")}");
             count.Should().Be(1, "Запрос вернул не одну запись");
 
-            variableController.SetVariable(varName, ((DataTable)outRecords).Columns[0].DataType, ((DataTable)outRecords).Rows[0][0]);
+            variableController.SetVariable(varName, ((DataTable)outRecords!).Columns[0].DataType, ((DataTable)outRecords).Rows[0][0]);
         }
     }
 }

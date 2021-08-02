@@ -49,7 +49,7 @@ namespace Molder.Generator.Steps
         [StepArgumentTransformation]
         public TypeCode StringToTypeCode(string type)
         {
-            var variablesType = new Dictionary<string, Type>()
+            var variablesType = new Dictionary<string, Type>
             {
                 { "int", typeof(int)},
                 { "string", typeof(string)},
@@ -61,7 +61,7 @@ namespace Molder.Generator.Steps
             };
             type.Should().NotBeNull("Значение \"type\" не задано");
             type = type.ToLower();
-            if (!variablesType.TryGetValue(type, out Type value)) throw new NotValidTypeException($"There is no type \"{type}\"");
+            if (!variablesType.TryGetValue(type, out var value)) throw new NotValidTypeException($"There is no type \"{type}\"");
             return Type.GetTypeCode(value);
         }
 
@@ -85,8 +85,8 @@ namespace Molder.Generator.Steps
         [StepDefinition(@"я удаляю переменную ""(.+)""")]
         public void DeleteVariable(string varName)
         {
-            this.variableController.Variables.Should().ContainKey(varName, $"переменная \"{varName}\" не существует");
-            this.variableController.Variables.TryRemove(varName, out _);
+            variableController.Variables.Should().ContainKey(varName, $"переменная \"{varName}\" не существует");
+            variableController.Variables.TryRemove(varName, out _);
         }
 
         /// <summary>
@@ -96,8 +96,8 @@ namespace Molder.Generator.Steps
         [StepDefinition(@"я очищаю переменную ""(.+)""")]
         public void EmtpyVariable(string varName)
         {
-            this.variableController.Variables.Should().ContainKey(varName, $"переменная \"{varName}\" не существует");
-            this.variableController.SetVariable(varName, typeof(object), null);
+            variableController.Variables.Should().ContainKey(varName, $"переменная \"{varName}\" не существует");
+            variableController.SetVariable(varName, typeof(object), null);
         }
 
         /// <summary>
@@ -108,8 +108,8 @@ namespace Molder.Generator.Steps
         [StepDefinition(@"я изменяю значение переменной ""(.+)"" на ""(.+)""")]
         public void ChangeVariable(string varName, object value)
         {
-            this.variableController.Variables.Should().ContainKey(varName, $"переменная \"{varName}\" не существует");
-            this.variableController.SetVariable(varName, value.GetType(), value);
+            variableController.Variables.Should().ContainKey(varName, $"переменная \"{varName}\" не существует");
+            variableController.SetVariable(varName, value.GetType(), value);
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace Molder.Generator.Steps
         {
             var str = variableController.ReplaceVariables(text);
             Log.Logger().LogDebug($"Replaced text with variables is equal to {Environment.NewLine}{str}");
-            this.variableController.SetVariable(varName, typeof(string), str);
+            variableController.SetVariable(varName, typeof(string), str);
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace Molder.Generator.Steps
         [StepDefinition(@"я сохраняю зашифрованный текст ""(.*)"" в переменную ""(.+)""")]
         public void StoreAsVariableEncriptedString(string text, string varName)
         {
-            this.variableController.SetVariable(varName, typeof(string), Encryptor.Decrypt(text));
+            variableController.SetVariable(varName, typeof(string), Encryptor.Decrypt(text));
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace Molder.Generator.Steps
                 ? $"Replaced multiline text with variables is equal to {Environment.NewLine}{Converter.CreateXMLEscapedString(str)}"
                 : $"Replaced multiline text with variables is equal to {Environment.NewLine}{str}");
 
-            this.variableController.SetVariable(varName, typeof(string), str);
+            variableController.SetVariable(varName, typeof(string), str);
         }
 
         /// <summary>
@@ -163,17 +163,17 @@ namespace Molder.Generator.Steps
         {
             if (decimal.TryParse(number, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.CurrentCulture, out var dec))
             {
-                this.variableController.SetVariable(varName, typeof(decimal), dec);
+                variableController.SetVariable(varName, typeof(decimal), dec);
                 return;
             }
 
             if (decimal.TryParse(number, System.Globalization.NumberStyles.Float, new System.Globalization.NumberFormatInfo() { PercentDecimalSeparator = ".", CurrencyDecimalSeparator = ".", NumberDecimalSeparator = "." }, out dec))
             {
-                this.variableController.SetVariable(varName, typeof(decimal), dec);
+                variableController.SetVariable(varName, typeof(decimal), dec);
                 return;
             }
 
-            this.variableController.SetVariable(varName, typeof(int), int.Parse(number));
+            variableController.SetVariable(varName, typeof(int), int.Parse(number));
         }
 
         /// <summary>
@@ -184,14 +184,14 @@ namespace Molder.Generator.Steps
         [StepDefinition(@"я сохраняю текст как XML документ в переменную ""(.+)"":")]
         public void StoreAsVariableXmlFromText(string varName, string xml)
         {
-            var xmlBody = this.variableController.ReplaceVariables(xml);
+            var xmlBody = variableController.ReplaceVariables(xml);
 
             Log.Logger().LogInformation($"input xml is:{Environment.NewLine}{Converter.CreateXMLEscapedString(xmlBody)}");
 
             var doc = Converter.CreateXmlDoc(xmlBody);
             doc.Should().NotBeNull($"создать XmlDoc из строки {Environment.NewLine}\"{Converter.CreateXMLEscapedString(xmlBody)}\" не удалось");
 
-            this.variableController.SetVariable(varName, doc.GetType(), doc);
+            variableController.SetVariable(varName, doc.GetType(), doc);
         }
 
         /// <summary>
@@ -202,10 +202,10 @@ namespace Molder.Generator.Steps
         [StepDefinition(@"я сохраняю значение переменной ""(.+)"" в переменную ""(.+)""")]
         public void StoreVariableValueToVariable(string varName, string newVarName)
         {
-            var value = this.variableController.GetVariableValue(varName);
+            var value = variableController.GetVariableValue(varName);
             value.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
 
-            this.variableController.SetVariable(newVarName, value.GetType(), value);
+            variableController.SetVariable(newVarName, value.GetType(), value);
         }
 
         /// <summary>
@@ -216,26 +216,26 @@ namespace Molder.Generator.Steps
         [StepDefinition(@"я сохраняю содержимое переменной ""(.+)"" в переменную ""(.+)""")]
         public void StoreVariableTextToVariable(string varName, string newVarName)
         {
-            var value = this.variableController.GetVariableValueText(varName);
+            var value = variableController.GetVariableValueText(varName);
             value.Should().NotBeNull($"содержимого в переменной \"{varName}\" нет");
 
-            this.variableController.SetVariable(newVarName, value.GetType(), value);
+            variableController.SetVariable(newVarName, value.GetType(), value);
         }
 
         /// <summary>
         /// Шаг сохранения результата значения переменной, содержащей cdata в переменную.
         /// </summary>
-        /// <param name="cdata">Переменная с cdata.</param>
+        /// <param name="varCDATA">Переменная с cdata.</param>
         /// <param name="varName">Идентификатор переменной.</param>
         [StepDefinition(@"я сохраняю значение переменной \""(.+)\"" из CDATA в переменную \""(.+)\""")]
-        public void StoreCDataVariable_ToVariable(string cdataVar, string varName)
+        public void StoreCDataVariable_ToVariable(string varCDATA, string varName)
         {
-            var value = (string)this.variableController.GetVariableValue(varName);
+            var value = (string)variableController.GetVariableValue(varCDATA)!;
             value.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
             var cdata = Converter.CreateCData(value);
             cdata.Should().NotBeNull($"значение переменной \"{Environment.NewLine + cdata + Environment.NewLine}\" не является CDATA");
 
-            this.variableController.SetVariable(varName, typeof(XDocument), cdata);
+            variableController.SetVariable(varName, typeof(XDocument), cdata);
         }
 
         /// <summary>
@@ -249,20 +249,20 @@ namespace Molder.Generator.Steps
         {
             var replacement = string.Empty;
 
-            if (this.variableController.GetVariableValue(varName) != null)
+            if (variableController.GetVariableValue(varName) != null)
             {
-                if (this.variableController.Variables[varName].Type == typeof(string))
+                if (variableController.Variables[varName].Type == typeof(string))
                 {
-                    replacement = (string)this.variableController.GetVariableValue(varName);
+                    replacement = (string)variableController.GetVariableValue(varName)!;
                 }
                 else
                 {
-                    replacement = this.variableController.GetVariableValue(varName).ToString();
+                    replacement = variableController.GetVariableValue(varName).ToString();
                 }
             }
 
             Log.Logger().LogInformation($"Result text is equal to {Environment.NewLine}{replacement}");
-            this.variableController.SetVariable(newVarName, typeof(string), text?.Replace($"{{{varName}}}", replacement));
+            variableController.SetVariable(newVarName, typeof(string), text?.Replace($"{{{varName}}}", replacement));
         }
 
         /// <summary>
@@ -273,7 +273,7 @@ namespace Molder.Generator.Steps
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" существует")]
         public void CheckVariableIsNotNull(string varName)
         {
-            var value = this.variableController.GetVariableValue(varName);
+            var value = variableController.GetVariableValue(varName);
             value.Should().NotBeNull($"значение переменной \"{varName}\" является NULL");
         }
 
@@ -286,7 +286,7 @@ namespace Molder.Generator.Steps
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" не существует")]
         public void CheckVariableIsNull(string varName)
         {
-            var value = this.variableController.GetVariableValue(varName);
+            var value = variableController.GetVariableValue(varName);
             value.Should().BeNull($"значение переменной \"{varName}\" не является NULL");
         }
 
@@ -297,11 +297,11 @@ namespace Molder.Generator.Steps
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" не является пустой строкой")]
         public void CheckVariableIsNotEmpty(string varName)
         {
-            var value = this.variableController.GetVariableValue(varName);
+            var value = variableController.GetVariableValue(varName);
             value.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
-            if (this.variableController.GetVariable(varName)?.Type == typeof(string))
+            if (variableController.GetVariable(varName)?.Type == typeof(string))
             {
-                string.IsNullOrWhiteSpace((string)value).Should().BeFalse($"значение переменной \"{varName}\" пустая строка");
+                string.IsNullOrWhiteSpace((string)value!).Should().BeFalse($"значение переменной \"{varName}\" пустая строка");
             }
         }
 
@@ -313,11 +313,11 @@ namespace Molder.Generator.Steps
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" равно пустой строке")]
         public void CheckVariableIsEmpty(string varName)
         {
-            var value = this.variableController.GetVariableValue(varName);
+            var value = variableController.GetVariableValue(varName);
             value.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
-            if (this.variableController.GetVariable(varName)?.Type == typeof(string))
+            if (variableController.GetVariable(varName)?.Type == typeof(string))
             {
-                string.IsNullOrWhiteSpace((string)value).Should().BeTrue($"значение переменной \"{varName}\" не пустая строка");
+                string.IsNullOrWhiteSpace((string)value!).Should().BeTrue($"значение переменной \"{varName}\" не пустая строка");
             }
         }
 
@@ -330,9 +330,9 @@ namespace Molder.Generator.Steps
         public void CheckVariableEquals(string varName, string expected)
         {
             expected.Should().NotBeNull($"значение \"expected\" не задано");
-            expected = this.variableController.ReplaceVariables(expected) ?? expected;
+            expected = variableController.ReplaceVariables(expected) ?? expected;
 
-            var actual = this.variableController.GetVariableValueText(varName);
+            var actual = variableController.GetVariableValueText(varName);
             actual.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
             expected.Should().Be(actual, $"значение переменной \"{varName}\":\"{actual}\" не равно \"{expected}\"");
         }
@@ -346,9 +346,9 @@ namespace Molder.Generator.Steps
         public void CheckVariableNotEquals(string varName, string expected)
         {
             expected.Should().NotBeNull($"значение \"expected\" не задано");
-            expected = this.variableController.ReplaceVariables(expected) ?? expected;
+            expected = variableController.ReplaceVariables(expected) ?? expected;
 
-            var actual = this.variableController.GetVariableValueText(varName);
+            var actual = variableController.GetVariableValueText(varName);
             actual.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
             expected.Should().NotBe(actual, $"значение переменной \"{varName}\":\"{actual}\" равно \"{expected}\"");
         }
@@ -362,9 +362,9 @@ namespace Molder.Generator.Steps
         public void CheckVariableContains(string varName, string expected)
         {
             expected.Should().NotBeNull($"значение \"expected\" не задано");
-            expected = this.variableController.ReplaceVariables(expected) ?? expected;
+            expected = variableController.ReplaceVariables(expected) ?? expected;
 
-            var actual = this.variableController.GetVariableValueText(varName);
+            var actual = variableController.GetVariableValueText(varName);
             actual.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
             actual.Should().Contain(expected, $"значение переменной \"{varName}\":\"{actual}\" не содержит \"{expected}\"");
         }
@@ -378,9 +378,9 @@ namespace Molder.Generator.Steps
         public void CheckVariableNotContains(string varName, string expected)
         {
             expected.Should().NotBeNull($"значение \"expected\" не задано");
-            expected = this.variableController.ReplaceVariables(expected) ?? expected;
+            expected = variableController.ReplaceVariables(expected) ?? expected;
 
-            var actual = this.variableController.GetVariableValueText(varName);
+            var actual = variableController.GetVariableValueText(varName);
             actual.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
             actual.Should().NotContain(expected, $"значение переменной \"{varName}\":\"{actual}\" содержит \"{expected}\"");
         }
@@ -394,9 +394,9 @@ namespace Molder.Generator.Steps
         public void CheckVariableStartsWith(string varName, string expected)
         {
             expected.Should().NotBeNull($"значение \"expected\" не задано");
-            expected = this.variableController.ReplaceVariables(expected) ?? expected;
+            expected = variableController.ReplaceVariables(expected) ?? expected;
 
-            var actual = this.variableController.GetVariableValueText(varName);
+            var actual = variableController.GetVariableValueText(varName);
             actual.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
             actual.Should().StartWith(expected, $"значение переменной \"{varName}\":\"{actual}\" не начинается с \"{expected}\"");
         }
@@ -410,9 +410,9 @@ namespace Molder.Generator.Steps
         public void CheckVariableEndsWith(string varName, string expected)
         {
             expected.Should().NotBeNull($"значение \"expected\" не задано");
-            expected = this.variableController.ReplaceVariables(expected) ?? expected;
+            expected = variableController.ReplaceVariables(expected) ?? expected;
 
-            var actual = this.variableController.GetVariableValueText(varName);
+            var actual = variableController.GetVariableValueText(varName);
             actual.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
             actual.Should().EndWith(expected, $"значение переменной \"{varName}\":\"{actual}\" не заканчивается с \"{expected}\"");
         }
@@ -484,7 +484,7 @@ namespace Molder.Generator.Steps
             collectionName.IsEnumerable(variableController);
             var collection = variableController.GetVariableValue(collectionName);
             var rand = new Random();
-            var param = rand.Next() % ((IEnumerable)collection).Cast<object>().ToList().Count;
+            var param = rand.Next() % ((IEnumerable)collection!).Cast<object>().ToList().Count;
             var variable = variableController.GetVariableValue($"{collectionName}[{param}]");
             variableController.SetVariable(varName, variable.GetType(), variable);
             Log.Logger().LogDebug($"Got variable {variable} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
@@ -517,8 +517,7 @@ namespace Molder.Generator.Steps
         public void StoreDictionaryAsVariableNoType(string varName, Dictionary<string,object> dictionary)
         {
             varName.Should().NotBeNull("Значение \"varname\" не задано");
-            this.variableController.SetVariable(varName, dictionary.GetType(), dictionary);
-
+            variableController.SetVariable(varName, dictionary.GetType(), dictionary);
         }
 
         /// <summary>
@@ -534,9 +533,9 @@ namespace Molder.Generator.Steps
             dictionaryName.IsDictionary(variableController);
             var dictionary = variableController.GetVariableValue(dictionaryName);
             var rand = new Random();
-            var param = rand.Next() % Enumerable.ToList(((Dictionary<string, object>)dictionary).Keys).Count;
-            var key = Enumerable.ToList(((Dictionary<string, object>)dictionary).Keys)[param];
-           var variable = variableController.GetVariableValue($"{dictionaryName}[{key}]");
+            var param = rand.Next() % ((Dictionary<string, object>)dictionary!).Keys.ToList().Count;
+            var key = ((Dictionary<string, object>)dictionary!).Keys.ToList()[param];
+            var variable = variableController.GetVariableValue($"{dictionaryName}[{key}]");
             variableController.SetVariable(varName, variable.GetType(), variable);
             Log.Logger().LogDebug($"Got variable {variable} from collection \"{dictionaryName}\" and put it into new variable\"{varName}\"");
         }
@@ -554,7 +553,7 @@ namespace Molder.Generator.Steps
             dictionaryName.IsDictionary(variableController);
             var variable = variableController.GetVariableValue(dictionaryName);
             (variable is Dictionary<string,object>).Should().BeFalse($"\"{dictionaryName}\" не является значением коллекции");
-            this.variableController.SetVariable(varName, variable.GetType(), variable);
+            variableController.SetVariable(varName, variable.GetType(), variable);
             Log.Logger().LogDebug($"Got variable {variable} from dictionary \"{dictionaryName}\" and put it into new variable\"{varName}\"");
         }
     }

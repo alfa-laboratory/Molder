@@ -15,7 +15,7 @@
     <Description>Library containing the logic for working with variables, logging, basic models for working with directories and files</Description>
     <PackageVersion>2.0-beta</PackageVersion>
     <LangVersion>9</LangVersion>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -8,7 +8,7 @@ namespace Molder.Models.Profider
     [ExcludeFromCodeCoverage]
     public class PathProvider: IPathProvider
     {
-        public string? Combine(string path1, string path2)
+        public string Combine(string path1, string path2)
         {
             try
             {
@@ -26,7 +26,7 @@ namespace Molder.Models.Profider
             }
         }
 
-        public string? GetEnviromentVariable(string variable)
+        public string GetEnviromentVariable(string variable)
         {
             try
             {
@@ -39,7 +39,7 @@ namespace Molder.Models.Profider
             }
         }
 
-        public (string?, string) CutFullpath(string fullpath)
+        public (string, string) CutFullpath(string fullpath)
         {    
             try
             {

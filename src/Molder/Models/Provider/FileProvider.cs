@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace Molder.Models.Profider
 {
     [ExcludeFromCodeCoverage]
-    public class FileProvider: IFileProvider
+    public class FileProvider : IFileProvider
     {
         public bool CheckFileExtension(string filename)
         {
@@ -116,7 +116,7 @@ namespace Molder.Models.Profider
             }
         }
 
-        public string? ReadAllText(string filename, string path)
+        public string ReadAllText(string filename, string path)
         {
             var fullpath = Path.Combine(path, filename);    
             try
@@ -141,8 +141,6 @@ namespace Molder.Models.Profider
                 Log.Logger().LogWarning($"File \"{fullpath}\" not found. \" {e.Message}\" ");
                 return null;
             }
-            
         }
     }
 }
-

@@ -29,7 +29,7 @@ namespace Molder.Generator.Tests
         [Fact]
         public void IsEnumerable_NotColl_ReturnException()
         {
-            var variable = 5;
+            const int variable = 5;
             variableController.SetVariable("test", variable.GetType(), variable);
             Action act = () => "test".IsEnumerable(variableController);
             act.Should().Throw<Exception>()
@@ -67,7 +67,7 @@ namespace Molder.Generator.Tests
         [Fact]
         public void IsDictionary_NotColl_ReturnException()
         {
-            var variable = 5;
+            const int variable = 5;
             variableController.SetVariable("test", variable.GetType(), variable);
             Action act = () => "test".IsDictionary(variableController);
             act.Should().Throw<Exception>()

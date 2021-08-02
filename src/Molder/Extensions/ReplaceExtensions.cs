@@ -15,7 +15,7 @@ namespace Molder.Extensions
 
         public static string ReplaceVariables(this VariableController variableController, string str, string pattern, Func<object, string> foundReplace = null!, Func<object, string> notFoundReplace = null!)
         {
-            object? val;
+            object val;
             var fmt = Regex.Replace(
                 str ?? string.Empty,
                 pattern,
@@ -28,7 +28,7 @@ namespace Molder.Extensions
 
                     var variable = m.Groups[1].Value;
 
-                    (string methodName, string[] parameters) = ReplaceMethodsExtension.GetFunction(variable);
+                    var (methodName, parameters) = ReplaceMethodsExtension.GetFunction(variable);
 
                     if (methodName is null)
                     {
@@ -40,36 +40,34 @@ namespace Molder.Extensions
                         val = variableController.GetVariableValueText(variable);
                         return (foundReplace != null ? foundReplace(val) : val.ToString())!;
                     }
-                    else
+
+                    var _params = Array.Empty<string>();
+                    if(parameters is not null)
                     {
-                        string?[] _params = Array.Empty<string>();
-                        if(parameters is not null)
+                        _params = new string[parameters.Length];
+                        if (parameters.Any())
                         {
-                            _params = new string[parameters.Length];
-                            if (parameters.Any())
+                            for(var i = 0; i < parameters.Length; i++)
                             {
-                                for(var i = 0; i < parameters.Length; i++)
+                                if (variableController.GetVariable(parameters[i]) is null)
                                 {
-                                    if (variableController.GetVariable(parameters[i]) is null)
-                                    {
-                                        _params[i] = notFoundReplace != null ? notFoundReplace(parameters[i]) : parameters[i];
-                                    }
-                                    else
-                                    {
-                                        _params[i] = variableController.GetVariableValueText(parameters[i]);
-                                    }
+                                    _params[i] = notFoundReplace != null ? notFoundReplace(parameters[i]) : parameters[i];
+                                }
+                                else
+                                {
+                                    _params[i] = variableController.GetVariableValueText(parameters[i]);
                                 }
                             }
                         }
-
-                        var function = ReplaceMethodsExtension.Check(methodName);
-                        if(function.GetParameters().Length != _params.Length)
-                        {
-                            return notFoundReplace != null ? notFoundReplace(variable) : variable;
-                        }
-                        var funcVal = ReplaceMethodsExtension.Invoke(methodName, _params);
-                        return (foundReplace != null ? foundReplace(funcVal) : funcVal.ToString())!;
                     }
+
+                    var function = ReplaceMethodsExtension.Check(methodName);
+                    if(function.GetParameters().Length != _params.Length)
+                    {
+                        return notFoundReplace != null ? notFoundReplace(variable) : variable;
+                    }
+                    var funcVal = ReplaceMethodsExtension.Invoke(methodName, _params);
+                    return (foundReplace != null ? foundReplace(funcVal) : funcVal.ToString())!;
                 },
                 RegexOptions.None);
             return fmt;

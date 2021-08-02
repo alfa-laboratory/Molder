@@ -28,10 +28,10 @@ namespace Molder.Extensions
             output.Append($"|{Environment.NewLine}{new string('=', output.Length)}{Environment.NewLine}");
 
             // Write Rows
-            int currentRow = 1;
+            var currentRow = 1;
             foreach (DataRow row in dataTable.Rows)
             {
-                for (int i = 0; i < dataTable.Columns.Count; i++)
+                for (var i = 0; i < dataTable.Columns.Count; i++)
                 {
                     var text = row[i].ToString().Shorten();
                     output.Append("|" + PadCenter(text, columnsWidths[i] + 2));
@@ -49,14 +49,14 @@ namespace Molder.Extensions
             var output = new StringBuilder();
             var columnsWidths = GetColumnsSize(dataRow.Table.Columns, dataRow);
 
-            for (int i = 0; i < dataRow.Table.Columns.Count; i++)
+            for (var i = 0; i < dataRow.Table.Columns.Count; i++)
             {
                 var text = dataRow.Table.Columns[i].ColumnName.Shorten();
                 output.Append("|" + PadCenter(text, columnsWidths[i] + 2));
             }
             output.Append($"|{Environment.NewLine}{new string('=', output.Length)}{Environment.NewLine}");
 
-            for (int i = 0; i < dataRow.Table.Columns.Count; i++)
+            for (var i = 0; i < dataRow.Table.Columns.Count; i++)
             {
                 var text = dataRow[i].ToString().Shorten();
                 output.Append("|" + PadCenter(text, columnsWidths[i] + 2));
@@ -71,7 +71,7 @@ namespace Molder.Extensions
             var columnsWidths = new int[dataTable.Columns.Count];
 
             // Get Column Titles
-            for (int i = 0; i < dataTable.Columns.Count; i++)
+            for (var i = 0; i < dataTable.Columns.Count; i++)
             {
                 var length = dataTable.Columns[i].ColumnName.Length;
                 if (columnsWidths[i] < length)
@@ -83,7 +83,7 @@ namespace Molder.Extensions
             // Get column widths
             foreach (DataRow row in dataTable.Rows)
             {
-                for (int i = 0; i < dataTable.Columns.Count; i++)
+                for (var i = 0; i < dataTable.Columns.Count; i++)
                 {
                     var length = row[i].ToString().Length;
                     if (columnsWidths[i] < length)

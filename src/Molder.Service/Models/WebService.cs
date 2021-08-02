@@ -12,7 +12,7 @@ namespace Molder.Service.Models
 {
     public class WebService : IWebService, IDisposable
     {
-        protected AsyncLocal<IFlurlProvider> flurlProvider = new AsyncLocal<IFlurlProvider> { Value = null };
+        protected AsyncLocal<IFlurlProvider> flurlProvider = new() { Value = null };
         public IFlurlProvider Provider
         {
             get => flurlProvider.Value;

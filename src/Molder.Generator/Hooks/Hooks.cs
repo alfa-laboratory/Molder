@@ -11,7 +11,7 @@ namespace Molder.Generator.Hooks
     [Binding]
     public class Hooks : TechTalk.SpecFlow.Steps
     {
-        [BeforeTestRun()]
+        [BeforeTestRun]
         public static void Initialize()
         {
             var obj = ReplaceMethods.Get() as List<Type>;

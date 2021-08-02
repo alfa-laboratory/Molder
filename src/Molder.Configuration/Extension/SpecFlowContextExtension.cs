@@ -9,9 +9,9 @@ namespace Molder.Configuration.Extension
         public static SpecFlowContext Copy(this SpecFlowContext specflowContext, VariableController variableController)
         {
             var context = specflowContext;
-            foreach(var variable in variableController.Variables)
+            foreach(var (key, value) in variableController.Variables)
             {
-                context.Add(variable.Key, variable.Value);
+                context.Add(key, value);
             }
             return context;
         }
@@ -19,11 +19,11 @@ namespace Molder.Configuration.Extension
         public static VariableController Reload(this VariableController variableController, SpecFlowContext context)
         {
             var controller = variableController;
-            foreach(var variable in context)
+            foreach(var (key, value) in context)
             {
-                if(!controller.Variables.ContainsKey(variable.Key))
+                if(!controller.Variables.ContainsKey(key))
                 {
-                    controller.Variables.TryAdd(variable.Key, variable.Value as Variable);
+                    controller.Variables.TryAdd(key, value as Variable);
                 }
             }
             return controller;

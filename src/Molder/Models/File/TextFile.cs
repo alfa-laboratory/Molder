@@ -10,9 +10,9 @@ namespace Molder.Models.File
     public class TextFile : IFile, IDisposable
     {
         public IDirectory UserDirectory { get; set; } = new UserDirectory();
-        public string? Filename { get; set; }
-        public string? Path { get; set; }
-        public string? Content { get; set; }
+        public string Filename { get; set; }
+        public string Path { get; set; }
+        public string Content { get; set; }
         public string Url { get; set; }
 
         public IFileProvider FileProvider = new FileProvider();
@@ -43,20 +43,15 @@ namespace Molder.Models.File
                 Log.Logger().LogWarning("DOWNLOAD: FileName is missing");
                 throw new ArgumentException("DOWNLOAD: FileName is missing");
             }
-            else
+
+            var isValidExtension = FileProvider.CheckFileExtension(filename);
+            if (isValidExtension)
             {
-                bool isValidExtension = FileProvider.CheckFileExtension(filename);
-                if (isValidExtension)
-                {
-                    if (WebProvider.Download(url, pathToSave, filename)) return true;
-                    else return false;
-                }
-                else
-                {
-                    Log.Logger().LogWarning($"Check that the file \"{filename}\" has a .txt extension");
-                    throw new ValidFileNameException($"Check that the file \"{filename}\" has a .txt extension");
-                }
+                return WebProvider.Download(url, pathToSave, filename);
             }
+
+            Log.Logger().LogWarning($"Check that the file \"{filename}\" has a .txt extension");
+            throw new ValidFileNameException($"Check that the file \"{filename}\" has a .txt extension");
         }
 
         public bool Create(string filename, string path = null!, string content = null!)
@@ -66,41 +61,27 @@ namespace Molder.Models.File
                 path = UserDirectory.Get();
             }
 
-            bool isNull = string.IsNullOrEmpty(filename);
+            var isNull = string.IsNullOrEmpty(filename);
             if (!isNull)
             {
-                bool IsTxt = FileProvider.CheckFileExtension(filename);
+                var IsTxt = FileProvider.CheckFileExtension(filename);
 
                 if (IsTxt)
                 {
                     var exist = IsExist(filename, path);
                     if (!exist)
                     {
-                        if (string.IsNullOrWhiteSpace(content))
-                        {
-                            return FileProvider.Create(filename, path, content);
-
-                        }
-                        else
-                        {
-                            return FileProvider.AppendAllText(filename, path, content);
-                        }
-                    }
-                    else
-                    {
-                        return FileProvider.WriteAllText(filename, path, content);
+                        return string.IsNullOrWhiteSpace(content) ? FileProvider.Create(filename, path, content) : FileProvider.AppendAllText(filename, path, content);
                     }
 
+                    return FileProvider.WriteAllText(filename, path, content);
+
                 }
-                else
-                {
-                    throw new FileExtensionException($"The file \"{filename}\" is not a text file");
-                }
+
+                throw new FileExtensionException($"The file \"{filename}\" is not a text file");
             }
-            else
-            {
-                throw new NoFileNameException("CREATE: FileName is missing");
-            }
+
+            throw new NoFileNameException("CREATE: FileName is missing");
         }
 
         public bool Delete(string filename, string path = null!)
@@ -121,14 +102,12 @@ namespace Molder.Models.File
                 var fullpath = PathProvider.Combine(path, filename);
                 return FileProvider.Delete(fullpath);
             }
-            else
-            {
-                Log.Logger().LogWarning($"The file \"{filename}\" does not exist in the \"{path}\" directory");
-                throw new FileExistException($"The file \"{filename}\" does not exist in the \"{path}\" directory");
-            }
+
+            Log.Logger().LogWarning($"The file \"{filename}\" does not exist in the \"{path}\" directory");
+            throw new FileExistException($"The file \"{filename}\" does not exist in the \"{path}\" directory");
         }
 
-        public string? GetContent(string filename, string? path)
+        public string GetContent(string filename, string path)
         {
             if (string.IsNullOrWhiteSpace(path))
             {

@@ -10,7 +10,7 @@ namespace Molder.Helpers
     [ExcludeFromCodeCoverage]
     public static class Encryptor
     {
-        private static SecureString _salt = new SecureString();
+        private static SecureString _salt = new();
 
 
         public static void SetSalt(string salt)
@@ -36,7 +36,7 @@ namespace Molder.Helpers
             return Convert.ToBase64String(inArray);
         }
 
-        public static string? Decrypt(string? input)
+        public static string Decrypt(string input)
         {
             if (string.IsNullOrEmpty(input))
             {
@@ -71,7 +71,7 @@ namespace Molder.Helpers
             return secureString;
         }
 
-        private static string? GetOriginalString(SecureString secStr)
+        private static string GetOriginalString(SecureString secStr)
         {
             var num = IntPtr.Zero;
             try

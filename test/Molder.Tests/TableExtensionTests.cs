@@ -52,7 +52,7 @@ namespace Molder.Tests
         [Fact]
         public void ConvertToString_TableIsNull_ReturnException()
         {
-            DataTable? dt = null;
+            DataTable dt = null;
             Action action = () => dt.ConvertToString();
             action.Should().Throw<ArgumentNullException>().WithMessage("The table to convert to string is null (Parameter 'dataTable')");
         }

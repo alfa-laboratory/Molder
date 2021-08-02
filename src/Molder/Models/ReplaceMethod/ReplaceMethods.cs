@@ -14,7 +14,7 @@ namespace Molder.Models.ReplaceMethod
             (_types.Value as List<Type>).Add(typeof(ParseFunctions));
         }
 
-        private static ReplaceMethods? _instance;
+        private static ReplaceMethods _instance;
         public static IEnumerable<Type> Get()
         {
             if (_instance != null) return _instance._types.Value;

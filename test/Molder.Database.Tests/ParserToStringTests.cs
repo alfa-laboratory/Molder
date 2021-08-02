@@ -1,6 +1,5 @@
 ﻿using Molder.Controllers;
 using Molder.Database.Controllers;
-using Molder.Database.Helpers;
 using Molder.Database.Steps;
 using FluentAssertions;
 using System;
@@ -35,7 +34,7 @@ namespace Molder.Database.Tests
 
             var ListParams = step.TransformationTableToString(table);
 
-            var result = ParserExtensions.ToSqlQuery(ListParams, tableName);
+            var result = ListParams.ToSqlQuery(tableName);
 
             result.Should().BeEquivalentTo("INSERT INTO Table (id,User,Balance,Date,Bool)" +
                 " VALUES (1243,'Петор Петров',100000,'2000-12-12',False)");
@@ -53,7 +52,7 @@ namespace Molder.Database.Tests
             Action action = () => ListParams.ToSqlQuery(tableName);
             action.Should()
                 .Throw<ArgumentNullException>()
-                .WithMessage($"Value cannot be null.{Environment.NewLine}Parameter name: Table name is Empty.");
+                .WithMessage($"Value cannot be null. (Parameter 'Table name is Empty.')");
         }
 
         [Fact]
@@ -64,7 +63,7 @@ namespace Molder.Database.Tests
             Action action = () => ListParams.ToSqlQuery(tableName);
             action.Should()
                 .Throw<ArgumentNullException>()
-                .WithMessage($"Value cannot be null.{Environment.NewLine}Parameter name: List with table parameters is Empty.");
+                .WithMessage($"Value cannot be null. (Parameter 'List with table parameters is Empty.')");
         }
     }
 }

@@ -24,9 +24,9 @@ namespace Molder.Controllers
     {
         private Lazy<ConcurrentDictionary<string, Variable>> _variables = new(() => new ConcurrentDictionary<string, Variable>());
 
-        public ConcurrentDictionary<string, Variable?> Variables => _variables.Value!;
+        public ConcurrentDictionary<string, Variable> Variables => _variables.Value!;
 
-        public string? GetVariableName(string key)
+        public string GetVariableName(string key)
         {
             if (string.IsNullOrWhiteSpace(key)) return null;
             var varName = key;
@@ -42,7 +42,7 @@ namespace Molder.Controllers
 
             return varName;
         }
-        public Variable? GetVariable(string key)
+        public Variable GetVariable(string key)
         {
             var correcKey = GetVariableName(key);
             if (correcKey == null) return null;
@@ -60,7 +60,7 @@ namespace Molder.Controllers
         {
             return Variables.Any(_ => _.Key == GetVariableName(key));
         }
-        public void SetVariable(string key, Type type, object? value, TypeOfAccess accessType = TypeOfAccess.Local)
+        public void SetVariable(string key, Type type, object value, TypeOfAccess accessType = TypeOfAccess.Local)
         {
             if(key is null)
             {
@@ -128,14 +128,14 @@ namespace Molder.Controllers
             var variable = new Variable() { Type = type, Value = value, TypeOfAccess = accessType };
             Variables.AddOrUpdate(varName, variable, (_, _) => variable);
         } 
-        public object? GetVariableValue(string? key)
+        public object GetVariableValue(string key)
         {
             try
             {
                 var name = key;
                 var keyPath = string.Empty;
                 var index = -1;
-                string? path = null;
+                string path = null;
                 if (key.IndexOf('.') > 0)
                 {
                     name = key.Substring(0, key.IndexOf('.'));
@@ -264,7 +264,7 @@ namespace Molder.Controllers
                 return null;
             }
         }
-        public string? GetVariableValueText(string? key)
+        public string GetVariableValueText(string key)
         {
             var val = GetVariableValue(key);
 
@@ -273,7 +273,7 @@ namespace Molder.Controllers
                 return null;
             }
 
-            string? ret;
+            string ret;
             switch (val)
             {
                 

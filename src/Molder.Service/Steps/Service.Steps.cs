@@ -33,7 +33,7 @@ namespace Molder.Service.Steps
         /// Привязка шагов работы с с web сервисами к работе с переменным через контекст.
         /// </summary>
         /// <param name="variableController">Контекст для работы с переменными.</param>
-        /// <param name="serviceContext">Контекст для работы с web сервисами.</param>
+        /// <param name="serviceController">Контекст для работы с web сервисами.</param>
         public ServiceSteps(VariableController variableController, ServiceController serviceController)
         {
             this.variableController = variableController;
@@ -83,8 +83,8 @@ namespace Molder.Service.Steps
         /// </summary>
         /// <param name="url">Ссылка на сервис.</param>
         /// <param name="method">Метод сервиса.</param>
-        /// <param name="service">Название сервиса.</param>
-        /// <param name="parameters">Параметры вызова.</param>
+        /// <param name="name">Название сервиса.</param>
+        /// <param name="requestDto">Параметры вызова.</param>
         [When(@"я вызываю веб-сервис ""(.+)"" по адресу ""(.+)"" с методом ""(.+)"", используя параметры:")]
         public void SendToRestServiceWithBody(string name, string url, HTTPMethodType method, RequestDto requestDto) 
         {
@@ -114,25 +114,24 @@ namespace Molder.Service.Steps
                 Url = url 
             };
 
-            using (var service = new WebService())
-            {
-                var responce =  service.SendMessage(request).Result;
+            using var service = new WebService();
+            
+            var responce =  service.SendMessage(request).Result;
 
-                if (responce != null)
-                {
-                    serviceController.Services.TryAdd(name, responce);
-                }
-                else
-                {
-                    Log.Logger().LogInformation($"Сервис с названием \"{name}\" не добавлен. Подробности в логах");
-                }
+            if (responce != null)
+            {
+                serviceController.Services.TryAdd(name, responce);
+            }
+            else
+            {
+                Log.Logger().LogInformation($"Сервис с названием \"{name}\" не добавлен. Подробности в логах");
             }
         }
 
         /// <summary>
         /// Шаг проверки статуса выполнения web сервиса.
         /// </summary>
-        /// <param name="service">Название сервиса.</param>
+        /// <param name="name">Название сервиса.</param>
         /// <param name="status">Статус.</param>
         [Then(@"веб-сервис \""(.+)\"" выполнился со статусом \""(.+)\""")]
         public void Then_ReceivedService_Status(string name, HttpStatusCode status)
@@ -146,7 +145,7 @@ namespace Molder.Service.Steps
         /// <summary>
         /// Шаг сохранения результата вызова web сервиса как строка в переменную.
         /// </summary>
-        /// <param name="service">Название сервиса.</param>
+        /// <param name="name">Название сервиса.</param>
         /// <param name="varName">Идентификатор переменной.</param>
         [Then(@"я сохраняю результат вызова веб-сервиса \""(.+)\"" как текст в переменную \""(.+)\""")]
         public void StoreReceivedResultInVariable_String(string name, string varName)
@@ -165,7 +164,7 @@ namespace Molder.Service.Steps
         /// <summary>
         /// Шаг сохранения результата вызова web сервиса как json в переменную.
         /// </summary>
-        /// <param name="service">Название сервиса.</param>
+        /// <param name="name">Название сервиса.</param>
         /// <param name="varName">Идентификатор переменной.</param>
         [Then(@"я сохраняю результат вызова веб-сервиса \""(.+)\"" как json в переменную \""(.+)\""")]
         public void StoreReceivedResultInVariable_Json(string name, string varName)
@@ -186,7 +185,7 @@ namespace Molder.Service.Steps
         /// <summary>
         /// Шаг сохранения результата вызова web сервиса как xml в переменную.
         /// </summary>
-        /// <param name="service">Название сервиса.</param>
+        /// <param name="name">Название сервиса.</param>
         /// <param name="varName">Идентификатор переменной.</param>
         [Then(@"я сохраняю результат вызова веб-сервиса \""(.+)\"" как xml в переменную \""(.+)\""")]
         public void StoreReceivedResultInVariable_Xml(string name, string varName)

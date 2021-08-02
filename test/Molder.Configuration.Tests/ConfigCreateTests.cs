@@ -29,7 +29,7 @@ namespace Molder.Configuration.Tests
                         "}}" + "}",
                     new List<ConfigFile>
                     {
-                        new ConfigFile
+                        new()
                         {
                             Tag = "DataBase",
                             Parameters = new Dictionary<string, object>
@@ -38,7 +38,7 @@ namespace Molder.Configuration.Tests
                                 { "Key2", "Value2" }
                             }
                         },
-                        new ConfigFile
+                        new()
                         {
                             Tag = "WebService",
                             Parameters = new Dictionary<string, object>
@@ -58,7 +58,7 @@ namespace Molder.Configuration.Tests
                         "}}" + "}",
                     new List<ConfigFile>
                     {
-                        new ConfigFile
+                        new()
                         {
                             Tag = "WebService",
                             Parameters = new Dictionary<string, object>
@@ -81,11 +81,12 @@ namespace Molder.Configuration.Tests
 
             var configConfiguration = ConfigOptionsFactory.Create(testConfiguration);
 
-            configConfiguration.Value.Count().Should().Be(config.Count());
+            var configFiles = config as ConfigFile[] ?? config.ToArray();
+            configConfiguration.Value.Count().Should().Be(configFiles.Length);
 
             for(var i = 0; i < configConfiguration.Value.Count(); i++ )
             {
-                configConfiguration.Value.ToList()[i].Should().BeEquivalentTo(config.ToList()[i]);
+                configConfiguration.Value.ToList()[i].Should().BeEquivalentTo(configFiles.ToList()[i]);
             }
         }
 
@@ -102,7 +103,7 @@ namespace Molder.Configuration.Tests
                     "}}" + "}",
                 new List<ConfigFile>
                 {
-                    new ConfigFile
+                    new()
                     {
                         Tag = "WebService",
                         Parameters = new Dictionary<string, object>
@@ -126,7 +127,7 @@ namespace Molder.Configuration.Tests
                     + "}",
                 new List<ConfigFile>
                 {
-                    new ConfigFile
+                    new()
                     {
                         Tag = "WebService",
                         Parameters = new Dictionary<string, object>
@@ -149,18 +150,19 @@ namespace Molder.Configuration.Tests
 
             var configConfiguration = ConfigOptionsFactory.Create(testConfiguration);
 
-            configConfiguration.Value.Count().Should().Be(config.Count());
+            var configFiles = config as ConfigFile[] ?? config.ToArray();
+            configConfiguration.Value.Count().Should().Be(configFiles.Length);
 
             for (var i = 0; i < configConfiguration.Value.Count(); i++)
             {
-                configConfiguration.Value.ToList()[i].Should().BeEquivalentTo(config.ToList()[i]);
+                configConfiguration.Value.ToList()[i].Should().BeEquivalentTo(configFiles.ToList()[i]);
             }
         }
 
         [Fact]
         public void CreateConfiguration_EmptyConfigBlock_ReturnEmptyList()
         {
-            string json = "{\"AnotherSegment\": {}}";
+            const string json = "{\"AnotherSegment\": {}}";
 
             var testConfiguration = new ConfigurationBuilder()
                 .AddJsonStream(json.ToStream())

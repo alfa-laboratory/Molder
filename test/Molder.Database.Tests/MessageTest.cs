@@ -24,16 +24,16 @@ namespace Molder.Database.Tests
 
             client._provider = mockSqlProvider.Object;
 
-            var command = client._provider.SetupCommand(query, null);
+            var command = client._provider.SetupCommand(query);
 
-            var result = Message.CreateMessage(command);
+            var result = command.CreateMessage();
             result.Should().NotBeNullOrEmpty();
         }        
 
         [Fact]
         public void CreateMessage_CorrectConnectionString_ReturnString()
         {
-            var connectionString = "DataBase = Test; Source = Test";
+            const string connectionString = "DataBase = Test; Source = Test";
 
             var result = Message.CreateMessage(connectionString);
             result.Should().NotBeNullOrEmpty();
@@ -51,11 +51,11 @@ namespace Molder.Database.Tests
 
             client._provider = mockSqlProvider.Object;
 
-            var command = client._provider.SetupCommand(query, null);
+            var command = client._provider.SetupCommand(query);
             command = null;
 
 
-            var result = Message.CreateMessage(command);
+            var result = command.CreateMessage();
             result.Should().BeNull();
         }
     }

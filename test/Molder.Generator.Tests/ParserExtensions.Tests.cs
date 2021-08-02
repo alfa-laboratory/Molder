@@ -77,7 +77,7 @@ namespace Molder.Generator.Tests
         public void TryParse_StringToInt_ReturnException()
         {
             var enumerable = new List<object>() { "test" };
-            Action act = () => ((IEnumerable<object>)enumerable).TryParse<int>();
+            Action act = () => enumerable.TryParse<int>();
             act.Should().Throw<NotValidCastException>();
         }
 
@@ -85,7 +85,7 @@ namespace Molder.Generator.Tests
         public void CheckTryParse_LongToInt_ReturnException()
         {
             var enumerable = new List<object>() { 999999999999999L };
-            Action act = () => ((IEnumerable<object>)enumerable).TryParse<int>();
+            Action act = () => enumerable.TryParse<int>();
             act.Should().Throw<NotValidCastException>();
         }
 

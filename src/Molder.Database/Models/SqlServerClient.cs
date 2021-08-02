@@ -22,7 +22,7 @@ namespace Molder.Database.Models
         [ExcludeFromCodeCoverage]
         public IDbConnection Get()
         {
-            return (_provider as SqlProvider).Connection;
+            return (_provider as SqlProvider)?.Connection!;
         }
 
         public bool Create(DbConnectionStringBuilder sqlConnectionStringBuilder)

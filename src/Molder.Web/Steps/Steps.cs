@@ -65,19 +65,19 @@ namespace Molder.Web.Steps
         [StepDefinition(@"я сохраняю адрес активной веб-страницы в переменную \""(.+)\""")]
         public void SaveUrlActivePage(string varName)
         {
-            this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
+            variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
 
             var url = BrowserController.GetBrowser().Url;
-            this.variableController.SetVariable(varName, url.GetType(), url);
+            variableController.SetVariable(varName, url.GetType(), url);
         }
 
         [StepDefinition(@"я сохраняю заголовок активной веб-страницы в переменную \""(.+)\""")]
         public void SaveTitleActiveWebPage(string varName)
         {
-            this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
+            variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
 
             var title = BrowserController.GetBrowser().Title;
-            this.variableController.SetVariable(varName, title.GetType(), title);
+            variableController.SetVariable(varName, title.GetType(), title);
         }
 
         [StepDefinition(@"я закрываю веб-страницу")]

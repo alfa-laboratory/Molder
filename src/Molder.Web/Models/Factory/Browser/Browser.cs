@@ -15,11 +15,11 @@ namespace Molder.Web.Models.Browser
     {
         #region Node for current *
         
-        private AsyncLocal<Node> _currentPage = new AsyncLocal<Node> { Value = null };
+        private AsyncLocal<Node> _currentPage = new() { Value = null };
         
         #endregion
 
-        private AsyncLocal<IDriverProvider> _provider = new AsyncLocal<IDriverProvider> { Value = new DriverProvider() };
+        private AsyncLocal<IDriverProvider> _provider = new() { Value = new DriverProvider() };
 
         public IDriverProvider DriverProvider
         {

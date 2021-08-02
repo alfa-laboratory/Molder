@@ -11,7 +11,7 @@ namespace Molder.Helpers
 {
     public static class Message
     {
-        public static string? CreateMessage(IEnumerable<string> list)
+        public static string CreateMessage(IEnumerable<string> list)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace Molder.Helpers
             
         }
 
-        public static string? CreateMessage(ICollection<ValidationResult> results)
+        public static string CreateMessage(ICollection<ValidationResult> results)
         {
             try
             {

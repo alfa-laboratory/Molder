@@ -29,7 +29,7 @@ namespace Molder.Configuration.Tests
             {
                 new List<ConfigFile>
                 {
-                    new ConfigFile
+                    new()
                     {
                         Tag = "WebService",
                         Parameters = new Dictionary<string, object>
@@ -50,7 +50,7 @@ namespace Molder.Configuration.Tests
             {
                 new List<ConfigFile>
                 {
-                    new ConfigFile
+                    new()
                     {
                         Tag = "DataBase",
                         Parameters = new Dictionary<string, object>
@@ -59,7 +59,7 @@ namespace Molder.Configuration.Tests
                             { "Key2", "Value2" }
                         }
                     },
-                    new ConfigFile
+                    new()
                     {
                         Tag = "WebService",
                         Parameters = new Dictionary<string, object>
@@ -101,7 +101,7 @@ namespace Molder.Configuration.Tests
             {
                 new List<ConfigFile>
                 {
-                    new ConfigFile
+                    new()
                     {
                         Tag = "DataBase",
                         Parameters = new Dictionary<string, object>
@@ -110,7 +110,7 @@ namespace Molder.Configuration.Tests
                             { "Key2", "Value2" }
                         }
                     },
-                    new ConfigFile
+                    new()
                     {
                         Tag = "WebService",
                         Parameters = new Dictionary<string, object>
@@ -150,7 +150,7 @@ namespace Molder.Configuration.Tests
             {
                 new List<ConfigFile>
                 {
-                    new ConfigFile
+                    new()
                     {
                         Tag = "DataBase",
                         Parameters = new Dictionary<string, object>
@@ -159,7 +159,7 @@ namespace Molder.Configuration.Tests
 
                         }
                     },
-                    new ConfigFile
+                    new()
                     {
                         Tag = "WebService",
                         Parameters = new Dictionary<string, object>

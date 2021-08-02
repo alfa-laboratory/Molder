@@ -11,7 +11,7 @@ namespace Molder.Helpers
     [ExcludeFromCodeCoverage]
     public class Log
     {
-        private static ILoggerFactory? _Factory = null;
+        private static ILoggerFactory _Factory = null;
 
         private static void ConfigureLogger(ILoggerFactory factory)
         {

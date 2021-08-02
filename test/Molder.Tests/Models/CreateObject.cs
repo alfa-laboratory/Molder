@@ -16,7 +16,7 @@ namespace Molder.Tests.Models
                 dt.Columns.Add(column);
             }
 
-            foreach (object?[] elements in rows.Select(row => row.Split(";")))
+            foreach (object[] elements in rows.Select(row => row.Split(";")))
             {
                 dt.Rows.Add(elements);
             }
