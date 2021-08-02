@@ -18,7 +18,6 @@ namespace Molder.Web.Steps
         public Steps(VariableController controller)
         {
             variableController = controller;
-            BrowserController.SetVariables(variableController);
         }
 
         [StepArgumentTransformation]

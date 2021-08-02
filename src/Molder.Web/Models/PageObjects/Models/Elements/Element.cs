@@ -109,6 +109,11 @@ namespace Molder.Web.Models.PageObjects.Elements
             return (bool)mediator.Wait(() => _provider.TextMatch(text));
         }
 
+        public void WaitUntilAttributeValueEquals(string attributeName, string attributeValue)
+        {
+            mediator.Execute(() => _provider.WaitUntilAttributeValueEquals(attributeName, attributeValue));
+        }
+
         #region Get webDriver Element
 
         protected void GetElement(string locator = null)

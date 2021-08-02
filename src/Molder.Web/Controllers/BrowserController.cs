@@ -1,18 +1,18 @@
-﻿using Molder.Controllers;
-using Molder.Helpers;
+﻿using Molder.Helpers;
 using Molder.Web.Models.Settings;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Molder.Web.Models.Browser;
 using System.Threading;
 using Molder.Web.Infrastructures;
 
 namespace Molder.Web.Controllers
 {
+    [ExcludeFromCodeCoverage]
     public class BrowserController
     {
         private static AsyncLocal<IBrowser> Browser = new AsyncLocal<IBrowser> { Value = null };
-        private static Lazy<VariableController> _variableController;
         private BrowserController() { }
         public static IBrowser GetBrowser()
         {
@@ -21,25 +21,35 @@ namespace Molder.Web.Controllers
 
         private static IBrowser Create()
         {
-            if (Browser.Value != null) return Browser.Value;
             switch (BrowserSettings.Settings.Browser)
             {
                 case BrowserType.CHROME:
                 {
                     Browser.Value = new Chrome();
-                    Log.Logger().LogInformation($"ChromeBrowser session is - {Browser.Value.SessionId.ToString()}");
+                    Log.Logger().LogInformation($"ChromeBrowser session is - {Browser.Value.SessionId}");
                     return Browser.Value;
                 }
                 case BrowserType.FIREFOX:
-                    break;
+                {
+                    Browser.Value = new Firefox();
+                    Log.Logger().LogInformation($"FirefoxBrowser session is - {Browser.Value.SessionId}");
+                    return Browser.Value;
+                }
                 case BrowserType.EDGE:
-                    break;
+                {
+                    Browser.Value = new Edge();
+                    Log.Logger().LogInformation($"EdgeBrowser session is - {Browser.Value.SessionId}");
+                    return Browser.Value;
+                }
                 case BrowserType.OPERA:
-                    break;
+                {
+                    Browser.Value = new Opera();
+                    Log.Logger().LogInformation($"OperaBrowser session is - {Browser.Value.SessionId}");
+                    return Browser.Value;
+                }
                 default:
-                    throw new InvalidOperationException("unknown browser type");
+                    throw new InvalidOperationException($"unknown browser type {BrowserSettings.Settings.Browser.ToString()}");
             }
-            return Browser.Value;
         }
 
         public static void Quit()
@@ -51,7 +61,5 @@ namespace Molder.Web.Controllers
             Log.Logger().LogInformation("Browser is quited");
             Browser.Value = null;
         }
-
-        public static void SetVariables(VariableController variableController) => _variableController = new Lazy<VariableController>(() => variableController);
     }
 }

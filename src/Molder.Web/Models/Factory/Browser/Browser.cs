@@ -21,15 +21,15 @@ namespace Molder.Web.Models.Browser
 
         private AsyncLocal<IDriverProvider> _provider = new AsyncLocal<IDriverProvider> { Value = new DriverProvider() };
 
-        protected IDriverProvider WebDriver
+        public IDriverProvider DriverProvider
         {
             get => _provider.Value;
             set => _provider.Value = value;
         }
 
-        public string Url => WebDriver.Url;
-        public string Title => WebDriver.Title;
-        public int Tabs => WebDriver.Tabs;
+        public string Url => DriverProvider.Url;
+        public string Title => DriverProvider.Title;
+        public int Tabs => DriverProvider.Tabs;
 
         public abstract SessionId SessionId { get; protected set; }
 
@@ -44,13 +44,19 @@ namespace Molder.Web.Models.Browser
             
             if (!loading) return;
             
-            var gtp = ((Page) _currentPage.Value.Object).GoToPage();
-            if(!gtp) throw new PageException($"Going to page \"{name}\" at \"{(_currentPage.Value.Object as Page)?.Url}\" failed");
+            try
+            {
+                ((Page) _currentPage.Value.Object).GoToPage();
+            }
+            catch
+            {
+                throw new PageException($"Going to page \"{name}\" at \"{(_currentPage.Value.Object as Page)?.Url}\" failed");
+            }
         }
 
         public void UpdateCurrentPage(string name)
         {
-            this.SetCurrentPage(name, false);
+            SetCurrentPage(name, false);
         }
 
         public IPage GetCurrentPage()
@@ -62,66 +68,66 @@ namespace Molder.Web.Models.Browser
             return _currentPage.Value.Object as IPage;
         }
 
-        public bool Close()
+        public void Close()
         {
-            return WebDriver.Close();
+            DriverProvider.Close();
         }
 
-        public bool Quit()
+        public void Quit()
         {
-            return WebDriver.Quit();
+            DriverProvider.Quit();
         }
 
-        public bool WindowSize(int width, int height)
+        public void WindowSize(int width, int height)
         {
             Log.Logger().LogInformation($"Browser size is ({width},{height})");
-            return WebDriver.WindowSize(width, height);
+            DriverProvider.WindowSize(width, height);
         }
 
         public void Maximize()
         {
             Log.Logger().LogInformation($"Browser size is maximize");
-            WebDriver.Maximize();
+            DriverProvider.Maximize();
         }
 
         public void Back()
         {
             Log.Logger().LogInformation($"Go a back page");
-            WebDriver.Back();
+            DriverProvider.Back();
         }
 
         public void Forward()
         {
             Log.Logger().LogInformation($"Go a forvard page");
-            WebDriver.Forward();
+            DriverProvider.Forward();
         }
 
-        public bool GoToPage(string url)
+        public void GoToPage(string url)
         {
             Log.Logger().LogInformation($"GoToUrl {url}");
-            return WebDriver.GoToUrl(url);
+            DriverProvider.GoToUrl(url);
         }
 
-        public bool Refresh()
+        public void Refresh()
         {
             Log.Logger().LogInformation($"Refresh page");
-            return WebDriver.Refresh();
+            DriverProvider.Refresh();
         }
 
         public IAlert Alert()
         {
-            return new Alert(WebDriver);
+            return new Alert(DriverProvider);
         }
 
         public void SwitchTo(int number)
         {
             Log.Logger().LogInformation($"Switch to {number} page");
-            WebDriver.SwitchTo(number);
+            DriverProvider.SwitchTo(number);
         }
 
         public byte[] Screenshot()
         {
-            return WebDriver.Screenshot();
+            return DriverProvider.Screenshot();
         }
 
         public void Dispose() {  }

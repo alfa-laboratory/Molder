@@ -2,6 +2,7 @@
 using Molder.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -12,6 +13,7 @@ using Titanium.Web.Proxy.Models;
 
 namespace Molder.Web.Models.Proxy
 {
+    [ExcludeFromCodeCoverage]
     public class Proxy : IDisposable
     {
         private ProxyServer _proxyServer;

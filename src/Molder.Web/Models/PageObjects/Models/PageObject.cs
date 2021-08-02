@@ -1,6 +1,4 @@
 ﻿using Molder.Controllers;
-using Molder.Models.Assembly;
-using Molder.Models.Directory;
 using Molder.Web.Extensions;
 using Molder.Web.Infrastructures;
 using Molder.Web.Models.PageObjects.Attributes;
@@ -10,6 +8,7 @@ using Molder.Web.Models.PageObjects.Frames;
 using Molder.Web.Models.PageObjects.Pages;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
@@ -17,6 +16,7 @@ using Molder.Helpers;
 
 namespace Molder.Web.Models
 {
+    [ExcludeFromCodeCoverage]
     public class PageObject
     {
         private VariableController _variableController;
@@ -83,7 +83,7 @@ namespace Molder.Web.Models
                 {
                     case ObjectType.Element:
                     {
-                        if (rootObject != null && rootObject.Value.type == ObjectType.Block)
+                        if (rootObject is {type: ObjectType.Block})
                         {
                             var locator = (rootObject.Value.root as Block)?.Locator + (obj as Element)?.Locator;
                             ((Element) obj).Locator = locator;
@@ -103,7 +103,7 @@ namespace Molder.Web.Models
                             .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                             .Where(f => f.GetCustomAttribute<ElementAttribute>() != null);
                         
-                        if (rootObject != null && rootObject.Value.type == ObjectType.Block)
+                        if (rootObject is {type: ObjectType.Block})
                         {
                             var locator = (rootObject.Value.root as Block)?.Locator + (obj as Block)?.Locator;
                             ((Block) obj).Locator = locator;
@@ -124,7 +124,7 @@ namespace Molder.Web.Models
                             .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                             .Where(f => f.GetCustomAttribute<ElementAttribute>() != null);
 
-                        if (rootObject != null && rootObject.Value.type == ObjectType.Block)
+                        if (rootObject is {type: ObjectType.Block})
                         {
                             var locator = (rootObject.Value.root as Block)?.Locator + (obj as Frame)?.Locator;
                             ((Frame) obj).Locator = locator;
@@ -181,7 +181,7 @@ namespace Molder.Web.Models
             return (name, objectType, element);
         }
 
-        private IEnumerable<System.Reflection.Assembly> GetAssembly()
+        private IEnumerable<Assembly> GetAssembly()
         {
             try
             {
