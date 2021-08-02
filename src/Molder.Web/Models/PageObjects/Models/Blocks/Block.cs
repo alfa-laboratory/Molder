@@ -15,7 +15,7 @@ namespace Molder.Web.Models.PageObjects.Blocks
 
             (block.Object as Block)?.SetProvider(_driverProvider);
             ((Block) block.Object).Root = block;
-            return block.Object as Block;
+            return (Block) block.Object;
         }
 
         public new IElement GetElement(string name)
@@ -23,7 +23,7 @@ namespace Molder.Web.Models.PageObjects.Blocks
             var element = Root.SearchElementBy(name);
             (element.Object as Element)?.SetProvider(_driverProvider);
             ((Element) element.Object).Root = element;
-            return element.Object as IElement;
+            return (IElement) element.Object;
         }
 
         public Frame GetFrame(string name)
@@ -32,7 +32,7 @@ namespace Molder.Web.Models.PageObjects.Blocks
 
             (frame.Object as Frame)?.SetProvider(_driverProvider);
             ((Frame) frame.Object).Root = frame;
-            return frame.Object as Frame;
+            return (Frame) frame.Object;
         }
     }
 }

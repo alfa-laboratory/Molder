@@ -30,6 +30,7 @@ namespace Molder.Web.Models.Providers
         bool TextEqual(string text);
         bool TextContain(string text);
         bool TextMatch(string text);
+        void WaitUntilAttributeValueEquals(string attributeName, string attributeValue);
 
         IElementProvider FindElement(By by);
         ReadOnlyCollection<IElementProvider> FindElements(By by);

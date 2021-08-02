@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
+using System.Collections;
 using System.Threading;
 using System.Xml.Linq;
+using System.Linq;
 using FluentAssertions;
 using Molder.Controllers;
 using Molder.Helpers;
 using TechTalk.SpecFlow;
 using Microsoft.Extensions.Logging;
 using Molder.Extensions;
+using Molder.Generator.Extensions;
+using Molder.Generator.Exceptions;
 
 namespace Molder.Generator.Steps
 {
@@ -18,7 +23,7 @@ namespace Molder.Generator.Steps
     public class VariableSteps
     {
         private readonly VariableController variableController;
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="Generator"/> class.
         /// Привязка общих шагов к работе с переменным через контекст.
@@ -27,6 +32,37 @@ namespace Molder.Generator.Steps
         public VariableSteps(VariableController variableController)
         {
             this.variableController = variableController;
+        }
+
+        [StepArgumentTransformation]
+        public IEnumerable<object> TransformationTableToEnumerable(Table table)
+        {
+            return table.ToEnumerable(variableController);
+        }
+
+        [StepArgumentTransformation]
+        public Dictionary<string,object> TransformationTableToDictionary(Table table)
+        {
+            return table.ToDictionary(variableController);
+        }
+
+        [StepArgumentTransformation]
+        public TypeCode StringToTypeCode(string type)
+        {
+            var variablesType = new Dictionary<string, Type>()
+            {
+                { "int", typeof(int)},
+                { "string", typeof(string)},
+                { "double", typeof(double)},
+                { "bool", typeof(bool)},
+                { "object",typeof(object)},
+                { "long",typeof(long)},
+                { "float",typeof(float)}
+            };
+            type.Should().NotBeNull("Значение \"type\" не задано");
+            type = type.ToLower();
+            if (!variablesType.TryGetValue(type, out Type value)) throw new NotValidTypeException($"There is no type \"{type}\"");
+            return Type.GetTypeCode(value);
         }
 
         /// <summary>
@@ -379,6 +415,147 @@ namespace Molder.Generator.Steps
             var actual = this.variableController.GetVariableValueText(varName);
             actual.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
             actual.Should().EndWith(expected, $"значение переменной \"{varName}\":\"{actual}\" не заканчивается с \"{expected}\"");
+        }
+
+        /// <summary>
+        /// Шаг для сохранения коллекции в переменную без указания типа.
+        /// </summary>
+        /// <param name="varName">Идентификатор переменной.</param>
+        /// <param name="collection">Коллекция.</param>
+        [StepDefinition(@"я сохраняю коллекцию в переменную ""(.+)"":")]
+        public void StoreEnumerableAsVariableNoType(string varName, IEnumerable<object> collection)
+        {
+            varName.Should().NotBeNull("Значение \"varName\" не задано");
+            variableController.SetVariable(varName, collection.GetType(), collection);
+        }
+
+        /// <summary>
+        /// Шаг для сохранения коллекции в переменную c указанием типа.
+        /// </summary>
+        /// <param name="varType">Идентификатор типа переменной.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        /// <param name="collection">Коллекция.</param>
+        [StepDefinition(@"я сохраняю коллекцию с типом ""(.+)"" в переменную ""(.+)"":")]
+        public void StoreEnumerableAsVariableWithType(TypeCode varType, string varName, IEnumerable<object> collection)
+        {
+            varName.Should().NotBeNull("Значение \"varName\" не задано");
+            switch (varType) {
+                case TypeCode.Object:
+                    var tmpParserObject = collection.TryParse<object>();
+                    variableController.SetVariable(varName, tmpParserObject.GetType(), tmpParserObject);
+                    break;
+                case TypeCode.Int32:
+                    var tmpParserInt = collection.TryParse<int>();
+                    variableController.SetVariable(varName, tmpParserInt.GetType(), tmpParserInt);
+                    break;
+                case TypeCode.Boolean:
+                    var tmpParserBool = collection.TryParse<bool>();
+                    variableController.SetVariable(varName, tmpParserBool.GetType(), tmpParserBool);
+                    break;
+                case TypeCode.String:
+                    var tmpParserString = collection.TryParse<string>();
+                    variableController.SetVariable(varName, tmpParserString.GetType(), tmpParserString);
+                    break;
+                case TypeCode.Double:
+                    var tmpParserStringDouble = collection.TryParse<double>();
+                    variableController.SetVariable(varName, tmpParserStringDouble.GetType(), tmpParserStringDouble);
+                    break;
+                case TypeCode.Single:
+                    var tmpParserStringFloat = collection.TryParse<float>();
+                    variableController.SetVariable(varName, tmpParserStringFloat.GetType(), tmpParserStringFloat);
+                    break;
+                case TypeCode.Int64:
+                    var tmpParserStringLong = collection.TryParse<long>();
+                    variableController.SetVariable(varName, tmpParserStringLong.GetType(), tmpParserStringLong);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Шаг для сохранения произвольного значения из коллекции в переменную.
+        /// </summary>
+        /// <param name="collectionName">Идентификатор коллекции.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я выбираю произвольное значение из коллекции ""(.+)"" и записываю его в переменную ""(.+)""")]
+        public void StoreRandomVariableFromEnumerable(string collectionName, string varName)
+        {
+            collectionName.Should().NotBeNull("Значение \"collectionName\" не задано");
+            varName.Should().NotBeNull("Значение \"varName\" не задано");
+            collectionName.IsEnumerable(variableController);
+            var collection = variableController.GetVariableValue(collectionName);
+            var rand = new Random();
+            var param = rand.Next() % ((IEnumerable)collection).Cast<object>().ToList().Count;
+            var variable = variableController.GetVariableValue($"{collectionName}[{param}]");
+            variableController.SetVariable(varName, variable.GetType(), variable);
+            Log.Logger().LogDebug($"Got variable {variable} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
+        }
+
+        /// <summary>
+        /// Шаг для сохранения значения из коллекции в переменную.
+        /// </summary>
+        /// <param name="collectionName">Идентификатор коллекции и индекcа значения.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+
+        [StepDefinition(@"я выбираю значение из коллекции ""(.+)"" и записываю его в переменную ""(.+)""")]
+        public void StoreVariableFromEnumerable(string collectionName, string varName)
+        {
+            collectionName.Should().NotBeNull("Значение \"collectionName\" не задано");
+            varName.Should().NotBeNull("Значение \"varName\" не задано");
+            collectionName.IsEnumerable(variableController);
+            var variable = variableController.GetVariableValue(collectionName);
+            (variable is ICollection).Should().BeFalse($"\"{collectionName}\" не является значением коллекции");
+            variableController.SetVariable(varName, variable.GetType(), variable);
+            Log.Logger().LogDebug($"Got variable {variable} from collection \"{collectionName}\" and put it into new variable\"{varName}\"");
+        }
+
+        /// <summary>
+        /// Шаг для сохранения словаря в переменную без указания типа.
+        /// </summary>
+        /// <param name="varName">Идентификатор переменной.</param>
+        /// <param name="dictionary">Словарь.</param>
+        [StepDefinition(@"я сохраняю словарь в переменную ""(.+)"":")]
+        public void StoreDictionaryAsVariableNoType(string varName, Dictionary<string,object> dictionary)
+        {
+            varName.Should().NotBeNull("Значение \"varname\" не задано");
+            this.variableController.SetVariable(varName, dictionary.GetType(), dictionary);
+
+        }
+
+        /// <summary>
+        /// Шаг для сохранения произвольного значения из словаря в переменную.
+        /// </summary>
+        /// <param name="dictionaryName">Идентификатор словаря.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я выбираю произвольное значение из словаря ""(.+)"" и записываю его в переменную ""(.+)""")]
+        public void StoreRandomVariableFromDictionary(string dictionaryName, string varName)
+        {
+            varName.Should().NotBeNull("Значение \"varName\" не задано");
+            dictionaryName.Should().NotBeNull("Значение \"dictionaryName\" не задано");
+            dictionaryName.IsDictionary(variableController);
+            var dictionary = variableController.GetVariableValue(dictionaryName);
+            var rand = new Random();
+            var param = rand.Next() % Enumerable.ToList(((Dictionary<string, object>)dictionary).Keys).Count;
+            var key = Enumerable.ToList(((Dictionary<string, object>)dictionary).Keys)[param];
+           var variable = variableController.GetVariableValue($"{dictionaryName}[{key}]");
+            variableController.SetVariable(varName, variable.GetType(), variable);
+            Log.Logger().LogDebug($"Got variable {variable} from collection \"{dictionaryName}\" and put it into new variable\"{varName}\"");
+        }
+
+        /// <summary>
+        /// Шаг для сохранения значения из коллекции в переменную.
+        /// </summary>
+        /// <param name="dictionaryName">Идентификатор словаря.</param>
+        /// <param name="varName">Идентификатор переменной.</param>
+        [StepDefinition(@"я выбираю значение из словаря ""(.+)"" и записываю его в переменную ""(.+)""")]
+        public void StoreVariableFromDictionary(string dictionaryName, string varName)
+        {
+            dictionaryName.Should().NotBeNull("Значение \"dictionaryName\" не задано");
+            varName.Should().NotBeNull("Значение \"varName\" не задано");
+            dictionaryName.IsDictionary(variableController);
+            var variable = variableController.GetVariableValue(dictionaryName);
+            (variable is Dictionary<string,object>).Should().BeFalse($"\"{dictionaryName}\" не является значением коллекции");
+            this.variableController.SetVariable(varName, variable.GetType(), variable);
+            Log.Logger().LogDebug($"Got variable {variable} from dictionary \"{dictionaryName}\" and put it into new variable\"{varName}\"");
         }
     }
 }

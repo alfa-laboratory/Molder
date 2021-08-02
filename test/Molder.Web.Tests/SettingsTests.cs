@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Molder.Web.Models.Settings;
 using Xunit;
 
 namespace Molder.Web.Tests
 {
+    [ExcludeFromCodeCoverage]
     public class SettingsTests
     {
         [Fact]

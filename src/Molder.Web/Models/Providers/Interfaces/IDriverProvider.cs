@@ -16,17 +16,16 @@ namespace Molder.Web.Models.Providers
         void CreateDriver(Func<IWebDriver> action);
         IWebDriver GetDriver();
 
-        bool Close();
-        bool Quit();
+        void Close();
+        void Quit();
         IElementProvider GetElement(By by);
         ReadOnlyCollection<IElementProvider> GetElements(By by);
-        IElementProvider GetActiveElement();
-        bool WindowSize(int width, int height);
+        void WindowSize(int width, int height);
         void Maximize();
         void Back();
         void Forward();
-        bool GoToUrl(string url);
-        bool Refresh();
+        void GoToUrl(string url);
+        void Refresh();
 
         void SwitchTo(int number);
 

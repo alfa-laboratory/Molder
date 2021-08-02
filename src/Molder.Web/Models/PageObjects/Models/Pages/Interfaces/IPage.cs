@@ -15,13 +15,13 @@ namespace Molder.Web.Models.PageObjects.Pages
         Block GetBlock(string name);
         void BackToPage();
         IElement GetElement(string name);
-        IEnumerable<IElement> GetPrimaryElements();
+        IEnumerable<string> GetPrimaryElements();
 
         IPage GetDefaultFrame();
         Frame GetParentFrame();
         Frame GetFrame(string name);
 
-        bool GoToPage();
+        void GoToPage();
         void PageTop();
         void PageDown();
 

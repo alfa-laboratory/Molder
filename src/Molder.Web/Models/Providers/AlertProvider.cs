@@ -1,6 +1,8 @@
-﻿using OpenQA.Selenium;
+﻿using System;
+using OpenQA.Selenium;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
+using Molder.Web.Exceptions;
 
 namespace Molder.Web.Models.Providers
 {
@@ -17,27 +19,55 @@ namespace Molder.Web.Models.Providers
         }
 
         #endregion
-        
+
         public string Text => Alert.Text;
 
         public void SendAccept()
         {
-            Alert.Accept();
+            try
+            {
+                Alert.Accept();
+            }
+            catch (Exception ex)
+            {
+                throw new AlertException($"Accept in alert is return error with message {ex.Message}");
+            }
         }
 
         public void SendDismiss()
         {
-            Alert.Dismiss();
+            try
+            {
+                Alert.Dismiss();
+            }
+            catch (Exception ex)
+            {
+                throw new AlertException($"Dismiss in alert is return error with message {ex.Message}");
+            }
         }
 
         public void SendKeys(string keys)
         {
-            Alert.SendKeys(keys);
+            try
+            {
+                Alert.SendKeys(keys);
+            }
+            catch (Exception ex)
+            {
+                throw new AlertException($"Send keys \"{keys}\" in alert is return error with message {ex.Message}");
+            }
         }
 
         public void SetAuth(string login, string password)
         {
-            Alert.SetAuthenticationCredentials(login, password);
+            try
+            {
+                Alert.SetAuthenticationCredentials(login, password);
+            }
+            catch (Exception ex)
+            {
+                throw new AlertException($"Authentication credentials ({login},{password}) in alert is return error with message {ex.Message}");
+            }
         }
     }
 }

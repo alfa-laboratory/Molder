@@ -1,8 +1,10 @@
 ﻿using Polly.Retry;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Molder.Web.Models.Mediator
 {
+    [ExcludeFromCodeCoverage]
     public abstract class Mediator : IMediator
     {
         protected RetryPolicy retryPolicy = null;

@@ -18,15 +18,17 @@ namespace Molder.Web.Models.Browser
             var options = CreateOptions();
             if(BrowserSettings.Settings.IsRemoteRun())
             {
-                WebDriver.CreateDriver(() => new RemoteWebDriver(new Uri(BrowserSettings.Settings.Remote.Url), options.ToCapabilities()));
-                SessionId = (WebDriver.GetDriver() as RemoteWebDriver)?.SessionId;
+                Log.Logger().LogInformation($@"Start remote chrome browser...");
+                DriverProvider.CreateDriver(() => new RemoteWebDriver(new Uri(BrowserSettings.Settings.Remote.Url), options.ToCapabilities()));
+                SessionId = (DriverProvider.GetDriver() as RemoteWebDriver)?.SessionId;
                 Log.Logger().LogInformation($@"Remote chrome browser (SessionId is {SessionId}) is starting with options: {Helpers.Message.CreateMessage(options)}");
                 return;
             }
+            Log.Logger().LogInformation($@"Start chrome browser...");
             var service = ChromeDriverService.CreateDefaultService();
             service.HideCommandPromptWindow = true;
-            WebDriver.CreateDriver(() => new ChromeDriver(service, options));
-            SessionId = (WebDriver.GetDriver() as ChromeDriver)?.SessionId;
+            DriverProvider.CreateDriver(() => new ChromeDriver(service, options));
+            SessionId = (DriverProvider.GetDriver() as ChromeDriver)?.SessionId;
             Log.Logger().LogInformation($@"Local chrome browser (SessionId is {SessionId}) is starting with options: {Helpers.Message.CreateMessage(options)}");
         }
 
