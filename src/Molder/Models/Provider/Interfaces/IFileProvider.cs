@@ -7,7 +7,7 @@
         bool AppendAllText(string filename, string path, string content);
         bool Create(string filename, string path, string content);
         bool WriteAllText(string filename, string path, string content);
-        string ReadAllText(string filename, string path);
+        string? ReadAllText(string filename, string path);
         bool Delete(string fullpath);
     }
 }

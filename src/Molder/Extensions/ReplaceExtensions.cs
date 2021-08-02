@@ -8,14 +8,14 @@ namespace Molder.Extensions
 {
     public static class ReplaceExtensions
     {
-        public static string ReplaceVariables(this VariableController variableController, string str, Func<object, string> foundReplace = null, Func<object, string> notFoundReplace = null)
+        public static string ReplaceVariables(this VariableController variableController, string str, Func<object, string> foundReplace = null!, Func<object, string> notFoundReplace = null!)
         {
             return variableController.ReplaceVariables(str, StringPattern.SEARCH, foundReplace, notFoundReplace);
         }
 
-        public static string ReplaceVariables(this VariableController variableController, string str, string pattern, Func<object, string> foundReplace = null, Func<object, string> notFoundReplace = null)
+        public static string ReplaceVariables(this VariableController variableController, string str, string pattern, Func<object, string> foundReplace = null!, Func<object, string> notFoundReplace = null!)
         {
-            object val;
+            object? val;
             var fmt = Regex.Replace(
                 str ?? string.Empty,
                 pattern,
@@ -38,17 +38,17 @@ namespace Molder.Extensions
                         }
 
                         val = variableController.GetVariableValueText(variable);
-                        return foundReplace != null ? foundReplace(val) : val.ToString();
+                        return (foundReplace != null ? foundReplace(val) : val.ToString())!;
                     }
                     else
                     {
-                        string[] _params = new string[0];
-                        if(!(parameters is null))
+                        string?[] _params = Array.Empty<string>();
+                        if(parameters is not null)
                         {
-                            _params = new string[parameters.Count()];
+                            _params = new string[parameters.Length];
                             if (parameters.Any())
                             {
-                                for(int i = 0; i < parameters.Count(); i++)
+                                for(var i = 0; i < parameters.Length; i++)
                                 {
                                     if (variableController.GetVariable(parameters[i]) is null)
                                     {
@@ -63,12 +63,12 @@ namespace Molder.Extensions
                         }
 
                         var function = ReplaceMethodsExtension.Check(methodName);
-                        if(function.GetParameters().Count() != _params.Count())
+                        if(function.GetParameters().Length != _params.Length)
                         {
                             return notFoundReplace != null ? notFoundReplace(variable) : variable;
                         }
                         var funcVal = ReplaceMethodsExtension.Invoke(methodName, _params);
-                        return foundReplace != null ? foundReplace(funcVal) : funcVal.ToString();
+                        return (foundReplace != null ? foundReplace(funcVal) : funcVal.ToString())!;
                     }
                 },
                 RegexOptions.None);

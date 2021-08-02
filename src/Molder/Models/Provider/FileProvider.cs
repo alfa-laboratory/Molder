@@ -14,7 +14,7 @@ namespace Molder.Models.Profider
         {
             var extension = Path.GetExtension(filename);
             var extMustBeTxt = FileExtensions.TXT;
-            var result = (extension == extMustBeTxt);
+            var result = extension == extMustBeTxt;
             return result;
         }
 
@@ -37,12 +37,9 @@ namespace Molder.Models.Profider
             {
                 var fullPath = Path.Combine(path, filename);
                 System.IO.File.AppendAllText(fullPath, content);
-                if (Exist(fullPath))
-                {
-                    Log.Logger().LogInformation($"The file \"{filename}\" in the \"{path}\" directory has been created");
-                    return true;
-                }
-                else return false;
+                if (!Exist(fullPath)) return false;
+                Log.Logger().LogInformation($"The file \"{filename}\" in the \"{path}\" directory has been created");
+                return true;
 
             }
             catch (FileNotFoundException e)
@@ -58,12 +55,10 @@ namespace Molder.Models.Profider
             {
                 var fullpath = Path.Combine(path, filename);
                 System.IO.File.Create(fullpath);
-                if (Exist(fullpath))
-                {
-                    Log.Logger().LogInformation($"An empty file \"{filename}\" in the \"{fullpath}\" directory has been created");
-                    return true;
-                }
-                else return false;
+                if (!Exist(fullpath)) return false;
+                Log.Logger().LogInformation($"An empty file \"{filename}\" in the \"{fullpath}\" directory has been created");
+                return true;
+
             }
             catch (FileNotFoundException e)
             {
@@ -78,12 +73,10 @@ namespace Molder.Models.Profider
             {
                 var fullpath = Path.Combine(path, filename);
                 System.IO.File.WriteAllText(fullpath, content);
-                if (Exist(fullpath))
-                {
-                    Log.Logger().LogWarning($"The file \"{filename}\" in the \"{fullpath}\" directory has been overwritten");
-                    return true;
-                }
-                else return false;
+                if (!Exist(fullpath)) return false;
+                Log.Logger().LogWarning($"The file \"{filename}\" in the \"{fullpath}\" directory has been overwritten");
+                return true;
+
             }
             catch (FileNotFoundException e)
             {
@@ -102,11 +95,9 @@ namespace Molder.Models.Profider
                     Log.Logger().LogInformation($"The file \"{fullpath}\" has not been deleted");
                     return false;
                 }
-                else
-                {
-                    Log.Logger().LogInformation($"The file \"{fullpath}\" has been deleted");
-                    return true;
-                }
+
+                Log.Logger().LogInformation($"The file \"{fullpath}\" has been deleted");
+                return true;
             }
             catch (PathTooLongException e)
             {
@@ -125,7 +116,7 @@ namespace Molder.Models.Profider
             }
         }
 
-        public string ReadAllText(string filename, string path)
+        public string? ReadAllText(string filename, string path)
         {
             var fullpath = Path.Combine(path, filename);    
             try

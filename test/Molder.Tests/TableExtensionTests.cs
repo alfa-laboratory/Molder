@@ -16,7 +16,7 @@ namespace Molder.Tests
         private readonly DataTable dataTable;
         public TableExtensionTests()
         {
-            this.dataTable = new DataTable();
+            dataTable = new DataTable();
                 dataTable.Columns.Add("Number", typeof(int));
                 dataTable.Columns.Add("Patient", typeof(string));
                     dataTable.Rows.Add(25, "David");
@@ -52,9 +52,9 @@ namespace Molder.Tests
         [Fact]
         public void ConvertToString_TableIsNull_ReturnException()
         {
-            DataTable dt = null;
+            DataTable? dt = null;
             Action action = () => dt.ConvertToString();
-            action.Should().Throw<ArgumentNullException>().WithMessage("The table to convert to string is null\nParameter name: dataTable");
+            action.Should().Throw<ArgumentNullException>().WithMessage("The table to convert to string is null (Parameter 'dataTable')");
         }
 
         [Fact]

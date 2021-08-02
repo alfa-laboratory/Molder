@@ -1,17 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <LangVersion>9</LangVersion>
+
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>NU1701;1702;AD0001</NoWarn>
+    <NoWarn>NU1701;1702;CS8604;CS8602;CS8618</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>SA0001;NU5100;1701;1702</NoWarn>
+    <NoWarn>NU1701;1702;CS8604;CS8602;CS8618</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

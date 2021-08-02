@@ -23,9 +23,9 @@ namespace Molder.Tests
             yield return new object[] { ",abc", ",", new List<string> { "abc" } };
             yield return new object[] { "abc,", ",", new List<string> { "abc" } };
             yield return new object[] { "ab,c", ",", new List<string> { "ab", "c" } };
-            yield return new object[] { "abc", null, new List<string> { "abc" } };
-            yield return new object[] { null, ",", null };
-            yield return new object[] { null, null, null };
+            yield return new object[] { "abc", null!, new List<string> { "abc" } };
+            yield return new object[] { null!, ",", null! };
+            yield return new object[] { null!, null!, null! };
         }
 
         [Theory]

@@ -1,4 +1,4 @@
-﻿namespace Molder.Infrastructure
+﻿namespace Molder.Infrastructures
 {
     /// <summary>
     /// Тиы аутентификации.

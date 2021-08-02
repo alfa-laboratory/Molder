@@ -54,7 +54,7 @@ namespace Molder.Tests
         [Fact]
         public void CreateMessage_NullList_ReturnNull()
         {
-            List<string> list = null;
+            List<string>? list = null;
             var message = Message.CreateMessage(list);
 
             message.Should().BeNull();
@@ -65,9 +65,9 @@ namespace Molder.Tests
         {
             var list = new List<ValidationResult>
             {
-                new ValidationResult("1"),
-                new ValidationResult("2"),
-                new ValidationResult("3")
+                new("1"),
+                new("2"),
+                new("3")
             };
 
             var message = Message.CreateMessage(list);
@@ -88,7 +88,7 @@ namespace Molder.Tests
         [Fact]
         public void CreateMessage_NullValidationResult_ReturnNull()
         {
-            List<ValidationResult> list = null;
+            List<ValidationResult>? list = null;
 
             var message = Message.CreateMessage(list);
 
@@ -107,7 +107,7 @@ namespace Molder.Tests
                 row["Second"] = "2";
             dt.Rows.Add(row);
 
-            var message = Message.CreateMessage(dt);
+            var message = dt.CreateMessage();
 
             message.Should().NotBeEmpty();
         }
@@ -118,14 +118,14 @@ namespace Molder.Tests
             var dt = new DataTable();
             dt.Clear();
             dt.Columns.Add("1");
-            for (int i = 0; i < Constants.MAX_ROWS + 1; i++)
+            for (var i = 0; i < Constants.MAX_ROWS + 1; i++)
             {
                 DataRow row = dt.NewRow();
                 row["1"] = $"{i}";
                 dt.Rows.Add(row);
             }
 
-            var message = Message.CreateMessage(dt);
+            var message = dt.CreateMessage();
 
             message.Should().NotBeEmpty();
         }
@@ -142,7 +142,7 @@ namespace Molder.Tests
 
             dt.Rows.Add(row);
 
-            var message = Message.CreateMessage(dt.Rows[0]);
+            var message = dt.Rows[0].CreateMessage();
 
             message.Should().NotBeEmpty();
         }
@@ -150,9 +150,9 @@ namespace Molder.Tests
         [Fact]
         public void CreateMessage_NullDataTable_ReturnException()
         {
-            DataTable dt = null;
-            Action action = () => Message.CreateMessage(dt); ;
-            action.Should().Throw<ArgumentNullException>().WithMessage("The table to convert to string is null\nParameter name: dataTable");
+            DataTable? dt = null;
+            Action action = () => dt.CreateMessage();
+            action.Should().Throw<ArgumentNullException>().WithMessage("The table to convert to string is null (Parameter 'dataTable')");
         }
     }
 }

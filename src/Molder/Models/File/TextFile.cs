@@ -10,16 +10,16 @@ namespace Molder.Models.File
     public class TextFile : IFile, IDisposable
     {
         public IDirectory UserDirectory { get; set; } = new UserDirectory();
-        public string Filename { get; set; }
-        public string Path { get; set; }
-        public string Content { get; set; }
+        public string? Filename { get; set; }
+        public string? Path { get; set; }
+        public string? Content { get; set; }
         public string Url { get; set; }
 
         public IFileProvider FileProvider = new FileProvider();
         public IPathProvider PathProvider = new PathProvider();
         public IWebProvider WebProvider = new WebProvider();
         
-        public bool IsExist(string filename, string path = null)
+        public bool IsExist(string filename, string path = null!)
         {
             if (string.IsNullOrWhiteSpace(path))
             {
@@ -31,7 +31,7 @@ namespace Molder.Models.File
             return FileProvider.Exist(fullpath);
         }
 
-        public bool DownloadFile(string url, string filename, string pathToSave = null)
+        public bool DownloadFile(string url, string filename, string pathToSave = null!)
         {
             if (string.IsNullOrWhiteSpace(pathToSave))
             {
@@ -59,7 +59,7 @@ namespace Molder.Models.File
             }
         }
 
-        public bool Create(string filename, string path = null, string content = null)
+        public bool Create(string filename, string path = null!, string content = null!)
         {
             if (string.IsNullOrWhiteSpace(path))
             {
@@ -103,7 +103,7 @@ namespace Molder.Models.File
             }
         }
 
-        public bool Delete(string filename, string path = null)
+        public bool Delete(string filename, string path = null!)
         {
             if (string.IsNullOrWhiteSpace(path))
             {
@@ -128,7 +128,7 @@ namespace Molder.Models.File
             }
         }
 
-        public string GetContent(string filename, string path = null)
+        public string? GetContent(string filename, string? path)
         {
             if (string.IsNullOrWhiteSpace(path))
             {
@@ -145,11 +145,9 @@ namespace Molder.Models.File
             {
                 return FileProvider.ReadAllText(filename, path);
             }
-            else
-            {
-                Log.Logger().LogWarning($"The file \"{filename}\" does not exist in the \"{path}\" directory");
-                throw new FileExistException($"The file \"{filename}\" does not exist in the \"{path}\" directory");
-            }
+
+            Log.Logger().LogWarning($"The file \"{filename}\" does not exist in the \"{path}\" directory");
+            throw new FileExistException($"The file \"{filename}\" does not exist in the \"{path}\" directory");
         }
 
         public void Dispose()

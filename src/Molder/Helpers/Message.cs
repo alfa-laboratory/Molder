@@ -11,14 +11,15 @@ namespace Molder.Helpers
 {
     public static class Message
     {
-        public static string CreateMessage(IEnumerable<string> list)
+        public static string? CreateMessage(IEnumerable<string> list)
         {
             try
             {
-                if (list.Any())
+                var enumerable = list as string[] ?? list.ToArray();
+                if (enumerable.Any())
                 {
                     var message = string.Empty;
-                    message = list.Aggregate((i, j) => i + Environment.NewLine + j);
+                    message = enumerable.Aggregate((i, j) => i + Environment.NewLine + j);
                     return message;
                 }
 
@@ -33,7 +34,7 @@ namespace Molder.Helpers
             
         }
 
-        public static string CreateMessage(ICollection<ValidationResult> results)
+        public static string? CreateMessage(ICollection<ValidationResult> results)
         {
             try
             {

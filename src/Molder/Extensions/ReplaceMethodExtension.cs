@@ -13,7 +13,7 @@ namespace Molder.Extensions
 {
     public static class ReplaceMethodsExtension
     {
-        public static (string, string[]) GetFunction(string function)
+        public static (string method, string[]) GetFunction(string function)
         {
             var regex = new Regex(StringPattern.METHOD, RegexOptions.Compiled);
             var match = regex.Match(function);
@@ -21,23 +21,23 @@ namespace Molder.Extensions
             {
                 var method = match.Groups[StringPattern.MethodPlaceholder].Value;
                 var parameters = match.Groups[StringPattern.ParametersPlaceholder].Value;
-                return string.IsNullOrEmpty(parameters) ? (method, null) : (method, parameters.Split(','));
+                return (string.IsNullOrEmpty(parameters) ? (method, null) : (method, parameters.Split(',')))!;
             }
             else
             {
-                return (null, null);
+                return (null, null)!;
             }
         }
 
         [ExcludeFromCodeCoverage]
-        public static object Invoke(string methodName, object[] parameters)
+        public static object? Invoke(string methodName, object?[]? parameters)
         {
             var method = Check(methodName);
             return method?.Invoke(null, parameters);
         }
 
         [ExcludeFromCodeCoverage]
-        public static MethodInfo Check(string methodName)
+        public static MethodInfo? Check(string methodName)
         {
             var methods = GetMethods();
             try

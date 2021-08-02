@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace Molder.Tests.Models
 {
     [ExcludeFromCodeCoverage]
     public static class CreateObject
     {
-        public static DataTable CreateDataTable(List<string> columns, List<string> rows)
+        public static DataTable CreateDataTable(IEnumerable<string> columns, IEnumerable<string> rows)
         {
             var dt = new DataTable();
             foreach (var column in columns)
@@ -15,9 +16,8 @@ namespace Molder.Tests.Models
                 dt.Columns.Add(column);
             }
 
-            foreach (var row in rows)
+            foreach (object?[] elements in rows.Select(row => row.Split(";")))
             {
-                var elements = row.Split(";");
                 dt.Rows.Add(elements);
             }
             return dt;

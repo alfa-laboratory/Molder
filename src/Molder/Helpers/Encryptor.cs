@@ -36,7 +36,7 @@ namespace Molder.Helpers
             return Convert.ToBase64String(inArray);
         }
 
-        public static string Decrypt(string input)
+        public static string? Decrypt(string? input)
         {
             if (string.IsNullOrEmpty(input))
             {
@@ -62,7 +62,7 @@ namespace Molder.Helpers
         private static SecureString ToSecureString(string str)
         {
             var secureString = new SecureString();
-            if (str != null)
+            if (str is not null)
             {
                 Array.ForEach(str.ToCharArray(), secureString.AppendChar);
             }
@@ -71,7 +71,7 @@ namespace Molder.Helpers
             return secureString;
         }
 
-        private static string GetOriginalString(SecureString secStr)
+        private static string? GetOriginalString(SecureString secStr)
         {
             var num = IntPtr.Zero;
             try

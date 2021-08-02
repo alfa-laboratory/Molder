@@ -22,43 +22,36 @@ namespace Molder.Controllers
 {
     public class VariableController
     {
-        private Lazy<ConcurrentDictionary<string, Variable>> _variables = new Lazy<ConcurrentDictionary<string, Variable>>(() => new ConcurrentDictionary<string, Variable>());
+        private Lazy<ConcurrentDictionary<string, Variable>> _variables = new(() => new ConcurrentDictionary<string, Variable>());
 
-        public ConcurrentDictionary<string, Variable> Variables => _variables.Value;
+        public ConcurrentDictionary<string, Variable?> Variables => _variables.Value!;
 
-        public string GetVariableName(string key)
+        public string? GetVariableName(string key)
         {
-            if (!string.IsNullOrWhiteSpace(key))
+            if (string.IsNullOrWhiteSpace(key)) return null;
+            var varName = key;
+            if (varName.IndexOf('.') > 0)
             {
-                var varName = key;
-                if (varName.IndexOf('.') > 0)
-                {
-                    varName = varName.Substring(0, varName.IndexOf('.'));
-                }
-
-                if (varName.IndexOf('[') > 0)
-                {
-                    varName = varName.Substring(0, varName.IndexOf('['));
-                }
-
-                return varName;
+                varName = varName.Substring(0, varName.IndexOf('.'));
             }
-            else
+
+            if (varName.IndexOf('[') > 0)
             {
-                return null;
+                varName = varName.Substring(0, varName.IndexOf('['));
             }
+
+            return varName;
         }
-        public Variable GetVariable(string key)
+        public Variable? GetVariable(string key)
         {
             var correcKey = GetVariableName(key);
             if (correcKey == null) return null;
 
-            if (Variables.ContainsKey(correcKey))
+            if (!Variables.ContainsKey(correcKey))
+                return Variables.SingleOrDefault(_ => _.Key == GetVariableName(key)).Value;
+            if (Variables[correcKey].TypeOfAccess is TypeOfAccess.Global or TypeOfAccess.Default)
             {
-                if (Variables[correcKey].TypeOfAccess == TypeOfAccess.Global || Variables[correcKey].TypeOfAccess == TypeOfAccess.Default)
-                {
-                    Log.Logger().LogInformation($"Element with key: \"{key}\" contains value {Variables[correcKey].Value} with type '{Variables[correcKey].TypeOfAccess}'");
-                }
+                Log.Logger().LogInformation($"Element with key: \"{key}\" contains value {Variables[correcKey].Value} with type '{Variables[correcKey].TypeOfAccess}'");
             }
 
             return Variables.SingleOrDefault(_ => _.Key == GetVariableName(key)).Value;            
@@ -67,7 +60,7 @@ namespace Molder.Controllers
         {
             return Variables.Any(_ => _.Key == GetVariableName(key));
         }
-        public void SetVariable(string key, Type type, object value, TypeOfAccess accessType = TypeOfAccess.Local)
+        public void SetVariable(string key, Type type, object? value, TypeOfAccess accessType = TypeOfAccess.Local)
         {
             if(key is null)
             {
@@ -80,10 +73,7 @@ namespace Molder.Controllers
             if(match.Success && type == typeof(string))
             {
                 key = match.Groups[1].Value;
-                if (value != null)
-                {
-                    value = Encryptor.Decrypt(value as string);
-                }
+                value = Encryptor.Decrypt(value as string);
             }
 
             var varName = GetVariableName(key);
@@ -133,20 +123,19 @@ namespace Molder.Controllers
                             break;
                         }
                 }
-
             }
 
             var variable = new Variable() { Type = type, Value = value, TypeOfAccess = accessType };
-            Variables.AddOrUpdate(varName, variable, (k, v) => variable);
+            Variables.AddOrUpdate(varName, variable, (_, _) => variable);
         } 
-        public object GetVariableValue(string key)
+        public object? GetVariableValue(string? key)
         {
             try
             {
                 var name = key;
                 var keyPath = string.Empty;
                 var index = -1;
-                string path = null;
+                string? path = null;
                 if (key.IndexOf('.') > 0)
                 {
                     name = key.Substring(0, key.IndexOf('.'));
@@ -182,7 +171,7 @@ namespace Molder.Controllers
                 if (varType.HasElementType && index >= 0)
                 {
                     var objArray = ((Array)varValue).Cast<object>().ToArray();
-                    varValue = (objArray)[index];
+                    varValue = objArray[index];
                     varType = varType.GetElementType();
                 }
 
@@ -234,7 +223,7 @@ namespace Molder.Controllers
                         {
                             return ((DataRow)varValue);
                         }
-                        return int.TryParse(keyPath, out var id) ? ((DataRow)varValue).ItemArray[id].ToString() : ((DataRow)varValue)[keyPath].ToString();
+                        return int.TryParse(keyPath, out var id) ? ((DataRow)varValue).ItemArray[id]?.ToString() : ((DataRow)varValue)[keyPath].ToString();
                     }
 
                     if (!typeof(DataTable).IsAssignableFrom(varType))
@@ -275,7 +264,7 @@ namespace Molder.Controllers
                 return null;
             }
         }
-        public string GetVariableValueText(string key)
+        public string? GetVariableValueText(string? key)
         {
             var val = GetVariableValue(key);
 
@@ -284,23 +273,21 @@ namespace Molder.Controllers
                 return null;
             }
 
-            string ret;
+            string? ret;
             switch (val)
             {
                 
-                case XElement element when element.HasElements == false:
+                case XElement {HasElements: false} element:
                     {
                         ret = element.Value;
                         break;
                     }
-                case XElement element when element.HasElements:
+                case XElement {HasElements: true} element:
                     {
                         Log.Logger().LogWarning($"Key \"{key}\" is root for (XElement)");
-                        using (var sw = new StringWriter())
-                        {
-                            element.Save(sw);
-                            return sw.ToString();
-                        }
+                        using var sw = new StringWriter();
+                        element.Save(sw);
+                        return sw.ToString();
                     }
 
                 case XmlNode node when node.FirstChild.GetType() == typeof(XmlText):
@@ -308,22 +295,22 @@ namespace Molder.Controllers
                         ret = node.FirstChild.Value;
                         break;
                     }
-                case XmlElement element when element.HasChildNodes:
+                case XmlElement {HasChildNodes: true}:
                     {
                         Log.Logger().LogWarning($"Key \"{key}\" is root for (XmlElement)");
                         return null;
                     }
 
-                case JToken token when token.HasValues:
+                case JToken {HasValues: true} token:
                     {
                         ret = token.ToString();
                         break;
                     }
 
                 default:
-                    if (val is Dictionary<string, object> || val is ICollection)
+                    if (val is Dictionary<string, object> or ICollection)
                     {
-                        throw new IEnumerableException("IEnumerable cant be converted to String");
+                        throw new EnumerableException("IEnumerable cant be converted to String");
                     }
                     ret = Reflection.ConvertObject<string>(val);
                     break;
