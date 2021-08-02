@@ -35,6 +35,7 @@ namespace Molder.Web.Hooks
         public static void BeforeFeature(VariableController variableController)
         {
             BrowserController.SetVariables(variableController);
+
             TreePages.SetVariables(variableController);
             TreePages.Get();
             var pageObject = TreePages.Get();
