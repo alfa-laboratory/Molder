@@ -95,9 +95,7 @@ namespace Molder.Web.Models.Providers
             };
         }
         public ReadOnlyCollection<IElementProvider> GetElements(By by)
-        {
-            WebDriver.Wait((int) BrowserSettings.Settings.Timeout).ForElement(by).ToExist();
-            
+        {         
             var elements = WebDriver.FindElements(by);
             var listElement = elements.Select(element => new ElementProvider((int)BrowserSettings.Settings.Timeout, by) {WebElement = element, WebDriver = WebDriver}).Cast<IElementProvider>().ToList();
             return listElement.AsReadOnly();
