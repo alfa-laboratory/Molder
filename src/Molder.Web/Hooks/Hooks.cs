@@ -6,6 +6,7 @@ using Molder.Web.Helpers;
 using Molder.Web.Infrastructures;
 using Molder.Web.Models;
 using Molder.Web.Models.Settings;
+using Molder.Web.Extensions;
 using TechTalk.SpecFlow;
 
 namespace Molder.Web.Hooks
@@ -34,6 +35,8 @@ namespace Molder.Web.Hooks
         {
             TreePages.SetVariables(variableController);
             TreePages.Get();
+            var pageObject = TreePages.Get();
+            Log.Logger().LogDebug(pageObject.PageObjectToString());
         }
         
         [AfterScenario()]

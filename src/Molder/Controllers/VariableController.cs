@@ -14,6 +14,9 @@ using System.Xml.XPath;
 using Molder.Infrastructures;
 using Microsoft.Extensions.Logging;
 using System.IO;
+using System.Collections.Generic;
+using System.Collections;
+using Molder.Exceptions;
 
 namespace Molder.Controllers
 {
@@ -210,7 +213,19 @@ namespace Molder.Controllers
                 {
                     return ((XmlNode)varValue).SelectSingleNode(path ?? "/*");
                 }
+                
+                if (typeof(Dictionary<string, object>).IsAssignableFrom(varType))
+                {
+                    var objDict = ((Dictionary<string, object>)varValue);
+                    return !string.IsNullOrWhiteSpace(keyPath) ? objDict[keyPath] : objDict;
+                }
 
+                if (typeof(ICollection).IsAssignableFrom(varType))
+                {
+                    var objList = ((IEnumerable)varValue).Cast<object>().ToList();
+                    return index >= 0 ? objList[index] : objList;
+                }
+                
                 try
                 {
                     if (typeof(DataRow).IsAssignableFrom(varType))
@@ -219,11 +234,7 @@ namespace Molder.Controllers
                         {
                             return ((DataRow)varValue);
                         }
-                        if (int.TryParse(keyPath, out int id))
-                        {
-                            return ((DataRow)varValue).ItemArray[id].ToString();
-                        }
-                        return ((DataRow)varValue)[keyPath].ToString();
+                        return int.TryParse(keyPath, out var id) ? ((DataRow)varValue).ItemArray[id].ToString() : ((DataRow)varValue)[keyPath].ToString();
                     }
 
                     if (!typeof(DataTable).IsAssignableFrom(varType))
@@ -276,6 +287,7 @@ namespace Molder.Controllers
             string ret;
             switch (val)
             {
+                
                 case XElement element when element.HasElements == false:
                     {
                         ret = element.Value;
@@ -309,6 +321,10 @@ namespace Molder.Controllers
                     }
 
                 default:
+                    if (val is Dictionary<string, object> || val is ICollection)
+                    {
+                        throw new IEnumerableException("IEnumerable cant be converted to String");
+                    }
                     ret = Reflection.ConvertObject<string>(val);
                     break;
             }

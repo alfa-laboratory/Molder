@@ -18,10 +18,6 @@
     <NoWarn>1701;1702;CS0618</NoWarn>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <NoWarn>1701;1702;CS0618</NoWarn>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
