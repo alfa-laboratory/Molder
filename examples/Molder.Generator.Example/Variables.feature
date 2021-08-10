@@ -17,7 +17,7 @@ Scenario: Create Random UUID
 
 Scenario: Create Enumerable list
 	Given я сохраняю коллекцию с типом "int" в переменную "Test":
-	|8|133|64|
+	| 8 | 133 | 64 |
 	When я выбираю значение из коллекции "Test[1]" и записываю его в переменную "tmp"
 	Then write variable "tmp"
 
