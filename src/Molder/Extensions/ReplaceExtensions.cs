@@ -37,7 +37,7 @@ namespace Molder.Extensions
                             return notFoundReplace != null ? notFoundReplace(variable) : variable;
                         }
 
-                        val = variableController.GetVariableValueText(variable);
+                        val = variableController.GetVariableValue(variable);
                         return (foundReplace != null ? foundReplace(val) : val.ToString())!;
                     }
 

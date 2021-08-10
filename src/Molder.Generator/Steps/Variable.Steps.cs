@@ -297,12 +297,8 @@ namespace Molder.Generator.Steps
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" не является пустой строкой")]
         public void CheckVariableIsNotEmpty(string varName)
         {
-            var value = variableController.GetVariableValue(varName);
-            value.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
-            if (variableController.GetVariable(varName)?.Type == typeof(string))
-            {
-                string.IsNullOrWhiteSpace((string)value!).Should().BeFalse($"значение переменной \"{varName}\" пустая строка");
-            }
+            var value = variableController.GetVariableValueText(varName);
+            value.Should().NotBeNullOrWhiteSpace($"значение переменной \"{varName}\" пустая строка");
         }
 
         /// <summary>
@@ -313,12 +309,8 @@ namespace Molder.Generator.Steps
         [Then(@"я убеждаюсь, что значение переменной ""(.+)"" равно пустой строке")]
         public void CheckVariableIsEmpty(string varName)
         {
-            var value = variableController.GetVariableValue(varName);
-            value.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
-            if (variableController.GetVariable(varName)?.Type == typeof(string))
-            {
-                string.IsNullOrWhiteSpace((string)value!).Should().BeTrue($"значение переменной \"{varName}\" не пустая строка");
-            }
+            var value = variableController.GetVariableValueText(varName);
+            value.Should().BeNullOrWhiteSpace($"значение переменной \"{varName}\" не пустая строка");
         }
 
         /// <summary>

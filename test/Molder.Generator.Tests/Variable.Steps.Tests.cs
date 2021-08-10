@@ -268,7 +268,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableIsNotEmpty("test");
             act.Should().Throw<Exception>()
-                .WithMessage($"Expected value not to be <null> because значения в переменной \"test\" нет.");
+                .WithMessage($"Expected value not to be <null> or whitespace because значение переменной \"test\" пустая строка, but found <null>.");
         }
 
         [Fact]
@@ -281,7 +281,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableIsNotEmpty("test");
             act.Should().Throw<Exception>()
-                .WithMessage($"Expected string.IsNullOrWhiteSpace((string)value!) to be false because значение переменной \"test\" пустая строка, but found True.");
+                .WithMessage($"Expected value not to be <null> or whitespace because значение переменной \"test\" пустая строка, but found \"\".");
         }
 
         [Fact]
@@ -295,7 +295,7 @@ namespace Molder.Generator.Tests
         }
 
         [Fact]
-        public void CheckVariableIsEmpty_VariableValueIsNull_ReturnException()
+        public void CheckVariableIsEmpty_VariableValueIsNull_ReturnNotException()
         {
             var variable = new Variable() { Type = typeof(string), Value = null };
             variableController.Variables.TryAdd("test", variable);
@@ -303,8 +303,19 @@ namespace Molder.Generator.Tests
             VariableSteps steps = new VariableSteps(variableController);
 
             Action act = () => steps.CheckVariableIsEmpty("test");
-            act.Should().Throw<Exception>()
-                .WithMessage($"Expected value not to be <null> because значения в переменной \"test\" нет.");
+            act.Should().NotThrow<Exception>();
+        }
+        
+        [Fact]
+        public void CheckVariableIsEmpty_VariableValueWhiteSpace_ReturnNotException()
+        {
+            var variable = new Variable() { Type = typeof(string), Value = "    " };
+            variableController.Variables.TryAdd("test", variable);
+
+            VariableSteps steps = new VariableSteps(variableController);
+
+            Action act = () => steps.CheckVariableIsEmpty("test");
+            act.Should().NotThrow<Exception>();
         }
 
         [Fact]
@@ -317,7 +328,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.CheckVariableIsEmpty("test");
             act.Should().Throw<Exception>()
-                .WithMessage($"Expected string.IsNullOrWhiteSpace((string)value!) to be true because значение переменной \"test\" не пустая строка, but found False.");
+                .WithMessage($"Expected value to be <null> or whitespace because значение переменной \"test\" не пустая строка, but found \"test\".");
         }
 
         [Fact]
