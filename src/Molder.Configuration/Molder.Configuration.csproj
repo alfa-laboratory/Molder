@@ -11,7 +11,7 @@
     <IsPackable>true</IsPackable>
     <Description>Library for adding a block to the appsettings.json configuration file for adding variables to scenarios</Description>
     <LangVersion>7.1</LangVersion>
-    <PackageVersion>1.0.17</PackageVersion>
+    <PackageVersion>1.0.18</PackageVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -26,7 +26,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
-    <PackageReference Include="Molder" Version="1.0.23" />
+    <PackageReference Include="Molder" Version="1.0.25" />
     <PackageReference Include="SpecFlow" Version="3.3.30" />
   </ItemGroup>
 
