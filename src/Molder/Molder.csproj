@@ -13,7 +13,7 @@
     <IsPackable>true</IsPackable>
     <AssemblyName>Molder</AssemblyName>
     <Description>Library containing the logic for working with variables, logging, basic models for working with directories and files</Description>
-    <PackageVersion>2.0.2-beta</PackageVersion>
+    <PackageVersion>2.0.3-beta</PackageVersion>
     <LangVersion>9</LangVersion>
     <Nullable>disable</Nullable>
   </PropertyGroup>
@@ -37,6 +37,7 @@
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
     <PackageReference Include="Serilog.Sinks.ColoredConsole" Version="3.0.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
+    <PackageReference Include="SpecFlow" Version="3.9.22" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
