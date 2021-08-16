@@ -13,7 +13,7 @@
     <IsPackable>true</IsPackable>
     <AssemblyName>Molder</AssemblyName>
     <Description>Library containing the logic for working with variables, logging, basic models for working with directories and files</Description>
-    <PackageVersion>2.0.1-beta</PackageVersion>
+    <PackageVersion>2.0.2-beta</PackageVersion>
     <LangVersion>9</LangVersion>
     <Nullable>disable</Nullable>
   </PropertyGroup>

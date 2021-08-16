@@ -54,7 +54,8 @@ namespace Molder.Models.Profider
             try
             {
                 var fullpath = Path.Combine(path, filename);
-                System.IO.File.Create(fullpath);
+                var file = System.IO.File.Create(fullpath);
+                file.Close();
                 if (!Exist(fullpath)) return false;
                 Log.Logger().LogInformation($"An empty file \"{filename}\" in the \"{fullpath}\" directory has been created");
                 return true;
