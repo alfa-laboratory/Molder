@@ -13,11 +13,11 @@ namespace Molder.Web.Steps
     [Binding]
     public class Steps
     {
-        protected VariableController variableController;
+        private readonly VariableController variableController;
 
-        public Steps(VariableController controller)
+        public Steps(VariableController variableController)
         {
-            variableController = controller;
+            this.variableController = variableController;
         }
 
         [StepArgumentTransformation]
@@ -589,6 +589,21 @@ namespace Molder.Web.Steps
         {
             BrowserController.GetBrowser().GetCurrentPage().GetDefaultFrame();
         }
+        #endregion
+
+        #region File
+        
+        [StepDefinition(@"я загружаю в элемент \""(.+)\"" веб-страницы файл \""(.+)\""")]
+        public void UploadFileIntoField(string name, string fullpath)
+        {
+            fullpath = variableController.ReplaceVariables(fullpath) ?? fullpath;
+            
+            var element = BrowserController.GetBrowser().GetCurrentPage().GetElement(name);
+            (element is File).Should().BeTrue($"элемент \"{name}\" имеет отличный от File профиль");
+            
+            (element as File)?.SetText(fullpath);
+        }
+        
         #endregion
     }
 }

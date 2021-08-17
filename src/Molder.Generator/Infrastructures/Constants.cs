@@ -14,5 +14,10 @@ namespace Molder.Generator.Infrastructures
         public const string PHONE_FORMAT = "(###)###-####";
 
         public const string DEFAULT_LOCALE = "en";
+
+        public const string PATHS = "PATHS";
+
+        public const string USER_DIR = "USER_DIR";
+        public const string BIN_DIR = "BIN_DIR";
     }
 }

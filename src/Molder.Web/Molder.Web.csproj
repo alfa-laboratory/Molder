@@ -11,7 +11,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Library for working with WebUI</Description>
     <LangVersion>9</LangVersion>
-    <PackageVersion>2.0.1-beta</PackageVersion>
+    <PackageVersion>2.0.2-beta</PackageVersion>
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
@@ -26,7 +26,7 @@
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
-    <PackageReference Include="Molder" Version="2.0.1-beta" />
+    <PackageReference Include="Molder" Version="2.0.3-beta" />
     <PackageReference Include="Noksa.WebDriver.ScreenshotsExtensions" Version="0.1.5.3" />
     <PackageReference Include="Polly" Version="7.2.2" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />

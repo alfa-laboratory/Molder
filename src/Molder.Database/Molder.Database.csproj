@@ -9,7 +9,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <LangVersion>9</LangVersion>
-    <PackageVersion>2.0.1-beta</PackageVersion>
+    <PackageVersion>2.0.2-beta</PackageVersion>
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
@@ -37,7 +37,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
-    <PackageReference Include="Molder" Version="2.0.1-beta" />
+    <PackageReference Include="Molder" Version="2.0.3-beta" />
     <PackageReference Include="SpecFlow" Version="3.9.22" />
     <PackageReference Include="SpecFlow.Assist.Dynamic" Version="1.4.2" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />

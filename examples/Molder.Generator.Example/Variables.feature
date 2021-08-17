@@ -27,3 +27,30 @@ Scenario: Create Dictionary
 	| 56   | qweasd | zxc  |
 	When я выбираю значение из коллекции "Test[Qwerty]" и записываю его в переменную "tmp"
 	Then write variable "tmp"
+
+@ignore
+Scenario: Create files
+	Given я создаю файл:
+		| Name      | Path     | Content  |
+		| test1.txt |          |          |
+		| test2.txt | TestPath | {{Key1}} |
+	Given я создаю файл:
+	  | Name       |
+	  | test11.txt |
+	  | test22.txt |
+	  | test33.txt |
+	Given я создаю файл:
+	  | Name        | Content |
+	  | test111.txt |         |
+	  | test222.txt | test    |
+
+@ignore   
+Scenario: Exists files
+	Given я создаю файл:
+	  | Name     |
+	  | test1.txt |
+	  | test2.txt |
+	  | test3.txt |
+	Given я проверяю наличие файла:
+	  | Name     |
+	  | test1.txt |

@@ -59,6 +59,11 @@ namespace Molder.Web.Models.Browser
                 options.AddCapabilities(BrowserSettings.Settings.Capabilities);
             }
             
+            if (BrowserSettings.Settings.CheckUserProfilePreference())
+            {
+                options.AddUserProfilePreference(BrowserSettings.Settings.UserProfilePreference);
+            }
+            
             return options;
         }
     }

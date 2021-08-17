@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Molder.Configuration\Molder.Configuration.csproj" />
+    <ProjectReference Include="..\..\..\src\Molder.Generator\Molder.Generator.csproj" />
     <ProjectReference Include="..\..\..\src\Molder.Web\Molder.Web.csproj">
       <Private></Private>
     </ProjectReference>

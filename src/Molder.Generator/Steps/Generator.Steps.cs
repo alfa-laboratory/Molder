@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using FluentAssertions;
 using Molder.Controllers;
@@ -8,8 +9,13 @@ using TechTalk.SpecFlow;
 using Molder.Generator.Extensions;
 using Molder.Generator.Models.Generators;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Threading;
 using Molder.Extensions;
 using Microsoft.Extensions.Logging;
+using Molder.Models.Directory;
+using Molder.Models.File;
+using TechTalk.SpecFlow.Assist;
 
 namespace Molder.Generator.Steps
 {
@@ -19,6 +25,8 @@ namespace Molder.Generator.Steps
     [Binding]
     public class GeneratorSteps 
     {
+        AsyncLocal<List<string>> _paths = new() { Value = new List<string>() };  
+        
         private string _locale = string.Empty;
         public IFakerGenerator fakerGenerator = null;
 
@@ -36,6 +44,17 @@ namespace Molder.Generator.Steps
             this.variableController = variableController;
             this.featureContext = featureContext;
             fakerGenerator = new FakerGenerator();
+            //{
+            //    var userDir = new UserDirectory().Get();
+            //    var dir = $"{userDir}{Path.DirectorySeparatorChar}{featureContext.FeatureInfo.Title}";
+            //    variableController.SetVariable(Infrastructures.Constants.USER_DIR, dir.GetType(), dir);
+            //}
+            //{
+            //    var binDir = new BinDirectory().Get();
+            //    variableController.SetVariable(Infrastructures.Constants.BIN_DIR, binDir.GetType(), binDir);
+            //}
+            //if(featureContext.ContainsKey(Infrastructures.Constants.PATHS)) return;
+            //featureContext.Add(Infrastructures.Constants.PATHS, new List<string>());
         }
 
         [ExcludeFromCodeCoverage]
@@ -47,9 +66,15 @@ namespace Molder.Generator.Steps
             {
                 Locale = _locale
             };
-            ((FakerGenerator)fakerGenerator).ReloadLocale();
+            ((FakerGenerator) fakerGenerator).ReloadLocale();
         }
 
+        [StepArgumentTransformation]
+        public IEnumerable<Models.DTO.FileInfo> GetFilesInfo(Table table)
+        {
+            return table.ReplaceWith(variableController).CreateSet<Models.DTO.FileInfo>();
+        }
+        
         #region Store DateTime
         /// <summary>
         /// Шаг для сохранения даты в переменную.
@@ -692,6 +717,30 @@ namespace Molder.Generator.Steps
             var enumerable = Converter.CreateEnumerable(str, chars);
             Log.Logger().LogInformation($"Result array is equal to {Environment.NewLine}{string.Join(',', enumerable as string[])}");
             variableController.SetVariable(newVarName, enumerable.GetType(), enumerable);
+        }
+        
+        [StepDefinition(@"я создаю файл:")]
+        [StepDefinition(@"я создаю файлы:")]
+        public void CreateFiles(IEnumerable<Models.DTO.FileInfo> filesInfo)
+        {
+            var userDir = variableController.GetVariableValueText(Infrastructures.Constants.USER_DIR);
+            foreach (var fileInfo in filesInfo)
+            {
+                new TextFile().Create(fileInfo.Name, fileInfo.Path ?? userDir, fileInfo.Content).Should().BeTrue($"A file named \"{fileInfo.Name}\" in \"{fileInfo.Path ?? userDir}\" was not created. Detailed information in the logs.");
+                var fullpath = $"{fileInfo.Path ?? userDir}{Path.DirectorySeparatorChar}{fileInfo.Name}";
+                variableController.SetVariable(fileInfo.Name, typeof(string), fullpath);
+            }
+        }
+
+        [StepDefinition(@"я проверяю наличие файла:")]
+        [StepDefinition(@"я проверяю наличие файлов:")]
+        public void ExistsFiles(IEnumerable<Models.DTO.FileInfo> filesInfo)
+        {
+            var userDir = variableController.GetVariableValueText(Infrastructures.Constants.USER_DIR);
+            foreach (var fileInfo in filesInfo)
+            {
+                new TextFile().IsExist(fileInfo.Name, fileInfo.Path ?? userDir).Should().BeTrue($"A file named \"{fileInfo.Name}\" in \"{fileInfo.Path ?? userDir}\" was not exist. Detailed information in the logs.");
+            }
         }
     }
 }

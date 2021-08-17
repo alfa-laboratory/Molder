@@ -7,5 +7,6 @@
         bool CheckRemoteRun();
         bool IsOptions();
         bool CheckCapability();
+        bool CheckUserProfilePreference();
     }
 }

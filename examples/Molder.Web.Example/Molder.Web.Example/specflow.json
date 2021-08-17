@@ -8,6 +8,9 @@
     },
     {
       "assembly": "Molder.Configuration"
+    },
+    {
+      "assembly": "Molder.Generator"
     }
   ]
 }
