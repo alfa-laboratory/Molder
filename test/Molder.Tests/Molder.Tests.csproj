@@ -1,25 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <LangVersion>9</LangVersion>
+
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>NU1701;1702;AD0001</NoWarn>
+    <NoWarn>NU1701;1702;CS8604;CS8602;CS8618</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>SA0001;NU5100;1701;1702</NoWarn>
+    <NoWarn>NU1701;1702;CS8604;CS8602;CS8618</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.msbuild" Version="3.0.3">
+    <PackageReference Include="coverlet.msbuild" Version="3.1.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="FluentAssertions" Version="6.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
     <PackageReference Include="Moq" Version="4.16.1" />
     <PackageReference Include="xunit" Version="2.4.1" />

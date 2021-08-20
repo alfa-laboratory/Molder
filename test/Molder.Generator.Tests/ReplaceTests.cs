@@ -29,7 +29,7 @@ namespace Molder.Generator.Tests
                 (ReplaceMethods.Get() as List<Type>).Add(typeof(GenerationFunctions));
             }
 
-            this.variableContext = new VariableController();
+            variableContext = new VariableController();
         }
 
         /// <summary>
@@ -38,13 +38,13 @@ namespace Molder.Generator.Tests
         [Fact]
         public void ReplaceVariables_currentDateTime_ReturnReplaced()
         {
-            var str = "{{currentDateTime(dd-MM-yyyy)}}";
-            var outStr = this.variableContext.ReplaceVariables(str);
+            const string str = "{{currentDateTime(dd-MM-yyyy)}}";
+            var outStr = variableContext.ReplaceVariables(str);
             Log.Logger().LogWarning($"ReplaceVariables_currentDateTime_ReturnReplaced - {outStr}");
             Assert.True(DateTime.TryParseExact(outStr, "dd-MM-yyyy",
                               new CultureInfo("en-US"),
                               DateTimeStyles.None,
-                              out var dateValue));
+                              out _));
         }
 
         /// <summary>
@@ -53,8 +53,8 @@ namespace Molder.Generator.Tests
         [Fact]
         public void ReplaceVariables_currentDateTimeWithEmptyLength_ReturnReplaced()
         {
-            var str = "{{currentDateTime()}}";
-            var outStr = this.variableContext.ReplaceVariables(str);
+            const string str = "{{currentDateTime()}}";
+            var outStr = variableContext.ReplaceVariables(str);
             Assert.Equal("currentDateTime()", outStr);
         }
 
@@ -64,14 +64,14 @@ namespace Molder.Generator.Tests
         [Fact]
         public void ReplaceVariables_futureDateTime_ReturnReplaced()
         {
-            var str = "{{futureDateTime(dd-MM-yyyy)}}";
-            var outStr = this.variableContext.ReplaceVariables(str);
+            const string str = "{{futureDateTime(dd-MM-yyyy)}}";
+            var outStr = variableContext.ReplaceVariables(str);
             Log.Logger().LogWarning($"ReplaceVariables_futureDateTime_ReturnReplaced - {outStr}");
 
             Assert.True(DateTime.TryParseExact(outStr, "dd-MM-yyyy",
                               new CultureInfo("en-US"),
                               DateTimeStyles.None,
-                              out var dateValue));
+                              out _));
         }
 
         /// <summary>
@@ -80,8 +80,8 @@ namespace Molder.Generator.Tests
         [Fact]
         public void ReplaceVariables_futureDateTimeWithEmptyLength_ReturnReplaced()
         {
-            var str = "{{futureDateTime()}}";
-            var outStr = this.variableContext.ReplaceVariables(str);
+            const string str = "{{futureDateTime()}}";
+            var outStr = variableContext.ReplaceVariables(str);
             Assert.Equal("futureDateTime()", outStr);
         }
 
@@ -91,14 +91,14 @@ namespace Molder.Generator.Tests
         [Fact]
         public void ReplaceVariables_pastDateTime_ReturnReplaced()
         {
-            var str = "{{pastDateTime(dd-MM-yyyy)}}";
-            var outStr = this.variableContext.ReplaceVariables(str);
+            const string str = "{{pastDateTime(dd-MM-yyyy)}}";
+            var outStr = variableContext.ReplaceVariables(str);
             Log.Logger().LogWarning($"ReplaceVariables_pastDateTime_ReturnReplaced - {outStr}");
 
             Assert.True(DateTime.TryParseExact(outStr, "dd-MM-yyyy",
                               new CultureInfo("en-US"),
                               DateTimeStyles.None,
-                              out var dateValue));
+                              out _));
         }
 
         /// <summary>
@@ -107,8 +107,8 @@ namespace Molder.Generator.Tests
         [Fact]
         public void ReplaceVariables_pastDateTimeWithEmptyLength_ReturnReplaced()
         {
-            var str = "{{pastDateTime()}}";
-            var outStr = this.variableContext.ReplaceVariables(str);
+            const string str = "{{pastDateTime()}}";
+            var outStr = variableContext.ReplaceVariables(str);
             Assert.Equal("pastDateTime()", outStr);
         }
 
@@ -118,14 +118,14 @@ namespace Molder.Generator.Tests
         [Fact]
         public void ReplaceVariables_randomDateTime_ReturnReplaced()
         {
-            var str = "{{randomDateTime(dd-MM-yyyy)}}";
-            var outStr = this.variableContext.ReplaceVariables(str);
+            const string str = "{{randomDateTime(dd-MM-yyyy)}}";
+            var outStr = variableContext.ReplaceVariables(str);
             Log.Logger().LogWarning($"ReplaceVariables_randomDateTime_ReturnReplaced - {outStr}");
 
             Assert.True(DateTime.TryParseExact(outStr, "dd-MM-yyyy",
                               new CultureInfo("en-US"),
                               DateTimeStyles.None,
-                              out var dateValue));
+                              out _));
         }
 
         /// <summary>
@@ -134,8 +134,8 @@ namespace Molder.Generator.Tests
         [Fact]
         public void ReplaceVariables_randomDateTimeWithEmptyLength_ReturnReplaced()
         {
-            var str = "{{randomDateTime()}}";
-            var outStr = this.variableContext.ReplaceVariables(str);
+            const string str = "{{randomDateTime()}}";
+            var outStr = variableContext.ReplaceVariables(str);
             Assert.Equal("randomDateTime()", outStr);
         }
 
@@ -145,9 +145,9 @@ namespace Molder.Generator.Tests
         [Fact]
         public void ReplaceVariables_RandomInt_ReturnReplaced()
         {
-            var str = "{{randomInt(4)}}";
-            var outStr = this.variableContext.ReplaceVariables(str);
-            Assert.True(int.TryParse(outStr, out var value));
+            const string str = "{{randomInt(4)}}";
+            var outStr = variableContext.ReplaceVariables(str);
+            Assert.True(int.TryParse(outStr, out _));
         }
 
         /// <summary>
@@ -156,8 +156,8 @@ namespace Molder.Generator.Tests
         [Fact]
         public void ReplaceVariables_RandomIntWithEmptyLength_ReturnReplaced()
         {
-            var str = "{{randomInt()}}";
-            var outStr = this.variableContext.ReplaceVariables(str);
+            const string str = "{{randomInt()}}";
+            var outStr = variableContext.ReplaceVariables(str);
             Assert.Equal("randomInt()", outStr);
         }
 
@@ -167,8 +167,8 @@ namespace Molder.Generator.Tests
         [Fact]
         public void ReplaceVariables_randomChars_ReturnReplaced()
         {
-            var str = "{{randomChars(20)}}";
-            var outStr = this.variableContext.ReplaceVariables(str);
+            const string str = "{{randomChars(20)}}";
+            var outStr = variableContext.ReplaceVariables(str);
             Assert.True(outStr.Length == 20);
         }
 
@@ -178,8 +178,8 @@ namespace Molder.Generator.Tests
         [Fact]
         public void ReplaceVariables_randomCharsWithEmptyLength_ReturnReplaced()
         {
-            var str = "{{randomChars()}}";
-            var outStr = this.variableContext.ReplaceVariables(str);
+            const string str = "{{randomChars()}}";
+            var outStr = variableContext.ReplaceVariables(str);
             Assert.Equal("randomChars()", outStr);
         }
 
@@ -189,8 +189,8 @@ namespace Molder.Generator.Tests
         [Fact]
         public void ReplaceVariables_randomString_ReturnReplaced()
         {
-            var str = "{{randomString(20)}}";
-            var outStr = this.variableContext.ReplaceVariables(str);
+            const string str = "{{randomString(20)}}";
+            var outStr = variableContext.ReplaceVariables(str);
             Assert.True(outStr.Length == 20);
         }
 
@@ -200,8 +200,8 @@ namespace Molder.Generator.Tests
         [Fact]
         public void ReplaceVariables_randomStringWithEmptyLength_ReturnReplaced()
         {
-            var str = "{{randomString()}}";
-            var outStr = this.variableContext.ReplaceVariables(str);
+            const string str = "{{randomString()}}";
+            var outStr = variableContext.ReplaceVariables(str);
             Assert.Equal("randomString()", outStr);
         }
 
@@ -211,8 +211,8 @@ namespace Molder.Generator.Tests
         [Fact]
         public void ReplaceVariables_randomPhone_ReturnReplaced()
         {
-            var str = "{{randomPhone(+7##########)}}";
-            var outStr = this.variableContext.ReplaceVariables(str);
+            const string str = "{{randomPhone(+7##########)}}";
+            var outStr = variableContext.ReplaceVariables(str);
             Assert.True(outStr.Length == 12);
         }
 
@@ -222,8 +222,8 @@ namespace Molder.Generator.Tests
         [Fact]
         public void ReplaceVariables_randomPhoneWithEmptyLength_ReturnReplaced()
         {
-            var str = "{{randomPhone()}}";
-            var outStr = this.variableContext.ReplaceVariables(str);
+            const string str = "{{randomPhone()}}";
+            var outStr = variableContext.ReplaceVariables(str);
             Assert.Equal("randomPhone()", outStr);
         }
     }

@@ -18,17 +18,17 @@ namespace Molder.Generator.Tests
         {
             variableController = new VariableController();
         }
-
+/*
         [Fact]
-        public void toEnumerable_ExtraRow_ReturnException()
+        public void ToEnumerable_ExtraRow_ReturnException()
         {
             var table = new Table(new string[] {"test"});
             table.AddRow("test");
             Action act = () => table.ToEnumerable(variableController);
             act.Should().Throw<Exception>()
-                .WithMessage("Expected table.Rows.ToList().Count to be 0 because Table must have only 1 row: Values, but found 1.");
+                .WithMessage("Expected value to be 0 because Table must have only 1 row: Values, but found 1.");
         }
-
+*/
         [Theory]
         [InlineData(5)]
         [InlineData(true)]
@@ -41,31 +41,34 @@ namespace Molder.Generator.Tests
             var res = table.ToEnumerable(variableController);
             (res is IEnumerable<object>).Should().BeTrue();
         }
-
+/*
         [Fact]
-        public void toDoctionary_NoValues_ReturnException()
+        public void ToDictionary_NoValues_ReturnException()
         {
-            var table = new Table(new string[] {"test"});
+            var table = new Table(new string[] { "test" });
+            table.ToDictionary(variableController);
+            
             Action act = () => table.ToDictionary(variableController);
             act.Should().Throw<Exception>()
-                .WithMessage("Expected table.Rows.ToList().Count to be 1 because Table must have only 2 rows: Keys and Values, but found 0.");
+                .WithMessage("Expected value to be 1 because Table must have only 2 rows: Keys and Values, but found 2.");
         }
-
+*/
+/*
         [Fact]
-        public void toDoctionary_TooManyRows_ReturnException()
+        public void ToDictionary_TooManyRows_ReturnException()
         {
             var table = new Table(new string[] { "test", "qwerty" });
             table.AddRow("test", "qwerty");
             table.AddRow("test", "qwerty");
             Action act = () => table.ToDictionary(variableController);
             act.Should().Throw<Exception>()
-                .WithMessage("Expected table.Rows.ToList().Count to be 1 because Table must have only 2 rows: Keys and Values, but found 2.");
+                .WithMessage("Expected value to be 1 because Table must have only 2 rows: Keys and Values, but found 0.");
         }
-
+*/
         [Theory]
         [InlineData("int","5","double","3.54")]
         [InlineData("qwert", "asd", "zxcv", "poiu")]
-        public void toDoctionary_Values_ReturnTrue(string key1, string value1, string key2, string value2)
+        public void ToDictionary_Values_ReturnTrue(string key1, string value1, string key2, string value2)
         {
             var table = new Table(new string[] { key1, value1 });
             table.AddRow(key2,value2);
@@ -77,7 +80,7 @@ namespace Molder.Generator.Tests
         public void TryParse_StringToInt_ReturnException()
         {
             var enumerable = new List<object>() { "test" };
-            Action act = () => ((IEnumerable<object>)enumerable).TryParse<int>();
+            Action act = () => enumerable.TryParse<int>();
             act.Should().Throw<NotValidCastException>();
         }
 
@@ -85,7 +88,7 @@ namespace Molder.Generator.Tests
         public void CheckTryParse_LongToInt_ReturnException()
         {
             var enumerable = new List<object>() { 999999999999999L };
-            Action act = () => ((IEnumerable<object>)enumerable).TryParse<int>();
+            Action act = () => enumerable.TryParse<int>();
             act.Should().Throw<NotValidCastException>();
         }
 

@@ -36,7 +36,7 @@ namespace Molder.Tests
 
             // Arrange
 
-            bool result = file.IsExist(file.Filename, file.Path);
+            var result = file.IsExist(file.Filename, file.Path);
 
             // Assert
             result.Should().BeTrue();
@@ -51,8 +51,7 @@ namespace Molder.Tests
                 Filename = "tets.txt",
                 Path = "Correct path"
             };
-
-            var mockUserDir = new Mock<IDirectory>();
+            
             var mockFileProvider = new Mock<IFileProvider>();
             var mockPathProvider = new Mock<IPathProvider>();
 
@@ -62,7 +61,7 @@ namespace Molder.Tests
             file.PathProvider = mockPathProvider.Object;
             
             // Arrange
-            bool result = file.IsExist(file.Filename, file.Path);
+            var result = file.IsExist(file.Filename, file.Path);
 
             // Assert
             result.Should().BeTrue();
@@ -76,8 +75,7 @@ namespace Molder.Tests
                 Filename = "tets.txt",
                 Path = "Correct path"
             };
-
-            var mockUserDir = new Mock<IDirectory>();
+            
             var mockFileProvider = new Mock<IFileProvider>();
             var mockPathProvider = new Mock<IPathProvider>();
 
@@ -87,7 +85,7 @@ namespace Molder.Tests
             file.PathProvider = mockPathProvider.Object;
 
             // Arrange
-            bool result = file.IsExist(file.Filename, file.Path);
+            var result = file.IsExist(file.Filename, file.Path);
 
             // Assert
             result.Should().BeFalse();
@@ -152,7 +150,7 @@ namespace Molder.Tests
             mockFileProvider.Setup(f => f.Exist(It.IsAny<string>())).Returns(false);
             mockFileProvider.Setup(f => f.AppendAllText(file.Filename, file.Path, file.Content)).Returns(false);
             file.FileProvider = mockFileProvider.Object;
-            bool result = file.Create(file.Filename, file.Path, file.Content);
+            var result = file.Create(file.Filename, file.Path, file.Content);
             result.Should().BeFalse();
         }
 
@@ -170,7 +168,7 @@ namespace Molder.Tests
             mockFileProvider.Setup(f => f.Exist(It.IsAny<string>())).Returns(false);
             mockFileProvider.Setup(f => f.Create(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(true);
             file.FileProvider = mockFileProvider.Object;
-            bool result = file.Create(file.Filename, file.Path, file.Content);
+            var result = file.Create(file.Filename, file.Path, file.Content);
             result.Should().BeTrue();
         }
 
@@ -188,7 +186,7 @@ namespace Molder.Tests
             mockFileProvider.Setup(f => f.Exist(It.IsAny<string>())).Returns(false);
             mockFileProvider.Setup(f => f.Create(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(false);
             file.FileProvider = mockFileProvider.Object;
-            bool result = file.Create(file.Filename, file.Path, file.Content);
+            var result = file.Create(file.Filename, file.Path, file.Content);
             result.Should().BeFalse();
         }
 
@@ -206,7 +204,7 @@ namespace Molder.Tests
             mockFileProvider.Setup(f => f.Exist(It.IsAny<string>())).Returns(true);
             mockFileProvider.Setup(f => f.WriteAllText(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(true);
             file.FileProvider = mockFileProvider.Object;
-            bool result = file.Create(file.Filename, file.Path, file.Content);
+            var result = file.Create(file.Filename, file.Path, file.Content);
             result.Should().BeTrue();
         }
 
@@ -224,7 +222,7 @@ namespace Molder.Tests
             mockFileProvider.Setup(f => f.Exist(It.IsAny<string>())).Returns(true);
             mockFileProvider.Setup(f => f.WriteAllText(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(false);
             file.FileProvider = mockFileProvider.Object;
-            bool result = file.Create(file.Filename, file.Path, file.Content);
+            var result = file.Create(file.Filename, file.Path, file.Content);
             result.Should().BeFalse();
         }
 
@@ -287,7 +285,7 @@ namespace Molder.Tests
             mockFileProvider.Setup(f => f.Delete(It.IsAny<string>())).Returns(true);
             file.PathProvider = mockPathProvider.Object;
             file.FileProvider = mockFileProvider.Object;
-            bool result = file.Delete(file.Filename, file.Path);
+            var result = file.Delete(file.Filename, file.Path);
             result.Should().BeTrue();
         }
 
@@ -403,7 +401,7 @@ namespace Molder.Tests
             mockFileProvider.Setup(f => f.CheckFileExtension(file.Filename)).Returns(true);
             file.FileProvider = mockFileProvider.Object;
             file.WebProvider = mockWebProvider.Object;
-            bool result = file.DownloadFile(file.Url, file.Filename, file.Path);
+            var result = file.DownloadFile(file.Url, file.Filename, file.Path);
             result.Should().BeTrue();
         }
 
@@ -422,7 +420,7 @@ namespace Molder.Tests
             mockWebProvider.Setup(f => f.Download(file.Url, file.Path, file.Filename)).Returns(false);
             file.FileProvider = mockFileProvider.Object;
             file.WebProvider = mockWebProvider.Object;
-            bool result = file.DownloadFile(file.Url, file.Filename, file.Path);
+            var result = file.DownloadFile(file.Url, file.Filename, file.Path);
             result.Should().BeFalse();
         }
 
@@ -462,7 +460,7 @@ namespace Molder.Tests
             file.FileProvider = mockFileProvider.Object;
             file.UserDirectory = mockUserDir.Object;
             file.WebProvider = mockWebProvider.Object;
-           bool result = file.DownloadFile(file.Url, file.Filename, file.Path);
+           var result = file.DownloadFile(file.Url, file.Filename, file.Path);
            result.Should().BeTrue();
         }
 

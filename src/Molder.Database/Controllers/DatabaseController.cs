@@ -9,7 +9,7 @@ namespace Molder.Database.Controllers
     [ExcludeFromCodeCoverage]
     public class DatabaseController
     {
-        private Lazy<ConcurrentDictionary<string, (IDbClient connection, TypeOfAccess typeOfAccess, int? timeout)>> _connections = new Lazy<ConcurrentDictionary<string, (IDbClient connection, TypeOfAccess typeOfAccess, int? timeout)>>(() => new ConcurrentDictionary<string, (IDbClient connection, TypeOfAccess typeOfAccess, int? timeout)>());
+        private Lazy<ConcurrentDictionary<string, (IDbClient connection, TypeOfAccess typeOfAccess, int? timeout)>> _connections = new(() => new ConcurrentDictionary<string, (IDbClient connection, TypeOfAccess typeOfAccess, int? timeout)>());
 
         public ConcurrentDictionary<string, (IDbClient connection, TypeOfAccess typeOfAccess, int? timeout)> Connections => _connections.Value;
     }

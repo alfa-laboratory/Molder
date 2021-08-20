@@ -28,16 +28,16 @@ namespace Molder.Configuration.Extension
                 {
                     if(tag == param.Tag)
                     {
-                        foreach(var p in param.Parameters)
+                        foreach(var (key, value) in param.Parameters)
                         {
                             try
                             {
-                                configDictionary.Add(p.Key, p.Value);
+                                configDictionary.Add(key, value);
                             }
                             catch(ArgumentException ex)
                             {
-                                Log.Logger().LogError($"A value has already been written for the \"{p.Key}\" key. Check the \"{p.Key}\" key in the \"{param.Tag}\" tag");
-                                throw new ConfigException($"A value has already been written for the \"{p.Key}\" key. Check the \"{p.Key}\" key in the \"{param.Tag}\" tag. Exception message is: \"{ex.Message}\"");
+                                Log.Logger().LogError($"A value has already been written for the \"{key}\" key. Check the \"{key}\" key in the \"{param.Tag}\" tag");
+                                throw new ConfigException($"A value has already been written for the \"{key}\" key. Check the \"{key}\" key in the \"{param.Tag}\" tag. Exception message is: \"{ex.Message}\"");
                             }
                         }
                     }
@@ -48,12 +48,10 @@ namespace Molder.Configuration.Extension
                 });
             });
 
-            if(configDictionary.Any())
+            if (!configDictionary.Any()) return controller;
+            foreach (var (key, value) in configDictionary)
             {
-                foreach (var element in configDictionary)
-                {
-                    controller.SetVariable(element.Key, element.Value.GetType(), element.Value, TypeOfAccess.Global);
-                }
+                controller.SetVariable(key, value.GetType(), value, TypeOfAccess.Global);
             }
             return controller;
         }

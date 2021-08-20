@@ -7,7 +7,7 @@
         string Content { get; set; }
         string Url { get; set; }
 
-        bool Create(string filename, string path, string content = null);
+        bool Create(string filename, string path, string content = null!);
         string GetContent(string filename, string path);
         bool Delete(string filename, string path);
         bool DownloadFile(string url, string filename, string pathToSave);

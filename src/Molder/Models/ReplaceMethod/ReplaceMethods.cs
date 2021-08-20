@@ -6,7 +6,7 @@ namespace Molder.Models.ReplaceMethod
 {
     public class ReplaceMethods
     {
-        private Lazy<IEnumerable<Type>> _types = new Lazy<IEnumerable<Type>>(() => new List<Type>());
+        private Lazy<IEnumerable<Type>> _types = new(() => new List<Type>());
         private static object syncRoot = new object();
 
         private ReplaceMethods()
@@ -20,10 +20,7 @@ namespace Molder.Models.ReplaceMethod
             if (_instance != null) return _instance._types.Value;
             lock (syncRoot)
             {
-                if (_instance == null)
-                {
-                    _instance = new ReplaceMethods();
-                }
+                _instance ??= new ReplaceMethods();
             }
             return _instance._types.Value;
         }

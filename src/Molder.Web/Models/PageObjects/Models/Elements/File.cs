@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Remote;
 
 namespace Molder.Web.Models.PageObjects.Elements
 {
@@ -8,14 +9,12 @@ namespace Molder.Web.Models.PageObjects.Elements
 
         public override void SetText(string text)
         {
-            if (Tag == "file")
+            if (_driverProvider.GetDriver() is IAllowsFileDetection allowsDetection)
             {
-                mediator.Execute(() => _provider.SendKeys(text));
+                allowsDetection.FileDetector = new LocalFileDetector();
             }
-            else
-            {
-                throw new ArgumentException($"Проверьте, что элемент \"{Name}\" имеет тип file");
-            }
+
+            mediator.Execute(() => _provider.SendKeys(text));
         }
     }
 }

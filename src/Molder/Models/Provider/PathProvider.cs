@@ -39,7 +39,7 @@ namespace Molder.Models.Profider
             }
         }
 
-        public (string,string) CutFullpath(string fullpath)
+        public (string, string) CutFullpath(string fullpath)
         {    
             try
             {
@@ -48,7 +48,7 @@ namespace Molder.Models.Profider
             catch (ArgumentException e)
             {
                 Log.Logger().LogWarning($"Error getting filename \"{fullpath}\": \"{e.Message}\"");
-                return (null, null);
+                return (null, null)!;
             }
         }        
     }

@@ -9,7 +9,7 @@ namespace Molder.Models.Directory
     [ExcludeFromCodeCoverage]
     public abstract class DefaultDirectory : IDirectory
     {
-        private AsyncLocal<DirectoryInfo> _directory = new AsyncLocal<DirectoryInfo>();
+        private AsyncLocal<DirectoryInfo> _directory = new();
 
         public void Create()
         {

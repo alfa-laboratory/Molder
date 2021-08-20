@@ -38,7 +38,7 @@ namespace Molder.Web.Models.Proxy
             {
                 if (conArr.Any(x => x.Port == i)) continue;
 
-                _proxyServer.AddEndPoint(new ExplicitProxyEndPoint(IPAddress.Any, i, true));
+                _proxyServer.AddEndPoint(new ExplicitProxyEndPoint(IPAddress.Any, i));
 
                 _authentications.Add(i, auth);
                 return i;

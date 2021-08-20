@@ -11,8 +11,8 @@ namespace Molder.Service.Helpers
     {
         public static ResponceInfo GetResponce(this Exception ex, RequestInfo request)
         {
-            if (!(ex is FlurlException)) return null;
-            switch (((FlurlException)ex).ExceptionName)
+            if (ex is not FlurlException flurlException) return null;
+            switch (flurlException.ExceptionName)
             {
                 case nameof(FlurlHttpTimeoutException):
                     return new ResponceInfo
@@ -24,7 +24,7 @@ namespace Molder.Service.Helpers
                     };
                 case nameof(FlurlHttpException):
                 {
-                    var exception = (((FlurlException)ex).Exception as FlurlHttpException)?.Call.Response;
+                    var exception = (flurlException.Exception as FlurlHttpException)?.Call.Response;
                     var content = exception?.ResponseMessage.Content.ReadAsStringAsync().Result;
 
                     var responce = new ResponceInfo

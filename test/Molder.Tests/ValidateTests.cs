@@ -2,10 +2,8 @@
 using Molder.Tests.Models;
 using FluentAssertions;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using Xunit;
 
 namespace Molder.Tests
@@ -54,7 +52,7 @@ namespace Molder.Tests
         {
             // Arrange
 
-            var isValid = Validate.TryParseToXml(Xml.Substring(15));
+            var isValid = Xml.Substring(15).TryParseToXml();
             // Assert
             isValid.Should().BeFalse();
         }
@@ -64,7 +62,7 @@ namespace Molder.Tests
         {
             // Arrange
 
-            var isValid = Validate.TryParseToXml(Xml);
+            var isValid = Xml.TryParseToXml();
             // Assert
             isValid.Should().BeTrue();
         }

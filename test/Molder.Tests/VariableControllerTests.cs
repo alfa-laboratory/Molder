@@ -92,7 +92,7 @@ namespace Molder.Tests
         [InlineData("zero", typeof(int), 0)]
         public void GetVariable_TypeofAccessLocal_ReturnVariable(string key, Type type, int value)
         {
-            variableContext.SetVariable(key, type, value, TypeOfAccess.Local);
+            variableContext.SetVariable(key, type, value);
             var variable = variableContext.GetVariable(key);
             variable.Type.Should().Be(type);
             variable.Value.Should().Be(value);
@@ -123,7 +123,7 @@ namespace Molder.Tests
             Action act = () => variableContext.SetVariable(key, type, value, typeOfAccess);
             act
                 .Should().Throw<ArgumentNullException>()
-                .WithMessage($"Key is null{Environment.NewLine}Parameter name: key");
+                .WithMessage($"Key is null (Parameter 'key')");
         }
 
         [Theory]
@@ -240,7 +240,7 @@ namespace Molder.Tests
 
             var variable = variableContext.GetVariableValue(searchKey);
 
-            ((XmlNode)variable).Name.Should().Be(name);
+            ((XmlNode)variable!).Name.Should().Be(name);
             ((XmlNode)variable).InnerXml.Should().Be(searchValue);
         }
 
@@ -256,7 +256,7 @@ namespace Molder.Tests
 
             var variable = variableContext.GetVariableValue(searchKey);
 
-            ((XElement)variable).Name.LocalName.Should().Be(name);
+            ((XElement)variable!).Name.LocalName.Should().Be(name);
         }
 
         [Theory]
@@ -269,7 +269,7 @@ namespace Molder.Tests
 
             var variable = variableContext.GetVariableValue(searchKey);
 
-            ((JValue)variable).Value.Should().Be(searchValue);
+            ((JValue)variable!).Value.Should().Be(searchValue);
         }
 
         [Theory]
@@ -282,7 +282,7 @@ namespace Molder.Tests
 
             var variable = variableContext.GetVariableValue(searchKey);
 
-            ((JValue)variable).Value.Should().Be(searchValue);
+            ((JValue)variable!).Value.Should().Be(searchValue);
         }
 
 
@@ -297,7 +297,7 @@ namespace Molder.Tests
 
             var variable = variableContext.GetVariableValue(searchKey);
 
-            ((JValue)variable).Value.Should().Be(searchValue);
+            ((JValue)variable!).Value.Should().Be(searchValue);
         }
 
         [Theory]
@@ -662,7 +662,7 @@ namespace Molder.Tests
             var collection = new List<object>() { 5, 6 };
             variableContext.SetVariable("Test", collection.GetType(), collection);
             Action act =() => variableContext.GetVariableValueText("Test");
-            act.Should().Throw<IEnumerableException>()
+            act.Should().Throw<EnumerableException>()
                 .WithMessage("IEnumerable cant be converted to String");
         }
 
@@ -681,7 +681,7 @@ namespace Molder.Tests
             var dictionary = new Dictionary<string, object>() { { "test", "qwerty" } };
             variableContext.SetVariable("Test", dictionary.GetType(), dictionary);
             Action act = () => variableContext.GetVariableValueText("Test");
-            act.Should().Throw<IEnumerableException>()
+            act.Should().Throw<EnumerableException>()
                 .WithMessage("IEnumerable cant be converted to String");
         }
     }

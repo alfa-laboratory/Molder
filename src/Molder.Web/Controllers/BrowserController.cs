@@ -12,7 +12,7 @@ namespace Molder.Web.Controllers
     [ExcludeFromCodeCoverage]
     public class BrowserController
     {
-        private static AsyncLocal<IBrowser> Browser = new AsyncLocal<IBrowser> { Value = null };
+        private static AsyncLocal<IBrowser> Browser = new() { Value = null };
         private BrowserController() { }
         public static IBrowser GetBrowser()
         {

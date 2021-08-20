@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
@@ -9,9 +10,9 @@ namespace Molder.Helpers
     [ExcludeFromCodeCoverage]
     public static class Reflection
     {
-        public static ParameterInfo[] GetMethodParameters(this MethodInfo method)
+        public static IEnumerable<ParameterInfo> GetMethodParameters(this MethodInfo method)
         {
-            return method?.GetParameters();
+            return method.GetParameters();
         }
 
         public static Type GetObjectType(this object obj, bool checkElementType = false)
@@ -20,22 +21,22 @@ namespace Molder.Helpers
             switch(obj)
             {
                 case null:
-                return null;
+                    return null;
                 case Type type:
-                t = type;
-                break;
+                    t = type;
+                    break;
                 case ParameterInfo info:
-                t = info.ParameterType;
-                break;
+                    t = info.ParameterType;
+                    break;
                 case PropertyInfo info:
-                t = info.PropertyType;
-                break;
+                    t = info.PropertyType;
+                    break;
                 case FieldInfo info:
-                t = info.FieldType;
-                break;
+                    t = info.FieldType;
+                    break;
                 default:
-                t = obj.GetType();
-                break;
+                    t = obj.GetType();
+                    break;
             }
 
             if(checkElementType && t.HasElementType)
@@ -55,7 +56,7 @@ namespace Molder.Helpers
 
         public static object GetDefault(this Type type)
         {
-            if(type == null || (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)))
+            if(type == null || type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 return null;
             }
@@ -66,7 +67,7 @@ namespace Molder.Helpers
 
         public static T GetDefault<T>()
         {
-            return default(T);
+            return default;
         }
 
         public static object ConvertObject(object obj, Type type)
@@ -91,7 +92,7 @@ namespace Molder.Helpers
                 }
 
                 var mi = obj.GetType().GetMethods().SingleOrDefault(m => m.Name == "ToString" && !m.GetMethodParameters().Any());
-                return mi?.Invoke(obj, new object[] { });
+                return mi?.Invoke(obj, Array.Empty<object>());
             }
 
             if((obj is string s) && t == typeof(char[]))
@@ -114,33 +115,33 @@ namespace Molder.Helpers
                 return obj;
             }
 
-            if(!(obj is string))
+            if(obj is not string o)
             {
                 return Convert.ChangeType(obj, t);
             }
 
             if(t == typeof(bool))
             {
-                if(short.TryParse((string)obj, out var i))
+                if(short.TryParse(o, out var i))
                 {
                     return i != 0;
                 }
 
-                return bool.Parse((string)obj);
+                return bool.Parse(o);
             }
 
             if(t == typeof(decimal) || t == typeof(float))
             {
                 var types = new[] { typeof(string), typeof(NumberStyles), typeof(IFormatProvider), t.MakeByRefType() };
-                var args = new[] { (string)obj, NumberStyles.Any, new NumberFormatInfo { NumberDecimalSeparator = "," }, GetDefault(t) };
+                var args = new[] { o, NumberStyles.Any, new NumberFormatInfo { NumberDecimalSeparator = "," }, GetDefault(t) };
 
-                if((bool)t.GetMethod("TryParse", types)?.Invoke(null, args))
+                if((bool)t.GetMethod("TryParse", types)?.Invoke(null, args)!)
                 {
                     return args[3];
                 }
 
                 types = new[] { typeof(string), typeof(NumberStyles), typeof(IFormatProvider) };
-                args = new object[] { (string)obj, NumberStyles.Any, new NumberFormatInfo { NumberDecimalSeparator = "." } };
+                args = new object[] { o, NumberStyles.Any, new NumberFormatInfo { NumberDecimalSeparator = "." } };
                 return t.GetMethod("Parse", types)?.Invoke(null, args);
             }
 
@@ -154,20 +155,20 @@ namespace Molder.Helpers
                 || t == typeof(sbyte)
                 || t == typeof(char))
             {
-                return t.GetMethod("Parse", new[] { typeof(string) })?.Invoke(null, new object[] { (string)obj });
+                return t.GetMethod("Parse", new[] { typeof(string) })?.Invoke(null, new object[] {o});
             }
 
             if(t == typeof(DateTime))
             {
-                return DateTime.TryParse((string)obj, CultureInfo.GetCultureInfo("ru-RU"), DateTimeStyles.AssumeLocal, out var dt) ? dt : DateTime.Parse((string)obj, CultureInfo.GetCultureInfo("en-US"), DateTimeStyles.AssumeLocal);
+                return DateTime.TryParse(o, CultureInfo.GetCultureInfo("ru-RU"), DateTimeStyles.AssumeLocal, out var dt) ? dt : DateTime.Parse(o, CultureInfo.GetCultureInfo("en-US"), DateTimeStyles.AssumeLocal);
             }
 
-            return Convert.ChangeType(obj, t);
+            return Convert.ChangeType(o, t);
         }
 
         public static T ConvertObject<T>(object obj)
         {
-            return (T)ConvertObject(obj, typeof(T));
+            return (T)ConvertObject(obj, typeof(T))!;
         }
 
         public static T[] CreateArray<T>(int length)
@@ -189,7 +190,7 @@ namespace Molder.Helpers
 
         public static T TryConvertObject<T>(object obj)
         {
-            return (T)TryConvertObject(obj, typeof(T));
+            return (T)TryConvertObject(obj, typeof(T))!;
         }
     }
 }

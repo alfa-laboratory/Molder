@@ -1,20 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput)</TargetsForTfmSpecificBuildOutput>
     <AssemblyName>Molder.Service</AssemblyName>
     <Authors>Egor Shokhin</Authors>
     <Company>AlfaBank</Company>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <LangVersion>7.1</LangVersion>
-    <PackageVersion>1.0.19</PackageVersion>
+    <LangVersion>9</LangVersion>
+    <PackageVersion>2.0.0</PackageVersion>
+    <AssemblyVersion>$(PackageVersion)</AssemblyVersion>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile></DocumentationFile>
-    <NoWarn>NU1701;1702</NoWarn>
+    <NoWarn>NU1701;1702;CS8604;CS8602;CS8618</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -31,16 +33,16 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>SA0001;NU5100;1701;1702</NoWarn>
+    <NoWarn>SA0001;NU5100;NU1701;1702;CS8604;CS8602;CS8618</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="FluentAssertions" Version="6.0.0" />
     <PackageReference Include="Flurl" Version="3.0.1" />
     <PackageReference Include="Flurl.Http" Version="3.0.1" />
-    <PackageReference Include="Molder" Version="1.0.26" />
+    <PackageReference Include="Molder" Version="2.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="SpecFlow" Version="3.3.30" />
+    <PackageReference Include="SpecFlow" Version="3.9.22" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
   </ItemGroup>
 

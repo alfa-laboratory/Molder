@@ -12,6 +12,7 @@ using TechTalk.SpecFlow;
 using System.Collections.Generic;
 using Molder.Database.Models.Parameters;
 using System.Data.SqlClient;
+using System.Linq;
 using Molder.Infrastructures;
 
 namespace Molder.Database.Tests
@@ -57,8 +58,9 @@ namespace Molder.Database.Tests
 
             var result = step.TransformationTableToString(table);
 
-            result.Should().NotBeNull();
-            result.Should().HaveCount(2);
+            var enumerable = result as Dictionary<string, object>[] ?? result.ToArray();
+            enumerable.Should().NotBeNull();
+            enumerable.Should().HaveCount(2);
         }
 
         [Fact]
@@ -69,13 +71,13 @@ namespace Molder.Database.Tests
             Action action = () => step.TransformationTableToString(table);
             action.Should()
                 .Throw<ArgumentNullException>()
-                .WithMessage($"Value cannot be null.{Environment.NewLine}Parameter name: List with table patameters is Empty.");
+                .WithMessage($"Value cannot be null. (Parameter 'List with table patameters is Empty.')");
         }
 
         [Fact]
         public void ConnectToDB_SqlServer_DbParamsIsNull_ReturnThrow()
         {
-            dbConnectionParams = new SqlConnectionStringBuilder() { InitialCatalog = "", DataSource = "", UserID = "", Password = "", ConnectTimeout = 0, ConnectRetryCount = 1 };
+            dbConnectionParams = new SqlConnectionStringBuilder { InitialCatalog = "", DataSource = "", UserID = "", Password = "", ConnectTimeout = 0, ConnectRetryCount = 1 };
 
             Action action = () => step.ConnectToDB_SqlServer(dbConnectionString, dbConnectionParams);
             action.Should()
@@ -113,11 +115,11 @@ namespace Molder.Database.Tests
 
             connection = mockSqlProvider.Object;
 
-            this.databaseController.Connections.TryAdd(connectName, (connection, TypeOfAccess.Local, 30));
+            databaseController.Connections.TryAdd(connectName, (connection, TypeOfAccess.Local, 30));
 
             step.ExecuteQueryTypeWithVarName(QueryType.INSERT, connectName, varName, new QueryParam { Query = query });
 
-            this.variableController.Variables.Should().NotBeEmpty();
+            variableController.Variables.Should().NotBeEmpty();
         }
 
         [Fact]
@@ -128,8 +130,7 @@ namespace Molder.Database.Tests
             var tableName = "newVariable";
             var connectName = "NewConnect";
 
-            var insertQuery = new List<Dictionary<string, object>>();
-            insertQuery.Add(new Dictionary<string, object>());
+            var insertQuery = new List<Dictionary<string, object>> { new() };
 
             IDbClient connection = new SqlServerClient();
             mockSqlProvider.Setup(c => c.Create(It.IsAny<SqlConnectionStringBuilder>())).Returns(true);

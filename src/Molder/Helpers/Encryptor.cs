@@ -10,7 +10,7 @@ namespace Molder.Helpers
     [ExcludeFromCodeCoverage]
     public static class Encryptor
     {
-        private static SecureString _salt = new SecureString();
+        private static SecureString _salt = new();
 
 
         public static void SetSalt(string salt)
@@ -62,7 +62,7 @@ namespace Molder.Helpers
         private static SecureString ToSecureString(string str)
         {
             var secureString = new SecureString();
-            if (str != null)
+            if (str is not null)
             {
                 Array.ForEach(str.ToCharArray(), secureString.AppendChar);
             }

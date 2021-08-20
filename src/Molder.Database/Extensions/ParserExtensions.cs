@@ -14,7 +14,8 @@ namespace Molder.Database.Extensions
     {
         /// <summary>
         /// Создание Sql INSERT запроса
-        /// </summary>        
+        /// </summary>
+        /// <exception cref="ArgumentNullException"></exception>        
         public static string ToSqlQuery(this IEnumerable<Dictionary<string, object>> tableParameters, string tableName) 
         {
             var value = string.Empty;
@@ -28,9 +29,10 @@ namespace Molder.Database.Extensions
                 throw new ArgumentNullException("Table name is Empty.");
             }
 
-            if (tableParameters.Any())
+            var parameters = tableParameters as Dictionary<string, object>[] ?? tableParameters.ToArray();
+            if (parameters.Any())
             {
-                tableParameters.ToList().ForEach(row =>
+                parameters.ToList().ForEach(row =>
                 {
                     if (!header.Any())
                     {
@@ -54,7 +56,7 @@ namespace Molder.Database.Extensions
         {
             var tableParameters = new List<Dictionary<string, object>>();
             var insertTable = table.CreateDynamicSet();
-            var list = Enumerable.ToList(insertTable);
+            var list = insertTable.ToList();
 
             if (!list.Any())
             {
@@ -68,28 +70,29 @@ namespace Molder.Database.Extensions
                     .Add(((IDictionary<string, object>)element)
                     .ToDictionary(e => e.Key, e =>
                     {
-                        if (string.IsNullOrWhiteSpace(e.Value.ToString()))
+                        var (_, value) = e;
+                        if (string.IsNullOrWhiteSpace(value.ToString()))
                         {
                             return "NULL";
                         }
 
-                        if (DateTime.TryParse(e.Value.ToString(), out DateTime date))
+                        if (DateTime.TryParse(value.ToString(), out DateTime date))
                         {
                             var result = date.ToString("yyyy-M-dd");
                             return $"'{result}'";
                         }
 
-                        if (e.Value.ToString().ToUpper() == "TRUE" || e.Value.ToString().ToUpper() == "FALSE")
+                        if (value.ToString()?.ToUpper() == "TRUE" || value.ToString()?.ToUpper() == "FALSE")
                         {
-                            return e.Value;
+                            return value;
                         }
 
-                        if (e.Value.ToString().Any(c => char.IsLetter(c)) & e.Value.ToString().ToUpper() != "NULL")
+                        if (value.ToString()!.Any(char.IsLetter) & value.ToString()?.ToUpper() != "NULL")
                         {
-                            return $"'{e.Value}'";
+                            return $"'{value}'";
                         }
 
-                        return e.Value;
+                        return value;
                     }));
             }
             return tableParameters;

@@ -333,7 +333,7 @@ namespace Molder.Generator.Tests
                 .Returns(fakeDate);
 
             var steps = new GeneratorSteps(variableController, featureContext);
-            ((FakerGenerator)steps.fakerGenerator).DateTimeHelper.Value = mockDateTimeHelper.Object;
+            ((FakerGenerator)steps.fakerGenerator!).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             // Arrange
             steps.StoreAsVariableCurrentDate("test");
@@ -371,7 +371,7 @@ namespace Molder.Generator.Tests
                 .Returns(fakeDate);
 
             var steps = new GeneratorSteps(variableController, featureContext);
-            ((FakerGenerator)steps.fakerGenerator).DateTimeHelper.Value = mockDateTimeHelper.Object;
+            ((FakerGenerator)steps.fakerGenerator!).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             // Arrange
             steps.StoreAsVariableCurrentDateWithFormat("G","test");
@@ -411,7 +411,7 @@ namespace Molder.Generator.Tests
 
             // Assert
             var dateTime = variableController.GetVariableValue("test");
-            ((DateTime)dateTime).Should().BeAfter(Constants.START_DATETIME).And.BeBefore(Constants.LAST_DATETIME);
+            ((DateTime)dateTime!).Should().BeAfter(Constants.START_DATETIME).And.BeBefore(Constants.LAST_DATETIME);
         }
 
         [Fact]
@@ -476,7 +476,7 @@ namespace Molder.Generator.Tests
                 .Returns(fakeDate);
 
             var steps = new GeneratorSteps(variableController, featureContext);
-            ((FakerGenerator)steps.fakerGenerator).DateTimeHelper.Value = mockDateTimeHelper.Object;
+            ((FakerGenerator)steps.fakerGenerator!).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             var dt = new DateTime(1999, 1, 1);
 
@@ -516,7 +516,7 @@ namespace Molder.Generator.Tests
                 .Returns(fakeDate);
 
             var steps = new GeneratorSteps(variableController, featureContext);
-            ((FakerGenerator)steps.fakerGenerator).DateTimeHelper.Value = mockDateTimeHelper.Object;
+            ((FakerGenerator)steps.fakerGenerator!).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             // Arrange
             Action act = () => steps.StoreAsVariablePastDateTimeWithDifference(2001, 0, 0, "test");
@@ -537,7 +537,7 @@ namespace Molder.Generator.Tests
                 .Returns(fakeDate);
 
             var steps = new GeneratorSteps(variableController, featureContext);
-            ((FakerGenerator)steps.fakerGenerator).DateTimeHelper.Value = mockDateTimeHelper.Object;
+            ((FakerGenerator)steps.fakerGenerator!).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             var dt = new DateTime(1999, 1, 1).ToString("yyyy-MM-dd");
 
@@ -577,7 +577,7 @@ namespace Molder.Generator.Tests
                 .Returns(fakeDate);
 
             var steps = new GeneratorSteps(variableController, featureContext);
-            ((FakerGenerator)steps.fakerGenerator).DateTimeHelper.Value = mockDateTimeHelper.Object;
+            ((FakerGenerator)steps.fakerGenerator!).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             // Arrange
             Action act = () => steps.StoreAsVariablePastDateTimeWithDifference(2001, 0, 0, "yyyy-MM-dd", "test");
@@ -696,7 +696,7 @@ namespace Molder.Generator.Tests
                 .Returns(fakeDate);
 
             var steps = new GeneratorSteps(variableController, featureContext);
-            ((FakerGenerator)steps.fakerGenerator).DateTimeHelper.Value = mockDateTimeHelper.Object;
+            ((FakerGenerator)steps.fakerGenerator!).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             var dt = new DateTime(2001, 1, 1);
 
@@ -736,7 +736,7 @@ namespace Molder.Generator.Tests
                 .Returns(fakeDate);
 
             var steps = new GeneratorSteps(variableController, featureContext);
-            ((FakerGenerator)steps.fakerGenerator).DateTimeHelper.Value = mockDateTimeHelper.Object;
+            ((FakerGenerator)steps.fakerGenerator!).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             // Arrange
             Action act = () => steps.StoreAsVariablePastDateTimeWithDifference(10001, 0, 0, "test");
@@ -757,7 +757,7 @@ namespace Molder.Generator.Tests
                 .Returns(fakeDate);
 
             var steps = new GeneratorSteps(variableController, featureContext);
-            ((FakerGenerator)steps.fakerGenerator).DateTimeHelper.Value = mockDateTimeHelper.Object;
+            ((FakerGenerator)steps.fakerGenerator!).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             var dt = new DateTime(2001, 1, 1).ToString("yyyy-MM-dd");
 
@@ -797,7 +797,7 @@ namespace Molder.Generator.Tests
                 .Returns(fakeDate);
 
             var steps = new GeneratorSteps(variableController, featureContext);
-            ((FakerGenerator)steps.fakerGenerator).DateTimeHelper.Value = mockDateTimeHelper.Object;
+            ((FakerGenerator)steps.fakerGenerator!).DateTimeHelper.Value = mockDateTimeHelper.Object;
 
             // Arrange
             Action act = () => steps.StoreAsVariableFutureDateTimeWithDifference(10001, 0, 0, "yyyy-MM-dd", "test");
@@ -917,7 +917,7 @@ namespace Molder.Generator.Tests
 
             // Assert
             var str = variableController.GetVariableValue("test");
-            ((string)str).Should().StartWith(_prepostfix);
+            ((string)str!).Should().StartWith(_prepostfix);
         }
 
         [Fact]
@@ -965,7 +965,7 @@ namespace Molder.Generator.Tests
 
             // Assert
             var str = variableController.GetVariableValue("test");
-            ((string)str).Should().StartWith(_prepostfix);
+            ((string)str!).Should().StartWith(_prepostfix);
         }
 
         [Fact]
@@ -1013,7 +1013,7 @@ namespace Molder.Generator.Tests
 
             // Assert
             var str = variableController.GetVariableValue("test");
-            ((string)str).Should().StartWith(_prepostfix);
+            ((string)str!).Should().StartWith(_prepostfix);
         }
 
         [Fact]
@@ -1061,7 +1061,7 @@ namespace Molder.Generator.Tests
 
             // Assert
             var str = variableController.GetVariableValue("test");
-            ((string)str).Should().EndWith(_prepostfix);
+            ((string)str!).Should().EndWith(_prepostfix);
         }
 
         [Fact]

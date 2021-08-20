@@ -21,7 +21,13 @@ namespace PageObject.Pages
 
         [Element(Name = "Dynamic Content", Locator = "//*[@id=\"content\"]/ul/li[12]/a")]
         A dynamicContent;
-
+        
+        [Element(Name = "File Download", Locator = "//*[@id=\"content\"]/ul/li[17]/a")]
+        A fileDownload;
+        
+        [Element(Name = "File Upload", Locator = "//*[@id=\"content\"]/ul/li[18]/a")]
+        A fileUpload;
+        
         [Element(Name = "Frames", Locator = "//*[@id=\"content\"]/ul/li[22]/a")]
         A frames;
 

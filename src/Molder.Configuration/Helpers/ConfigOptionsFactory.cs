@@ -22,17 +22,7 @@ namespace Molder.Configuration.Helpers
             {
                 if (tags.GetChildren().Any())
                 {
-                    foreach (var tag in tags.GetChildren())
-                    {
-                        config.Add
-                        (
-                            new ConfigFile
-                            {
-                                Tag = tag.Key,
-                                Parameters = tag.Get<Dictionary<string, object>>()
-                            }
-                        );
-                    }
+                    config.AddRange(tags.GetChildren().Select(tag => new ConfigFile {Tag = tag.Key, Parameters = tag.Get<Dictionary<string, object>>()}));
                 }
                 else
                 {

@@ -48,14 +48,10 @@ namespace Molder.Web.Models.PageObjects.Pages
                 }
             });
 
-            if (errors.Any())
-            {
-                var aggregate = string.Join(", ", errors);
-                Log.Logger().LogError($"element/s \"{aggregate}\" not initialize on page \"{Name}\"");
-                return false;
-            }
-
-            return true;
+            if (!errors.Any()) return true;
+            var aggregate = string.Join(", ", errors);
+            Log.Logger().LogError($"element/s \"{aggregate}\" not initialize on page \"{Name}\"");
+            return false;
         }
 
         public abstract IPage GetDefaultFrame();
