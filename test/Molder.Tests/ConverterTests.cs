@@ -33,6 +33,7 @@ namespace Molder.Tests
         public void CreateEnumerable_CorrectParams_ReturnEnumerable(string str, string chars, List<string> list)
         {
             var convertedList = Converter.CreateEnumerable(str, chars);
+            
             convertedList.Should().Equal(list);
         }
 

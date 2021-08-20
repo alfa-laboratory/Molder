@@ -12,7 +12,7 @@ namespace Molder.Helpers
 {
     public static class Converter
     {
-        public static IEnumerable CreateEnumerable(string str, string splitChars)
+        public static IEnumerable<string> CreateEnumerable(string str, string splitChars)
         {
             try
             { 
