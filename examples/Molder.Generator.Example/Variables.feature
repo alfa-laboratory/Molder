@@ -14,13 +14,13 @@ Scenario: Create Random Text
 	
 Scenario: Create Random UUID
 	Given я сохраняю новый UUID в переменную "randomUUID"
-
+@ignore
 Scenario: Create Enumerable list
 	Given я сохраняю коллекцию с типом "int" в переменную "Test":
 	| 8 | 133 | 64 |
 	When я выбираю значение из коллекции "Test[1]" и записываю его в переменную "tmp"
 	Then write variable "tmp"
-
+@ignore
 Scenario: Create Dictionary
 	Given я сохраняю словарь в переменную "Test":
 	| Test | Qwerty | asdf |
