@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <Version>1.0.20</Version>
     <Authors>Egor Shokhin</Authors>
     <Company>AlfaBank</Company>
     <Copyright>2021 AlfaBank</Copyright>
@@ -13,9 +12,10 @@
     <IsPackable>true</IsPackable>
     <AssemblyName>Molder</AssemblyName>
     <Description>Library containing the logic for working with variables, logging, basic models for working with directories and files</Description>
-    <PackageVersion>2.0.3-beta</PackageVersion>
+    <PackageVersion>2.0.0</PackageVersion>
     <LangVersion>9</LangVersion>
     <Nullable>disable</Nullable>
+    <AssemblyVersion>$(PackageVersion)</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
