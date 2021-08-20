@@ -33,7 +33,7 @@ namespace Molder.Generator.Tests
             variableController.SetVariable("test", variable.GetType(), variable);
             Action act = () => "test".IsEnumerable(variableController);
             act.Should().Throw<Exception>()
-                .WithMessage("Expected (collection is IEnumerable) to be true because \"test\" не является коллекцией, but found False.");
+                .Where(e => e.Message.Contains("\"test\" не является коллекцией"));
         }
 
         public static IEnumerable<object[]> DataForEnumerable =>
@@ -71,7 +71,7 @@ namespace Molder.Generator.Tests
             variableController.SetVariable("test", variable.GetType(), variable);
             Action act = () => "test".IsDictionary(variableController);
             act.Should().Throw<Exception>()
-                .WithMessage("Expected (dictionary is Dictionary<string, object>) to be true because \"test\" не является словарем, but found False.");
+                .Where(e => e.Message.Contains("\"test\" не является словарем"));
         }
 
         public static IEnumerable<object[]> DataForDictionary =>

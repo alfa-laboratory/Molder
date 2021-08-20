@@ -11,7 +11,8 @@
     <IsPackable>true</IsPackable>
     <Description>Library for adding a block to the appsettings.json configuration file for adding variables to scenarios</Description>
     <LangVersion>9</LangVersion>
-    <PackageVersion>2.0.1-beta</PackageVersion>
+    <PackageVersion>2.0.0</PackageVersion>
+    <AssemblyVersion>$(PackageVersion)</AssemblyVersion>
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
@@ -31,7 +32,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
-    <PackageReference Include="Molder" Version="2.0.1-beta" />
+    <PackageReference Include="Molder" Version="2.0.1" />
     <PackageReference Include="SpecFlow" Version="3.9.22" />
   </ItemGroup>
 
