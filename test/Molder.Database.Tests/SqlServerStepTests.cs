@@ -77,7 +77,7 @@ namespace Molder.Database.Tests
         [Fact]
         public void ConnectToDB_SqlServer_DbParamsIsNull_ReturnThrow()
         {
-            dbConnectionParams = new SqlConnectionStringBuilder { InitialCatalog = "", DataSource = "", UserID = "", Password = "", ConnectTimeout = 0, ConnectRetryCount = 1 };
+            dbConnectionParams = new SqlConnectionStringBuilder { InitialCatalog = "", DataSource = "", UserID = "", Password = "", ConnectTimeout = 1, ConnectRetryCount = 1 };
 
             Action action = () => step.ConnectToDB_SqlServer(dbConnectionString, dbConnectionParams);
             action.Should()
