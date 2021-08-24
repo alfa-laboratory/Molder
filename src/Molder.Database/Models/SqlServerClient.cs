@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using Molder.Database.Models.Providers;
 using System.Text;
 using System.Data.Common;
-using Molder.Database.Infrastructures;
 
 namespace Molder.Database.Models
 {
@@ -30,16 +29,8 @@ namespace Molder.Database.Models
             try
             {
                 var connectionString = sqlConnectionStringBuilder as SqlConnectionStringBuilder;
-
-                connectionString.ConnectTimeout = connectionString.ConnectTimeout == Default.ConnectTimeout ? DbSetting.TIMEOUT : Default.ConnectTimeout;
-                connectionString.LoadBalanceTimeout = connectionString.LoadBalanceTimeout != Default.LoadBalanceTimeout ? connectionString.ConnectTimeout : Default.LoadBalanceTimeout;
-
-
-                connectionString.ConnectRetryCount = connectionString.ConnectRetryCount != Default.ConnectRetryCount ? DbSetting.ConnectRetryCount : Default.ConnectRetryCount;
-                connectionString.ConnectRetryInterval = connectionString.ConnectRetryInterval != Default.ConnectRetryInterval ? DbSetting.ConnectRetryInterval : Default.ConnectRetryInterval;
                 
                 Log.Logger().LogInformation($"Connection has parameters: {Helpers.Message.CreateMessage(connectionString)}");
-                
                 var connect = _provider.Create(connectionString.ToString());
 
                 return connect;
