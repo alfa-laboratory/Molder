@@ -12,7 +12,7 @@ namespace Molder.Database.Infrastructures
     }
 
     [ExcludeFromCodeCoverage]
-    public static class Default
+    public static class DefaultSettings
     {
         public static int ConnectRetryCount = 1;
         public static int ConnectRetryInterval = 10;
