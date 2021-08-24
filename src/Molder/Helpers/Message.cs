@@ -15,10 +15,11 @@ namespace Molder.Helpers
         {
             try
             {
-                if (list.Any())
+                var enumerable = list as string[] ?? list.ToArray();
+                if (enumerable.Any())
                 {
                     var message = string.Empty;
-                    message = list.Aggregate((i, j) => i + Environment.NewLine + j);
+                    message = enumerable.Aggregate((i, j) => i + Environment.NewLine + j);
                     return message;
                 }
 

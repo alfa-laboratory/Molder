@@ -1,7 +1,6 @@
 ﻿using Molder.Web.Models.Mediator;
 using Molder.Web.Models.Providers;
 using Molder.Web.Models.Settings;
-using System;
 using System.Threading;
 
 namespace Molder.Web.Models.PageObjects.Alerts

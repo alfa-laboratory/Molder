@@ -23,15 +23,13 @@ namespace Molder.Service.Helpers
 
         public static string CreateMessage(this ResponceInfo responce)
         {
-            switch (responce.Content)
+            return responce.Content switch
             {
-                case null:
-                    return $"Responce: {responce.Request.Url} status: {responce.StatusCode}";
-                default:
-                    return responce.Content.TryParseToXml() ?
-                        $"Responce: {responce.Request.Url} status: {responce.StatusCode} and content: {Environment.NewLine} {Converter.CreateXMLEscapedString(responce.Content.ToXml())}" :
-                        $"Responce: {responce.Request.Url} status: {responce.StatusCode} and content: {Environment.NewLine} {responce.Content}";
-            }
+                null => $"Responce: {responce.Request.Url} status: {responce.StatusCode}",
+                _ => responce.Content.TryParseToXml()
+                    ? $"Responce: {responce.Request.Url} status: {responce.StatusCode} and content: {Environment.NewLine} {Converter.CreateXMLEscapedString(responce.Content.ToXml())}"
+                    : $"Responce: {responce.Request.Url} status: {responce.StatusCode} and content: {Environment.NewLine} {responce.Content}"
+            };
         }
     }
 }

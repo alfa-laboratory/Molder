@@ -8,6 +8,9 @@
     },
     {
       "assembly": "Molder.Service"
+    },
+    {
+      "assembly": "Molder.Configuration"
     }
   ]
 }

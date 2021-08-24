@@ -171,7 +171,7 @@ namespace Molder.Generator.Tests
         public void TryValidGuid()
         {
             var guid = generator.Guid();
-            bool isValid = Guid.TryParse(guid, out Guid outGuid);
+            var isValid = Guid.TryParse(guid, out _);
             isValid.Should().BeTrue();
         }
 
@@ -280,7 +280,7 @@ namespace Molder.Generator.Tests
         public void TryValidIp()
         {
             var ip = generator.Ip();
-            bool isValid = IPAddress.TryParse(ip, out IPAddress outIp);
+            var isValid = IPAddress.TryParse(ip, out _);
             isValid.Should().BeTrue();
         }
 
@@ -288,7 +288,7 @@ namespace Molder.Generator.Tests
         public void TryValidEmail()
         {
             var email = generator.Email("mail");
-            string address = new System.Net.Mail.MailAddress(email).Address;
+            var address = new System.Net.Mail.MailAddress(email).Address;
             address.Should().Be(email);
         }
 
@@ -296,7 +296,7 @@ namespace Molder.Generator.Tests
         public void TryValidUrl()
         {
             var url = generator.Url();
-            bool isValid = Uri.TryCreate(url, UriKind.Absolute, out Uri outUrl);
+            var isValid = Uri.TryCreate(url, UriKind.Absolute, out _);
             isValid.Should().BeTrue();
         }
 

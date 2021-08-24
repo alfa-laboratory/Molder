@@ -13,20 +13,14 @@ namespace Molder.Extensions
 {
     public static class ReplaceMethodsExtension
     {
-        public static (string, string[]) GetFunction(string function)
+        public static (string method, string[]) GetFunction(string function)
         {
             var regex = new Regex(StringPattern.METHOD, RegexOptions.Compiled);
             var match = regex.Match(function);
-            if (match.Success)
-            {
-                var method = match.Groups[StringPattern.MethodPlaceholder].Value;
-                var parameters = match.Groups[StringPattern.ParametersPlaceholder].Value;
-                return string.IsNullOrEmpty(parameters) ? (method, null) : (method, parameters.Split(','));
-            }
-            else
-            {
-                return (null, null);
-            }
+            if (!match.Success) return (null, null)!;
+            var method = match.Groups[StringPattern.MethodPlaceholder].Value;
+            var parameters = match.Groups[StringPattern.ParametersPlaceholder].Value;
+            return (string.IsNullOrEmpty(parameters) ? (method, null) : (method, parameters.Split(',')))!;
         }
 
         [ExcludeFromCodeCoverage]

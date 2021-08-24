@@ -13,7 +13,7 @@ namespace Molder.Generator.Models.Generators
 {
     public class FakerGenerator : IFakerGenerator
     {
-        private AsyncLocal<string> _locale = new AsyncLocal<string> { Value = Constants.DEFAULT_LOCALE };
+        private AsyncLocal<string> _locale = new() { Value = Constants.DEFAULT_LOCALE };
 
         public string Locale
         {
@@ -31,9 +31,9 @@ namespace Molder.Generator.Models.Generators
             bogus.Value = new BogusProvider(Locale);
         }
 
-        public AsyncLocal<IBogusProvider> bogus = new AsyncLocal<IBogusProvider> { Value = null };
+        public AsyncLocal<IBogusProvider> bogus = new() { Value = null! };
 
-        public AsyncLocal<IDateTimeHelper> DateTimeHelper = new AsyncLocal<IDateTimeHelper> { Value = new DateTimeHelper() };
+        public AsyncLocal<IDateTimeHelper> DateTimeHelper = new() { Value = new DateTimeHelper() };
 
         public Faker Get()
         {
@@ -66,10 +66,10 @@ namespace Molder.Generator.Models.Generators
 
         public DateTime? GetDate(int day, int month, int year, bool future = true, DateTime? refDate = null)
         {
-            int trigger = 1;
+            var trigger = 1;
             if (!future) trigger = -1;
 
-            refDate = refDate ?? DateTimeHelper.Value.GetDateTimeNow();
+            refDate ??= DateTimeHelper.Value.GetDateTimeNow();
 
             if (day >= 0 && month >= 0 && year >= 0)
             {
@@ -111,21 +111,21 @@ namespace Molder.Generator.Models.Generators
         public DateTime Soon(int days = 1, DateTime? refDate = null)
         {
             days.Check();
-            refDate = refDate ?? DateTimeHelper.Value.GetDateTimeNow();
+            refDate ??= DateTimeHelper.Value.GetDateTimeNow();
             return bogus.Value.Soon(days, refDate);
         }
 
         public DateTime Future(int yearsToGoForward = 1, DateTime? refDate = null)
         {
             yearsToGoForward.Check();
-            refDate = refDate ?? DateTimeHelper.Value.GetDateTimeNow();
+            refDate ??= DateTimeHelper.Value.GetDateTimeNow();
             return bogus.Value.Future(yearsToGoForward, refDate);
         }
 
         public DateTime Past(int yearsToGoBack = 1, DateTime? refDate = null)
         {
             yearsToGoBack.Check();
-            refDate = refDate ?? DateTimeHelper.Value.GetDateTimeNow();
+            refDate ??= DateTimeHelper.Value.GetDateTimeNow();
             return bogus.Value.Past(yearsToGoBack, refDate);
         }
 

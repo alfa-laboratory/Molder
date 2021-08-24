@@ -43,7 +43,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.DeleteVariable("test");
             act.Should().Throw<Exception>()
-                .WithMessage("Expected this.variableController.Variables {empty} to contain key \"test\" because переменная \"test\" не существует.");
+                .WithMessage("Expected variableController.Variables {empty} to contain key \"test\" because переменная \"test\" не существует.");
         }
 
         [Fact]
@@ -67,7 +67,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.EmtpyVariable("test");
             act.Should().Throw<Exception>()
-                .WithMessage("Expected this.variableController.Variables {empty} to contain key \"test\" because переменная \"test\" не существует.");
+                .WithMessage("Expected variableController.Variables {empty} to contain key \"test\" because переменная \"test\" не существует.");
         }
 
         [Fact]
@@ -119,7 +119,7 @@ namespace Molder.Generator.Tests
 
             Action act = () => steps.ChangeVariable("test", 0);
             act.Should().Throw<Exception>()
-                .WithMessage("Expected this.variableController.Variables {empty} to contain key \"test\" because переменная \"test\" не существует.");
+                .WithMessage("Expected variableController.Variables {empty} to contain key \"test\" because переменная \"test\" не существует.");
         }
 
         [Fact]
@@ -937,7 +937,7 @@ namespace Molder.Generator.Tests
             variableController.SetVariable("Test", tmp.GetType(), tmp);
             Action act = () => steps.StoreRandomVariableFromEnumerable("Test", "Test2");
             act.Should().Throw<Exception>()
-                .WithMessage("Expected (collection is IEnumerable) to be true because \"Test\" не является коллекцией, but found False.");
+                .Where(e => e.Message.Contains("\"Test\" не является коллекцией"));
         }
 
         public static IEnumerable<object[]> Data =>
@@ -990,7 +990,7 @@ namespace Molder.Generator.Tests
             variableController.SetVariable("Test", tmp.GetType(), tmp);
             Action act = () => steps.StoreVariableFromEnumerable("Test", "Test2");
             act.Should().Throw<Exception>()
-                .WithMessage("Expected (collection is IEnumerable) to be true because \"Test\" не является коллекцией, but found False.");
+                .Where(e => e.Message.Contains("\"Test\" не является коллекцией"));
         }
 
         [Fact]
@@ -1002,7 +1002,7 @@ namespace Molder.Generator.Tests
             steps.StoreEnumerableAsVariableWithType(TypeCode.Object, "Test", collection);
             Action act = () => steps.StoreVariableFromEnumerable(varName, "Test2");
             act.Should().Throw<Exception>()
-                .WithMessage("Index was out of range. Must be non-negative and less than the size of the collection.\nParameter name: index");
+                .WithMessage("Index was out of range. Must be non-negative and less than the size of the collection. (Parameter 'index')");
         }
 
         [Fact]
@@ -1014,7 +1014,7 @@ namespace Molder.Generator.Tests
             steps.StoreEnumerableAsVariableWithType(TypeCode.Object, "Test", collection);
             Action act = () =>steps.StoreVariableFromEnumerable(varName, "Test2");
             act.Should().Throw<Exception>()
-                .WithMessage("Expected (variable is ICollection) to be false because \"Test[qwerty]\" не является значением коллекции, but found True.");
+                .Where(e => e.Message.Contains("\"Test[qwerty]\" не является значением коллекции"));
         }
 
         [Fact]
@@ -1026,7 +1026,7 @@ namespace Molder.Generator.Tests
             steps.StoreEnumerableAsVariableWithType(TypeCode.Object, "Test", collection);
             Action act = () => steps.StoreVariableFromEnumerable(varName, "Test2");
             act.Should().Throw<Exception>()
-                .WithMessage("Expected (variable is ICollection) to be false because \"Test[   ]\" не является значением коллекции, but found True.");
+                .Where(e => e.Message.Contains("\"Test[   ]\" не является значением коллекции"));
         }
 
         [Fact]
@@ -1079,9 +1079,10 @@ namespace Molder.Generator.Tests
             var steps = new VariableSteps(variableController);
             var variable = 5;
             variableController.SetVariable("Test", variable.GetType(), variable);
+           
             Action act = () => steps.StoreRandomVariableFromDictionary("Test", "Test2");
             act.Should().Throw<Exception>()
-                .WithMessage("Expected (dictionary is Dictionary<string, object>) to be true because \"Test\" не является словарем, but found False.");
+                .Where(e => e.Message.Contains("\"Test\" не является словарем"));
         }
 
         [Theory]
@@ -1119,7 +1120,7 @@ namespace Molder.Generator.Tests
             steps.StoreDictionaryAsVariableNoType(varName, dictionary);
             Action act = () => steps.StoreVariableFromDictionary(varName, newVarName);
             act.Should().Throw<Exception>()
-                .WithMessage("Expected (variable is Dictionary<string,object>) to be false because \"Test\" не является значением коллекции, but found True.");
+                .Where(e => e.Message.Contains("\"Test\" не является значением коллекции"));
         }
 
         [Fact]
@@ -1132,7 +1133,7 @@ namespace Molder.Generator.Tests
             steps.StoreDictionaryAsVariableNoType(varName, dictionary);
             Action act = () => steps.StoreVariableFromDictionary(varName+"[]", newVarName);
             act.Should().Throw<Exception>()
-                .WithMessage("Expected (variable is Dictionary<string,object>) to be false because \"Test[]\" не является значением коллекции, but found True.");
+                .Where(e => e.Message.Contains("\"Test[]\" не является значением коллекции"));
         }
 
         [Fact]
@@ -1158,7 +1159,7 @@ namespace Molder.Generator.Tests
             steps.StoreDictionaryAsVariableNoType(varName, dictionary);
             Action act = () => steps.StoreVariableFromDictionary(varName + "[   ]", newVarName);
             act.Should().Throw<Exception>()
-                .WithMessage("Expected (variable is Dictionary<string,object>) to be false because \"Test[   ]\" не является значением коллекции, but found True.");
+                .Where(e => e.Message.Contains("\"Test[   ]\" не является значением коллекции"));
         }
 
         [Fact]

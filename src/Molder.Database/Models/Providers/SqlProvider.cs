@@ -10,7 +10,7 @@ namespace Molder.Database.Models.Providers
     [ExcludeFromCodeCoverage]
     public class SqlProvider : ISqlProvider
     {
-        private Lazy<SqlConnection> _connection = new Lazy<SqlConnection>(() => null);
+        private Lazy<SqlConnection> _connection = new(() => null);
 
         public SqlConnection Connection
         {
@@ -30,19 +30,15 @@ namespace Molder.Database.Models.Providers
                     Connection = Open(connectionString);
                     return true;
                 }
-                else
+
+                if (Connection.ConnectionString.Equals(connectionString))
                 {
-                    if (Connection.ConnectionString.Equals(connectionString))
-                    {
-                        Log.Logger().LogWarning($"Connection with parameters: {Helpers.Message.CreateMessage(connectionString)} is already create");
-                        return false;
-                    }
-                    else
-                    {
-                        Log.Logger().LogWarning($"Connection parameters are different: {Helpers.Message.CreateMessage(connectionString)}");
-                        return false;
-                    }
+                    Log.Logger().LogWarning($"Connection with parameters: {Helpers.Message.CreateMessage(connectionString)} is already create");
+                    return false;
                 }
+
+                Log.Logger().LogWarning($"Connection parameters are different: {Helpers.Message.CreateMessage(connectionString)}");
+                return false;
             }
             catch (SqlException ex)
             {
@@ -56,7 +52,7 @@ namespace Molder.Database.Models.Providers
             }
         }
 
-        public void UsingTransaction(Action<SqlTransaction> onExecute, Action<Exception> onError, Action onSuccess = null)
+        public void UsingTransaction(Action<SqlTransaction> onExecute, Action<Exception> onError, Action onSuccess = null!)
         {
             var transaction = Connection.BeginTransaction(IsolationLevel.ReadUncommitted);
 
@@ -89,7 +85,7 @@ namespace Molder.Database.Models.Providers
 
         public bool IsConnectAlive()
         {
-            return !(Connection is null) && Connection.State.HasFlag(ConnectionState.Open);
+            return Connection is not null && Connection.State.HasFlag(ConnectionState.Open);
         }
 
         public bool Disconnect()
@@ -116,9 +112,9 @@ namespace Molder.Database.Models.Providers
 
         protected SqlConnection Open(string connectionString)
         {
-            var _connection = new SqlConnection(connectionString);
-            _connection.Open();
-            return _connection;
+            var connection = new SqlConnection(connectionString);
+            connection.Open();
+            return connection;
         }
     }
 }

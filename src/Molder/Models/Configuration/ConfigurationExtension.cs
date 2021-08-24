@@ -8,7 +8,7 @@ namespace Molder.Models.Configuration
     public sealed class ConfigurationExtension
     {
         private static readonly Lazy<ConfigurationExtension> lazy
-        = new Lazy<ConfigurationExtension>(() => new ConfigurationExtension());
+        = new(() => new ConfigurationExtension());
 
         public static ConfigurationExtension Instance
             => lazy.Value;

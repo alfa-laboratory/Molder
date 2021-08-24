@@ -14,10 +14,8 @@ namespace Molder.Web.Models.PageObjects.Elements
             {
                 return (string)mediator.Execute(() => _provider.GetAttribute("href"));
             }
-            else
-            {
-                throw new ArgumentException($"Проверьте, что элемент \"{Name}\" Enabled и Displayed");
-            }
+
+            throw new ArgumentException($"Проверьте, что элемент \"{Name}\" Enabled и Displayed");
         }
     }
 }

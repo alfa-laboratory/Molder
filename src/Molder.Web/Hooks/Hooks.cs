@@ -39,7 +39,7 @@ namespace Molder.Web.Hooks
             Log.Logger().LogDebug(pageObject.PageObjectToString());
         }
         
-        [AfterScenario()]
+        [AfterScenario]
         public void AfterScenario(ScenarioContext scenario)
         {
             if (scenario.TestError != null)

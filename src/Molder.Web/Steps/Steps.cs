@@ -13,11 +13,11 @@ namespace Molder.Web.Steps
     [Binding]
     public class Steps
     {
-        protected VariableController variableController;
+        private readonly VariableController variableController;
 
-        public Steps(VariableController controller)
+        public Steps(VariableController variableController)
         {
-            variableController = controller;
+            this.variableController = variableController;
         }
 
         [StepArgumentTransformation]
@@ -65,19 +65,19 @@ namespace Molder.Web.Steps
         [StepDefinition(@"я сохраняю адрес активной веб-страницы в переменную \""(.+)\""")]
         public void SaveUrlActivePage(string varName)
         {
-            this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
+            variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
 
             var url = BrowserController.GetBrowser().Url;
-            this.variableController.SetVariable(varName, url.GetType(), url);
+            variableController.SetVariable(varName, url.GetType(), url);
         }
 
         [StepDefinition(@"я сохраняю заголовок активной веб-страницы в переменную \""(.+)\""")]
         public void SaveTitleActiveWebPage(string varName)
         {
-            this.variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
+            variableController.Variables.Should().NotContainKey(varName, $"переменная \"{varName}\" уже существует");
 
             var title = BrowserController.GetBrowser().Title;
-            this.variableController.SetVariable(varName, title.GetType(), title);
+            variableController.SetVariable(varName, title.GetType(), title);
         }
 
         [StepDefinition(@"я закрываю веб-страницу")]
@@ -589,6 +589,21 @@ namespace Molder.Web.Steps
         {
             BrowserController.GetBrowser().GetCurrentPage().GetDefaultFrame();
         }
+        #endregion
+
+        #region File
+        
+        [StepDefinition(@"я загружаю в элемент \""(.+)\"" веб-страницы файл \""(.+)\""")]
+        public void UploadFileIntoField(string name, string fullpath)
+        {
+            fullpath = variableController.ReplaceVariables(fullpath) ?? fullpath;
+            
+            var element = BrowserController.GetBrowser().GetCurrentPage().GetElement(name);
+            (element is File).Should().BeTrue($"элемент \"{name}\" имеет отличный от File профиль");
+            
+            (element as File)?.SetText(fullpath);
+        }
+        
         #endregion
     }
 }

@@ -9,6 +9,8 @@ namespace Molder.Web.Models.Settings
         public string BinaryLocation { get; set; }
         public List<string> Options { get; set; }
         public Dictionary<string, string> Capabilities { get; set; }
+        
+        public Dictionary<string, string> UserProfilePreference { get; set; }
 
         private long? _timeout = Constants.DEFAULT_TIMEOUT;
         public long? Timeout {
@@ -27,6 +29,7 @@ namespace Molder.Web.Models.Settings
         public bool CheckRemoteRun() => IsRemoteRun() && !string.IsNullOrWhiteSpace(Remote.Url);
 
         public bool CheckCapability() => Capabilities != null;
+        public bool CheckUserProfilePreference() => UserProfilePreference != null;
     }
 
     public class Remote

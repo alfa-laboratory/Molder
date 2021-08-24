@@ -22,7 +22,7 @@ namespace Molder.Database.Models
         [ExcludeFromCodeCoverage]
         public IDbConnection Get()
         {
-            return (_provider as SqlProvider).Connection;
+            return (_provider as SqlProvider)?.Connection!;
         }
 
         public bool Create(DbConnectionStringBuilder sqlConnectionStringBuilder)
@@ -30,13 +30,14 @@ namespace Molder.Database.Models
             try
             {
                 var connectionString = sqlConnectionStringBuilder as SqlConnectionStringBuilder;
+                
+                
+                connectionString.ConnectTimeout = connectionString.ConnectTimeout != DefaultSettings.ConnectTimeout ? connectionString.ConnectTimeout : DefaultSettings.ConnectTimeout;
+                connectionString.LoadBalanceTimeout = connectionString.LoadBalanceTimeout != DefaultSettings.LoadBalanceTimeout ? connectionString.ConnectTimeout : DefaultSettings.LoadBalanceTimeout;
 
-                connectionString.ConnectTimeout = connectionString.ConnectTimeout == Default.ConnectTimeout ? DbSetting.TIMEOUT : Default.ConnectTimeout;
-                connectionString.LoadBalanceTimeout = connectionString.LoadBalanceTimeout != Default.LoadBalanceTimeout ? connectionString.ConnectTimeout : Default.LoadBalanceTimeout;
 
-
-                connectionString.ConnectRetryCount = connectionString.ConnectRetryCount != Default.ConnectRetryCount ? DbSetting.ConnectRetryCount : Default.ConnectRetryCount;
-                connectionString.ConnectRetryInterval = connectionString.ConnectRetryInterval != Default.ConnectRetryInterval ? DbSetting.ConnectRetryInterval : Default.ConnectRetryInterval;
+                connectionString.ConnectRetryCount = connectionString.ConnectRetryCount != DefaultSettings.ConnectRetryCount ? connectionString.ConnectRetryCount : DefaultSettings.ConnectRetryCount;
+                connectionString.ConnectRetryInterval = connectionString.ConnectRetryInterval != DefaultSettings.ConnectRetryInterval ? connectionString.ConnectRetryInterval : DefaultSettings.ConnectRetryInterval;
                 
                 Log.Logger().LogInformation($"Connection has parameters: {Helpers.Message.CreateMessage(connectionString)}");
                 

@@ -39,7 +39,7 @@ namespace Molder.Service.Tests
         [InlineData("")]
         public void GetObjectFromString_EmptyString_ReturnString(string str)
         {
-            var result = str.GetObject(); ;
+            var result = str.GetObject();
             result.GetType().Name.Should().Be("String");
         }
 
@@ -66,7 +66,7 @@ namespace Molder.Service.Tests
         [Fact]
         public void AddQueryInURL_NullQuery_ReturnError()
         {
-            string url = string.Empty;
+            var url = string.Empty;
             Action action = () => url.AddQueryInURL(null);
 
             action.Should()
@@ -76,7 +76,7 @@ namespace Molder.Service.Tests
         [Fact]
         public void GetStringContent_String_ReturnStringContent()
         {
-            string str = "test";
+            const string str = "test";
             var type = str.GetObject();
             var result = type.GetHttpContent(str);
 
@@ -87,7 +87,7 @@ namespace Molder.Service.Tests
         [Fact]
         public void GetStringContent_JObject_ReturnStringContent()
         {
-            string str = "{'Test': 'Test'}";
+            const string str = "{'Test': 'Test'}";
             var type = str.GetObject();
             var result = type.GetHttpContent(str);
 
@@ -97,7 +97,7 @@ namespace Molder.Service.Tests
         [Fact]
         public void GetStringContent_XDoc_ReturnStringContent()
         {
-            string str = "<p>Test</p>";
+            const string str = "<p>Test</p>";
             var type = str.GetObject();
             var result = type.GetHttpContent(str);
 

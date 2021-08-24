@@ -9,7 +9,7 @@ namespace Molder.Web.Models
     [ExcludeFromCodeCoverage]
     public class TreePages
     {
-        private static AsyncLocal<IEnumerable<Node>> _pages = new AsyncLocal<IEnumerable<Node>>{ Value = null };
+        private static AsyncLocal<IEnumerable<Node>> _pages = new() { Value = null };
         private static Lazy<VariableController> _variableController;
 
         private TreePages() { }

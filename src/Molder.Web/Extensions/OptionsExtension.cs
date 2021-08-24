@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Molder.Helpers;
+using OpenQA.Selenium.Chrome;
 
 namespace Molder.Web.Extensions
 {
@@ -21,6 +22,24 @@ namespace Molder.Web.Extensions
             foreach(var (key, value) in capabilities)
             {
                 _options.AddAdditionalCapability(key, value);
+            }
+            
+            return _options;
+        }
+        
+        public static DriverOptions AddUserProfilePreference(this ChromeOptions options, Dictionary<string, string> userProfilePreference)
+        {
+            var _options = options;
+            
+            if ((userProfilePreference is null) || (!userProfilePreference.Any()))
+            {
+                Log.Logger().LogInformation($"Dictionary with userProfilePreference is null or empty. Return {options.GetType().Name.ToLower()} without UserProfilePreference");
+                return _options;
+            }
+            
+            foreach(var (key, value) in userProfilePreference)
+            {
+                _options.AddUserProfilePreference(key, value);
             }
             
             return _options;

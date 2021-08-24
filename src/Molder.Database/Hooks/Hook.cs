@@ -18,7 +18,7 @@ namespace Molder.Database.Hooks
             {
                 if (typeOfAccess != Molder.Infrastructures.TypeOfAccess.Local) continue;
                 
-                dbClient?.Dispose();
+                dbClient.Dispose();
                 databaseController.Connections.TryRemove(key, out _);
             }
         }
@@ -28,7 +28,7 @@ namespace Molder.Database.Hooks
         {
             foreach (var kvp in databaseController.Connections)
             {
-                kvp.Value.connection?.Dispose();
+                kvp.Value.connection.Dispose();
             }
             databaseController.Connections.Clear();
         }

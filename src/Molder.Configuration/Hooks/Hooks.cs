@@ -22,7 +22,7 @@ namespace Molder.Configuration.Hooks
         private VariableController controller;
 
         private static IDirectory BinDirectory = new BinDirectory();
-        private static AsyncLocal<IOptions<IEnumerable<ConfigFile>>> config = new AsyncLocal<IOptions<IEnumerable<ConfigFile>>>();
+        private static AsyncLocal<IOptions<IEnumerable<ConfigFile>>> config = new();
 
         public Hooks(VariableController variableController)
         {
@@ -33,13 +33,13 @@ namespace Molder.Configuration.Hooks
         public static void InitializeConfiguration()
         {
             BinDirectory.Create();
-            ConfigurationExtension.Instance.Configuration = ConfigurationExtension.Instance.Configuration ?? ConfigurationFactory.Create(BinDirectory);
+            ConfigurationExtension.Instance.Configuration ??= ConfigurationFactory.Create(BinDirectory);
         }
 
         [BeforeFeature(Order = -1000000)]
         public static void BeforeFeature(FeatureContext featureContext, VariableController variableController)
         {
-            ConfigurationExtension.Instance.Configuration = ConfigurationExtension.Instance.Configuration ?? ConfigurationFactory.Create(BinDirectory);
+            ConfigurationExtension.Instance.Configuration ??= ConfigurationFactory.Create(BinDirectory);
             config.Value = ConfigOptionsFactory.Create(ConfigurationExtension.Instance.Configuration);
 
             var tags = TagHelper.GetTagsBy(featureContext);
@@ -50,7 +50,7 @@ namespace Molder.Configuration.Hooks
         [BeforeScenario(Order = -1000000)]
         public void BeforeScenario(FeatureContext feature, ScenarioContext scenario)
         {
-            ConfigurationExtension.Instance.Configuration = ConfigurationExtension.Instance.Configuration ?? ConfigurationFactory.Create(BinDirectory);
+            ConfigurationExtension.Instance.Configuration ??= ConfigurationFactory.Create(BinDirectory);
             config.Value = ConfigOptionsFactory.Create(ConfigurationExtension.Instance.Configuration);
 
             var tags = TagHelper.GetTagsBy(scenario);
@@ -65,7 +65,7 @@ namespace Molder.Configuration.Hooks
 
             foreach (var (key, variable) in controller.Variables)
             {
-                if(variable.TypeOfAccess == Molder.Infrastructures.TypeOfAccess.Local)
+                if(variable!.TypeOfAccess == Molder.Infrastructures.TypeOfAccess.Local)
                 {
                     controller.Variables.TryRemove(key, out _);
                 }

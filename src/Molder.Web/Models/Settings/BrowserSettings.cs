@@ -8,7 +8,7 @@ namespace Molder.Web.Models.Settings
     {
         private BrowserSettings() {}
 
-        private static Lazy<Settings> _settings = new Lazy<Settings>(() => null);
+        private static Lazy<Settings> _settings = new(() => null);
         public static Settings Settings
         {
             get => _settings.Value;

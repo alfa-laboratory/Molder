@@ -12,7 +12,7 @@ namespace Molder.Helpers
 {
     public static class Converter
     {
-        public static IEnumerable CreateEnumerable(string str, string splitChars)
+        public static IEnumerable<string> CreateEnumerable(string str, string splitChars)
         {
             try
             { 
@@ -27,11 +27,9 @@ namespace Molder.Helpers
                     Log.Logger().LogWarning("Input string for creating the list is not specified");
                     return null;
                 }
-                else
-                {
-                    Log.Logger().LogWarning("Input string for creating the list is not specified");
-                    return new List<string>() { str };
-                }
+
+                Log.Logger().LogWarning("Input string for creating the list is not specified");
+                return new List<string> { str };
             }
         }
 
