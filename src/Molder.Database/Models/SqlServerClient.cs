@@ -31,11 +31,11 @@ namespace Molder.Database.Models
             {
                 var connectionString = sqlConnectionStringBuilder as SqlConnectionStringBuilder;
 
-                connectionString.ConnectTimeout = connectionString.ConnectTimeout != DefaultSettings.ConnectTimeout ? connectionString.ConnectTimeout : DefaultSettings.ConnectTimeout;
+                connectionString.ConnectTimeout = connectionString.ConnectTimeout == DefaultSettings.ConnectTimeout ? DbSetting.TIMEOUT : DefaultSettings.ConnectTimeout;
                 
-                connectionString.LoadBalanceTimeout = connectionString.LoadBalanceTimeout != DefaultSettings.LoadBalanceTimeout ? 15 : DefaultSettings.LoadBalanceTimeout;
-                connectionString.ConnectRetryCount = connectionString.ConnectRetryCount != DefaultSettings.ConnectRetryCount ? DbSetting.ConnectRetryCount : DefaultSettings.ConnectRetryCount;
-                connectionString.ConnectRetryInterval = connectionString.ConnectRetryInterval != DefaultSettings.ConnectRetryInterval ? DbSetting.ConnectRetryInterval : DefaultSettings.ConnectRetryInterval;
+                connectionString.LoadBalanceTimeout = connectionString.LoadBalanceTimeout != DefaultSettings.LoadBalanceTimeout ? connectionString.LoadBalanceTimeout : DefaultSettings.LoadBalanceTimeout;
+                connectionString.ConnectRetryCount = connectionString.ConnectRetryCount != DefaultSettings.ConnectRetryCount ? connectionString.ConnectRetryCount : DefaultSettings.ConnectRetryCount;
+                connectionString.ConnectRetryInterval = connectionString.ConnectRetryInterval != DefaultSettings.ConnectRetryInterval ? connectionString.ConnectRetryInterval : DefaultSettings.ConnectRetryInterval;
                 
                 Log.Logger().LogInformation($"Connection has parameters: {Helpers.Message.CreateMessage(connectionString)}");
                 
