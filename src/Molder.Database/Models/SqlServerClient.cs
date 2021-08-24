@@ -32,9 +32,6 @@ namespace Molder.Database.Models
                 var connectionString = sqlConnectionStringBuilder as SqlConnectionStringBuilder;
 
                 connectionString.ConnectTimeout = connectionString.ConnectTimeout != DefaultSettings.ConnectTimeout ? connectionString.ConnectTimeout : DefaultSettings.ConnectTimeout;
-                
-                Log.Logger().LogError($"DEBUG TIMEOUT {connectionString.ConnectTimeout}");
-                
                 connectionString.LoadBalanceTimeout = connectionString.LoadBalanceTimeout != DefaultSettings.LoadBalanceTimeout ? connectionString.LoadBalanceTimeout : DefaultSettings.LoadBalanceTimeout;
                 connectionString.ConnectRetryCount = connectionString.ConnectRetryCount != DefaultSettings.ConnectRetryCount ? connectionString.ConnectRetryCount : DefaultSettings.ConnectRetryCount;
                 connectionString.ConnectRetryInterval = connectionString.ConnectRetryInterval != DefaultSettings.ConnectRetryInterval ? connectionString.ConnectRetryInterval : DefaultSettings.ConnectRetryInterval;
