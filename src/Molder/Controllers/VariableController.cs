@@ -276,37 +276,51 @@ namespace Molder.Controllers
             string ret;
             switch (val)
             {
-                
+
                 case XElement {HasElements: false} element:
-                    {
-                        ret = element.Value;
-                        break;
-                    }
+                {
+                    ret = element.Value;
+                    break;
+                }
                 case XElement {HasElements: true} element:
-                    {
-                        Log.Logger().LogWarning($"Key \"{key}\" is root for (XElement)");
-                        using var sw = new StringWriter();
-                        element.Save(sw);
-                        return sw.ToString();
-                    }
+                {
+                    Log.Logger().LogWarning($"Key \"{key}\" is root for (XElement)");
+                    using var sw = new StringWriter();
+                    element.Save(sw);
+                    return sw.ToString();
+                }
 
                 case XmlNode node when node.FirstChild.GetType() == typeof(XmlText):
-                    {
-                        ret = node.FirstChild.Value;
-                        break;
-                    }
+                {
+                    ret = node.FirstChild.Value;
+                    break;
+                }
                 case XmlElement {HasChildNodes: true}:
+                {
+                    Log.Logger().LogWarning($"Key \"{key}\" is root for (XmlElement)");
+                    return null;
+                }
+                
+                case JToken token:
                     {
-                        Log.Logger().LogWarning($"Key \"{key}\" is root for (XmlElement)");
-                        return null;
-                    }
+                        if (token is JArray)
+                        {
+                            if (token.HasValues)
+                            {
+                                Log.Logger().LogTrace($"Key \"{key}\" is JArray");
+                                ret = token.ToString();
+                                break;
+                            }
 
-                case JToken {HasValues: true} token:
-                    {
+                            Log.Logger().LogTrace($"Key \"{key}\" is empty JArray");
+                            ret = null;
+                            break;
+                        }
+                        
                         ret = token.ToString();
                         break;
                     }
-
+                    
                 default:
                     if (val is Dictionary<string, object> or ICollection)
                     {
