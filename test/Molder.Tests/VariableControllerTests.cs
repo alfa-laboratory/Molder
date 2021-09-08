@@ -684,5 +684,14 @@ namespace Molder.Tests
             act.Should().Throw<EnumerableException>()
                 .WithMessage("IEnumerable cant be converted to String");
         }
+
+        [Fact]
+        public void GetVariableValueText_ValidJArray_ReturnNull()
+        {
+            var json = JToken.Parse(@"[]");
+            variableContext.SetVariable("jArray", json.GetType(), json);
+            var jarray = variableContext.GetVariableValueText("jArray.//$");
+            jarray.Should().BeNull();
+        }
     }
 }
