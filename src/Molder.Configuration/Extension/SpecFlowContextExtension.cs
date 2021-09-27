@@ -23,7 +23,10 @@ namespace Molder.Configuration.Extension
             {
                 if(!controller.Variables.ContainsKey(key))
                 {
-                    controller.Variables.TryAdd(key, value as Variable);
+                    if (value is Variable variable)
+                    {
+                        controller.Variables.TryAdd(key, variable);
+                    }
                 }
             }
             return controller;
