@@ -1,0 +1,8 @@
+﻿{
+  "enabled": true,
+  "server": {
+    "url": "",
+    "project": "",
+    "authentication": { "uuid": "" }
+  }
+}
