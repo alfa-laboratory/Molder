@@ -2,7 +2,9 @@
 using Molder.Web.Controllers;
 using FluentAssertions;
 using System;
+using System.Diagnostics;
 using Molder.Extensions;
+using Molder.Web.Infrastructures;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
 using Molder.Web.Models.PageObjects.Elements;
@@ -239,9 +241,25 @@ namespace Molder.Web.Steps
         [StepDefinition(@"выполнено нажатие на элемент \""(.+)\"" на веб-странице")]
         public void ClickToWebElement(string name)
         {
+            var stopwatch = new Stopwatch();
             var element = BrowserController.GetBrowser().GetCurrentPage().GetElement(name);
-            (element is BaseClick).Should().BeTrue($"элемент \"{name}\" имеет отличный от Click профиль");
-            (element as BaseClick)?.Click();
+            stopwatch.Start();
+            try
+            {
+                var isDisplayed = element.Displayed;
+                while (!isDisplayed && stopwatch.Elapsed.Milliseconds < Constants.ONE_SECOND)
+                {
+                    isDisplayed = element.Displayed;
+                }
+
+                (element is BaseClick).Should().BeTrue($"элемент \"{name}\" имеет отличный от Click профиль");
+                (element as BaseClick)?.Click();
+                stopwatch.Stop();
+            }
+            catch
+            {
+                stopwatch.Stop();
+            }
         }
 
         [StepDefinition(@"выполнено двойное нажатие на элемент \""(.+)\"" на веб-странице")]
