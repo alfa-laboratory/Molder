@@ -11,7 +11,5 @@ namespace Molder.ReportPortal.Infrastructures
         #endregion
 
         public const bool ENABLE_RP_REPORT = false;
-
-        public const string DEFAULT_RP_CONFIG = "{\"$schema\": \"https://raw.githubusercontent.com/reportportal/agent-net-specflow/master/ReportPortal.SpecFlowPlugin/ReportPortal.config.schema\",\"enabled\":true,\"server\":{\"url\":\"\",\"project\":\"\",\"authentication\":{\"uuid\":\"\"}}}";
     }
 }
