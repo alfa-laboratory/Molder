@@ -11,7 +11,7 @@
     <IsPackable>true</IsPackable>
     <Description>Library for adding report portal log</Description>
     <LangVersion>9</LangVersion>
-    <PackageVersion>2.0.0</PackageVersion>
+    <PackageVersion>2.1.0</PackageVersion>
     <AssemblyVersion>$(PackageVersion)</AssemblyVersion>
     <Nullable>disable</Nullable>
   </PropertyGroup>
