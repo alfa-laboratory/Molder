@@ -11,7 +11,7 @@
     <IsPackable>true</IsPackable>
     <Description>Library for adding report portal log</Description>
     <LangVersion>9</LangVersion>
-    <PackageVersion>2.0.0</PackageVersion>
+    <PackageVersion>2.1.0</PackageVersion>
     <AssemblyVersion>$(PackageVersion)</AssemblyVersion>
     <Nullable>disable</Nullable>
   </PropertyGroup>
@@ -27,6 +27,7 @@
   <ItemGroup>
     <PackageReference Include="Molder" Version="2.0.1" />
     <PackageReference Include="ReportPortal.Serilog" Version="2.0.0" />
+    <PackageReference Include="ReportPortal.SpecFlow" Version="3.2.1" />
     <PackageReference Include="SpecFlow" Version="3.9.22" />
   </ItemGroup>
 
@@ -34,6 +35,12 @@
     <None Include="..\..\LICENSE">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ReportPortal.config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   
