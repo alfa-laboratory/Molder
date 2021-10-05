@@ -247,7 +247,7 @@ namespace Molder.Web.Steps
             try
             {
                 var isDisplayed = element.Displayed;
-                while (!isDisplayed && stopwatch.Elapsed.Milliseconds < Constants.ONE_SECOND)
+                while (!isDisplayed && stopwatch.Elapsed.Ticks < (TimeSpan.TicksPerSecond * Constants.TIC_IN_SEC))
                 {
                     isDisplayed = element.Displayed;
                 }
