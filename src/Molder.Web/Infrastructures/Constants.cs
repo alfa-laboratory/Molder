@@ -15,7 +15,7 @@ namespace Molder.Web.Infrastructures
         public const string DEFAULT_PROJECT = "MolderDefault";
 
         public const int MS_IN_SEC = 1000;
-        public const int ONE_SECOND = 1000;
+        public const int TIC_IN_SEC = 10;
         public const int DEFAULT_TIMEOUT = 60;
         public const long TIMEOUT = DEFAULT_TIMEOUT * MS_IN_SEC;
     }
