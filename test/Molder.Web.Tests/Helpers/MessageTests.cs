@@ -46,7 +46,9 @@ namespace Molder.Web.Tests.Helpers
         private static readonly string edgeOptions = $@"
         {{
             ""browserName"": ""MicrosoftEdge"",
-            ""a"":""1""
+            ""ms:edgeOptions"": {{
+                  ""a"": ""1""
+              }}
         }}".Replace("\n", "").Replace("\r", "").RemoveWhitespace();
         
         [Fact]
