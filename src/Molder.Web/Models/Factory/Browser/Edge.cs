@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Molder.Helpers;
 using Molder.Web.Extensions;
 using Molder.Web.Models.Settings;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Remote;
 

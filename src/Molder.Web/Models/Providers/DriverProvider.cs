@@ -9,11 +9,9 @@ using System.Threading;
 using Microsoft.Extensions.Logging;
 using Molder.Helpers;
 using Molder.Web.Exceptions;
-using WDSE;
-using WDSE.ScreenshotMaker;
 using Molder.Web.Models.Settings;
 using OpenQA.Selenium.Support.UI;
-using static OpenQA.Selenium.Support.UI.ExpectedConditions;
+using SeleniumExtras.WaitHelpers;
 
 namespace Molder.Web.Models.Providers
 {
@@ -22,7 +20,7 @@ namespace Molder.Web.Models.Providers
     {
         #region  WebDriver
 
-        private AsyncLocal<IWebDriver> _driver = new AsyncLocal<IWebDriver> { Value = null };
+        private AsyncLocal<IWebDriver> _driver = new() { Value = null };
         public IWebDriver WebDriver
         {
             get => _driver.Value;
@@ -117,7 +115,7 @@ namespace Molder.Web.Models.Providers
             try
             {
                 var wait = new WebDriverWait(WebDriver, TimeSpan.FromSeconds((long) BrowserSettings.Settings.Timeout));
-                var alert = wait.Until(AlertIsPresent());
+                var alert = wait.Until(ExpectedConditions.AlertIsPresent());
                 return new AlertProvider()
                 {
                     Alert = alert
@@ -254,10 +252,11 @@ namespace Molder.Web.Models.Providers
             }
         }
         public byte[] Screenshot()
-        {
+        {/*
             var scmkr = new ScreenshotMaker();
             scmkr.RemoveScrollBarsWhileShooting();
-            return WebDriver.TakeScreenshot(scmkr);
+            return WebDriver.TakeScreenshot(scmkr);*/
+            return null;
         }
         public void WindowSize(int width, int height)
         {
