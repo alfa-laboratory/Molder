@@ -6,6 +6,7 @@ using Molder.Web.Models.Settings;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Remote;
 using System;
+using OpenQA.Selenium;
 
 namespace Molder.Web.Models.Browser
 {

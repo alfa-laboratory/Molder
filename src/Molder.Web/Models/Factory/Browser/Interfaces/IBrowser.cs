@@ -1,6 +1,6 @@
-﻿using Molder.Web.Models.PageObjects.Alerts;
-using Molder.Web.Models.PageObjects.Pages;
-using OpenQA.Selenium.Remote;
+﻿using Molder.Web.Models.PageObjects.Pages;
+using OpenQA.Selenium;
+using IAlert = Molder.Web.Models.PageObjects.Alerts.IAlert;
 
 namespace Molder.Web.Models.Browser
 {

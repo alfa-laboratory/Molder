@@ -4,6 +4,7 @@ using Molder.Helpers;
 using Molder.Web.Extensions;
 using Molder.Web.Infrastructures;
 using Molder.Web.Models.Settings;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Opera;
 using OpenQA.Selenium.Remote;
 

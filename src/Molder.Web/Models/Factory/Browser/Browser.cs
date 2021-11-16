@@ -3,11 +3,12 @@ using Molder.Web.Extensions;
 using Molder.Web.Models.PageObjects.Alerts;
 using Molder.Web.Models.PageObjects.Pages;
 using Molder.Web.Models.Providers;
-using OpenQA.Selenium.Remote;
 using System;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using Molder.Helpers;
+using OpenQA.Selenium;
+using IAlert = Molder.Web.Models.PageObjects.Alerts.IAlert;
 
 namespace Molder.Web.Models.Browser
 {
