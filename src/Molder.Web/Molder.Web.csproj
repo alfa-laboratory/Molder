@@ -11,7 +11,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Library for working with WebUI</Description>
     <LangVersion>9</LangVersion>
-    <PackageVersion>2.0.2-beta1</PackageVersion>
+    <PackageVersion>2.1.0</PackageVersion>
     <AssemblyVersion>2.0.2</AssemblyVersion>
     <Nullable>disable</Nullable>
   </PropertyGroup>
@@ -26,13 +26,13 @@
 
   <ItemGroup>
     <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
-    <PackageReference Include="FluentAssertions" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
-    <PackageReference Include="Molder" Version="2.0.1" />
+    <PackageReference Include="FluentAssertions" Version="6.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
+    <PackageReference Include="Molder" Version="2.1.0" />
     <PackageReference Include="Polly" Version="7.2.2" />
     <PackageReference Include="Selenium.Support" Version="4.0.1" />
     <PackageReference Include="Selenium.WebDriver" Version="4.0.1" />
-    <PackageReference Include="SpecFlow" Version="3.9.22" />
+    <PackageReference Include="SpecFlow" Version="3.9.40" />
     <PackageReference Include="Titanium.Web.Proxy" Version="3.1.1344" />
   </ItemGroup>
 

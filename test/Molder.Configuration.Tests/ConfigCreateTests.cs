@@ -198,7 +198,8 @@ namespace Molder.Configuration.Tests
                 .Build();
 
             var configConfiguration = ConfigOptionsFactory.Create(testConfiguration);
-            configConfiguration.Value.Count().Should().Be(0);
+            configConfiguration.Value.Count().Should().Be(1);
+            configConfiguration.Value.First().Parameters.Should().BeNull();
         }
     }
 }
