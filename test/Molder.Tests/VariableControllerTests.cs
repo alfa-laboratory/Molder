@@ -401,6 +401,26 @@ namespace Molder.Tests
         }
 
         [Fact]
+        public void GetVariableValue_SearchDataRowByNumber_ReturnNullValue()
+        {
+            var table = CreateObject.CreateDataTable(new List<string>() { "a", "b", "c" }, new List<string>() { "a1;b1" });
+            variableContext.SetVariable("DataRow", typeof(DataRow), table.Rows[0]);
+
+            var variable = variableContext.GetVariableValue("DataRow[2]");
+            variable.Should().BeNull();
+        }
+
+        [Fact]
+        public void GetVariableValue_SearchDataRowByName_ReturnNullValue()
+        {
+            var table = CreateObject.CreateDataTable(new List<string>() { "a", "b", "c" }, new List<string>() { "a1;b1" });
+            variableContext.SetVariable("DataRow", typeof(DataRow), table.Rows[0]);
+
+            var variable = variableContext.GetVariableValue("DataRow[c]");
+            variable.Should().BeNull();
+        }
+
+        [Fact]
         public void GetVariableValue_SearchDataRowByName_ReturnValue()
         {
             var table = CreateObject.CreateDataTable(new List<string>() { "a", "b" }, new List<string>() { "a1;b1" });
@@ -590,9 +610,9 @@ namespace Molder.Tests
 
         [Theory]
         [MemberData(nameof(DataForEnumerable))]
-        public void GetVariableValue_Enumerable_ReturnValue(List <object> collection)
+        public void GetVariableValue_Enumerable_ReturnValue(List<object> collection)
         {
-            variableContext.SetVariable("Test",collection.GetType(),collection);
+            variableContext.SetVariable("Test", collection.GetType(), collection);
             var actual = variableContext.GetVariableValue("Test[0]");
             actual.Should().Be(collection[0]);
         }
@@ -661,14 +681,14 @@ namespace Molder.Tests
         {
             var collection = new List<object>() { 5, 6 };
             variableContext.SetVariable("Test", collection.GetType(), collection);
-            Action act =() => variableContext.GetVariableValueText("Test");
+            Action act = () => variableContext.GetVariableValueText("Test");
             act.Should().Throw<EnumerableException>()
                 .WithMessage("IEnumerable cant be converted to String");
         }
 
         [Theory]
         [MemberData(nameof(DataForDictionary))]
-        public void GetVariableValueText_Dictionary_ReturnValueText(Dictionary<string,object> dictionary, string _)
+        public void GetVariableValueText_Dictionary_ReturnValueText(Dictionary<string, object> dictionary, string _)
         {
             variableContext.SetVariable("Test", dictionary.GetType(), dictionary);
             var actual = variableContext.GetVariableValueText("Test[asdf]");

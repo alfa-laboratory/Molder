@@ -223,7 +223,8 @@ namespace Molder.Controllers
                         {
                             return ((DataRow)varValue);
                         }
-                        return int.TryParse(keyPath, out var id) ? ((DataRow)varValue).ItemArray[id]?.ToString() : ((DataRow)varValue)[keyPath].ToString();
+                        return int.TryParse(keyPath, out var id) ? ((DataRow)varValue).ItemArray[id]?.GetType() == typeof(DBNull) ? null : ((DataRow)varValue).ItemArray[id]?.ToString()
+                            : ((DataRow)varValue)[keyPath] is DBNull ? null : ((DataRow)varValue)[keyPath].ToString();
                     }
 
                     if (!typeof(DataTable).IsAssignableFrom(varType))
