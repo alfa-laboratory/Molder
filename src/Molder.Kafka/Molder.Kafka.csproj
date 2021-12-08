@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <Authors>Egor Shokhin</Authors>
+        <Company>AlfaBank</Company>
+        <Copyright>2021 AlfaBank</Copyright>
+        <PackageProjectUrl>https://github.com/alfa-laboratory/Molder</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/alfa-laboratory/Molder</RepositoryUrl>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <IsPackable>true</IsPackable>
+        <Description>Library for work with Kafka</Description>
+        <LangVersion>9</LangVersion>
+        <PackageVersion>1.0.0</PackageVersion>
+        <AssemblyVersion>$(PackageVersion)</AssemblyVersion>
+        <Nullable>disable</Nullable>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <NoWarn>NU1701;1702;CS8604;CS8602;CS8618</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <WarningsAsErrors>NU1701;1702;CS8604;CS8602;CS8618</WarningsAsErrors>
+    </PropertyGroup>
+    
+    <ItemGroup>
+      <PackageReference Include="Confluent.Kafka" Version="1.8.2" />
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
+      <PackageReference Include="Molder" Version="2.1.1" />
+      <PackageReference Include="SpecFlow" Version="3.9.40" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\LICENSE">
+            <Pack>True</Pack>
+            <PackagePath></PackagePath>
+        </None>
+    </ItemGroup>
+    
+</Project>
