@@ -11,7 +11,7 @@
         <IsPackable>true</IsPackable>
         <Description>Library for work with Kafka</Description>
         <LangVersion>9</LangVersion>
-        <PackageVersion>1.0.0</PackageVersion>
+        <PackageVersion>1.0.1</PackageVersion>
         <AssemblyVersion>$(PackageVersion)</AssemblyVersion>
         <Nullable>disable</Nullable>
     </PropertyGroup>
