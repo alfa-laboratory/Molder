@@ -10,7 +10,7 @@ namespace Molder.Models.Directory
         public override string Get()
         {
             Log.Logger().LogInformation("Work with DllDirectory");
-            return System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).Substring(6);
+            return System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase)?.Substring(6);
         }
     }
 }
