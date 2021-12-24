@@ -19,10 +19,12 @@
 
     <ItemGroup>
       <UpToDateCheckInput Remove="Features\Calculator.feature" />
+      <UpToDateCheckInput Remove="Threads\Kafka.feature" />
     </ItemGroup>
 
     <ItemGroup>
       <UpToDateCheckBuild Remove="Features\Calculator.feature.cs" />
+      <UpToDateCheckBuild Remove="Threads\Kafka.feature.cs" />
     </ItemGroup>
 
     <ItemGroup>
