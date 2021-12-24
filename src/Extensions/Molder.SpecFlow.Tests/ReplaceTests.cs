@@ -22,13 +22,11 @@ namespace Molder.Tests
             variableContext = new VariableController();
                 variableContext.SetVariable("int", typeof(int), 1);
                 variableContext.SetVariable("long", typeof(long), 100);
-                variableContext.SetVariable("double", typeof(double), 1.1);
                 variableContext.SetVariable("bool", typeof(bool), true);
 
             expectedTable = new Table("Name", "Value");
             expectedTable.AddRow("int", "1");
             expectedTable.AddRow("long", "100");
-            expectedTable.AddRow("double", "1,1");
             expectedTable.AddRow("bool", "True");
         }
         
@@ -41,7 +39,6 @@ namespace Molder.Tests
             var table = new Table("Name", "Value");
             table.AddRow("int", "{{int}}");
             table.AddRow("long", "{{long}}");
-            table.AddRow("double", "{{double}}");
             table.AddRow("bool", "{{bool}}");
 
             var actual = table.ReplaceWith(variableContext);
