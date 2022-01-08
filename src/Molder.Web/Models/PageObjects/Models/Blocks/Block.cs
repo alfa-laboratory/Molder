@@ -13,15 +13,18 @@ namespace Molder.Web.Models.PageObjects.Blocks
         {
             var block = Root.SearchElementBy(name, ObjectType.Block);
 
-            (block.Object as Block)?.SetProvider(_driverProvider);
+            (block.Object as Block)?.SetProvider(Driver);
+            (block.Object as Block)?.Get();
             ((Block) block.Object).Root = block;
             return (Block) block.Object;
         }
 
-        public new IElement GetElement(string name)
+        public IElement GetElement(string name)
         {
             var element = Root.SearchElementBy(name);
-            (element.Object as Element)?.SetProvider(_driverProvider);
+            (element.Object as Element)?.SetProvider(Driver);
+            (element.Object as Element)?.Get();
+            
             ((Element) element.Object).Root = element;
             return (IElement) element.Object;
         }
@@ -30,7 +33,7 @@ namespace Molder.Web.Models.PageObjects.Blocks
         {
             var frame = Root.SearchElementBy(name, ObjectType.Frame);
 
-            (frame.Object as Frame)?.SetProvider(_driverProvider);
+            (frame.Object as Frame)?.SetProvider(Driver);
             ((Frame) frame.Object).Root = frame;
             return (Frame) frame.Object;
         }

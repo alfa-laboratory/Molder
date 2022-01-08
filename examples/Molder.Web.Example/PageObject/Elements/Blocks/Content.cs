@@ -12,5 +12,8 @@ namespace PageObject.Elements.Blocks
         
         [Block(Name = "row 2", Locator = "/div[2]")]
         ScndContent scndContent;
+        
+        [Collection(Name = "subContent", Locator = "/*[@class=\"row\"]")]
+        SubContent subContent;
     }
 }

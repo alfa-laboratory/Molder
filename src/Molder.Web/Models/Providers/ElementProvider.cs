@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using Molder.Web.Exceptions;
+using Molder.Web.Extensions;
 using Molder.Web.Models.Settings;
 using OpenQA.Selenium.Support.UI;
 
@@ -22,12 +23,14 @@ namespace Molder.Web.Models.Providers
 
         #region WebElement
 
-        private AsyncLocal<IWebElement> _element = new AsyncLocal<IWebElement>{ Value = null };
+        private AsyncLocal<IWebElement> _element = new() { Value = null };
 
         public IWebElement WebElement
         {
             get
             {
+                if (_element.Value is not null) return _element.Value;
+                
                 _element.Value = WebDriver.Wait((int)BrowserSettings.Settings.Timeout).ForElement(_locator).ToExist();
                 return _element.Value;
             }
@@ -38,7 +41,7 @@ namespace Molder.Web.Models.Providers
         
         #region  WebDriver
 
-        private AsyncLocal<IWebDriver> _driver = new AsyncLocal<IWebDriver> { Value = null };
+        private AsyncLocal<IWebDriver> _driver = new() { Value = null };
         public IWebDriver WebDriver
         {
             get => _driver.Value;
@@ -139,7 +142,7 @@ namespace Molder.Web.Models.Providers
 
         public IElementProvider FindElement(By by)
         {
-            var element = WebElement.FindElement(by);
+            var element = WebElement.FindBy(by, WebDriver, (int) BrowserSettings.Settings.Timeout);
             return new ElementProvider(_timeout, by)
             {
                 WebElement = element
@@ -148,7 +151,7 @@ namespace Molder.Web.Models.Providers
 
         public ReadOnlyCollection<IElementProvider> FindElements(By by)
         {
-            var elements = WebElement.FindElements(by);
+            var elements = WebElement.FindAllBy(by, WebDriver, (int) BrowserSettings.Settings.Timeout);
             var listElement = elements.Select(element => new ElementProvider(_timeout, by) {WebElement = element}).Cast<IElementProvider>().ToList();
             return listElement.AsReadOnly();
         }

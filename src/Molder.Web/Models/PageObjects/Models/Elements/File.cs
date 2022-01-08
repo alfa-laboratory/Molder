@@ -9,12 +9,12 @@ namespace Molder.Web.Models.PageObjects.Elements
 
         public override void SetText(string text)
         {
-            if (_driverProvider.GetDriver() is IAllowsFileDetection allowsDetection)
+            if (Driver.GetDriver() is IAllowsFileDetection allowsDetection)
             {
                 allowsDetection.FileDetector = new LocalFileDetector();
             }
 
-            mediator.Execute(() => _provider.SendKeys(text));
+            mediator.Execute(() => ElementProvider.SendKeys(text));
         }
     }
 }
