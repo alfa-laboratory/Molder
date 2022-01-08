@@ -30,6 +30,9 @@ namespace Molder.Web.Models.PageObjects.Pages
         public void BackToPage() => Local = null;
 
         public abstract IElement GetElement(string name);
+
+        public abstract IEnumerable<IElement> GetCollection(string name);
+        
         public abstract IEnumerable<string> GetPrimaryElements();
         public abstract void GoToPage();
         public abstract void PageTop();

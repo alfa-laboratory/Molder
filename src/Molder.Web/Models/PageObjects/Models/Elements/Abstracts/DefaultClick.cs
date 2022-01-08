@@ -4,15 +4,15 @@ using System;
 
 namespace Molder.Web.Models.PageObjects.Elements
 {
-    public abstract class BaseClick : Element
+    public abstract class DefaultClick : Element
     {
-        public BaseClick(string name, string locator, bool optional = false) : base(name, locator, optional) { }
+        public DefaultClick(string name, string locator, bool optional = false) : base(name, locator, optional) { }
 
         public virtual void Click()
         {
             if (Enabled && Displayed)
             {
-                mediator.Execute(() => _provider.Click());
+                mediator.Execute(() => ElementProvider.Click());
             }
             else
             {
@@ -24,8 +24,8 @@ namespace Molder.Web.Models.PageObjects.Elements
         {
             if (Enabled && Displayed)
             {
-                var action = new Actions(_driverProvider.GetDriver());
-                mediator.Execute(() => action.DoubleClick(((ElementProvider)_provider).WebElement).Build().Perform());
+                var action = new Actions(Driver.GetDriver());
+                mediator.Execute(() => action.DoubleClick(((ElementProvider)ElementProvider).WebElement).Build().Perform());
             }
             else
             {
@@ -37,8 +37,8 @@ namespace Molder.Web.Models.PageObjects.Elements
         {
             if (Enabled && Displayed)
             {
-                var action = new Actions(_driverProvider.GetDriver());
-                mediator.Execute(() => action.ClickAndHold(((ElementProvider)_provider).WebElement).Build().Perform());
+                var action = new Actions(Driver.GetDriver());
+                mediator.Execute(() => action.ClickAndHold(((ElementProvider)ElementProvider).WebElement).Build().Perform());
             }
             else
             {

@@ -1,17 +1,20 @@
-﻿namespace Molder.Web.Models.PageObjects.Elements
-{
-    public interface IElement
-    {
-        Node Root { get; set; }
+﻿using System.Collections.Generic;
+using Molder.Web.Infrastructures;
+using Molder.Web.Models.Providers;
 
-        string Name { get; set; }
-        bool Optional { get; }
-        string Locator { get; }
+namespace Molder.Web.Models.PageObjects.Elements
+{
+    public interface IElement : IEntity
+    {
+        # region WebEntity
+        IDriverProvider Driver { get; set; }
+        IElementProvider ElementProvider { get; set; }
+        #endregion
+        #region Getters & Setters
 
         string Text { get; }
         string Tag { get; }
         object Value { get; }
-
         bool Loaded { get; }
         bool NotLoaded { get; }
         bool Enabled { get;  }
@@ -22,13 +25,22 @@
         bool NotSelected { get; }
         bool Editabled { get; }
         bool NotEditable { get; }
+        #endregion
+        
+        void SetProvider(IDriverProvider provider);
+        public void Get();
+        IElement Find(string locator, How how = How.XPath);
+        IEnumerable<IElement> FindAll(string locator, How how = How.XPath);
 
+        void Clear();
         string GetAttribute(string name);
         void Move();
-        void PressKey(string key);
+        void PressKeys(string keys);
 
         bool IsTextContains(string text);
         bool IsTextEquals(string text);
         bool IsTextMatch(string text);
+
+        object Clone();
     }
 }

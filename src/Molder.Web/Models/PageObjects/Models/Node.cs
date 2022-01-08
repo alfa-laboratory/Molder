@@ -8,7 +8,7 @@ namespace Molder.Web.Models
         public object Object { get; set; }
         public string Name { get; set; }
         public ObjectType Type { get; set; }
-
+        public Node Root { get; set; }
         public IEnumerable<Node> Childrens { get; set; }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using OpenQA.Selenium;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Molder.Web.Infrastructures;
 
 namespace Molder.Web.Models.Providers
 {
@@ -18,8 +20,8 @@ namespace Molder.Web.Models.Providers
 
         void Close();
         void Quit();
-        IElementProvider GetElement(By by);
-        ReadOnlyCollection<IElementProvider> GetElements(By by);
+        IElementProvider GetElement(string locator, How how);
+        IEnumerable<IElementProvider> GetElements(string locator, How how);
         void WindowSize(int width, int height);
         void Maximize();
         void Back();

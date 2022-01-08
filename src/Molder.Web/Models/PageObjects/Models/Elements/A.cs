@@ -2,7 +2,7 @@
 
 namespace Molder.Web.Models.PageObjects.Elements
 {
-    public class A : BaseClick
+    public class A : DefaultClick
     {
         public A(string name, string locator, bool optional = false) : base(name, locator, optional) { }
 
@@ -12,7 +12,7 @@ namespace Molder.Web.Models.PageObjects.Elements
         {
             if (Enabled && Displayed)
             {
-                return (string)mediator.Execute(() => _provider.GetAttribute("href"));
+                return (string)mediator.Execute(() => ElementProvider.GetAttribute("href"));
             }
 
             throw new ArgumentException($"Проверьте, что элемент \"{Name}\" Enabled и Displayed");

@@ -85,6 +85,20 @@ Scenario: Dropdown
 
 		And я закрываю веб-страницу
 		And я закрываю браузер
+@ignore
+Scenario: Dynamic Content with collection
+	Given я инициализирую браузер
+	And я развернул веб-страницу на весь экран
+	And я перехожу на страницу "InternetHerokuapp"
+
+	Given выполнено нажатие на элемент "Dynamic Content" на веб-странице
+	And я обновляю текущую страницу на "Dynamic Content"
+	
+	When я перехожу на блок "Content" на веб-странице
+		And GetCollection
+
+	And я закрываю веб-страницу
+	And я закрываю браузер
 
 Scenario: Dynamic Content
 	Given я инициализирую браузер
@@ -117,25 +131,7 @@ Scenario: Dynamic Content v.2
 
 		And я закрываю веб-страницу
 		And я закрываю браузер
-
-Scenario: Dynamic Content v.3
-		Given я инициализирую браузер
-		And я развернул веб-страницу на весь экран
-		And я перехожу на страницу "InternetHerokuapp"
-
-		Given выполнено нажатие на элемент "Dynamic Content" на веб-странице
-		And я обновляю текущую страницу на "Dynamic Content"
 		
-		When я перехожу на блок "Content..row 1" на веб-странице
-		Then на веб-странице текст элемента "Text" заполнен
-
-		Given я возвращаюсь к основной веб-странице
-		When я перехожу на блок "Content..row 2" на веб-странице
-		Then на веб-странице текст элемента "Text" заполнен
-
-		And я закрываю веб-страницу
-		And я закрываю браузер
-				
 Scenario: Frames
 	Given я инициализирую браузер
 		And я развернул веб-страницу на весь экран

@@ -3,6 +3,7 @@ using Molder.Web.Controllers;
 using FluentAssertions;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using Molder.Extensions;
 using Molder.Web.Infrastructures;
 using TechTalk.SpecFlow;
@@ -165,7 +166,7 @@ namespace Molder.Web.Steps
         public void WebPageUrlContainsExpected(string expected)
         {
             expected.Should().NotBeNull($"значение \"expected\" не задано");
-            expected = this.variableController.ReplaceVariables(expected) ?? expected;
+            expected = variableController.ReplaceVariables(expected) ?? expected;
             BrowserController.GetBrowser().Url.Should().Contain(expected, $"адрес активной веб страницы \"{BrowserController.GetBrowser().GetCurrentPage().Name}\":\"{BrowserController.GetBrowser().Url}\" не содержит \"{expected}\"");
         }
         
@@ -252,8 +253,8 @@ namespace Molder.Web.Steps
                     isDisplayed = element.Displayed;
                 }
 
-                (element is BaseClick).Should().BeTrue($"элемент \"{name}\" имеет отличный от Click профиль");
-                (element as BaseClick)?.Click();
+                (element is DefaultClick).Should().BeTrue($"элемент \"{name}\" имеет отличный от Click профиль");
+                (element as DefaultClick)?.Click();
                 stopwatch.Stop();
             }
             catch
@@ -266,16 +267,16 @@ namespace Molder.Web.Steps
         public void DoubleClickToWebElement(string name)
         {
             var element = BrowserController.GetBrowser().GetCurrentPage().GetElement(name);
-            (element is BaseClick).Should().BeTrue($"элемент \"{name}\" имеет отличный от Click профиль");
-            (element as BaseClick)?.DoubleClick();
+            (element is DefaultClick).Should().BeTrue($"элемент \"{name}\" имеет отличный от Click профиль");
+            (element as DefaultClick)?.DoubleClick();
         }
 
         [StepDefinition(@"выполнено нажатие с удержанием на элементе \""(.+)\"" на веб-странице")]
         public void ClickAndHoldToWebElement(string name)
         {
             var element = BrowserController.GetBrowser().GetCurrentPage().GetElement(name);
-            (element is BaseClick).Should().BeTrue($"элемент \"{name}\" имеет отличный от Click профиль");
-            (element as BaseClick)?.ClickAndHold();
+            (element is DefaultClick).Should().BeTrue($"элемент \"{name}\" имеет отличный от Click профиль");
+            (element as DefaultClick)?.ClickAndHold();
         }
 
         [StepDefinition(@"я ввожу в поле \""(.+)\"" веб-страницы значение \""(.+)\""")]
@@ -339,7 +340,7 @@ namespace Molder.Web.Steps
         public void PressKeyToWebElement(string key, string name)
         {
             var element = BrowserController.GetBrowser().GetCurrentPage().GetElement(name);
-            element.PressKey(key);
+            element.PressKeys(key);
         }
 
         [Then(@"на веб-странице значение элемента \""(.+)\"" пусто")]

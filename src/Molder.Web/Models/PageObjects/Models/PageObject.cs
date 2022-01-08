@@ -1,5 +1,4 @@
 ﻿using Molder.Controllers;
-using Molder.Web.Extensions;
 using Molder.Web.Infrastructures;
 using Molder.Web.Models.PageObjects.Attributes;
 using Molder.Web.Models.PageObjects.Blocks;
@@ -21,7 +20,7 @@ namespace Molder.Web.Models
     {
         private VariableController _variableController;
 
-        public IEnumerable<Node> Pages { get; } = null;
+        public IEnumerable<Node> Pages { get; } = default;
 
         public PageObject(VariableController variableController)
         {
@@ -48,9 +47,10 @@ namespace Molder.Web.Models
 
                     pages.Add(new Node
                     {
-                        Name = pageAttribute.Name,
+                        Name = pageAttribute?.Name,
                         Object = page,
                         Type = ObjectType.Page,
+                        Root = null,
                         Childrens = new List<Node>()
                     });
                 }
@@ -67,32 +67,36 @@ namespace Molder.Web.Models
                 var elements = page.Object.GetType()
                     .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                     .Where(f => f.GetCustomAttribute<ElementAttribute>() != null);
-                page.Childrens = GetChildrens(elements);
+                page.Childrens = GetChildrens(elements, page);
             }
 
             return _pages;
         }
         
-        private IEnumerable<Node> GetChildrens(IEnumerable<FieldInfo> elements, (object root, ObjectType type)? rootObject = null)
+        private IEnumerable<Node> GetChildrens(IEnumerable<FieldInfo> elements, Node root, (object obj, ObjectType type)? rootObject = null)
         {
             var childrens = new List<Node>();
             foreach(var element in elements)
             {
-                var (name, type, obj) = GetElement(element);
+                var (name, type, obj) = InitBy(element);
                 switch(type)
                 {
                     case ObjectType.Element:
                     {
                         if (rootObject is {type: ObjectType.Block})
                         {
-                            var locator = (rootObject.Value.root as Block)?.Locator + (obj as Element)?.Locator;
-                            ((Element) obj).Locator = locator;
+                            if ((rootObject.Value.obj as Block)?.How is How.XPath && (obj as Element)?.How is How.XPath )
+                            {
+                                var locator = (rootObject.Value.obj as Block)?.Locator + (obj as Element).Locator;
+                                ((Element) obj).Locator = locator;
+                            }
                         }
                         childrens.Add(new Node
                         {
                             Name = name,
                             Object = obj,
                             Type = type,
+                            Root = root,
                             Childrens = null
                         });
                         break;
@@ -105,17 +109,23 @@ namespace Molder.Web.Models
                         
                         if (rootObject is {type: ObjectType.Block})
                         {
-                            var locator = (rootObject.Value.root as Block)?.Locator + (obj as Block)?.Locator;
-                            ((Block) obj).Locator = locator;
+                            if ((rootObject.Value.obj as Block)?.How is How.XPath && (obj as Block)?.How is How.XPath )
+                            {
+                                var locator = (rootObject.Value.obj as Block)?.Locator + (obj as Block).Locator;
+                                ((Block) obj).Locator = locator;
+                            }
                         }
                         
-                        childrens.Add(new Node
+                        var node = new Node
                         {
                             Name = name,
                             Object = obj,
                             Type = type,
-                            Childrens = GetChildrens(subElements, (obj, ObjectType.Block))
-                        });
+                            Root = root
+                        };
+                        node.Childrens = GetChildrens(subElements, node, (obj, ObjectType.Block));
+                        childrens.Add(node);
+                        
                         break;
                     }
                     case ObjectType.Frame:
@@ -126,56 +136,107 @@ namespace Molder.Web.Models
 
                         if (rootObject is {type: ObjectType.Block})
                         {
-                            var locator = (rootObject.Value.root as Block)?.Locator + (obj as Frame)?.Locator;
-                            ((Frame) obj).Locator = locator;
+                            if ((rootObject.Value.obj as Block)?.How is How.XPath && (obj as Frame)?.How is How.XPath )
+                            {
+                                var locator = (rootObject.Value.obj as Block)?.Locator + (obj as Frame).Locator;
+                                ((Frame) obj).Locator = locator;
+                            }
                         }
                         
-                        childrens.Add(new Node
+                        var node = new Node
                         {
                             Name = name,
                             Object = obj,
                             Type = type,
-                            Childrens = GetChildrens(subElements)
-                        });
+                            Root = root
+                        };
+                        node.Childrens = GetChildrens(subElements, node);
+                        childrens.Add(node);
                         break;
                     }
-                    case ObjectType.Page:
+                    case ObjectType.Collection:
+                    {
+                        var subElements = obj.GetType()
+                            .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                            .Where(f => f.GetCustomAttribute<ElementAttribute>() != null);
+
+                        if (rootObject is {type: ObjectType.Block})
+                        {
+                            if ((rootObject.Value.obj as Block)?.How is How.XPath && (obj as Block)?.How is How.XPath )
+                            {
+                                var locator = (rootObject.Value.obj as Block)?.Locator + (obj as Block).Locator;
+                                ((Block) obj).Locator = locator;
+                            }
+                        }
+
+                        var node = new Node
+                        {
+                            Name = name,
+                            Object = obj,
+                            Type = type,
+                            Root = root
+                        };
+                        
+                        node.Childrens = subElements.Any() ? GetChildrens(subElements, node) : null;
+                        
+                        childrens.Add(node);
                         break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                    }
+                    case { }:
+                    {
+                        break;
+                    }
                 }
             }
             return childrens;
         }
 
-        private (string, ObjectType, object) GetElement(FieldInfo fieldInfo)
+        private (string, ObjectType, object) InitBy(FieldInfo fieldInfo)
         {
-            Attribute attribute;
-            string name;
-            object element;
+            string name = default;
+            object element = default;
             var objectType = ObjectType.Element;
 
-            if (fieldInfo.CheckAttribute(typeof(BlockAttribute)))
+            switch (fieldInfo.GetCustomAttribute<ElementAttribute>())
             {
-                attribute = fieldInfo.GetCustomAttribute<BlockAttribute>();
-                name = ((BlockAttribute)attribute).Name;
-                element = Activator.CreateInstance(fieldInfo.FieldType, ((BlockAttribute)attribute).Name, ((BlockAttribute)attribute).Locator, ((BlockAttribute)attribute).Optional);
-                objectType = ObjectType.Block;
-            }
-            else
-            {
-                if (fieldInfo.CheckAttribute(typeof(FrameAttribute)))
+                case CollectionAttribute collectionAttribute:
                 {
-                    attribute = fieldInfo.GetCustomAttribute<FrameAttribute>();
-                    name = ((FrameAttribute)attribute).Name;
-                    element = Activator.CreateInstance(fieldInfo.FieldType, ((FrameAttribute)attribute).Name, ((FrameAttribute)attribute).FrameName, ((FrameAttribute)attribute).Number, ((FrameAttribute)attribute).Locator, ((FrameAttribute)attribute).Optional);
-                    objectType = ObjectType.Frame;
+                    name = collectionAttribute.Name;
+                    element = Activator.CreateInstance(
+                        fieldInfo.FieldType,
+                        collectionAttribute.Name, collectionAttribute.Locator, collectionAttribute.Optional);
+                    
+                    (element as IElement).How = collectionAttribute.How;
+                    objectType = ObjectType.Collection;
+                    break;
                 }
-                else
+                
+                case BlockAttribute blockAttribute:
                 {
-                    attribute = fieldInfo.GetCustomAttribute<ElementAttribute>();
-                    name = ((ElementAttribute)attribute).Name;
-                    element = Activator.CreateInstance(fieldInfo.FieldType, ((ElementAttribute)attribute).Name, ((ElementAttribute)attribute).Locator, ((ElementAttribute)attribute).Optional);
+                    name = blockAttribute.Name;
+                    element = Activator.CreateInstance(
+                        fieldInfo.FieldType,
+                        blockAttribute.Name, blockAttribute.Locator, blockAttribute.Optional);
+                    (element as Block).How = blockAttribute.How;
+                    objectType = ObjectType.Block;
+                    break;
+                }
+                case FrameAttribute frameAttribute:
+                {
+                    name = frameAttribute.Name;
+                    element = Activator.CreateInstance(fieldInfo.FieldType, 
+                        frameAttribute.Name, frameAttribute.FrameName, frameAttribute.Number, frameAttribute.Locator, frameAttribute.Optional);
+                    (element as Frame).How = frameAttribute.How;
+                    objectType = ObjectType.Frame;
+                    break;
+                }
+                case { } elementAttribute:
+                {
+                    name = elementAttribute.Name;
+                    element = Activator.CreateInstance(fieldInfo.FieldType, 
+                        elementAttribute.Name, elementAttribute.Locator, elementAttribute.Optional);
+                    (element as Element).How = elementAttribute.How;
+                    break;
                 }
             }
             return (name, objectType, element);
@@ -192,23 +253,6 @@ namespace Molder.Web.Models
                 Log.Logger().LogError($@"Loading all assembly is failed, because {ex.Message}");
                 return null;
             }
-
-            /// TODO исправить получение Assembly так как необходимо, чтобы PageObjects был в текущей сборке (CurrentDomain)
-            /*
-                var assemblies = new List<System.Reflection.Assembly>();
-                BaseDirectory.Create();
-                if (BaseDirectory.Exists())
-                {
-                    var files = BaseDirectory.GetFiles("*.dll");
-                    assemblies.AddRange(files.Select(file => System.Reflection.Assembly.Load(File.ReadAllBytes(file.FullName))));
-                    //assemblies.AddRange(files.Select(file => CustomAssembly.LoadFile(file.FullName)));
-                    return assemblies;
-                }
-                else
-                {
-                    throw new DirectoryException($"BaseDirectory from path \"{BaseDirectory}\" is not exist");
-                }
-            */
         }
     }
 }
