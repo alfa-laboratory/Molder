@@ -1,5 +1,4 @@
-﻿@ignore
-@WebUI
+﻿@WebUI
 Feature: WebUI
 
 Scenario: OpenWebUI
@@ -8,7 +7,7 @@ Scenario: OpenWebUI
 		And я перехожу на страницу "InternetHerokuapp"
 		And я закрываю веб-страницу
 		And я закрываю браузер
-@ignore
+
 # в процессе тестирования
 Scenario: OpenWebUI with auth
 	Given я инициализирую аутентификацию для прокси сервера:
@@ -85,7 +84,7 @@ Scenario: Dropdown
 
 		And я закрываю веб-страницу
 		And я закрываю браузер
-@ignore
+
 Scenario: Dynamic Content with collection
 	Given я инициализирую браузер
 	And я развернул веб-страницу на весь экран

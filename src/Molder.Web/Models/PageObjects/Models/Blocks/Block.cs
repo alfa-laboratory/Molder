@@ -7,7 +7,7 @@ namespace Molder.Web.Models.PageObjects.Blocks
 {
     public class Block : Element
     {
-        public Block(string name, string locator, bool optional) : base(name, locator, optional) {  }
+        public Block(string name, string locator, bool optional) : base(name, locator, optional) { }
 
         public Block GetBlock(string name)
         {
@@ -15,18 +15,24 @@ namespace Molder.Web.Models.PageObjects.Blocks
 
             (block.Object as Block)?.SetProvider(Driver);
             (block.Object as Block)?.Get();
-            ((Block) block.Object).Root = block;
-            return (Block) block.Object;
+            ((Block)block.Object).Root = block;
+            return (Block)block.Object;
         }
 
         public IElement GetElement(string name)
         {
             var element = Root.SearchElementBy(name);
             (element.Object as Element)?.SetProvider(Driver);
+            ((Element)element.Object).Root = element;
+            if (Root.Type == ObjectType.Collection)
+            {
+                var tmpElement = Find(((Element)element.Object).Locator);
+                tmpElement.Root = element;
+                tmpElement.Name = element.Name;
+                return tmpElement;
+            }
             (element.Object as Element)?.Get();
-            
-            ((Element) element.Object).Root = element;
-            return (IElement) element.Object;
+            return (IElement)element.Object;
         }
 
         public Frame GetFrame(string name)
@@ -34,8 +40,8 @@ namespace Molder.Web.Models.PageObjects.Blocks
             var frame = Root.SearchElementBy(name, ObjectType.Frame);
 
             (frame.Object as Frame)?.SetProvider(Driver);
-            ((Frame) frame.Object).Root = frame;
-            return (Frame) frame.Object;
+            ((Frame)frame.Object).Root = frame;
+            return (Frame)frame.Object;
         }
     }
 }
