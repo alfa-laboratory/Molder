@@ -61,7 +61,7 @@ namespace Molder.Web.Models.PageObjects.Pages
             foreach (var element in elements)
             {
                 IElement obj = (IElement)((IElement) collection.Object).Clone();
-                obj.Root = root;
+                obj.Root = collection;
                 obj.SetProvider(DriverProvider);
                 obj.ElementProvider = element;
                 lst.Add(obj);

@@ -11,7 +11,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Library for working with WebUI</Description>
     <LangVersion>9</LangVersion>
-    <PackageVersion>2.1.2-beta</PackageVersion>
+    <PackageVersion>2.1.2.1-beta</PackageVersion>
     <AssemblyVersion>2.0.2</AssemblyVersion>
     <Nullable>disable</Nullable>
   </PropertyGroup>

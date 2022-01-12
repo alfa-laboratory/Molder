@@ -22,7 +22,7 @@ namespace Molder.Web.Models.PageObjects.Elements
             get => _elementMediator.Value;
             set => _elementMediator.Value = value;
         }
-        
+
         public IDriverProvider Driver { get; set; } = default;
         public IElementProvider ElementProvider { get; set; } = default;
 
@@ -76,21 +76,22 @@ namespace Molder.Web.Models.PageObjects.Elements
 
         public IElement Find(string locator, How how = How.XPath)
         {
-            var by = how.GetBy(locator);
+            var by = how.GetBy(locator.GetStringByRegex());
             return new Default(how, locator)
             {
+                mediator = new ElementMediator(BrowserSettings.Settings.Timeout),
                 ElementProvider = ElementProvider.FindElement(by)
             };
         }
 
         public IEnumerable<IElement> FindAll(string locator, How how = How.XPath)
         {
-            var by = how.GetBy(locator);
+            var by = how.GetBy(locator.GetStringByRegex());
             var elements = ElementProvider.FindElements(by);
-            var listElement = elements.Select(element => new Default(how, locator) {ElementProvider = element}).Cast<IElement>().ToList();
+            var listElement = elements.Select(element => new Default(how, locator) { ElementProvider = element, mediator = new ElementMediator(BrowserSettings.Settings.Timeout) }).Cast<IElement>().ToList();
             return listElement.AsReadOnly();
         }
-        
+
         public void Clear()
         {
             try
@@ -124,7 +125,7 @@ namespace Molder.Web.Models.PageObjects.Elements
                 throw new ArgumentNullException($"Проверьте, что элемент \"{Name}\" Enabled и Displayed");
             }
         }
-        
+
         public bool IsTextContains(string text)
         {
             return (bool)mediator.Wait(() => ElementProvider.TextContain(text));
@@ -144,12 +145,12 @@ namespace Molder.Web.Models.PageObjects.Elements
         {
             mediator.Execute(() => ElementProvider.WaitUntilAttributeValueEquals(attributeName, attributeValue));
         }
-        
+
         private bool IsEditabled()
         {
             return Convert.ToBoolean(GetAttribute("readonly"));
         }
-        
+
         #region Get webDriver Element
 
         protected void GetElement(string locator, How how = How.XPath)
