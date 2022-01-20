@@ -135,6 +135,7 @@ namespace Molder.Web.Models.Providers
             try
             {
                 var driver = WebDriver.SwitchTo().DefaultContent();
+                driver.Wait((int)BrowserSettings.Settings.Timeout).ForPage().ReadyStateComplete();
                 return new DriverProvider()
                 {
                     WebDriver = driver
@@ -150,6 +151,7 @@ namespace Molder.Web.Models.Providers
             try
             {
                 var driver = WebDriver.SwitchTo().ParentFrame();
+                driver.Wait((int)BrowserSettings.Settings.Timeout).ForPage().ReadyStateComplete();
                 return new DriverProvider()
                 {
                     WebDriver = driver
@@ -166,6 +168,7 @@ namespace Molder.Web.Models.Providers
             {
                 Log.Logger().LogDebug($"SwitchTo().Frame by id \"{id}\"");
                 var driver = WebDriver.SwitchTo().Frame(id);
+                driver.Wait((int)BrowserSettings.Settings.Timeout).ForPage().ReadyStateComplete();
                 return new DriverProvider()
                 {
                     WebDriver = driver
@@ -182,6 +185,7 @@ namespace Molder.Web.Models.Providers
             {
                 Log.Logger().LogDebug($"SwitchTo().Frame by name \"{name}\"");
                 var driver = WebDriver.SwitchTo().Frame(name);
+                driver.Wait((int)BrowserSettings.Settings.Timeout).ForPage().ReadyStateComplete();
                 return new DriverProvider()
                 {
                     WebDriver = driver
@@ -199,6 +203,7 @@ namespace Molder.Web.Models.Providers
                 Log.Logger().LogDebug($"SwitchTo().Frame by locator");
                 var element = WebDriver.FindElement(by);
                 var driver = WebDriver.SwitchTo().Frame(element);
+                driver.Wait((int)BrowserSettings.Settings.Timeout).ForPage().ReadyStateComplete();
                 return new DriverProvider()
                 {
                     WebDriver = driver
