@@ -74,21 +74,25 @@ namespace Molder.Web.Models.PageObjects.Elements
                 IElementProvider;
         }
 
-        public IElement Find(string locator, How how = How.XPath)
+        public IElement Find(Node element, How how = How.XPath)
         {
-            var by = how.GetBy(locator.GetStringByRegex());
-            return new Default(how, locator)
-            {
-                mediator = new ElementMediator(BrowserSettings.Settings.Timeout),
-                ElementProvider = ElementProvider.FindElement(by)
-            };
+            var by = how.GetBy(((Element)element.Object).Locator.GetStringByRegex());
+            ((Element) element.Object).mediator = new ElementMediator(BrowserSettings.Settings.Timeout);
+            ((Element) element.Object).ElementProvider = ElementProvider.FindElement(by);
+            return (IElement)element.Object;
         }
 
-        public IEnumerable<IElement> FindAll(string locator, How how = How.XPath)
+        public IEnumerable<IElement> FindAll(Node element, How how = How.XPath)
         {
-            var by = how.GetBy(locator.GetStringByRegex());
+            var by = how.GetBy(((Element)element.Object).Locator.GetStringByRegex());
             var elements = ElementProvider.FindElements(by);
-            var listElement = elements.Select(element => new Default(how, locator) { ElementProvider = element, mediator = new ElementMediator(BrowserSettings.Settings.Timeout) }).Cast<IElement>().ToList();
+            var listElement = new List<IElement>();
+            foreach (var tmpElement in elements)
+            {
+                ((Element)element.Object).mediator = new ElementMediator(BrowserSettings.Settings.Timeout);
+                ((Element)element.Object).ElementProvider = tmpElement;
+                listElement.Add((IElement)element.Object);
+            }
             return listElement.AsReadOnly();
         }
 

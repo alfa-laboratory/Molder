@@ -29,8 +29,8 @@ namespace Molder.Web.Models.PageObjects.Elements
         
         void SetProvider(IDriverProvider provider);
         public void Get();
-        IElement Find(string locator, How how = How.XPath);
-        IEnumerable<IElement> FindAll(string locator, How how = How.XPath);
+        IElement Find(Node element, How how = How.XPath);
+        IEnumerable<IElement> FindAll(Node element, How how = How.XPath);
 
         void Clear();
         string GetAttribute(string name);
