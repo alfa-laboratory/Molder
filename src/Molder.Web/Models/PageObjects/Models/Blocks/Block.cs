@@ -26,8 +26,8 @@ namespace Molder.Web.Models.PageObjects.Blocks
             ((Element)element.Object).Root = element;
             if (Root.Type == ObjectType.Collection)
             {
-                var tmpElement = Find(((Element)element.Object).Locator);
-                tmpElement.Root = element;
+                var tmpElement = Find(element);
+                tmpElement.Root = element.Root;
                 tmpElement.Name = element.Name;
                 return tmpElement;
             }

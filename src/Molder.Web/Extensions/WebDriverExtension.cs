@@ -63,18 +63,18 @@ namespace Molder.Web.Extensions
             return wait.Until(_ => parent.FindElements(by));
         }
         
-        private static IWebElement FindElement(this IWebDriver driver, By by, int timeoutInSeconds)
+        private static IWebElement FindElement(this IWebDriver driver, By by, int timeoutInMilliseconds)
         {
-            if (timeoutInSeconds <= 0) return driver.FindElement(@by);
+            if (timeoutInMilliseconds <= 0) return driver.FindElement(@by);
             
-            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeoutInSeconds));
+            var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(timeoutInMilliseconds));
             return wait.Until(drv => drv.FindElement(@by));
         }
-        private static IWebElement FindElement(this IWebDriver driver, By by, IWebElement parent, int timeoutInSeconds)
+        private static IWebElement FindElement(this IWebDriver driver, By by, IWebElement parent, int timeoutInMilliseconds)
         {
-            if (timeoutInSeconds <= 0) return parent.FindElement(by);
+            if (timeoutInMilliseconds <= 0) return parent.FindElement(by);
             
-            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeoutInSeconds));
+            var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(timeoutInMilliseconds));
             return wait.Until(_ => parent.FindElement(by));
         }
 
