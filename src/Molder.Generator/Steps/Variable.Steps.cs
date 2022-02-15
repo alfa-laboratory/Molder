@@ -375,6 +375,8 @@ namespace Molder.Generator.Steps
             var actual = variableController.GetVariableValueText(varName);
             if (actual != null)
                 actual.Should().NotContain(expected, $"значение переменной \"{varName}\":\"{actual}\" содержит \"{expected}\"");
+            else
+                Log.Logger().LogDebug($"Variable {varName} is null");
         }
 
         /// <summary>
