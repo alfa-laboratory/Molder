@@ -9,7 +9,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <LangVersion>9</LangVersion>
-    <PackageVersion>2.1.1</PackageVersion>
+    <PackageVersion>2.1.2</PackageVersion>
     <AssemblyVersion>$(PackageVersion)</AssemblyVersion>
     <Nullable>disable</Nullable>
   </PropertyGroup>
