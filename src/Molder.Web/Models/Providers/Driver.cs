@@ -118,7 +118,7 @@ namespace Molder.Web.Models.Providers
         {
             try
             {
-                var wait = new WebDriverWait(WebDriver, TimeSpan.FromSeconds((long) BrowserSettings.Settings.Timeout));
+                var wait = new WebDriverWait(WebDriver, TimeSpan.FromMilliseconds((long) BrowserSettings.Settings.Timeout));
                 var alert = wait.Until(ExpectedConditions.AlertIsPresent());
                 return new AlertProvider()
                 {
