@@ -182,8 +182,9 @@ namespace Molder.Web.Models.Providers
         public IDriverProvider GetFrame(string name)
         {
             try
-            {
+            {    
                 Log.Logger().LogDebug($"SwitchTo().Frame by name \"{name}\"");
+                WebDriver.Wait((int)BrowserSettings.Settings.Timeout).ForPage().ReadyStateComplete();
                 var driver = WebDriver.SwitchTo().Frame(name);
                 driver.Wait((int)BrowserSettings.Settings.Timeout).ForPage().ReadyStateComplete();
                 return new DriverProvider()

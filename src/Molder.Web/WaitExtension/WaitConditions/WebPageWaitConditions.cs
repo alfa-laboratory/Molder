@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
@@ -49,9 +50,31 @@ namespace Selenium.WebDriver.WaitExtensions.WaitConditions
 
         public void ReadyStateComplete()
         {
+            WaitForJqueryAjax();
             new WebDriverWait(_webDriver, TimeSpan.FromMilliseconds(_waitMs))
                 .Until(driver => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
         }
 
+        public void WaitForJqueryAjax()
+        {
+            var delay = 10;
+            while (delay > 0)
+            {
+                var jquery = (bool)((IJavaScriptExecutor) _webDriver)
+                    .ExecuteScript("return window.jQuery == undefined");
+                if (jquery)
+                {
+                    break;
+                }
+                var ajaxIsComplete = (bool)((IJavaScriptExecutor) _webDriver)
+                    .ExecuteScript("return window.jQuery.active == 0");
+                if (ajaxIsComplete)
+                {
+                    break;
+                }
+                Thread.Sleep(1000);
+                delay--;
+            }
+        }
     }
 }
