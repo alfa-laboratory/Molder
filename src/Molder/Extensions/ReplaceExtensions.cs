@@ -1,8 +1,10 @@
 ﻿using Molder.Controllers;
 using Molder.Infrastructures;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using TechTalk.SpecFlow;
 
 namespace Molder.Extensions
 {
@@ -71,6 +73,22 @@ namespace Molder.Extensions
                 },
                 RegexOptions.None);
             return fmt;
+        }
+        
+        public static Table ReplaceWith(this Table table, VariableController variableController)
+        {
+            var dt = new Table(table.Header.ToArray());
+            table.Rows.ToList().ForEach(row =>
+            {
+                var tr = new List<string>();
+                row.Values.ToList().ForEach(elem =>
+                {
+                    tr.Add(variableController.ReplaceVariables(elem));
+                });
+                dt.AddRow(tr.ToArray());
+                tr.Clear();
+            });
+            return dt;
         }
     }
 }
