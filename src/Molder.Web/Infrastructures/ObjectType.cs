@@ -5,6 +5,7 @@
         Page,
         Block,
         Frame,
-        Element
+        Element,
+        Collection
     }
 }

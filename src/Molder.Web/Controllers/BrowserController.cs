@@ -9,11 +9,18 @@ using Molder.Web.Infrastructures;
 
 namespace Molder.Web.Controllers
 {
+    /// <summary>
+    /// Контроллер для управления (инициализации/получения браузера).
+    /// </summary>
     [ExcludeFromCodeCoverage]
     public class BrowserController
     {
         private static AsyncLocal<IBrowser> Browser = new() { Value = null };
         private BrowserController() { }
+        /// <summary>
+        /// Создать или получить (если прошла инициализация) браузер.
+        /// </summary>
+        /// <returns>Браузер</returns>
         public static IBrowser GetBrowser()
         {
             return Browser.Value ?? Create();

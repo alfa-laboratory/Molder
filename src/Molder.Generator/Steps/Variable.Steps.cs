@@ -373,8 +373,10 @@ namespace Molder.Generator.Steps
             expected = variableController.ReplaceVariables(expected) ?? expected;
 
             var actual = variableController.GetVariableValueText(varName);
-            actual.Should().NotBeNull($"значения в переменной \"{varName}\" нет");
-            actual.Should().NotContain(expected, $"значение переменной \"{varName}\":\"{actual}\" содержит \"{expected}\"");
+            if (actual != null)
+                actual.Should().NotContain(expected, $"значение переменной \"{varName}\":\"{actual}\" содержит \"{expected}\"");
+            else
+                Log.Logger().LogDebug($"Variable {varName} is null");
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Molder.Controllers;
@@ -21,8 +22,6 @@ namespace Molder.Web.Models.PageObjects.Pages
         public override string Url => _variableController.ReplaceVariables(GetType().GetCustomAttribute<PageAttribute>()?.Url);
         public override Node Root { get; set; }
 
-        public Page(){ }
-
         public void SetProvider(IDriverProvider provider)
         {
             DriverProvider = provider;
@@ -34,24 +33,45 @@ namespace Molder.Web.Models.PageObjects.Pages
         {
             var root = Local ?? Root;
             var block = root.SearchElementBy(name, ObjectType.Block);
-            (block.Object as Block)?.SetProvider(_driverProvider);
+            (block.Object as Block)?.SetProvider(DriverProvider);
+            (block.Object as Block)?.Get();
             ((Block) block.Object).Root = block;
             Local = block;
-            return block.Object as Block;
+            return (Block) block.Object;
         }
 
         public override IElement GetElement(string name)
         {
             var root = Local ?? Root;
             var element = root.SearchElementBy(name);
-            (element.Object as Element)?.SetProvider(_driverProvider);
-            ((Element) element.Object).Root = element;
+            ((IElement) element.Object).Root = element;
+            ((IElement) element.Object).SetProvider(DriverProvider);
+            ((IElement) element.Object).Get();
             return (IElement) element.Object;
+        }
+
+        public override IEnumerable<IElement> GetCollection(string name)
+        {
+            var root = Local ?? Root;
+            var collection = root.SearchCollectionBy(name);
+            var elements = DriverProvider.GetElements(((IElement) collection.Object).Locator,
+                ((IElement) collection.Object).How);
+            var lst = new List<IElement>();
+
+            foreach (var element in elements)
+            {
+                IElement obj = (IElement)((IElement) collection.Object).Clone();
+                obj.Root = collection;
+                obj.SetProvider(DriverProvider);
+                obj.ElementProvider = element;
+                lst.Add(obj);
+            }
+            return lst;
         }
 
         public override IEnumerable<string> GetPrimaryElements()
         {
-            var elements = Root.Childrens.Where(c => ((Element) c.Object).Optional == false);
+            var elements = Root.Childrens.Where(c => ((IElement) c.Object).Optional == false);
             return elements.Select(element => element.Name).ToList();
         }
 
@@ -59,11 +79,10 @@ namespace Molder.Web.Models.PageObjects.Pages
 
         public override IPage GetDefaultFrame()
         {
-            if (Local is {Type: ObjectType.Frame})
-            {
-                _driverProvider = (Local.Object as Frame)?.Default();
-                Local = null;
-            }
+            if (Local is not {Type: ObjectType.Frame}) return this;
+            
+            DriverProvider = (Local.Object as Frame)?.Default();
+            Local = null;
             return this;
         }
 
@@ -76,7 +95,7 @@ namespace Molder.Web.Models.PageObjects.Pages
         {
             var root = Local ?? Root;
             var frame = root.SearchElementBy(name, ObjectType.Frame);
-            (frame.Object as Frame)?.SetProvider(_driverProvider);
+            (frame.Object as Frame)?.SetProvider(DriverProvider);
             ((Frame) frame.Object).Root = frame;
             Local = frame;
             return frame.Object as Frame;
@@ -91,14 +110,14 @@ namespace Molder.Web.Models.PageObjects.Pages
 
         public override void PageTop()
         {
-            var action = new Actions(_driverProvider.GetDriver());
+            var action = new Actions(DriverProvider.GetDriver());
             action.SendKeys(Keys.Control).SendKeys(Keys.Home).Build().Perform();
             action.KeyUp(Keys.Control).Perform();
         }
 
         public override void PageDown()
         {
-            var action = new Actions(_driverProvider.GetDriver());
+            var action = new Actions(DriverProvider.GetDriver());
             action.SendKeys(Keys.Control).SendKeys(Keys.End).Build().Perform();
             action.KeyUp(Keys.Control).Perform();
         }

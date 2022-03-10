@@ -26,8 +26,7 @@ namespace Molder.Web.Models.PageObjects.Frames
         
         protected string _frameName;
         protected int? _number;
-
-        public Frame() { }
+        
 
         protected Frame(string name, string frameName, int? number, string locator, bool optional = false) : base(name, locator, optional)
         {
@@ -35,28 +34,29 @@ namespace Molder.Web.Models.PageObjects.Frames
             _frameName = frameName;
         }
 
-        public override void SetProvider(IDriverProvider provider)
+        public new void SetProvider(IDriverProvider provider)
         {
-            _provider = null;
+            ElementProvider = null;
             mediator = new FrameMediator(BrowserSettings.Settings.Timeout);
-            _driverProvider = GetFrame(provider);
+            Driver = GetFrame(provider);
         }
 
         public IDriverProvider Parent()
         {
-            return mediator.Execute(() => _driverProvider.GetParentFrame()) as IDriverProvider;
+            return mediator.Execute(() => Driver.GetParentFrame()) as IDriverProvider;
         }
 
         public IDriverProvider Default()
         {
-            return _frameMediator.Value.Execute(() => _driverProvider.GetDefaultFrame()) as IDriverProvider;
+            return _frameMediator.Value.Execute(() => Driver.GetDefaultFrame()) as IDriverProvider;
         }
 
         public Block GetBlock(string name)
         {
             var block = Root.SearchElementBy(name, ObjectType.Block);
 
-            (block.Object as Block)?.SetProvider(_driverProvider);
+            (block.Object as Block)?.SetProvider(Driver);
+            (block.Object as Block)?.Get();
             ((Block) block.Object).Root = block;
             return block.Object as Block;
         }
@@ -65,22 +65,23 @@ namespace Molder.Web.Models.PageObjects.Frames
         {
             var frame = Root.SearchElementBy(name, ObjectType.Frame);
 
-            (frame.Object as Frame)?.SetProvider(_driverProvider);
+            (frame.Object as Frame)?.SetProvider(Driver);
             ((Frame) frame.Object).Root = frame;
             return frame.Object as Frame;
         }
 
-        public new IElement GetElement(string name)
+        public IElement GetElement(string name)
         {
             var element = Root.SearchElementBy(name);
-            (element.Object as Element)?.SetProvider(_driverProvider);
+            (element.Object as Element)?.SetProvider(Driver);
+            (element.Object as Element)?.Get();
             ((Element) element.Object).Root = element;
             return (IElement) element.Object;
         }
 
         private IDriverProvider GetFrame(IDriverProvider provider)
         {
-            IDriverProvider _driver = null;
+            IDriverProvider _driver = default;
             if (_frameName != null)
             {
                 _driver = _frameMediator.Value.Execute(() => provider.GetFrame(_frameName)) as IDriverProvider;

@@ -1,5 +1,4 @@
 ﻿using Molder.Web.Models.PageObjects.Attributes;
-using Molder.Web.Models.PageObjects.Elements;
 using Molder.Web.Models.PageObjects.Frames;
 
 namespace PageObject.Elements.Frames

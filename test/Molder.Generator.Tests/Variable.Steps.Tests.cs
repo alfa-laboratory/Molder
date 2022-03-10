@@ -475,8 +475,7 @@ namespace Molder.Generator.Tests
             VariableSteps steps = new VariableSteps(variableController);
 
             Action act = () => steps.CheckVariableNotContains("test", "test");
-            act.Should().Throw<Exception>()
-                .WithMessage($"Expected actual not to be <null> because значения в переменной \"test\" нет.");
+            act.Should().NotThrow<Exception>();
         }
 
         [Fact]
@@ -729,8 +728,7 @@ namespace Molder.Generator.Tests
             VariableSteps steps = new VariableSteps(variableController);
 
             Action act = () => steps.CheckVariableNotContains("test1", "test2");
-            act.Should().Throw<Exception>()
-                .WithMessage($"Expected actual not to be <null> because значения в переменной \"test1\" нет.");
+            act.Should().NotThrow<Exception>();
         }
 
         [Fact]

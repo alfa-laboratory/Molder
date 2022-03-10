@@ -15,6 +15,7 @@ namespace Molder.Web.Models.PageObjects.Pages
         Block GetBlock(string name);
         void BackToPage();
         IElement GetElement(string name);
+        IEnumerable<IElement> GetCollection(string name);
         IEnumerable<string> GetPrimaryElements();
 
         IPage GetDefaultFrame();

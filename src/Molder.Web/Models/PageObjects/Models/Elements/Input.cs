@@ -10,7 +10,7 @@ namespace Molder.Web.Models.PageObjects.Elements
         {
             if (Enabled && Displayed)
             {
-                mediator.Execute(() => _provider.SendKeys(text));
+                mediator.Execute(() => ElementProvider.SendKeys(text));
             }
             else
             {
@@ -18,11 +18,11 @@ namespace Molder.Web.Models.PageObjects.Elements
             }
         }
 
-        public void Clear()
+        public new void Clear()
         {
             if (Enabled && Displayed)
             {
-                mediator.Execute(() => _provider.Clear());
+                mediator.Execute(() => ElementProvider.Clear());
             }
             else
             {

@@ -2,6 +2,7 @@
 using OpenQA.Selenium;
 using Selenium.WebDriver.WaitExtensions;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -9,9 +10,12 @@ using System.Threading;
 using Microsoft.Extensions.Logging;
 using Molder.Helpers;
 using Molder.Web.Exceptions;
+using Molder.Web.Infrastructures;
 using Molder.Web.Models.Settings;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
+using WDSE;
+using WDSE.ScreenshotMaker;
 
 namespace Molder.Web.Models.Providers
 {
@@ -19,14 +23,12 @@ namespace Molder.Web.Models.Providers
     public class DriverProvider : IDriverProvider
     {
         #region  WebDriver
-
         private AsyncLocal<IWebDriver> _driver = new() { Value = null };
         public IWebDriver WebDriver
         {
             get => _driver.Value;
             set => _driver.Value = value;
         }
-
         #endregion
         
         public string PageSource => WebDriver.PageSource;
@@ -83,8 +85,9 @@ namespace Molder.Web.Models.Providers
                 throw new DriverException($"Navigate().Forward() is return error with message {ex.Message}");
             }
         }
-        public IElementProvider GetElement(By by)
+        public IElementProvider GetElement(string locator, How how)
         {
+            var by = how.GetBy(locator);
             var element = WebDriver.Wait((int)BrowserSettings.Settings.Timeout).ForElement(by).ToExist();
             return new ElementProvider(BrowserSettings.Settings.Timeout, by)
             {
@@ -92,11 +95,12 @@ namespace Molder.Web.Models.Providers
                 WebDriver = WebDriver
             };
         }
-        public ReadOnlyCollection<IElementProvider> GetElements(By by)
-        {         
-            var elements = WebDriver.FindElements(by);
+        public IEnumerable<IElementProvider> GetElements(string locator, How how)
+        {      
+            var by = how.GetBy(locator);
+            var elements = WebDriver.FindAllBy(by);
             var listElement = elements.Select(element => new ElementProvider((int)BrowserSettings.Settings.Timeout, by) {WebElement = element, WebDriver = WebDriver}).Cast<IElementProvider>().ToList();
-            return listElement.AsReadOnly();
+            return listElement;
         }
         public void SwitchTo(int number)
         {
@@ -114,7 +118,7 @@ namespace Molder.Web.Models.Providers
         {
             try
             {
-                var wait = new WebDriverWait(WebDriver, TimeSpan.FromSeconds((long) BrowserSettings.Settings.Timeout));
+                var wait = new WebDriverWait(WebDriver, TimeSpan.FromMilliseconds((long) BrowserSettings.Settings.Timeout));
                 var alert = wait.Until(ExpectedConditions.AlertIsPresent());
                 return new AlertProvider()
                 {
@@ -131,6 +135,7 @@ namespace Molder.Web.Models.Providers
             try
             {
                 var driver = WebDriver.SwitchTo().DefaultContent();
+                driver.Wait((int)BrowserSettings.Settings.Timeout).ForPage().ReadyStateComplete();
                 return new DriverProvider()
                 {
                     WebDriver = driver
@@ -146,6 +151,7 @@ namespace Molder.Web.Models.Providers
             try
             {
                 var driver = WebDriver.SwitchTo().ParentFrame();
+                driver.Wait((int)BrowserSettings.Settings.Timeout).ForPage().ReadyStateComplete();
                 return new DriverProvider()
                 {
                     WebDriver = driver
@@ -162,6 +168,7 @@ namespace Molder.Web.Models.Providers
             {
                 Log.Logger().LogDebug($"SwitchTo().Frame by id \"{id}\"");
                 var driver = WebDriver.SwitchTo().Frame(id);
+                driver.Wait((int)BrowserSettings.Settings.Timeout).ForPage().ReadyStateComplete();
                 return new DriverProvider()
                 {
                     WebDriver = driver
@@ -175,9 +182,11 @@ namespace Molder.Web.Models.Providers
         public IDriverProvider GetFrame(string name)
         {
             try
-            {
+            {    
                 Log.Logger().LogDebug($"SwitchTo().Frame by name \"{name}\"");
+                WebDriver.Wait((int)BrowserSettings.Settings.Timeout).ForPage().ReadyStateComplete();
                 var driver = WebDriver.SwitchTo().Frame(name);
+                driver.Wait((int)BrowserSettings.Settings.Timeout).ForPage().ReadyStateComplete();
                 return new DriverProvider()
                 {
                     WebDriver = driver
@@ -195,6 +204,7 @@ namespace Molder.Web.Models.Providers
                 Log.Logger().LogDebug($"SwitchTo().Frame by locator");
                 var element = WebDriver.FindElement(by);
                 var driver = WebDriver.SwitchTo().Frame(element);
+                driver.Wait((int)BrowserSettings.Settings.Timeout).ForPage().ReadyStateComplete();
                 return new DriverProvider()
                 {
                     WebDriver = driver
@@ -252,11 +262,10 @@ namespace Molder.Web.Models.Providers
             }
         }
         public byte[] Screenshot()
-        {/*
-            var scmkr = new ScreenshotMaker();
-            scmkr.RemoveScrollBarsWhileShooting();
-            return WebDriver.TakeScreenshot(scmkr);*/
-            return null;
+        {
+            var screenshotMaker = new ScreenshotMaker();
+            screenshotMaker.RemoveScrollBarsWhileShooting();
+            return WebDriver.TakeScreenshot(screenshotMaker);
         }
         public void WindowSize(int width, int height)
         {

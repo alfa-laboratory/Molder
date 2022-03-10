@@ -27,6 +27,22 @@ namespace Molder.Web.Extensions
             }
         }
 
+        public static Node SearchCollectionBy(this Node node, string name)
+        {
+            try
+            {
+                Log.Logger().LogInformation($"Search collection element by name \"{name}\" in {node.Type.ToString().ToLower()} \"{node.Name}\"");
+                return (node.Childrens as List<Node>)?.SingleOrDefault(n =>
+                    n.Type == ObjectType.Collection && n.Name == name) ?? throw new SearchException(
+                    $"A collection elements \"{name}\" was not found in the {node.Type.ToString().ToLower()} \"{node.Name}\"");
+            }
+            catch (InvalidOperationException)
+            {
+                throw new SearchException(
+                    $"A {node.Type.ToString().ToLower()} \"{node.Name}\" contains more than one node named \"{name}\"");
+            }
+        }
+
         public static Node SearchPageBy(this IEnumerable<Node> nodes, string name)
         {
             try
