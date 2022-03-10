@@ -18,13 +18,6 @@ namespace Molder.Web.Models.Settings
             set => _timeout = value;
         }
 
-        private long? _frameTimeout = Constants.LOWER_TIMEOUT;
-        public long? FrameTimeout
-        {
-            get => _frameTimeout * Constants.MS_IN_SEC;
-            set => _frameTimeout = value;
-        } 
-
         public bool IsRemote { get; set; } = false;
 
         public Remote Remote { get; set; }

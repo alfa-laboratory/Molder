@@ -51,12 +51,12 @@ namespace Selenium.WebDriver.WaitExtensions.WaitConditions
 
         public void ReadyStateComplete()
         {
-            WaitForJqueryAjax((int)BrowserSettings.Settings.FrameTimeout);
+            WaitForJqueryAjax();
             new WebDriverWait(_webDriver, TimeSpan.FromMilliseconds(_waitMs))
                 .Until(driver => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
         }
 
-        public void WaitForJqueryAjax(int delay)
+        public void WaitForJqueryAjax(int delay = 10)
         {
             while (delay > 0)
             {

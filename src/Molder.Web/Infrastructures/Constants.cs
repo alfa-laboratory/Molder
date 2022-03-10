@@ -17,7 +17,6 @@ namespace Molder.Web.Infrastructures
         public const int MS_IN_SEC = 1000;
         public const int TIC_IN_SEC = 10;
         public const int DEFAULT_TIMEOUT = 60;
-        public const int LOWER_TIMEOUT = 20;
         public const long TIMEOUT = DEFAULT_TIMEOUT * MS_IN_SEC;
     }
 }
