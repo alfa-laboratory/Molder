@@ -14,7 +14,7 @@ using Molder.Web.Infrastructures;
 
 namespace Molder.Web.Models.PageObjects.Elements
 {
-    public abstract class Element : IElement, ICloneable
+    public class Element : IElement, ICloneable
     {
         private AsyncLocal<IMediator> _elementMediator = new() { Value = null };
         protected IMediator mediator
