@@ -12,10 +12,10 @@
     <IsPackable>true</IsPackable>
     <AssemblyName>Molder</AssemblyName>
     <Description>Library containing the logic for working with variables, logging, basic models for working with directories and files</Description>
-    <PackageVersion>2.1.1</PackageVersion>
+    <PackageVersion>2.3.0</PackageVersion>
     <LangVersion>9</LangVersion>
     <Nullable>disable</Nullable>
-    <AssemblyVersion>2.2.1</AssemblyVersion>
+    <AssemblyVersion>$(PackageVersion)</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
