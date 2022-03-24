@@ -9,9 +9,10 @@
     <RepositoryUrl>https://github.com/alfa-laboratory/Molder</RepositoryUrl>
     <PackageTags>specflow bdd steps web alfabank</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
     <Description>Library for working with WebUI</Description>
     <LangVersion>9</LangVersion>
-    <PackageVersion>2.1.4-beta</PackageVersion>
+    <PackageVersion>2.1.4.1-beta</PackageVersion>
     <AssemblyVersion>$(PackageVersion)</AssemblyVersion>
     <Nullable>disable</Nullable>
   </PropertyGroup>
