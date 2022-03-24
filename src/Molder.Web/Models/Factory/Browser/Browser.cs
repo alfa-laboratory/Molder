@@ -7,7 +7,7 @@ using System;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using Molder.Helpers;
-using OpenQA.Selenium;
+using OpenQA.Selenium.Remote;
 using IAlert = Molder.Web.Models.PageObjects.Alerts.IAlert;
 
 namespace Molder.Web.Models.Browser

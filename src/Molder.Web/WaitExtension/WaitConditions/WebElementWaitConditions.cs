@@ -1,7 +1,6 @@
 using System;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
-using SeleniumExtras.WaitHelpers;
 
 namespace Selenium.WebDriver.WaitExtensions.WaitConditions
 {

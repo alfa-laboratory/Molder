@@ -13,7 +13,6 @@ using Molder.Web.Exceptions;
 using Molder.Web.Infrastructures;
 using Molder.Web.Models.Settings;
 using OpenQA.Selenium.Support.UI;
-using SeleniumExtras.WaitHelpers;
 using WDSE;
 using WDSE.ScreenshotMaker;
 
