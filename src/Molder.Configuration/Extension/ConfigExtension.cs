@@ -43,7 +43,7 @@ namespace Molder.Configuration.Extension
                     }
                     else
                     {
-                        Log.Logger().LogInformation($"Tag \"{tag}\" is skipped.");
+                        Log.Logger().LogDebug($"Tag \"{tag}\" is skipped.");
                     }
                 });
             });

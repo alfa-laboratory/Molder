@@ -11,7 +11,7 @@
     <IsPackable>true</IsPackable>
     <Description>Library for adding a block to the appsettings.json configuration file for adding variables to scenarios</Description>
     <LangVersion>9</LangVersion>
-    <PackageVersion>2.1.1</PackageVersion>
+    <PackageVersion>2.1.1.1</PackageVersion>
     <AssemblyVersion>$(PackageVersion)</AssemblyVersion>
     <Nullable>disable</Nullable>
   </PropertyGroup>
