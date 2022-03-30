@@ -9,9 +9,10 @@
     <RepositoryUrl>https://github.com/alfa-laboratory/Molder</RepositoryUrl>
     <PackageTags>specflow bdd steps web alfabank</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
     <Description>Library for working with WebUI</Description>
     <LangVersion>9</LangVersion>
-    <PackageVersion>2.1.3</PackageVersion>
+    <PackageVersion>2.1.4.1-beta</PackageVersion>
     <AssemblyVersion>$(PackageVersion)</AssemblyVersion>
     <Nullable>disable</Nullable>
   </PropertyGroup>
@@ -31,8 +32,8 @@
     <PackageReference Include="Molder" Version="2.3.0" />
     <PackageReference Include="Noksa.WebDriver.ScreenshotsExtensions" Version="0.1.5.4" />
     <PackageReference Include="Polly" Version="7.2.2" />
-    <PackageReference Include="Selenium.Support" Version="4.0.1" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.0.1" />
+    <PackageReference Include="Selenium.Support" Version="3.141.0" />
+    <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
     <PackageReference Include="SpecFlow" Version="3.9.40" />
     <PackageReference Include="Titanium.Web.Proxy" Version="3.1.1344" />
   </ItemGroup>
